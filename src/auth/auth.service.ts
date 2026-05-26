@@ -83,6 +83,34 @@ export class AuthService {
     return { user: this.sanitizeUser(user), ...tokens };
   }
 
+  async googleLogin(profile: { email: string; firstName: string; lastName: string; picture?: string }) {
+    let user = await this.prisma.user.findUnique({ where: { email: profile.email } });
+
+    if (!user) {
+      user = await this.prisma.user.create({
+        data: {
+          name: profile.firstName,
+          surname: profile.lastName || "",
+          email: profile.email,
+          passwordHash: await argon2.hash(crypto.randomBytes(32).toString("hex")),
+          birthDate: new Date("1990-01-01"),
+          gender: "OTHER",
+          cityId: 1,
+          districtId: 1,
+          isEmailVerified: true,
+          avatar: profile.picture,
+        },
+      });
+    }
+
+    const tokens = await this.generateTokens(user.id, user.email);
+    await this.updateRefreshToken(user.id, tokens.refreshToken);
+
+    this.audit.log({ action: "GOOGLE_LOGIN", userId: user.id, metadata: { email: profile.email } });
+
+    return tokens;
+  }
+
   async refresh(refreshToken: string) {
     try {
       const payload = this.jwtService.verify(refreshToken, { secret: jwtConstants.refreshSecret });

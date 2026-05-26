@@ -38,4 +38,6 @@ export declare class AuthController {
     resetPassword(email: string, code: string, newPassword: string): Promise<{
         reset: boolean;
     }>;
+    googleAuth(): Promise<void>;
+    googleAuthRedirect(req: any, res: any): Promise<void>;
 }

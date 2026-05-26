@@ -1,4 +1,5 @@
-import { Controller, Post, Get, Body, HttpCode, HttpStatus, UseGuards, Query } from "@nestjs/common";
+import { Controller, Post, Get, Body, HttpCode, HttpStatus, UseGuards, Query, Req, Res } from "@nestjs/common";
+import { AuthGuard } from "@nestjs/passport";
 import { Throttle } from "@nestjs/throttler";
 import { AuthService } from "./auth.service";
 import { RegisterDto } from "./dto/register.dto";
@@ -60,5 +61,17 @@ export class AuthController {
   @Throttle({ default: { limit: 5, ttl: 60000 } })
   async resetPassword(@Body("email") email: string, @Body("code") code: string, @Body("newPassword") newPassword: string) {
     return this.authService.resetPassword(email, code, newPassword);
+  }
+
+  @Get("google")
+  @UseGuards(AuthGuard("google"))
+  async googleAuth() {}
+
+  @Get("google/callback")
+  @UseGuards(AuthGuard("google"))
+  async googleAuthRedirect(@Req() req: any, @Res() res: any) {
+    const result = await this.authService.googleLogin(req.user);
+    const frontendUrl = process.env.CORS_ORIGIN || "http://localhost:3001";
+    res.redirect(`${frontendUrl}/auth/callback?accessToken=${result.accessToken}&refreshToken=${result.refreshToken}`);
   }
 }

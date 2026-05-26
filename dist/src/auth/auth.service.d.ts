@@ -28,6 +28,15 @@ export declare class AuthService {
         requires2FA?: undefined;
         tempToken?: undefined;
     }>;
+    googleLogin(profile: {
+        email: string;
+        firstName: string;
+        lastName: string;
+        picture?: string;
+    }): Promise<{
+        accessToken: string;
+        refreshToken: string;
+    }>;
     refresh(refreshToken: string): Promise<{
         accessToken: string;
         refreshToken: string;
