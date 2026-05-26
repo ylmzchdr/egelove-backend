@@ -1,0 +1,53 @@
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AppModule = void 0;
+const common_1 = require("@nestjs/common");
+const config_1 = require("@nestjs/config");
+const throttler_1 = require("@nestjs/throttler");
+const prisma_module_1 = require("./prisma/prisma.module");
+const auth_module_1 = require("./auth/auth.module");
+const user_module_1 = require("./user/user.module");
+const match_module_1 = require("./match/match.module");
+const message_module_1 = require("./message/message.module");
+const chat_module_1 = require("./chat/chat.module");
+const payment_module_1 = require("./payment/payment.module");
+const photo_module_1 = require("./photo/photo.module");
+const city_module_1 = require("./city/city.module");
+const audit_module_1 = require("./common/audit/audit.module");
+const email_module_1 = require("./email/email.module");
+const twofa_module_1 = require("./twofa/twofa.module");
+let AppModule = class AppModule {
+};
+exports.AppModule = AppModule;
+exports.AppModule = AppModule = __decorate([
+    (0, common_1.Module)({
+        imports: [
+            config_1.ConfigModule.forRoot({ isGlobal: true }),
+            throttler_1.ThrottlerModule.forRoot([
+                { name: "default", ttl: 60000, limit: 100 },
+                { name: "auth", ttl: 60000, limit: 10 },
+                { name: "register", ttl: 60000, limit: 5 },
+                { name: "upload", ttl: 60000, limit: 20 },
+            ]),
+            prisma_module_1.PrismaModule,
+            auth_module_1.AuthModule,
+            user_module_1.UserModule,
+            match_module_1.MatchModule,
+            message_module_1.MessageModule,
+            chat_module_1.ChatModule,
+            payment_module_1.PaymentModule,
+            photo_module_1.PhotoModule,
+            city_module_1.CityModule,
+            audit_module_1.AuditModule,
+            email_module_1.EmailModule,
+            twofa_module_1.TwofaModule,
+        ],
+    })
+], AppModule);
+//# sourceMappingURL=app.module.js.map
