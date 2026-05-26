@@ -1,4 +1,5 @@
 import { PrismaService } from "../prisma/prisma.service";
+import { UpdateUserDto } from "./dto/update-user.dto";
 export declare class UserController {
     private prisma;
     constructor(prisma: PrismaService);
@@ -8,10 +9,10 @@ export declare class UserController {
             id: number;
         };
         photos: {
-            url: string;
             id: string;
             createdAt: Date;
             updatedAt: Date;
+            url: string;
             status: import("@prisma/client").$Enums.PhotoStatus;
             thumbnail: string | null;
             blurHash: string | null;
@@ -69,7 +70,7 @@ export declare class UserController {
         cityId: number;
         districtId: number;
     }>;
-    updateMe(user: any, data: any): Promise<{
+    updateMe(user: any, data: UpdateUserDto): Promise<{
         name: string;
         id: string;
         email: string;
@@ -158,10 +159,10 @@ export declare class UserController {
             id: number;
         };
         photos: {
-            url: string;
             id: string;
             createdAt: Date;
             updatedAt: Date;
+            url: string;
             status: import("@prisma/client").$Enums.PhotoStatus;
             thumbnail: string | null;
             blurHash: string | null;

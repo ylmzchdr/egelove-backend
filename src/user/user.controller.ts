@@ -2,6 +2,7 @@ import { Controller, Get, Put, Body, UseGuards, Param } from "@nestjs/common";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { CurrentUser } from "../auth/current-user.decorator";
 import { PrismaService } from "../prisma/prisma.service";
+import { UpdateUserDto } from "./dto/update-user.dto";
 
 @Controller("users")
 export class UserController {
@@ -20,7 +21,7 @@ export class UserController {
 
   @Put("me")
   @UseGuards(JwtAuthGuard)
-  async updateMe(@CurrentUser() user: any, @Body() data: any) {
+  async updateMe(@CurrentUser() user: any, @Body() data: UpdateUserDto) {
     const updated = await this.prisma.user.update({
       where: { id: user.sub },
       data,

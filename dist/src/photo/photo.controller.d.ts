@@ -5,10 +5,10 @@ export declare class PhotoController {
     private audit;
     constructor(prisma: PrismaService, audit: AuditService);
     uploadPhoto(user: any, url: string, mimetype?: string, size?: number): Promise<{
-        url: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        url: string;
         status: import("@prisma/client").$Enums.PhotoStatus;
         thumbnail: string | null;
         blurHash: string | null;
@@ -21,10 +21,10 @@ export declare class PhotoController {
         error: string;
     }>;
     getMyPhotos(user: any): Promise<{
-        url: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        url: string;
         status: import("@prisma/client").$Enums.PhotoStatus;
         thumbnail: string | null;
         blurHash: string | null;
@@ -35,10 +35,10 @@ export declare class PhotoController {
         moderatedAt: Date | null;
     }[]>;
     approvePhoto(user: any, photoId: string): Promise<{
-        url: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        url: string;
         status: import("@prisma/client").$Enums.PhotoStatus;
         thumbnail: string | null;
         blurHash: string | null;
@@ -51,10 +51,10 @@ export declare class PhotoController {
         error: string;
     }>;
     rejectPhoto(user: any, photoId: string, reason?: string): Promise<{
-        url: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        url: string;
         status: import("@prisma/client").$Enums.PhotoStatus;
         thumbnail: string | null;
         blurHash: string | null;
@@ -67,10 +67,10 @@ export declare class PhotoController {
         error: string;
     }>;
     getPendingPhotos(user: any): Promise<{
-        url: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        url: string;
         status: import("@prisma/client").$Enums.PhotoStatus;
         thumbnail: string | null;
         blurHash: string | null;
