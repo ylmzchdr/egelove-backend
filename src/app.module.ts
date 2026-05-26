@@ -13,6 +13,7 @@ import { CityModule } from "./city/city.module";
 import { AuditModule } from "./common/audit/audit.module";
 import { EmailModule } from "./email/email.module";
 import { TwofaModule } from "./twofa/twofa.module";
+import { AdminModule } from "./admin/admin.module";
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { TwofaModule } from "./twofa/twofa.module";
     AuditModule,
     EmailModule,
     TwofaModule,
+    AdminModule,
   ],
 })
 export class AppModule {}

@@ -38,7 +38,7 @@ export class PhotoController {
   @Post("approve/:id")
   async approvePhoto(@CurrentUser() user: any, @Param("id") photoId: string) {
     const photo = await this.prisma.photo.findUnique({ where: { id: photoId } });
-    if (!photo || photo.userId !== user.sub) return { error: "Erişim reddedildi" };
+    if (!photo || (photo.userId !== user.sub && !user.isAdmin)) return { error: "Erişim reddedildi" };
 
     const updated = await this.prisma.photo.update({
       where: { id: photoId },
@@ -52,7 +52,7 @@ export class PhotoController {
   @Post("reject/:id")
   async rejectPhoto(@CurrentUser() user: any, @Param("id") photoId: string, @Body("reason") reason?: string) {
     const photo = await this.prisma.photo.findUnique({ where: { id: photoId } });
-    if (!photo || photo.userId !== user.sub) return { error: "Erişim reddedildi" };
+    if (!photo || (photo.userId !== user.sub && !user.isAdmin)) return { error: "Erişim reddedildi" };
 
     const updated = await this.prisma.photo.update({
       where: { id: photoId },
@@ -65,6 +65,9 @@ export class PhotoController {
 
   @Get("pending")
   async getPendingPhotos(@CurrentUser() user: any) {
-    return this.prisma.photo.findMany({ where: { status: "PENDING" } });
+    if (user.isAdmin) {
+      return this.prisma.photo.findMany({ where: { status: "PENDING" }, include: { user: { select: { id: true, name: true, surname: true, email: true } } } });
+    }
+    return this.prisma.photo.findMany({ where: { userId: user.sub, status: "PENDING" } });
   }
 }

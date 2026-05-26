@@ -22,6 +22,7 @@ const city_module_1 = require("./city/city.module");
 const audit_module_1 = require("./common/audit/audit.module");
 const email_module_1 = require("./email/email.module");
 const twofa_module_1 = require("./twofa/twofa.module");
+const admin_module_1 = require("./admin/admin.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -47,6 +48,7 @@ exports.AppModule = AppModule = __decorate([
             audit_module_1.AuditModule,
             email_module_1.EmailModule,
             twofa_module_1.TwofaModule,
+            admin_module_1.AdminModule,
         ],
     })
 ], AppModule);
