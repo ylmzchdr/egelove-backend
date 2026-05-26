@@ -1,4 +1,4 @@
-import { Controller, Get, Put, Body, UseGuards, Param } from "@nestjs/common";
+import { Controller, Get, Put, Body, UseGuards, Param, Query } from "@nestjs/common";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { CurrentUser } from "../auth/current-user.decorator";
 import { PrismaService } from "../prisma/prisma.service";
@@ -48,45 +48,71 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   async filterUsers(
     @CurrentUser() user: any,
-    @Body() filters: {
-      city?: number; gender?: string; minAge?: number; maxAge?: number;
-      education?: string; smoking?: string; alcohol?: string;
-      maritalStatus?: string; children?: string; religion?: string;
-      minHeight?: number; maxHeight?: number; bodyType?: string;
-    },
+    @Query("city") city?: string,
+    @Query("gender") gender?: string,
+    @Query("minAge") minAge?: string,
+    @Query("maxAge") maxAge?: string,
+    @Query("education") education?: string,
+    @Query("smoking") smoking?: string,
+    @Query("alcohol") alcohol?: string,
+    @Query("maritalStatus") maritalStatus?: string,
+    @Query("children") children?: string,
+    @Query("religion") religion?: string,
+    @Query("bodyType") bodyType?: string,
+    @Query("hairColor") hairColor?: string,
+    @Query("eyeColor") eyeColor?: string,
+    @Query("bloodType") bloodType?: string,
+    @Query("income") income?: string,
+    @Query("minHeight") minHeight?: string,
+    @Query("maxHeight") maxHeight?: string,
   ) {
     const where: any = { id: { not: user.sub }, isActive: true };
 
-    if (filters.gender) where.gender = filters.gender;
-    if (filters.city) where.cityId = filters.city;
-    if (filters.education) where.education = filters.education;
-    if (filters.smoking) where.smoking = filters.smoking;
-    if (filters.alcohol) where.alcohol = filters.alcohol;
-    if (filters.maritalStatus) where.maritalStatus = filters.maritalStatus;
-    if (filters.children) where.children = filters.children;
-    if (filters.religion) where.religion = filters.religion;
-    if (filters.bodyType) where.bodyType = filters.bodyType;
-    if (filters.minHeight || filters.maxHeight) {
+    if (gender) where.gender = gender;
+    if (city) where.cityId = parseInt(city);
+    if (education) where.education = education;
+    if (smoking) where.smoking = smoking;
+    if (alcohol) where.alcohol = alcohol;
+    if (maritalStatus) where.maritalStatus = maritalStatus;
+    if (children) where.children = children;
+    if (religion) where.religion = religion;
+    if (bodyType) where.bodyType = bodyType;
+    if (hairColor) where.hairColor = hairColor;
+    if (eyeColor) where.eyeColor = eyeColor;
+    if (bloodType) where.bloodType = bloodType;
+    if (income) where.income = income;
+    if (minHeight || maxHeight) {
       where.height = {};
-      if (filters.minHeight) where.height.gte = filters.minHeight;
-      if (filters.maxHeight) where.height.lte = filters.maxHeight;
+      if (minHeight) where.height.gte = parseInt(minHeight);
+      if (maxHeight) where.height.lte = parseInt(maxHeight);
+    }
+
+    if (minAge || maxAge) {
+      const now = new Date();
+      if (maxAge) {
+        const minDate = new Date(now.getFullYear() - parseInt(maxAge), now.getMonth(), now.getDate());
+        where.birthDate = { ...where.birthDate, gte: minDate };
+      }
+      if (minAge) {
+        const maxDate = new Date(now.getFullYear() - parseInt(minAge), now.getMonth(), now.getDate());
+        where.birthDate = { ...where.birthDate, lte: maxDate };
+      }
     }
 
     const users = await this.prisma.user.findMany({
       where,
       take: 50,
-      select: {
-        id: true, name: true, birthDate: true, cityId: true,
-        gender: true, bio: true, avatar: true, isVerified: true,
-        education: true, smoking: true, alcohol: true, height: true,
-      },
+      include: { city: true, district: true },
     });
 
-    return users.map((u) => ({
-      ...u,
-      age: Math.floor((Date.now() - new Date(u.birthDate).getTime()) / 31557600000),
-      birthDate: undefined,
-    }));
+    return users.map((u) => {
+      const { passwordHash, refreshToken, turnstileToken, twoFactorSecret, emailVerifyToken, emailVerifySentAt, ...safe } = u;
+      return {
+        ...safe,
+        age: Math.floor((Date.now() - new Date(safe.birthDate).getTime()) / 31557600000),
+        birthDate: undefined,
+      };
+    });
   }
 
   @Get(":id")

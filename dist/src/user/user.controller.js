@@ -50,47 +50,65 @@ let UserController = class UserController {
         });
         return users;
     }
-    async filterUsers(user, filters) {
+    async filterUsers(user, city, gender, minAge, maxAge, education, smoking, alcohol, maritalStatus, children, religion, bodyType, hairColor, eyeColor, bloodType, income, minHeight, maxHeight) {
         const where = { id: { not: user.sub }, isActive: true };
-        if (filters.gender)
-            where.gender = filters.gender;
-        if (filters.city)
-            where.cityId = filters.city;
-        if (filters.education)
-            where.education = filters.education;
-        if (filters.smoking)
-            where.smoking = filters.smoking;
-        if (filters.alcohol)
-            where.alcohol = filters.alcohol;
-        if (filters.maritalStatus)
-            where.maritalStatus = filters.maritalStatus;
-        if (filters.children)
-            where.children = filters.children;
-        if (filters.religion)
-            where.religion = filters.religion;
-        if (filters.bodyType)
-            where.bodyType = filters.bodyType;
-        if (filters.minHeight || filters.maxHeight) {
+        if (gender)
+            where.gender = gender;
+        if (city)
+            where.cityId = parseInt(city);
+        if (education)
+            where.education = education;
+        if (smoking)
+            where.smoking = smoking;
+        if (alcohol)
+            where.alcohol = alcohol;
+        if (maritalStatus)
+            where.maritalStatus = maritalStatus;
+        if (children)
+            where.children = children;
+        if (religion)
+            where.religion = religion;
+        if (bodyType)
+            where.bodyType = bodyType;
+        if (hairColor)
+            where.hairColor = hairColor;
+        if (eyeColor)
+            where.eyeColor = eyeColor;
+        if (bloodType)
+            where.bloodType = bloodType;
+        if (income)
+            where.income = income;
+        if (minHeight || maxHeight) {
             where.height = {};
-            if (filters.minHeight)
-                where.height.gte = filters.minHeight;
-            if (filters.maxHeight)
-                where.height.lte = filters.maxHeight;
+            if (minHeight)
+                where.height.gte = parseInt(minHeight);
+            if (maxHeight)
+                where.height.lte = parseInt(maxHeight);
+        }
+        if (minAge || maxAge) {
+            const now = new Date();
+            if (maxAge) {
+                const minDate = new Date(now.getFullYear() - parseInt(maxAge), now.getMonth(), now.getDate());
+                where.birthDate = { ...where.birthDate, gte: minDate };
+            }
+            if (minAge) {
+                const maxDate = new Date(now.getFullYear() - parseInt(minAge), now.getMonth(), now.getDate());
+                where.birthDate = { ...where.birthDate, lte: maxDate };
+            }
         }
         const users = await this.prisma.user.findMany({
             where,
             take: 50,
-            select: {
-                id: true, name: true, birthDate: true, cityId: true,
-                gender: true, bio: true, avatar: true, isVerified: true,
-                education: true, smoking: true, alcohol: true, height: true,
-            },
+            include: { city: true, district: true },
         });
-        return users.map((u) => ({
-            ...u,
-            age: Math.floor((Date.now() - new Date(u.birthDate).getTime()) / 31557600000),
-            birthDate: undefined,
-        }));
+        return users.map((u) => {
+            const { passwordHash, refreshToken, turnstileToken, twoFactorSecret, emailVerifyToken, emailVerifySentAt, ...safe } = u;
+            return {
+                ...safe,
+                age: Math.floor((Date.now() - new Date(safe.birthDate).getTime()) / 31557600000),
+                birthDate: undefined,
+            };
+        });
     }
     async getProfile(id) {
         const profile = await this.prisma.user.findUnique({
@@ -133,9 +151,25 @@ __decorate([
     (0, common_1.Get)("search/filter"),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, current_user_decorator_1.CurrentUser)()),
-    __param(1, (0, common_1.Body)()),
+    __param(1, (0, common_1.Query)("city")),
+    __param(2, (0, common_1.Query)("gender")),
+    __param(3, (0, common_1.Query)("minAge")),
+    __param(4, (0, common_1.Query)("maxAge")),
+    __param(5, (0, common_1.Query)("education")),
+    __param(6, (0, common_1.Query)("smoking")),
+    __param(7, (0, common_1.Query)("alcohol")),
+    __param(8, (0, common_1.Query)("maritalStatus")),
+    __param(9, (0, common_1.Query)("children")),
+    __param(10, (0, common_1.Query)("religion")),
+    __param(11, (0, common_1.Query)("bodyType")),
+    __param(12, (0, common_1.Query)("hairColor")),
+    __param(13, (0, common_1.Query)("eyeColor")),
+    __param(14, (0, common_1.Query)("bloodType")),
+    __param(15, (0, common_1.Query)("income")),
+    __param(16, (0, common_1.Query)("minHeight")),
+    __param(17, (0, common_1.Query)("maxHeight")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:paramtypes", [Object, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "filterUsers", null);
 __decorate([

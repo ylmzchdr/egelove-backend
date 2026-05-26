@@ -124,34 +124,56 @@ export declare class UserController {
         isVerified: boolean;
         cityId: number;
     }[]>;
-    filterUsers(user: any, filters: {
-        city?: number;
-        gender?: string;
-        minAge?: number;
-        maxAge?: number;
-        education?: string;
-        smoking?: string;
-        alcohol?: string;
-        maritalStatus?: string;
-        children?: string;
-        religion?: string;
-        minHeight?: number;
-        maxHeight?: number;
-        bodyType?: string;
-    }): Promise<{
+    filterUsers(user: any, city?: string, gender?: string, minAge?: string, maxAge?: string, education?: string, smoking?: string, alcohol?: string, maritalStatus?: string, children?: string, religion?: string, bodyType?: string, hairColor?: string, eyeColor?: string, bloodType?: string, income?: string, minHeight?: string, maxHeight?: string): Promise<{
         age: number;
         birthDate: undefined;
+        city: {
+            name: string;
+            id: number;
+        };
+        district: {
+            name: string;
+            id: number;
+            cityId: number;
+        };
         name: string;
         id: string;
+        email: string;
+        phone: string | null;
+        surname: string;
         gender: import("@prisma/client").$Enums.Gender;
         bio: string | null;
         avatar: string | null;
+        isPremiumCandidate: boolean;
+        premiumExpiresAt: Date | null;
+        isAdmin: boolean;
         isVerified: boolean;
+        isActive: boolean;
+        lastLoginAt: Date | null;
+        isEmailVerified: boolean;
+        twoFactorEnabled: boolean;
+        createdAt: Date;
+        updatedAt: Date;
         education: import("@prisma/client").$Enums.EducationLevel | null;
+        income: import("@prisma/client").$Enums.IncomeLevel | null;
+        religion: import("@prisma/client").$Enums.ReligionLevel | null;
         smoking: import("@prisma/client").$Enums.SmokingStatus | null;
         alcohol: import("@prisma/client").$Enums.AlcoholStatus | null;
+        children: import("@prisma/client").$Enums.ChildrenStatus | null;
+        bodyType: import("@prisma/client").$Enums.BodyType | null;
         height: number | null;
+        weight: number | null;
+        eyeColor: import("@prisma/client").$Enums.EyeColor | null;
+        hairColor: import("@prisma/client").$Enums.HairColor | null;
+        bloodType: import("@prisma/client").$Enums.BloodType | null;
+        occupation: string | null;
+        hobbies: string[];
+        aboutMe: string | null;
+        lookingFor: string | null;
+        privacySettings: import("@prisma/client/runtime/client").JsonValue;
+        matchingPreferences: import("@prisma/client/runtime/client").JsonValue;
         cityId: number;
+        districtId: number;
     }[]>;
     getProfile(id: string): Promise<{
         city: {
