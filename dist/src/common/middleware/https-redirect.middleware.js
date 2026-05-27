@@ -11,6 +11,8 @@ const common_1 = require("@nestjs/common");
 let HttpsRedirectMiddleware = class HttpsRedirectMiddleware {
     use(req, res, next) {
         if (process.env.NODE_ENV === "production" && !req.secure && req.headers["x-forwarded-proto"] !== "https") {
+            if (req.path === "/health")
+                return next();
             return res.redirect(301, `https://${req.hostname}${req.originalUrl}`);
         }
         next();
