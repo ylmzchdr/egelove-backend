@@ -8,7 +8,6 @@ const common_1 = require("@nestjs/common");
 const helmet_1 = __importDefault(require("helmet"));
 const app_module_1 = require("./app.module");
 const all_exceptions_filter_1 = require("./common/filters/all-exceptions.filter");
-const https_redirect_middleware_1 = require("./common/middleware/https-redirect.middleware");
 const env_validation_1 = require("./common/env.validation");
 async function bootstrap() {
     (0, env_validation_1.validateEnv)();
@@ -33,7 +32,6 @@ async function bootstrap() {
     app.use(helmet_1.default.frameguard({ action: "deny" }));
     app.use(helmet_1.default.noSniff());
     app.use(helmet_1.default.xssFilter());
-    app.use(new https_redirect_middleware_1.HttpsRedirectMiddleware().use);
     app.enableCors({
         origin: process.env.CORS_ORIGIN || "http://localhost:3001",
         credentials: true,

@@ -3,7 +3,6 @@ import { ValidationPipe } from "@nestjs/common";
 import helmet from "helmet";
 import { AppModule } from "./app.module";
 import { AllExceptionsFilter } from "./common/filters/all-exceptions.filter";
-import { HttpsRedirectMiddleware } from "./common/middleware/https-redirect.middleware";
 import { validateEnv } from "./common/env.validation";
 
 async function bootstrap() {
@@ -33,8 +32,6 @@ async function bootstrap() {
   app.use(helmet.frameguard({ action: "deny" }));
   app.use(helmet.noSniff());
   app.use(helmet.xssFilter());
-
-  app.use(new HttpsRedirectMiddleware().use);
 
   app.enableCors({
     origin: process.env.CORS_ORIGIN || "http://localhost:3001",
