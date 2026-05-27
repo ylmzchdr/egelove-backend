@@ -17,9 +17,22 @@ let PrismaService = PrismaService_1 = class PrismaService extends client_1.Prism
     logger = new common_1.Logger(PrismaService_1.name);
     connected = false;
     constructor() {
+        const rawUrl = process.env.DATABASE_URL || "";
+        const hasParams = rawUrl.includes("?");
+        const sslUrl = rawUrl
+            ? hasParams
+                ? rawUrl.includes("sslmode")
+                    ? rawUrl
+                    : `${rawUrl}&sslmode=require`
+                : `${rawUrl}?sslmode=require`
+            : rawUrl;
+        if (rawUrl && rawUrl !== sslUrl) {
+            process.env.DATABASE_URL = sslUrl;
+        }
         super({
             log: ["warn", "error"],
             errorFormat: "pretty",
+            datasources: rawUrl ? { db: { url: sslUrl } } : undefined,
         });
     }
     async onModuleInit() {

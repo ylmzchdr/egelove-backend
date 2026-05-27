@@ -7,9 +7,22 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
   private connected = false;
 
   constructor() {
+    const rawUrl = process.env.DATABASE_URL || "";
+    const hasParams = rawUrl.includes("?");
+    const sslUrl = rawUrl
+      ? hasParams
+        ? rawUrl.includes("sslmode")
+          ? rawUrl
+          : `${rawUrl}&sslmode=require`
+        : `${rawUrl}?sslmode=require`
+      : rawUrl;
+    if (rawUrl && rawUrl !== sslUrl) {
+      process.env.DATABASE_URL = sslUrl;
+    }
     super({
       log: ["warn", "error"],
       errorFormat: "pretty",
+      datasources: rawUrl ? { db: { url: sslUrl } } : undefined,
     });
   }
 
