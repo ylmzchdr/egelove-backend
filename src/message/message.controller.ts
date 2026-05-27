@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, UseGuards, NotFoundException, ForbiddenException } from "@nestjs/common";
+import { Controller, Get, Post, Body, Param, UseGuards, NotFoundException, ForbiddenException, Query } from "@nestjs/common";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { CurrentUser } from "../auth/current-user.decorator";
 import { PrismaService } from "../prisma/prisma.service";
@@ -31,25 +31,45 @@ export class MessageController {
   }
 
   @Get()
-  async getMyConversations(@CurrentUser() user: any) {
-    return this.prisma.conversation.findMany({
-      where: { OR: [{ user1Id: user.sub }, { user2Id: user.sub }] },
-      include: this.conversationInclude(),
-      orderBy: { updatedAt: "desc" },
-    });
+  async getMyConversations(@CurrentUser() user: any, @Query("page") page?: string, @Query("limit") limit?: string) {
+    const pageNum = Math.max(Number(page) || 1, 1);
+    const limitNum = Math.min(Math.max(Number(limit) || 20, 1), 100);
+    const skip = (pageNum - 1) * limitNum;
+    const [conversations, total] = await Promise.all([
+      this.prisma.conversation.findMany({
+        where: { OR: [{ user1Id: user.sub }, { user2Id: user.sub }] },
+        include: this.conversationInclude(),
+        orderBy: { updatedAt: "desc" },
+        skip,
+        take: limitNum,
+      }),
+      this.prisma.conversation.count({
+        where: { OR: [{ user1Id: user.sub }, { user2Id: user.sub }] },
+      }),
+    ]);
+    return { conversations, total, page: pageNum, limit: limitNum, totalPages: Math.ceil(total / limitNum) };
   }
 
   @Get(":id/messages")
-  async getMessages(@CurrentUser() user: any, @Param("id") conversationId: string) {
+  async getMessages(@CurrentUser() user: any, @Param("id") conversationId: string, @Query("page") page?: string, @Query("limit") limit?: string) {
     const conversation = await this.prisma.conversation.findUnique({ where: { id: conversationId } });
     if (!conversation || (conversation.user1Id !== user.sub && conversation.user2Id !== user.sub)) {
       throw new ForbiddenException("Erişim reddedildi");
     }
-    return this.prisma.message.findMany({
-      where: { conversationId },
-      orderBy: { createdAt: "asc" },
-      include: { sender: { select: { id: true, name: true, avatar: true } } },
-    });
+    const pageNum = Math.max(Number(page) || 1, 1);
+    const limitNum = Math.min(Math.max(Number(limit) || 50, 1), 200);
+    const skip = (pageNum - 1) * limitNum;
+    const [messages, total] = await Promise.all([
+      this.prisma.message.findMany({
+        where: { conversationId },
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: limitNum,
+        include: { sender: { select: { id: true, name: true, avatar: true } } },
+      }),
+      this.prisma.message.count({ where: { conversationId } }),
+    ]);
+    return { messages: messages.reverse(), total, page: pageNum, limit: limitNum, totalPages: Math.ceil(total / limitNum) };
   }
 
   @Post(":id/messages")

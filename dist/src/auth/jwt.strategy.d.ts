@@ -12,6 +12,7 @@ export declare class JwtStrategy extends JwtStrategy_base {
     }): Promise<{
         sub: string;
         email: string;
+        isAdmin: boolean;
         role: string;
     }>;
 }

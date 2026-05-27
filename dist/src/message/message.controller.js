@@ -43,23 +43,43 @@ let MessageController = class MessageController {
         });
         return conv;
     }
-    async getMyConversations(user) {
-        return this.prisma.conversation.findMany({
-            where: { OR: [{ user1Id: user.sub }, { user2Id: user.sub }] },
-            include: this.conversationInclude(),
-            orderBy: { updatedAt: "desc" },
-        });
+    async getMyConversations(user, page, limit) {
+        const pageNum = Math.max(Number(page) || 1, 1);
+        const limitNum = Math.min(Math.max(Number(limit) || 20, 1), 100);
+        const skip = (pageNum - 1) * limitNum;
+        const [conversations, total] = await Promise.all([
+            this.prisma.conversation.findMany({
+                where: { OR: [{ user1Id: user.sub }, { user2Id: user.sub }] },
+                include: this.conversationInclude(),
+                orderBy: { updatedAt: "desc" },
+                skip,
+                take: limitNum,
+            }),
+            this.prisma.conversation.count({
+                where: { OR: [{ user1Id: user.sub }, { user2Id: user.sub }] },
+            }),
+        ]);
+        return { conversations, total, page: pageNum, limit: limitNum, totalPages: Math.ceil(total / limitNum) };
     }
-    async getMessages(user, conversationId) {
+    async getMessages(user, conversationId, page, limit) {
         const conversation = await this.prisma.conversation.findUnique({ where: { id: conversationId } });
         if (!conversation || (conversation.user1Id !== user.sub && conversation.user2Id !== user.sub)) {
             throw new common_1.ForbiddenException("Erişim reddedildi");
         }
-        return this.prisma.message.findMany({
-            where: { conversationId },
-            orderBy: { createdAt: "asc" },
-            include: { sender: { select: { id: true, name: true, avatar: true } } },
-        });
+        const pageNum = Math.max(Number(page) || 1, 1);
+        const limitNum = Math.min(Math.max(Number(limit) || 50, 1), 200);
+        const skip = (pageNum - 1) * limitNum;
+        const [messages, total] = await Promise.all([
+            this.prisma.message.findMany({
+                where: { conversationId },
+                orderBy: { createdAt: "desc" },
+                skip,
+                take: limitNum,
+                include: { sender: { select: { id: true, name: true, avatar: true } } },
+            }),
+            this.prisma.message.count({ where: { conversationId } }),
+        ]);
+        return { messages: messages.reverse(), total, page: pageNum, limit: limitNum, totalPages: Math.ceil(total / limitNum) };
     }
     async sendMessage(user, conversationId, content) {
         const conversation = await this.prisma.conversation.findUnique({ where: { id: conversationId } });
@@ -115,16 +135,20 @@ __decorate([
 __decorate([
     (0, common_1.Get)(),
     __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __param(1, (0, common_1.Query)("page")),
+    __param(2, (0, common_1.Query)("limit")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, String, String]),
     __metadata("design:returntype", Promise)
 ], MessageController.prototype, "getMyConversations", null);
 __decorate([
     (0, common_1.Get)(":id/messages"),
     __param(0, (0, current_user_decorator_1.CurrentUser)()),
     __param(1, (0, common_1.Param)("id")),
+    __param(2, (0, common_1.Query)("page")),
+    __param(3, (0, common_1.Query)("limit")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:paramtypes", [Object, String, String, String]),
     __metadata("design:returntype", Promise)
 ], MessageController.prototype, "getMessages", null);
 __decorate([

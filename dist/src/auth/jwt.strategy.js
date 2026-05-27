@@ -29,7 +29,7 @@ let JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(pas
         const user = await this.prisma.user.findUnique({ where: { id: payload.sub } });
         if (!user)
             throw new common_1.UnauthorizedException();
-        return { sub: user.id, email: user.email, role: user.isAdmin ? "admin" : "user" };
+        return { sub: user.id, email: user.email, isAdmin: user.isAdmin, role: user.isAdmin ? "admin" : "user" };
     }
 };
 exports.JwtStrategy = JwtStrategy;

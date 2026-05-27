@@ -51,10 +51,14 @@ export class MatchService {
     }
   }
 
-  async getMyMatches(userId: string) {
-    return this.prisma.match.findMany({
-      where: { OR: [{ senderId: userId }, { receiverId: userId }] },
-      include: {
+  async getMyMatches(userId: string, page = 1, limit = 20) {
+    const skip = (page - 1) * limit;
+    const [matches, total] = await Promise.all([
+      this.prisma.match.findMany({
+        where: { OR: [{ senderId: userId }, { receiverId: userId }] },
+        skip,
+        take: limit,
+        include: {
         sender: {
           select: {
             id: true, name: true, surname: true, birthDate: true, avatar: true,
@@ -74,12 +78,20 @@ export class MatchService {
           },
         },
       },
-    });
+      orderBy: { createdAt: "desc" },
+    }),
+    this.prisma.match.count({ where: { OR: [{ senderId: userId }, { receiverId: userId }] } }),
+  ]);
+  return { matches, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
-  async getMutualMatches(userId: string) {
-    return this.prisma.match.findMany({
+  async getMutualMatches(userId: string, page = 1, limit = 20) {
+    const skip = (page - 1) * limit;
+    const [matches, total] = await Promise.all([
+      this.prisma.match.findMany({
       where: { OR: [{ senderId: userId }, { receiverId: userId }], isMutual: true, isActive: true },
+      skip,
+      take: limit,
       include: {
         sender: {
           select: {
@@ -100,6 +112,12 @@ export class MatchService {
           },
         },
       },
-    });
+      orderBy: { createdAt: "desc" },
+    }),
+    this.prisma.match.count({
+      where: { OR: [{ senderId: userId }, { receiverId: userId }], isMutual: true, isActive: true },
+    }),
+  ]);
+  return { matches, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 }

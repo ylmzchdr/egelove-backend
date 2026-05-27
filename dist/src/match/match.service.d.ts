@@ -12,104 +12,116 @@ export declare class MatchService {
         isMutual: boolean;
     }>;
     unlikeUser(senderId: string, receiverId: string): Promise<void>;
-    getMyMatches(userId: string): Promise<({
-        sender: {
-            name: string;
+    getMyMatches(userId: string, page?: number, limit?: number): Promise<{
+        matches: ({
+            sender: {
+                name: string;
+                id: string;
+                surname: string;
+                birthDate: Date;
+                bio: string | null;
+                avatar: string | null;
+                isVerified: boolean;
+                city: {
+                    name: string;
+                };
+                photos: {
+                    url: string;
+                }[];
+                cityId: number;
+                districtId: number;
+                district: {
+                    name: string;
+                };
+            };
+            receiver: {
+                name: string;
+                id: string;
+                surname: string;
+                birthDate: Date;
+                bio: string | null;
+                avatar: string | null;
+                isVerified: boolean;
+                city: {
+                    name: string;
+                };
+                photos: {
+                    url: string;
+                }[];
+                cityId: number;
+                districtId: number;
+                district: {
+                    name: string;
+                };
+            };
+        } & {
             id: string;
-            surname: string;
-            birthDate: Date;
-            bio: string | null;
-            avatar: string | null;
-            isVerified: boolean;
-            city: {
+            isActive: boolean;
+            createdAt: Date;
+            updatedAt: Date;
+            senderId: string;
+            receiverId: string;
+            isMutual: boolean;
+        })[];
+        total: number;
+        page: number;
+        limit: number;
+        totalPages: number;
+    }>;
+    getMutualMatches(userId: string, page?: number, limit?: number): Promise<{
+        matches: ({
+            sender: {
                 name: string;
+                id: string;
+                surname: string;
+                birthDate: Date;
+                bio: string | null;
+                avatar: string | null;
+                isVerified: boolean;
+                city: {
+                    name: string;
+                };
+                photos: {
+                    url: string;
+                }[];
+                cityId: number;
+                districtId: number;
+                district: {
+                    name: string;
+                };
             };
-            photos: {
-                url: string;
-            }[];
-            cityId: number;
-            districtId: number;
-            district: {
+            receiver: {
                 name: string;
+                id: string;
+                surname: string;
+                birthDate: Date;
+                bio: string | null;
+                avatar: string | null;
+                isVerified: boolean;
+                city: {
+                    name: string;
+                };
+                photos: {
+                    url: string;
+                }[];
+                cityId: number;
+                districtId: number;
+                district: {
+                    name: string;
+                };
             };
-        };
-        receiver: {
-            name: string;
+        } & {
             id: string;
-            surname: string;
-            birthDate: Date;
-            bio: string | null;
-            avatar: string | null;
-            isVerified: boolean;
-            city: {
-                name: string;
-            };
-            photos: {
-                url: string;
-            }[];
-            cityId: number;
-            districtId: number;
-            district: {
-                name: string;
-            };
-        };
-    } & {
-        id: string;
-        isActive: boolean;
-        createdAt: Date;
-        updatedAt: Date;
-        senderId: string;
-        receiverId: string;
-        isMutual: boolean;
-    })[]>;
-    getMutualMatches(userId: string): Promise<({
-        sender: {
-            name: string;
-            id: string;
-            surname: string;
-            birthDate: Date;
-            bio: string | null;
-            avatar: string | null;
-            isVerified: boolean;
-            city: {
-                name: string;
-            };
-            photos: {
-                url: string;
-            }[];
-            cityId: number;
-            districtId: number;
-            district: {
-                name: string;
-            };
-        };
-        receiver: {
-            name: string;
-            id: string;
-            surname: string;
-            birthDate: Date;
-            bio: string | null;
-            avatar: string | null;
-            isVerified: boolean;
-            city: {
-                name: string;
-            };
-            photos: {
-                url: string;
-            }[];
-            cityId: number;
-            districtId: number;
-            district: {
-                name: string;
-            };
-        };
-    } & {
-        id: string;
-        isActive: boolean;
-        createdAt: Date;
-        updatedAt: Date;
-        senderId: string;
-        receiverId: string;
-        isMutual: boolean;
-    })[]>;
+            isActive: boolean;
+            createdAt: Date;
+            updatedAt: Date;
+            senderId: string;
+            receiverId: string;
+            isMutual: boolean;
+        })[];
+        total: number;
+        page: number;
+        limit: number;
+        totalPages: number;
+    }>;
 }

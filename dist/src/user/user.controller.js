@@ -39,18 +39,28 @@ let UserController = class UserController {
         const { passwordHash, refreshToken, turnstileToken, ...safe } = updated;
         return safe;
     }
-    async searchUsers(user) {
-        const users = await this.prisma.user.findMany({
-            where: { id: { not: user.sub }, isActive: true },
-            take: 20,
-            select: {
-                id: true, name: true, birthDate: true, cityId: true,
-                gender: true, bio: true, avatar: true, isVerified: true,
-            },
-        });
-        return users;
+    async searchUsers(user, page, limit) {
+        const pageNum = Math.max(Number(page) || 1, 1);
+        const limitNum = Math.min(Math.max(Number(limit) || 20, 1), 100);
+        const skip = (pageNum - 1) * limitNum;
+        const [users, total] = await Promise.all([
+            this.prisma.user.findMany({
+                where: { id: { not: user.sub }, isActive: true },
+                skip,
+                take: limitNum,
+                select: {
+                    id: true, name: true, birthDate: true, cityId: true,
+                    gender: true, bio: true, avatar: true, isVerified: true,
+                },
+            }),
+            this.prisma.user.count({ where: { id: { not: user.sub }, isActive: true } }),
+        ]);
+        return { users, total, page: pageNum, limit: limitNum, totalPages: Math.ceil(total / limitNum) };
     }
-    async filterUsers(user, city, district, gender, minAge, maxAge, education, smoking, alcohol, maritalStatus, children, religion, bodyType, hairColor, eyeColor, bloodType, income, minHeight, maxHeight, minWeight, maxWeight, occupation, hasPhotos, username) {
+    async filterUsers(user, city, district, gender, minAge, maxAge, education, smoking, alcohol, maritalStatus, children, religion, bodyType, hairColor, eyeColor, bloodType, income, minHeight, maxHeight, minWeight, maxWeight, occupation, hasPhotos, username, page, limit) {
+        const pageNum = Math.max(Number(page) || 1, 1);
+        const limitNum = Math.min(Math.max(Number(limit) || 20, 1), 100);
+        const skip = (pageNum - 1) * limitNum;
         const where = { id: { not: user.sub }, isActive: true };
         if (gender)
             where.gender = gender;
@@ -116,19 +126,29 @@ let UserController = class UserController {
                 where.birthDate = { ...where.birthDate, lte: maxDate };
             }
         }
-        const users = await this.prisma.user.findMany({
-            where,
-            take: 50,
-            include: { city: true, district: true, photos: { where: { status: "APPROVED" }, take: 3 } },
-        });
-        return users.map((u) => {
-            const { passwordHash, refreshToken, turnstileToken, twoFactorSecret, emailVerifyToken, emailVerifySentAt, ...safe } = u;
-            return {
-                ...safe,
-                age: Math.floor((Date.now() - new Date(safe.birthDate).getTime()) / 31557600000),
-                birthDate: undefined,
-            };
-        });
+        const [users, total] = await Promise.all([
+            this.prisma.user.findMany({
+                where,
+                skip,
+                take: limitNum,
+                include: { city: true, district: true, photos: { where: { status: "APPROVED" }, take: 3 } },
+            }),
+            this.prisma.user.count({ where }),
+        ]);
+        return {
+            users: users.map((u) => {
+                const { passwordHash, refreshToken, turnstileToken, twoFactorSecret, emailVerifyToken, emailVerifySentAt, ...safe } = u;
+                return {
+                    ...safe,
+                    age: Math.floor((Date.now() - new Date(safe.birthDate).getTime()) / 31557600000),
+                    birthDate: undefined,
+                };
+            }),
+            total,
+            page: pageNum,
+            limit: limitNum,
+            totalPages: Math.ceil(total / limitNum),
+        };
     }
     async getProfile(id) {
         const profile = await this.prisma.user.findUnique({
@@ -163,8 +183,10 @@ __decorate([
     (0, common_1.Get)("search"),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __param(1, (0, common_1.Query)("page")),
+    __param(2, (0, common_1.Query)("limit")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, String, String]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "searchUsers", null);
 __decorate([
@@ -194,8 +216,10 @@ __decorate([
     __param(21, (0, common_1.Query)("occupation")),
     __param(22, (0, common_1.Query)("hasPhotos")),
     __param(23, (0, common_1.Query)("username")),
+    __param(24, (0, common_1.Query)("page")),
+    __param(25, (0, common_1.Query)("limit")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String]),
+    __metadata("design:paramtypes", [Object, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String, String]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "filterUsers", null);
 __decorate([

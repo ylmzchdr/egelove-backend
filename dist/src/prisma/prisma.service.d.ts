@@ -6,6 +6,7 @@ export declare class PrismaService extends PrismaClient implements OnModuleInit,
     lastError: string | null;
     constructor();
     onModuleInit(): Promise<void>;
+    private seedCities;
     get isConnected(): boolean;
     onModuleDestroy(): Promise<void>;
 }

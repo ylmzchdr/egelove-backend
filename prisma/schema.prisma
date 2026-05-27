@@ -153,6 +153,8 @@ model User {
   emailVerifySentAt   DateTime?
   twoFactorSecret     String?
   twoFactorEnabled    Boolean        @default(false)
+  resetPasswordToken  String?
+  resetPasswordSentAt DateTime?
   createdAt           DateTime       @default(now())
   updatedAt           DateTime       @updatedAt
 
@@ -166,6 +168,7 @@ model User {
 
   presence            UserPresence?
   payments            PaymentWebhookLog[]
+  notifications       Notification[]
 
   maritalStatus       MaritalStatus?
   education           EducationLevel?
@@ -296,4 +299,19 @@ model PaymentWebhookLog {
 
   @@index([userId])
   @@index([platformOrderId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  type      String
+  title     String
+  message   String
+  data      Json?
+  readAt    DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([userId, readAt])
 }

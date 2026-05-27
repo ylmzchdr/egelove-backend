@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Param, UseGuards, Body, UnauthorizedException } from "@nestjs/common";
+import { Controller, Get, Post, Param, UseGuards, Body, Query, UnauthorizedException } from "@nestjs/common";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { CurrentUser } from "../auth/current-user.decorator";
 import { PrismaService } from "../prisma/prisma.service";
@@ -30,18 +30,27 @@ export class AdminController {
   }
 
   @Get("users")
-  async getUsers(@CurrentUser() user: any) {
+  async getUsers(@CurrentUser() user: any, @Query("page") page?: string, @Query("limit") limit?: string) {
     this.checkAdmin(user);
-    return this.prisma.user.findMany({
-      orderBy: { createdAt: "desc" },
-      select: {
-        id: true, name: true, surname: true, email: true, phone: true,
-        gender: true, birthDate: true, isPremiumCandidate: true,
-        isVerified: true, isEmailVerified: true, isActive: true,
-        createdAt: true, lastLoginAt: true,
-        city: { select: { name: true } },
-      },
-    });
+    const pageNum = Math.max(Number(page) || 1, 1);
+    const limitNum = Math.min(Math.max(Number(limit) || 20, 1), 100);
+    const skip = (pageNum - 1) * limitNum;
+    const [users, total] = await Promise.all([
+      this.prisma.user.findMany({
+        skip,
+        take: limitNum,
+        orderBy: { createdAt: "desc" },
+        select: {
+          id: true, name: true, surname: true, email: true, phone: true,
+          gender: true, birthDate: true, isPremiumCandidate: true,
+          isVerified: true, isEmailVerified: true, isActive: true,
+          createdAt: true, lastLoginAt: true,
+          city: { select: { name: true } },
+        },
+      }),
+      this.prisma.user.count(),
+    ]);
+    return { users, total, page: pageNum, limit: limitNum, totalPages: Math.ceil(total / limitNum) };
   }
 
   @Post("users/:id/toggle-active")
@@ -90,11 +99,20 @@ export class AdminController {
   }
 
   @Get("photos/pending")
-  async getPendingPhotos(@CurrentUser() user: any) {
+  async getPendingPhotos(@CurrentUser() user: any, @Query("page") page?: string, @Query("limit") limit?: string) {
     this.checkAdmin(user);
-    return this.prisma.photo.findMany({
-      where: { status: "PENDING" },
-      include: { user: { select: { id: true, name: true, surname: true, email: true } } },
-    });
+    const pageNum = Math.max(Number(page) || 1, 1);
+    const limitNum = Math.min(Math.max(Number(limit) || 20, 1), 100);
+    const skip = (pageNum - 1) * limitNum;
+    const [photos, total] = await Promise.all([
+      this.prisma.photo.findMany({
+        skip,
+        take: limitNum,
+        where: { status: "PENDING" },
+        include: { user: { select: { id: true, name: true, surname: true, email: true } } },
+      }),
+      this.prisma.photo.count({ where: { status: "PENDING" } }),
+    ]);
+    return { photos, total, page: pageNum, limit: limitNum, totalPages: Math.ceil(total / limitNum) };
   }
 }

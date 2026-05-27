@@ -196,7 +196,7 @@ let AuthService = class AuthService {
         const resetTokenHash = await argon2.hash(resetToken);
         await this.prisma.user.update({
             where: { id: user.id },
-            data: { emailVerifyToken: resetTokenHash, emailVerifySentAt: new Date() },
+            data: { resetPasswordToken: resetTokenHash, resetPasswordSentAt: new Date() },
         });
         const baseUrl = process.env.CORS_ORIGIN || "http://localhost:3001";
         await this.email.send({
@@ -215,19 +215,19 @@ let AuthService = class AuthService {
     }
     async resetPassword(email, code, newPassword) {
         const user = await this.prisma.user.findUnique({ where: { email } });
-        if (!user || !user.emailVerifyToken)
+        if (!user || !user.resetPasswordToken)
             throw new common_1.BadRequestException("Geçersiz kod");
-        const valid = await argon2.verify(user.emailVerifyToken, code.toLowerCase());
+        const valid = await argon2.verify(user.resetPasswordToken, code.toUpperCase());
         if (!valid)
             throw new common_1.BadRequestException("Geçersiz kod");
-        const sentAt = user.emailVerifySentAt;
+        const sentAt = user.resetPasswordSentAt;
         if (sentAt && Date.now() - sentAt.getTime() > 60 * 60 * 1000) {
             throw new common_1.BadRequestException("Kodun süresi dolmuş");
         }
         const passwordHash = await argon2.hash(newPassword);
         await this.prisma.user.update({
             where: { id: user.id },
-            data: { passwordHash, emailVerifyToken: null, emailVerifySentAt: null, refreshToken: null },
+            data: { passwordHash, resetPasswordToken: null, resetPasswordSentAt: null, refreshToken: null },
         });
         this.audit.log({ action: "PASSWORD_RESET", userId: user.id });
         return { reset: true };
@@ -241,14 +241,13 @@ let AuthService = class AuthService {
         return { accessToken, refreshToken };
     }
     async updateRefreshToken(userId, refreshToken) {
-        const hash = await argon2.hash(refreshToken);
-        await this.prisma.user.update({ where: { id: userId }, data: { refreshToken: hash } });
+        await this.prisma.user.update({ where: { id: userId }, data: { refreshToken } });
     }
     generateTempToken(userId) {
         return this.jwtService.sign({ sub: userId, temp: true }, { secret: constants_1.jwtConstants.secret, expiresIn: "5m" });
     }
     sanitizeUser(user) {
-        const { passwordHash, refreshToken, turnstileToken, twoFactorSecret, emailVerifyToken, ...safe } = user;
+        const { passwordHash, refreshToken, turnstileToken, twoFactorSecret, emailVerifyToken, resetPasswordToken, ...safe } = user;
         return safe;
     }
 };

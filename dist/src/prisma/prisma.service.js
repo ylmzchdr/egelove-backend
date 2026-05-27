@@ -13,6 +13,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PrismaService = void 0;
 const common_1 = require("@nestjs/common");
 const client_1 = require("@prisma/client");
+const seed_data_1 = require("../../prisma/seed-data");
 let PrismaService = PrismaService_1 = class PrismaService extends client_1.PrismaClient {
     logger = new common_1.Logger(PrismaService_1.name);
     connected = false;
@@ -25,12 +26,39 @@ let PrismaService = PrismaService_1 = class PrismaService extends client_1.Prism
             await this.$connect();
             this.connected = true;
             this.logger.log(`Veritabanına bağlanıldı: ${process.env.DATABASE_URL?.split("@")[1] || "unknown"}`);
+            await this.seedCities();
         }
         catch (e) {
             this.lastError = `${e.message} | ${JSON.stringify(e?.response || {})}`;
             this.logger.warn(`Veritabanı bağlantısı başarısız: ${e.message}`);
             this.logger.warn(`Detay: ${JSON.stringify(e?.response || {})}`);
             this.logger.warn("Uygulama DB olmadan başlatılacak — sınırlı işlevsellik");
+        }
+    }
+    async seedCities() {
+        try {
+            const count = await this.city.count();
+            if (count > 0) {
+                this.logger.log(`Şehirler zaten mevcut (${count}), seed atlanıyor`);
+                return;
+            }
+            this.logger.log(`${seed_data_1.cities.length} şehir ekleniyor...`);
+            for (const city of seed_data_1.cities) {
+                await this.city.create({
+                    data: {
+                        name: city.name,
+                        districts: {
+                            create: city.districts.map((d) => ({ name: d })),
+                        },
+                    },
+                });
+            }
+            const totalCities = await this.city.count();
+            const totalDistricts = await this.district.count();
+            this.logger.log(`Seed tamamlandı: ${totalCities} şehir, ${totalDistricts} ilçe`);
+        }
+        catch (e) {
+            this.logger.warn(`Seed hatası: ${e.message}`);
         }
     }
     get isConnected() {

@@ -28,11 +28,11 @@ let MatchController = class MatchController {
     async unlikeUser(user, targetUserId) {
         return this.matchService.unlikeUser(user.sub, targetUserId);
     }
-    async getMyMatches(user) {
-        return this.matchService.getMyMatches(user.sub);
+    async getMyMatches(user, page, limit) {
+        return this.matchService.getMyMatches(user.sub, Number(page) || 1, Number(limit) || 20);
     }
-    async getMutualMatches(user) {
-        return this.matchService.getMutualMatches(user.sub);
+    async getMutualMatches(user, page, limit) {
+        return this.matchService.getMutualMatches(user.sub, Number(page) || 1, Number(limit) || 20);
     }
 };
 exports.MatchController = MatchController;
@@ -55,15 +55,19 @@ __decorate([
 __decorate([
     (0, common_1.Get)(),
     __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __param(1, (0, common_1.Query)("page")),
+    __param(2, (0, common_1.Query)("limit")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, String, String]),
     __metadata("design:returntype", Promise)
 ], MatchController.prototype, "getMyMatches", null);
 __decorate([
     (0, common_1.Get)("mutual"),
     __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __param(1, (0, common_1.Query)("page")),
+    __param(2, (0, common_1.Query)("limit")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, String, String]),
     __metadata("design:returntype", Promise)
 ], MatchController.prototype, "getMutualMatches", null);
 exports.MatchController = MatchController = __decorate([

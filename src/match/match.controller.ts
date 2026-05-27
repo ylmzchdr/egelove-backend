@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Param, UseGuards } from "@nestjs/common";
+import { Controller, Post, Get, Param, Query, UseGuards } from "@nestjs/common";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { CurrentUser } from "../auth/current-user.decorator";
 import { MatchService } from "./match.service";
@@ -19,12 +19,12 @@ export class MatchController {
   }
 
   @Get()
-  async getMyMatches(@CurrentUser() user: any) {
-    return this.matchService.getMyMatches(user.sub);
+  async getMyMatches(@CurrentUser() user: any, @Query("page") page?: string, @Query("limit") limit?: string) {
+    return this.matchService.getMyMatches(user.sub, Number(page) || 1, Number(limit) || 20);
   }
 
   @Get("mutual")
-  async getMutualMatches(@CurrentUser() user: any) {
-    return this.matchService.getMutualMatches(user.sub);
+  async getMutualMatches(@CurrentUser() user: any, @Query("page") page?: string, @Query("limit") limit?: string) {
+    return this.matchService.getMutualMatches(user.sub, Number(page) || 1, Number(limit) || 20);
   }
 }

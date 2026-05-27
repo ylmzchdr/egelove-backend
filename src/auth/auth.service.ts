@@ -173,7 +173,7 @@ export class AuthService {
 
     await this.prisma.user.update({
       where: { id: user.id },
-      data: { emailVerifyToken: resetTokenHash, emailVerifySentAt: new Date() },
+      data: { resetPasswordToken: resetTokenHash, resetPasswordSentAt: new Date() },
     });
 
     const baseUrl = process.env.CORS_ORIGIN || "http://localhost:3001";
@@ -195,12 +195,12 @@ export class AuthService {
 
   async resetPassword(email: string, code: string, newPassword: string) {
     const user = await this.prisma.user.findUnique({ where: { email } });
-    if (!user || !user.emailVerifyToken) throw new BadRequestException("Geçersiz kod");
+    if (!user || !user.resetPasswordToken) throw new BadRequestException("Geçersiz kod");
 
-    const valid = await argon2.verify(user.emailVerifyToken, code.toLowerCase());
+    const valid = await argon2.verify(user.resetPasswordToken, code.toUpperCase());
     if (!valid) throw new BadRequestException("Geçersiz kod");
 
-    const sentAt = user.emailVerifySentAt;
+    const sentAt = user.resetPasswordSentAt;
     if (sentAt && Date.now() - sentAt.getTime() > 60 * 60 * 1000) {
       throw new BadRequestException("Kodun süresi dolmuş");
     }
@@ -208,7 +208,7 @@ export class AuthService {
     const passwordHash = await argon2.hash(newPassword);
     await this.prisma.user.update({
       where: { id: user.id },
-      data: { passwordHash, emailVerifyToken: null, emailVerifySentAt: null, refreshToken: null },
+      data: { passwordHash, resetPasswordToken: null, resetPasswordSentAt: null, refreshToken: null },
     });
 
     this.audit.log({ action: "PASSWORD_RESET", userId: user.id });
@@ -225,8 +225,7 @@ export class AuthService {
   }
 
   private async updateRefreshToken(userId: string, refreshToken: string) {
-    const hash = await argon2.hash(refreshToken);
-    await this.prisma.user.update({ where: { id: userId }, data: { refreshToken: hash } });
+    await this.prisma.user.update({ where: { id: userId }, data: { refreshToken } });
   }
 
   private generateTempToken(userId: string) {
@@ -234,7 +233,7 @@ export class AuthService {
   }
 
   private sanitizeUser(user: any) {
-    const { passwordHash, refreshToken, turnstileToken, twoFactorSecret, emailVerifyToken, ...safe } = user;
+    const { passwordHash, refreshToken, turnstileToken, twoFactorSecret, emailVerifyToken, resetPasswordToken, ...safe } = user;
     return safe;
   }
 }

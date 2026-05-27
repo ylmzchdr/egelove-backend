@@ -32,16 +32,23 @@ export class UserController {
 
   @Get("search")
   @UseGuards(JwtAuthGuard)
-  async searchUsers(@CurrentUser() user: any) {
-    const users = await this.prisma.user.findMany({
-      where: { id: { not: user.sub }, isActive: true },
-      take: 20,
-      select: {
-        id: true, name: true, birthDate: true, cityId: true,
-        gender: true, bio: true, avatar: true, isVerified: true,
-      },
-    });
-    return users;
+  async searchUsers(@CurrentUser() user: any, @Query("page") page?: string, @Query("limit") limit?: string) {
+    const pageNum = Math.max(Number(page) || 1, 1);
+    const limitNum = Math.min(Math.max(Number(limit) || 20, 1), 100);
+    const skip = (pageNum - 1) * limitNum;
+    const [users, total] = await Promise.all([
+      this.prisma.user.findMany({
+        where: { id: { not: user.sub }, isActive: true },
+        skip,
+        take: limitNum,
+        select: {
+          id: true, name: true, birthDate: true, cityId: true,
+          gender: true, bio: true, avatar: true, isVerified: true,
+        },
+      }),
+      this.prisma.user.count({ where: { id: { not: user.sub }, isActive: true } }),
+    ]);
+    return { users, total, page: pageNum, limit: limitNum, totalPages: Math.ceil(total / limitNum) };
   }
 
   @Get("search/filter")
@@ -71,7 +78,12 @@ export class UserController {
     @Query("occupation") occupation?: string,
     @Query("hasPhotos") hasPhotos?: string,
     @Query("username") username?: string,
+    @Query("page") page?: string,
+    @Query("limit") limit?: string,
   ) {
+    const pageNum = Math.max(Number(page) || 1, 1);
+    const limitNum = Math.min(Math.max(Number(limit) || 20, 1), 100);
+    const skip = (pageNum - 1) * limitNum;
     const where: any = { id: { not: user.sub }, isActive: true };
 
     if (gender) where.gender = gender;
@@ -121,20 +133,30 @@ export class UserController {
       }
     }
 
-    const users = await this.prisma.user.findMany({
-      where,
-      take: 50,
-      include: { city: true, district: true, photos: { where: { status: "APPROVED" }, take: 3 } },
-    });
+    const [users, total] = await Promise.all([
+      this.prisma.user.findMany({
+        where,
+        skip,
+        take: limitNum,
+        include: { city: true, district: true, photos: { where: { status: "APPROVED" }, take: 3 } },
+      }),
+      this.prisma.user.count({ where }),
+    ]);
 
-    return users.map((u) => {
-      const { passwordHash, refreshToken, turnstileToken, twoFactorSecret, emailVerifyToken, emailVerifySentAt, ...safe } = u;
-      return {
-        ...safe,
-        age: Math.floor((Date.now() - new Date(safe.birthDate).getTime()) / 31557600000),
-        birthDate: undefined,
-      };
-    });
+    return {
+      users: users.map((u) => {
+        const { passwordHash, refreshToken, turnstileToken, twoFactorSecret, emailVerifyToken, emailVerifySentAt, ...safe } = u;
+        return {
+          ...safe,
+          age: Math.floor((Date.now() - new Date(safe.birthDate).getTime()) / 31557600000),
+          birthDate: undefined,
+        };
+      }),
+      total,
+      page: pageNum,
+      limit: limitNum,
+      totalPages: Math.ceil(total / limitNum),
+    };
   }
 
   @Get(":id")
