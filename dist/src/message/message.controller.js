@@ -30,34 +30,77 @@ let MessageController = class MessageController {
                     { user1Id: otherUserId, user2Id: user.sub },
                 ],
             },
+            include: this.conversationInclude(),
         });
         if (existing)
             return existing;
-        return this.prisma.conversation.create({
+        const conv = await this.prisma.conversation.create({
             data: { user1Id: user.sub, user2Id: otherUserId },
+            include: this.conversationInclude(),
         });
+        await this.prisma.conversationRead.create({
+            data: { userId: user.sub, conversationId: conv.id },
+        });
+        return conv;
     }
     async getMyConversations(user) {
         return this.prisma.conversation.findMany({
             where: { OR: [{ user1Id: user.sub }, { user2Id: user.sub }] },
-            include: {
-                user1: { select: { id: true, name: true, avatar: true } },
-                user2: { select: { id: true, name: true, avatar: true } },
-                messages: { take: 1, orderBy: { createdAt: "desc" } },
-            },
+            include: this.conversationInclude(),
             orderBy: { updatedAt: "desc" },
         });
     }
     async getMessages(user, conversationId) {
         const conversation = await this.prisma.conversation.findUnique({ where: { id: conversationId } });
         if (!conversation || (conversation.user1Id !== user.sub && conversation.user2Id !== user.sub)) {
-            return { error: "Erişim reddedildi" };
+            throw new common_1.ForbiddenException("Erişim reddedildi");
         }
         return this.prisma.message.findMany({
             where: { conversationId },
             orderBy: { createdAt: "asc" },
             include: { sender: { select: { id: true, name: true, avatar: true } } },
         });
+    }
+    async sendMessage(user, conversationId, content) {
+        const conversation = await this.prisma.conversation.findUnique({ where: { id: conversationId } });
+        if (!conversation)
+            throw new common_1.NotFoundException("Konuşma bulunamadı");
+        if (conversation.user1Id !== user.sub && conversation.user2Id !== user.sub) {
+            throw new common_1.ForbiddenException("Erişim reddedildi");
+        }
+        const otherId = conversation.user1Id === user.sub ? conversation.user2Id : conversation.user1Id;
+        const isMutual = await this.prisma.match.findFirst({
+            where: { OR: [{ senderId: user.sub, receiverId: otherId }, { senderId: otherId, receiverId: user.sub }], isMutual: true },
+        });
+        if (!isMutual)
+            throw new common_1.ForbiddenException("Karşılıklı eşleşme olmadan mesaj gönderemezsiniz");
+        const message = await this.prisma.message.create({
+            data: { content, senderId: user.sub, conversationId },
+            include: { sender: { select: { id: true, name: true, avatar: true } } },
+        });
+        await this.prisma.conversation.update({ where: { id: conversationId }, data: { updatedAt: new Date() } });
+        return message;
+    }
+    conversationInclude() {
+        return {
+            user1: {
+                select: {
+                    id: true, name: true, surname: true, birthDate: true, avatar: true,
+                    city: { select: { name: true } },
+                    district: { select: { name: true } },
+                },
+            },
+            user2: {
+                select: {
+                    id: true, name: true, surname: true, birthDate: true, avatar: true,
+                    city: { select: { name: true } },
+                    district: { select: { name: true } },
+                },
+            },
+            messages: { take: 1, orderBy: { createdAt: "desc" }, include: { sender: { select: { id: true, name: true, avatar: true } } } },
+            reads: { select: { userId: true, lastReadAt: true } },
+            _count: { select: { messages: true } },
+        };
     }
 };
 exports.MessageController = MessageController;
@@ -84,6 +127,15 @@ __decorate([
     __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", Promise)
 ], MessageController.prototype, "getMessages", null);
+__decorate([
+    (0, common_1.Post)(":id/messages"),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __param(1, (0, common_1.Param)("id")),
+    __param(2, (0, common_1.Body)("content")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, String]),
+    __metadata("design:returntype", Promise)
+], MessageController.prototype, "sendMessage", null);
 exports.MessageController = MessageController = __decorate([
     (0, common_1.Controller)("conversations"),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),

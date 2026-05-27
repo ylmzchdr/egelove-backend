@@ -55,8 +55,24 @@ export class MatchService {
     return this.prisma.match.findMany({
       where: { OR: [{ senderId: userId }, { receiverId: userId }] },
       include: {
-        sender: { select: { id: true, name: true, avatar: true, cityId: true } },
-        receiver: { select: { id: true, name: true, avatar: true, cityId: true } },
+        sender: {
+          select: {
+            id: true, name: true, surname: true, birthDate: true, avatar: true,
+            bio: true, isVerified: true, cityId: true, districtId: true,
+            city: { select: { name: true } },
+            district: { select: { name: true } },
+            photos: { where: { isMain: true }, select: { url: true }, take: 1 },
+          },
+        },
+        receiver: {
+          select: {
+            id: true, name: true, surname: true, birthDate: true, avatar: true,
+            bio: true, isVerified: true, cityId: true, districtId: true,
+            city: { select: { name: true } },
+            district: { select: { name: true } },
+            photos: { where: { isMain: true }, select: { url: true }, take: 1 },
+          },
+        },
       },
     });
   }
@@ -65,8 +81,24 @@ export class MatchService {
     return this.prisma.match.findMany({
       where: { OR: [{ senderId: userId }, { receiverId: userId }], isMutual: true, isActive: true },
       include: {
-        sender: { select: { id: true, name: true, avatar: true } },
-        receiver: { select: { id: true, name: true, avatar: true } },
+        sender: {
+          select: {
+            id: true, name: true, surname: true, birthDate: true, avatar: true,
+            bio: true, isVerified: true, cityId: true, districtId: true,
+            city: { select: { name: true } },
+            district: { select: { name: true } },
+            photos: { where: { isMain: true }, select: { url: true }, take: 1 },
+          },
+        },
+        receiver: {
+          select: {
+            id: true, name: true, surname: true, birthDate: true, avatar: true,
+            bio: true, isVerified: true, cityId: true, districtId: true,
+            city: { select: { name: true } },
+            district: { select: { name: true } },
+            photos: { where: { isMain: true }, select: { url: true }, take: 1 },
+          },
+        },
       },
     });
   }

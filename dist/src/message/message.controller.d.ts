@@ -3,6 +3,54 @@ export declare class MessageController {
     private prisma;
     constructor(prisma: PrismaService);
     createOrGetConversation(user: any, otherUserId: string): Promise<{
+        _count: {
+            messages: number;
+        };
+        user1: {
+            name: string;
+            id: string;
+            surname: string;
+            birthDate: Date;
+            avatar: string | null;
+            city: {
+                name: string;
+            };
+            district: {
+                name: string;
+            };
+        };
+        user2: {
+            name: string;
+            id: string;
+            surname: string;
+            birthDate: Date;
+            avatar: string | null;
+            city: {
+                name: string;
+            };
+            district: {
+                name: string;
+            };
+        };
+        messages: ({
+            sender: {
+                name: string;
+                id: string;
+                avatar: string | null;
+            };
+        } & {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            senderId: string;
+            conversationId: string;
+            content: string;
+        })[];
+        reads: {
+            userId: string;
+            lastReadAt: Date;
+        }[];
+    } & {
         id: string;
         createdAt: Date;
         updatedAt: Date;
@@ -10,23 +58,52 @@ export declare class MessageController {
         user2Id: string;
     }>;
     getMyConversations(user: any): Promise<({
+        _count: {
+            messages: number;
+        };
         user1: {
             name: string;
             id: string;
+            surname: string;
+            birthDate: Date;
             avatar: string | null;
+            city: {
+                name: string;
+            };
+            district: {
+                name: string;
+            };
         };
         user2: {
             name: string;
             id: string;
+            surname: string;
+            birthDate: Date;
             avatar: string | null;
+            city: {
+                name: string;
+            };
+            district: {
+                name: string;
+            };
         };
-        messages: {
+        messages: ({
+            sender: {
+                name: string;
+                id: string;
+                avatar: string | null;
+            };
+        } & {
             id: string;
             createdAt: Date;
             updatedAt: Date;
             senderId: string;
-            content: string;
             conversationId: string;
+            content: string;
+        })[];
+        reads: {
+            userId: string;
+            lastReadAt: Date;
         }[];
     } & {
         id: string;
@@ -46,9 +123,22 @@ export declare class MessageController {
         createdAt: Date;
         updatedAt: Date;
         senderId: string;
-        content: string;
         conversationId: string;
-    })[] | {
-        error: string;
+        content: string;
+    })[]>;
+    sendMessage(user: any, conversationId: string, content: string): Promise<{
+        sender: {
+            name: string;
+            id: string;
+            avatar: string | null;
+        };
+    } & {
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        senderId: string;
+        conversationId: string;
+        content: string;
     }>;
+    private conversationInclude;
 }

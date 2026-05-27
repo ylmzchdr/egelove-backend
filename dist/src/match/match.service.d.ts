@@ -16,14 +16,42 @@ export declare class MatchService {
         sender: {
             name: string;
             id: string;
+            surname: string;
+            birthDate: Date;
+            bio: string | null;
             avatar: string | null;
+            isVerified: boolean;
+            city: {
+                name: string;
+            };
+            photos: {
+                url: string;
+            }[];
             cityId: number;
+            districtId: number;
+            district: {
+                name: string;
+            };
         };
         receiver: {
             name: string;
             id: string;
+            surname: string;
+            birthDate: Date;
+            bio: string | null;
             avatar: string | null;
+            isVerified: boolean;
+            city: {
+                name: string;
+            };
+            photos: {
+                url: string;
+            }[];
             cityId: number;
+            districtId: number;
+            district: {
+                name: string;
+            };
         };
     } & {
         id: string;
@@ -38,12 +66,42 @@ export declare class MatchService {
         sender: {
             name: string;
             id: string;
+            surname: string;
+            birthDate: Date;
+            bio: string | null;
             avatar: string | null;
+            isVerified: boolean;
+            city: {
+                name: string;
+            };
+            photos: {
+                url: string;
+            }[];
+            cityId: number;
+            districtId: number;
+            district: {
+                name: string;
+            };
         };
         receiver: {
             name: string;
             id: string;
+            surname: string;
+            birthDate: Date;
+            bio: string | null;
             avatar: string | null;
+            isVerified: boolean;
+            city: {
+                name: string;
+            };
+            photos: {
+                url: string;
+            }[];
+            cityId: number;
+            districtId: number;
+            district: {
+                name: string;
+            };
         };
     } & {
         id: string;
