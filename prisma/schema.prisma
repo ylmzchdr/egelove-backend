@@ -202,6 +202,7 @@ model Photo {
   url        String
   thumbnail  String?
   blurHash   String?
+  mimetype   String?
   status     PhotoStatus @default(PENDING)
   isMain     Boolean     @default(false)
   userId     String

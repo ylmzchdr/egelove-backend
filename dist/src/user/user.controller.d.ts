@@ -16,6 +16,7 @@ export declare class UserController {
             status: import(".prisma/client").$Enums.PhotoStatus;
             thumbnail: string | null;
             blurHash: string | null;
+            mimetype: string | null;
             isMain: boolean;
             userId: string;
             rejectedReason: string | null;
@@ -152,6 +153,7 @@ export declare class UserController {
                 status: import(".prisma/client").$Enums.PhotoStatus;
                 thumbnail: string | null;
                 blurHash: string | null;
+                mimetype: string | null;
                 isMain: boolean;
                 userId: string;
                 rejectedReason: string | null;
@@ -223,6 +225,7 @@ export declare class UserController {
             status: import(".prisma/client").$Enums.PhotoStatus;
             thumbnail: string | null;
             blurHash: string | null;
+            mimetype: string | null;
             isMain: boolean;
             userId: string;
             rejectedReason: string | null;

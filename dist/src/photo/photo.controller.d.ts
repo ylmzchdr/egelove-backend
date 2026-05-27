@@ -4,6 +4,21 @@ export declare class PhotoController {
     private prisma;
     private audit;
     constructor(prisma: PrismaService, audit: AuditService);
+    uploadFile(user: any, file: Express.Multer.File): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        url: string;
+        status: import(".prisma/client").$Enums.PhotoStatus;
+        thumbnail: string | null;
+        blurHash: string | null;
+        mimetype: string | null;
+        isMain: boolean;
+        userId: string;
+        rejectedReason: string | null;
+        moderatedBy: string | null;
+        moderatedAt: Date | null;
+    }>;
     uploadPhoto(user: any, url: string, mimetype?: string, size?: number): Promise<{
         id: string;
         createdAt: Date;
@@ -12,13 +27,12 @@ export declare class PhotoController {
         status: import(".prisma/client").$Enums.PhotoStatus;
         thumbnail: string | null;
         blurHash: string | null;
+        mimetype: string | null;
         isMain: boolean;
         userId: string;
         rejectedReason: string | null;
         moderatedBy: string | null;
         moderatedAt: Date | null;
-    } | {
-        error: string;
     }>;
     getMyPhotos(user: any): Promise<{
         id: string;
@@ -28,6 +42,7 @@ export declare class PhotoController {
         status: import(".prisma/client").$Enums.PhotoStatus;
         thumbnail: string | null;
         blurHash: string | null;
+        mimetype: string | null;
         isMain: boolean;
         userId: string;
         rejectedReason: string | null;
@@ -42,13 +57,12 @@ export declare class PhotoController {
         status: import(".prisma/client").$Enums.PhotoStatus;
         thumbnail: string | null;
         blurHash: string | null;
+        mimetype: string | null;
         isMain: boolean;
         userId: string;
         rejectedReason: string | null;
         moderatedBy: string | null;
         moderatedAt: Date | null;
-    } | {
-        error: string;
     }>;
     rejectPhoto(user: any, photoId: string, reason?: string): Promise<{
         id: string;
@@ -58,13 +72,12 @@ export declare class PhotoController {
         status: import(".prisma/client").$Enums.PhotoStatus;
         thumbnail: string | null;
         blurHash: string | null;
+        mimetype: string | null;
         isMain: boolean;
         userId: string;
         rejectedReason: string | null;
         moderatedBy: string | null;
         moderatedAt: Date | null;
-    } | {
-        error: string;
     }>;
     getPendingPhotos(user: any): Promise<{
         id: string;
@@ -74,6 +87,7 @@ export declare class PhotoController {
         status: import(".prisma/client").$Enums.PhotoStatus;
         thumbnail: string | null;
         blurHash: string | null;
+        mimetype: string | null;
         isMain: boolean;
         userId: string;
         rejectedReason: string | null;

@@ -1,16 +1,21 @@
 import { NestFactory } from "@nestjs/core";
 import { ValidationPipe } from "@nestjs/common";
+import { NestExpressApplication } from "@nestjs/platform-express";
 import helmet from "helmet";
 import { AppModule } from "./app.module";
 import { AllExceptionsFilter } from "./common/filters/all-exceptions.filter";
 import { validateEnv } from "./common/env.validation";
+import * as express from "express";
+import * as path from "path";
 
 async function bootstrap() {
   validateEnv();
 
-  const app = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     rawBody: true,
   });
+
+  app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
   app.use(helmet());
   app.use(
