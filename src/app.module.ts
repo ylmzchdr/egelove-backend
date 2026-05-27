@@ -14,6 +14,8 @@ import { AuditModule } from "./common/audit/audit.module";
 import { EmailModule } from "./email/email.module";
 import { TwofaModule } from "./twofa/twofa.module";
 import { AdminModule } from "./admin/admin.module";
+import { AppController } from "./app.controller";
+import { AppService } from "./app.service";
 
 @Module({
   imports: [
@@ -38,5 +40,7 @@ import { AdminModule } from "./admin/admin.module";
     TwofaModule,
     AdminModule,
   ],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
