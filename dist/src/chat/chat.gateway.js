@@ -157,7 +157,7 @@ __decorate([
 ], ChatGateway.prototype, "handleTypingStop", null);
 exports.ChatGateway = ChatGateway = __decorate([
     (0, websockets_1.WebSocketGateway)({
-        cors: { origin: process.env.CORS_ORIGIN || "http://localhost:3001", credentials: true },
+        cors: { origin: (process.env.CORS_ORIGIN || "http://localhost:3001,http://localhost:3002,http://localhost:3000").split(",").map((s) => s.trim()), credentials: true },
         namespace: "/chat",
     }),
     __metadata("design:paramtypes", [jwt_1.JwtService,

@@ -13,7 +13,7 @@ import { PrismaService } from "../prisma/prisma.service";
 import { jwtConstants } from "../common/constants";
 
 @WebSocketGateway({
-  cors: { origin: process.env.CORS_ORIGIN || "http://localhost:3001", credentials: true },
+  cors: { origin: (process.env.CORS_ORIGIN || "http://localhost:3001,http://localhost:3002,http://localhost:3000").split(",").map((s) => s.trim()), credentials: true },
   namespace: "/chat",
 })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {

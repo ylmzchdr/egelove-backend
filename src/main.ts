@@ -17,6 +17,10 @@ async function bootstrap() {
 
   app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
+  const allowedOrigins = (process.env.CORS_ORIGIN || "http://localhost:3001,http://localhost:3002,http://localhost:3000")
+    .split(",")
+    .map((s) => s.trim());
+
   app.use(helmet());
   app.use(
     helmet.contentSecurityPolicy({
@@ -26,7 +30,7 @@ async function bootstrap() {
         scriptSrc: ["'self'"],
         styleSrc: ["'self'", "'unsafe-inline'"],
         fontSrc: ["'self'", "https:", "data:"],
-        connectSrc: ["'self'"],
+        connectSrc: ["'self'", ...allowedOrigins, process.env.RENDER_EXTERNAL_URL || "https://egelove-backend.onrender.com"].filter(Boolean),
         frameSrc: ["'none'"],
         objectSrc: ["'none'"],
       },
@@ -37,9 +41,14 @@ async function bootstrap() {
   app.use(helmet.frameguard({ action: "deny" }));
   app.use(helmet.noSniff());
   app.use(helmet.xssFilter());
-
   app.enableCors({
-    origin: process.env.CORS_ORIGIN || "http://localhost:3001",
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(null, allowedOrigins[0]);
+      }
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization", "x-shopier-signature"],
