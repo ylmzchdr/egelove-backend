@@ -17,32 +17,17 @@ let PrismaService = PrismaService_1 = class PrismaService extends client_1.Prism
     logger = new common_1.Logger(PrismaService_1.name);
     connected = false;
     constructor() {
-        const rawUrl = process.env.DATABASE_URL || "";
-        const hasParams = rawUrl.includes("?");
-        const sslUrl = rawUrl
-            ? hasParams
-                ? rawUrl.includes("sslmode")
-                    ? rawUrl
-                    : `${rawUrl}&sslmode=require`
-                : `${rawUrl}?sslmode=require`
-            : rawUrl;
-        if (rawUrl && rawUrl !== sslUrl) {
-            process.env.DATABASE_URL = sslUrl;
-        }
-        super({
-            log: ["warn", "error"],
-            errorFormat: "pretty",
-            datasources: rawUrl ? { db: { url: sslUrl } } : undefined,
-        });
+        super();
     }
     async onModuleInit() {
         try {
             await this.$connect();
             this.connected = true;
-            this.logger.log("Veritabanına bağlanıldı");
+            this.logger.log(`Veritabanına bağlanıldı: ${process.env.DATABASE_URL?.split("@")[1] || "unknown"}`);
         }
         catch (e) {
             this.logger.warn(`Veritabanı bağlantısı başarısız: ${e.message}`);
+            this.logger.warn(`Detay: ${JSON.stringify(e?.response || {})}`);
             this.logger.warn("Uygulama DB olmadan başlatılacak — sınırlı işlevsellik");
         }
     }
