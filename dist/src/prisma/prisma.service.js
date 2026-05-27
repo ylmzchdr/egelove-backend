@@ -16,6 +16,7 @@ const client_1 = require("@prisma/client");
 let PrismaService = PrismaService_1 = class PrismaService extends client_1.PrismaClient {
     logger = new common_1.Logger(PrismaService_1.name);
     connected = false;
+    lastError = null;
     constructor() {
         super();
     }
@@ -26,6 +27,7 @@ let PrismaService = PrismaService_1 = class PrismaService extends client_1.Prism
             this.logger.log(`Veritabanına bağlanıldı: ${process.env.DATABASE_URL?.split("@")[1] || "unknown"}`);
         }
         catch (e) {
+            this.lastError = `${e.message} | ${JSON.stringify(e?.response || {})}`;
             this.logger.warn(`Veritabanı bağlantısı başarısız: ${e.message}`);
             this.logger.warn(`Detay: ${JSON.stringify(e?.response || {})}`);
             this.logger.warn("Uygulama DB olmadan başlatılacak — sınırlı işlevsellik");

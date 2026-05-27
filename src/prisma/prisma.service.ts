@@ -5,6 +5,7 @@ import { PrismaClient } from "@prisma/client";
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(PrismaService.name);
   private connected = false;
+  lastError: string | null = null;
 
   constructor() {
     super();
@@ -16,6 +17,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
       this.connected = true;
       this.logger.log(`Veritabanına bağlanıldı: ${process.env.DATABASE_URL?.split("@")[1] || "unknown"}`);
     } catch (e) {
+      this.lastError = `${(e as Error).message} | ${JSON.stringify((e as any)?.response || {})}`;
       this.logger.warn(`Veritabanı bağlantısı başarısız: ${(e as Error).message}`);
       this.logger.warn(`Detay: ${JSON.stringify((e as any)?.response || {})}`);
       this.logger.warn("Uygulama DB olmadan başlatılacak — sınırlı işlevsellik");

@@ -11,5 +11,7 @@ export declare class AppController {
         uptime: number;
         database: string;
         env: string;
+        dbUrl: string;
+        dbError: any;
     };
 }
