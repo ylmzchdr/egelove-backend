@@ -9,7 +9,7 @@ export declare class PhotoController {
         createdAt: Date;
         updatedAt: Date;
         url: string;
-        status: import("@prisma/client").$Enums.PhotoStatus;
+        status: import(".prisma/client").$Enums.PhotoStatus;
         thumbnail: string | null;
         blurHash: string | null;
         isMain: boolean;
@@ -25,7 +25,7 @@ export declare class PhotoController {
         createdAt: Date;
         updatedAt: Date;
         url: string;
-        status: import("@prisma/client").$Enums.PhotoStatus;
+        status: import(".prisma/client").$Enums.PhotoStatus;
         thumbnail: string | null;
         blurHash: string | null;
         isMain: boolean;
@@ -39,7 +39,7 @@ export declare class PhotoController {
         createdAt: Date;
         updatedAt: Date;
         url: string;
-        status: import("@prisma/client").$Enums.PhotoStatus;
+        status: import(".prisma/client").$Enums.PhotoStatus;
         thumbnail: string | null;
         blurHash: string | null;
         isMain: boolean;
@@ -55,7 +55,7 @@ export declare class PhotoController {
         createdAt: Date;
         updatedAt: Date;
         url: string;
-        status: import("@prisma/client").$Enums.PhotoStatus;
+        status: import(".prisma/client").$Enums.PhotoStatus;
         thumbnail: string | null;
         blurHash: string | null;
         isMain: boolean;
@@ -71,7 +71,7 @@ export declare class PhotoController {
         createdAt: Date;
         updatedAt: Date;
         url: string;
-        status: import("@prisma/client").$Enums.PhotoStatus;
+        status: import(".prisma/client").$Enums.PhotoStatus;
         thumbnail: string | null;
         blurHash: string | null;
         isMain: boolean;
