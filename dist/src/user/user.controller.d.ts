@@ -124,13 +124,27 @@ export declare class UserController {
         isVerified: boolean;
         cityId: number;
     }[]>;
-    filterUsers(user: any, city?: string, gender?: string, minAge?: string, maxAge?: string, education?: string, smoking?: string, alcohol?: string, maritalStatus?: string, children?: string, religion?: string, bodyType?: string, hairColor?: string, eyeColor?: string, bloodType?: string, income?: string, minHeight?: string, maxHeight?: string): Promise<{
+    filterUsers(user: any, city?: string, district?: string, gender?: string, minAge?: string, maxAge?: string, education?: string, smoking?: string, alcohol?: string, maritalStatus?: string, children?: string, religion?: string, bodyType?: string, hairColor?: string, eyeColor?: string, bloodType?: string, income?: string, minHeight?: string, maxHeight?: string, minWeight?: string, maxWeight?: string, occupation?: string, hasPhotos?: string, username?: string): Promise<{
         age: number;
         birthDate: undefined;
         city: {
             name: string;
             id: number;
         };
+        photos: {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            url: string;
+            status: import("@prisma/client").$Enums.PhotoStatus;
+            thumbnail: string | null;
+            blurHash: string | null;
+            isMain: boolean;
+            userId: string;
+            rejectedReason: string | null;
+            moderatedBy: string | null;
+            moderatedAt: Date | null;
+        }[];
         district: {
             name: string;
             id: number;

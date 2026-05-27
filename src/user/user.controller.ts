@@ -49,6 +49,7 @@ export class UserController {
   async filterUsers(
     @CurrentUser() user: any,
     @Query("city") city?: string,
+    @Query("district") district?: string,
     @Query("gender") gender?: string,
     @Query("minAge") minAge?: string,
     @Query("maxAge") maxAge?: string,
@@ -65,11 +66,17 @@ export class UserController {
     @Query("income") income?: string,
     @Query("minHeight") minHeight?: string,
     @Query("maxHeight") maxHeight?: string,
+    @Query("minWeight") minWeight?: string,
+    @Query("maxWeight") maxWeight?: string,
+    @Query("occupation") occupation?: string,
+    @Query("hasPhotos") hasPhotos?: string,
+    @Query("username") username?: string,
   ) {
     const where: any = { id: { not: user.sub }, isActive: true };
 
     if (gender) where.gender = gender;
     if (city) where.cityId = parseInt(city);
+    if (district) where.districtId = parseInt(district);
     if (education) where.education = education;
     if (smoking) where.smoking = smoking;
     if (alcohol) where.alcohol = alcohol;
@@ -81,10 +88,25 @@ export class UserController {
     if (eyeColor) where.eyeColor = eyeColor;
     if (bloodType) where.bloodType = bloodType;
     if (income) where.income = income;
+    if (occupation) where.occupation = { contains: occupation, mode: "insensitive" };
+    if (username) {
+      where.OR = [
+        { name: { contains: username, mode: "insensitive" } },
+        { surname: { contains: username, mode: "insensitive" } },
+      ];
+    }
+    if (hasPhotos === "true") {
+      where.photos = { some: { status: "APPROVED" } };
+    }
     if (minHeight || maxHeight) {
       where.height = {};
       if (minHeight) where.height.gte = parseInt(minHeight);
       if (maxHeight) where.height.lte = parseInt(maxHeight);
+    }
+    if (minWeight || maxWeight) {
+      where.weight = {};
+      if (minWeight) where.weight.gte = parseInt(minWeight);
+      if (maxWeight) where.weight.lte = parseInt(maxWeight);
     }
 
     if (minAge || maxAge) {
@@ -102,7 +124,7 @@ export class UserController {
     const users = await this.prisma.user.findMany({
       where,
       take: 50,
-      include: { city: true, district: true },
+      include: { city: true, district: true, photos: { where: { status: "APPROVED" }, take: 3 } },
     });
 
     return users.map((u) => {
