@@ -38,7 +38,7 @@ async function bootstrap() {
         // DÜZELTME: Hem yerel test linklerine hem de canlı Render/Vercel adreslerine tam izin verildi
         connectSrc: [
           "'self'", 
-          "https://onrender.com", 
+          "https://egelove-backend.onrender.com", 
           "https://egelove.tr", 
           "https://egelove.tr",
           /\.vercel\.app$/,
@@ -84,8 +84,8 @@ async function bootstrap() {
   const corsOrigins = [...defaultOrigins, ...envOrigins];
 
   app.enableCors({
-    // Vercel'in dinamik test linklerini de (.vercel.app) desteklemesi için regex/fonksiyon yapısı kuruldu
-    origin: (origin, callback) => {
+    // DÜZELTME: origin ve callback parametrelerine açıkça tipler (any) atanarak TypeScript katı mod hatası çözüldü
+    origin: (origin: any, callback: any) => {
       if (!origin || corsOrigins.indexOf(origin) !== -1 || /\.vercel\.app$/.test(origin)) {
         callback(null, true);
       } else {
