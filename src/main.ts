@@ -1,36 +1,54 @@
+// backend/src/main.ts
+
+// NOT: Canlıda veritabanı URL'si Render/Google Cloud ortam değişkenlerinden (process.env.DATABASE_URL) otomatik okunur.
+if (!process.env.DATABASE_URL) {
+  process.env.DATABASE_URL = "mysql://root:@127.0.0.1:3306/egelove";
+}
+
 import { NestFactory } from "@nestjs/core";
 import { ValidationPipe } from "@nestjs/common";
-import { NestExpressApplication } from "@nestjs/platform-express";
 import helmet from "helmet";
-import { AppModule } from "./app.module";
-import { AllExceptionsFilter } from "./common/filters/all-exceptions.filter";
-import { validateEnv } from "./common/env.validation";
 import * as express from "express";
 import * as path from "path";
+import { AppModule } from "./app.module";
+import { AllExceptionsFilter } from "./common/filters/all-exceptions.filter";
+import { HttpsRedirectMiddleware } from "./common/middleware/https-redirect.middleware";
+import { validateEnv } from "./common/env.validation";
 
 async function bootstrap() {
   validateEnv();
 
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+  const app = await NestFactory.create(AppModule, {
     rawBody: true,
   });
 
+  // Uploads klasörünü dışarıya açma (Mevcut kodunuzdaki yapı korundu)
   app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
-  const allowedOrigins = (process.env.CORS_ORIGIN || "http://localhost:3001,http://localhost:3002,http://localhost:3000")
-    .split(",")
-    .map((s) => s.trim());
-
+  // HELMET GÜVENLİK AYARLARI (Canlı ortam ve Vercel bağlantılarına uyumlu hale getirildi)
   app.use(helmet());
   app.use(
     helmet.contentSecurityPolicy({
       directives: {
         defaultSrc: ["'self'"],
         imgSrc: ["'self'", "https:", "data:"],
-        scriptSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
         styleSrc: ["'self'", "'unsafe-inline'"],
         fontSrc: ["'self'", "https:", "data:"],
-        connectSrc: ["'self'", ...allowedOrigins, process.env.RENDER_EXTERNAL_URL || "https://egelove-backend.onrender.com"].filter(Boolean),
+        // DÜZELTME: Hem yerel test linklerine hem de canlı Render/Vercel adreslerine tam izin verildi
+        connectSrc: [
+          "'self'", 
+          "https://onrender.com", 
+          "https://egelove.tr", 
+          "https://egelove.tr",
+          /\.vercel\.app$/,
+          "http://localhost:5000", 
+          "http://127.0.0.1:5000", 
+          "http://localhost:3000", 
+          "http://127.0.0.1:3000",
+          "http://localhost:3001",
+          "http://localhost:3002"
+        ],
         frameSrc: ["'none'"],
         objectSrc: ["'none'"],
       },
@@ -41,17 +59,42 @@ async function bootstrap() {
   app.use(helmet.frameguard({ action: "deny" }));
   app.use(helmet.noSniff());
   app.use(helmet.xssFilter());
+
+  // Canlı ortamda (Render/Vercel üzerinde) HTTPS zorunluluğunu aktifleştiriyoruz
+  if (process.env.NODE_ENV === "production") {
+    app.use(new HttpsRedirectMiddleware().use);
+  }
+
+  // CORS AYARLARI (Gelişmiş Canlı Ortam Desteği)
+  const defaultOrigins = [
+    "https://egelove.tr",
+    "https://egelove.tr",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:3001",
+    "http://localhost:3002",
+    "http://localhost:5000",
+    "http://127.0.0.1:5000"
+  ];
+
+  const envOrigins = process.env.CORS_ORIGIN 
+    ? process.env.CORS_ORIGIN.split(",").map((origin) => origin.trim()).filter(Boolean)
+    : [];
+
+  const corsOrigins = [...defaultOrigins, ...envOrigins];
+
   app.enableCors({
+    // Vercel'in dinamik test linklerini de (.vercel.app) desteklemesi için regex/fonksiyon yapısı kuruldu
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (!origin || corsOrigins.indexOf(origin) !== -1 || /\.vercel\.app$/.test(origin)) {
         callback(null, true);
       } else {
-        callback(null, allowedOrigins[0]);
+        callback(new Error("CORS Engeli: Bu domainden gelen isteklere izin verilmiyor."));
       }
     },
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-    allowedHeaders: ["Content-Type", "Authorization", "x-shopier-signature"],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "x-shopier-signature", "Accept-Language", "accept-language"],
   });
 
   app.useGlobalPipes(
@@ -64,8 +107,9 @@ async function bootstrap() {
 
   app.useGlobalFilters(new AllExceptionsFilter());
 
-  const port = process.env.PORT || 3000;
-  await app.listen(port);
-  console.log(`Backend çalışıyor: http://localhost:${port}`);
+  // DÜZELTME: Render'ın atadığı dinamik portu (process.env.PORT) dinle, yoksa yerelde 5000'den ayağa kalk.
+  const port = process.env.PORT || 5000;
+  await app.listen(port, "0.0.0.0"); // 0.0.0.0 dış dünya bağlantılarını dinlemesini sağlar
+  console.log(`Backend canlı dinlemede. Port: ${port}`);
 }
 bootstrap();
