@@ -25,7 +25,7 @@ async function bootstrap() {
   // Uploads klasörünü dışarıya açma (Mevcut kodunuzdaki yapı korundu)
   app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
-  // HELMET GÜVENLİK AYARLARI (Canlı ortam ve Vercel bağlantılarına uyumlu hale getirildi)
+  // HELMET GÜVENLİK AYARLARI (TypeScript tip uyumluluğu için kısıtlamalar kaldırıldı ve esnetildi)
   app.use(helmet());
   app.use(
     helmet.contentSecurityPolicy({
@@ -35,13 +35,13 @@ async function bootstrap() {
         scriptSrc: ["'self'", "'unsafe-inline'"],
         styleSrc: ["'self'", "'unsafe-inline'"],
         fontSrc: ["'self'", "https:", "data:"],
-        // DÜZELTME: Hem yerel test linklerine hem de canlı Render/Vercel adreslerine tam izin verildi
+        // DÜZELTME: TypeScript hatasını önlemek için Regex kaldırıldı, geniş wildcard (*.vercel.app) ve canlı adresler eklendi
         connectSrc: [
           "'self'", 
-          "https://egelove-backend.onrender.com", 
+          "https://onrender.com", 
           "https://egelove.tr", 
           "https://egelove.tr",
-          /\.vercel\.app$/,
+          "https://*.vercel.app",
           "http://localhost:5000", 
           "http://127.0.0.1:5000", 
           "http://localhost:3000", 
@@ -84,7 +84,7 @@ async function bootstrap() {
   const corsOrigins = [...defaultOrigins, ...envOrigins];
 
   app.enableCors({
-    // DÜZELTME: origin ve callback parametrelerine açıkça tipler (any) atanarak TypeScript katı mod hatası çözüldü
+    // origin ve callback parametrelerine açıkça tipler atanarak uyumluluk sağlandı
     origin: (origin: any, callback: any) => {
       if (!origin || corsOrigins.indexOf(origin) !== -1 || /\.vercel\.app$/.test(origin)) {
         callback(null, true);
@@ -107,7 +107,7 @@ async function bootstrap() {
 
   app.useGlobalFilters(new AllExceptionsFilter());
 
-  // DÜZELTME: Render'ın atadığı dinamik portu (process.env.PORT) dinle, yoksa yerelde 5000'den ayağa kalk.
+  // DÜZELTME: Render'ın atadığı dinamik portu dinle, yoksa yerelde 5000'den ayağa kalk.
   const port = process.env.PORT || 5000;
   await app.listen(port, "0.0.0.0"); // 0.0.0.0 dış dünya bağlantılarını dinlemesini sağlar
   console.log(`Backend canlı dinlemede. Port: ${port}`);
