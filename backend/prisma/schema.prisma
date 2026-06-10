@@ -1,0 +1,301 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+ url      = env("DATABASE_URL")
+}
+
+
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum MaritalStatus {
+  NEVER_MARRIED
+  DIVORCED
+  WIDOWED
+  SEPARATED
+}
+
+enum EducationLevel {
+  PRIMARY
+  SECONDARY
+  HIGH_SCHOOL
+  ASSOCIATE
+  BACHELOR
+  MASTER
+  DOCTORATE
+}
+
+enum IncomeLevel {
+  VERY_LOW
+  LOW
+  MEDIUM
+  HIGH
+  VERY_HIGH
+}
+
+enum ReligionLevel {
+  VERY_RELIGIOUS
+  RELIGIOUS
+  MODERATE
+  NOT_RELIGIOUS
+  ATHEIST
+}
+
+enum SmokingStatus {
+  NEVER
+  QUIT
+  OCCASIONAL
+  REGULAR
+}
+
+enum AlcoholStatus {
+  NEVER
+  QUIT
+  OCCASIONAL
+  REGULAR
+}
+
+enum ChildrenStatus {
+  HAS_LIVING_WITH
+  HAS_NOT_LIVING
+  NONE
+}
+
+enum BodyType {
+  SLIM
+  ATHLETIC
+  NORMAL
+  CURVY
+  PLUS
+}
+
+enum EyeColor {
+  BROWN
+  BLUE
+  GREEN
+  HAZEL
+  BLACK
+  OTHER
+}
+
+enum HairColor {
+  BLACK
+  BROWN
+  BLOND
+  RED
+  WHITE
+  BALD
+  OTHER
+}
+
+enum BloodType {
+  A_POSITIVE
+  A_NEGATIVE
+  B_POSITIVE
+  B_NEGATIVE
+  AB_POSITIVE
+  AB_NEGATIVE
+  ZERO_POSITIVE
+  ZERO_NEGATIVE
+}
+
+enum PhotoStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model City {
+  id        Int       @id @default(autoincrement())
+  name      String
+  districts District[]
+  users     User[]
+}
+
+model District {
+  id      Int    @id @default(autoincrement())
+  name    String
+  cityId  Int
+  city    City   @relation(fields: [cityId], references: [id])
+  users   User[]
+}
+
+model User {
+  id                  String         @id @default(cuid())
+  email               String         @unique
+  phone               String?        @unique
+  passwordHash        String
+  name                String
+  surname             String
+  birthDate           DateTime
+  gender              Gender
+  cityId              Int
+  city                City           @relation(fields: [cityId], references: [id])
+  districtId          Int
+  district            District       @relation(fields: [districtId], references: [id])
+  bio                 String?
+  avatar              String?
+  isPremiumCandidate  Boolean        @default(false)
+  premiumExpiresAt    DateTime?
+  isAdmin             Boolean        @default(false)
+  isVerified          Boolean        @default(false)
+  isActive            Boolean        @default(true)
+  turnstileToken      String?
+  refreshToken        String?
+  lastLoginAt         DateTime?
+  isEmailVerified     Boolean        @default(false)
+  emailVerifyToken    String?
+  emailVerifySentAt   DateTime?
+  twoFactorSecret     String?
+  twoFactorEnabled    Boolean        @default(false)
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+
+  photos              Photo[]
+  sentMatches         Match[]        @relation("SentMatches")
+  receivedMatches     Match[]        @relation("ReceivedMatches")
+  sentMessages        Message[]      @relation("SentMessages")
+  conversationsAs1    Conversation[]  @relation("ConversationUser1")
+  conversationsAs2    Conversation[]  @relation("ConversationUser2")
+  conversationReads   ConversationRead[]
+
+  presence            UserPresence?
+  payments            PaymentWebhookLog[]
+
+  education           EducationLevel?
+  income              IncomeLevel?
+  religion            ReligionLevel?
+  smoking             SmokingStatus?
+  alcohol             AlcoholStatus?
+  children            ChildrenStatus?
+  bodyType            BodyType?
+  height              Int?
+  weight              Int?
+  eyeColor            EyeColor?
+  hairColor           HairColor?
+  bloodType           BloodType?
+  occupation          String?
+  hobbies             String?   @db.Text
+
+  aboutMe             String?
+  lookingFor          String?
+
+  privacySettings     Json           @default("{}")
+  matchingPreferences Json           @default("{}")
+
+  @@index([cityId])
+  @@index([districtId])
+  @@index([gender])
+  @@index([email])
+}
+
+model Photo {
+  id         String      @id @default(cuid())
+  url        String
+  thumbnail  String?
+  blurHash   String?
+  status     PhotoStatus @default(PENDING)
+  isMain     Boolean     @default(false)
+  userId     String
+  user       User        @relation(fields: [userId], references: [id])
+  rejectedReason String?
+  moderatedBy String?
+  moderatedAt DateTime?
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  @@index([userId])
+  @@index([status])
+}
+
+model Match {
+  id          String   @id @default(cuid())
+  senderId    String
+  sender      User     @relation("SentMatches", fields: [senderId], references: [id])
+  receiverId  String
+  receiver    User     @relation("ReceivedMatches", fields: [receiverId], references: [id])
+  isMutual    Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([senderId, receiverId])
+  @@index([senderId])
+  @@index([receiverId])
+  @@index([isMutual])
+}
+
+model Conversation {
+  id        String              @id @default(cuid())
+  user1Id   String
+  user1     User                @relation("ConversationUser1", fields: [user1Id], references: [id])
+  user2Id   String
+  user2     User                @relation("ConversationUser2", fields: [user2Id], references: [id])
+  messages  Message[]
+  reads     ConversationRead[]
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+
+  @@unique([user1Id, user2Id])
+  @@index([user1Id])
+  @@index([user2Id])
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  content        String
+  senderId       String
+  sender         User         @relation("SentMessages", fields: [senderId], references: [id])
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([conversationId])
+  @@index([senderId])
+  @@index([createdAt])
+}
+
+model ConversationRead {
+  id             String       @id @default(cuid())
+  userId         String
+  user           User         @relation(fields: [userId], references: [id])
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  lastReadAt     DateTime     @default(now())
+
+  @@unique([userId, conversationId])
+}
+
+model UserPresence {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  isOnline  Boolean  @default(false)
+  lastSeen  DateTime @default(now())
+}
+
+model PaymentWebhookLog {
+  id              String   @id @default(cuid())
+  userId          String
+  platformOrderId String   @unique
+  packageType     String
+  amount          Decimal  @db.Decimal(10, 2)
+  currency        String   @default("TRY")
+  status          String   @default("completed")
+  rawBody         String
+  signature       String
+  ipAddress       String?
+  processedAt     DateTime @default(now())
+  user            User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([platformOrderId])
+}

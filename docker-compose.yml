@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: egelove-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: egelove
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: egelove-backend
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/egelove?schema=public
+      JWT_SECRET: egelove-super-secret-jwt-key-change-in-production
+      JWT_REFRESH_SECRET: egelove-super-secret-refresh-key-change-in-production
+      CORS_ORIGIN: http://localhost:3000
+      FRONTEND_URL: http://localhost:3000
+      GOOGLE_CLIENT_ID: 729655959217-kr6bce2jajg1akvs5nogj041bf84hhu8.apps.googleusercontent.com
+      GOOGLE_CLIENT_SECRET: "****WJ2S"
+      GOOGLE_CALLBACK_URL: http://localhost:3001/auth/google/callback
+      SHOPIER_API_KEY: your-shopier-api-key
+      SHOPIER_SECRET_KEY: your-shopier-secret-key
+      TURNSTILE_SECRET_KEY: your-turnstile-secret-key
+      SMTP_HOST: smtp.hostinger.com
+      SMTP_PORT: 587
+      SMTP_USER: your-email@egelove.tr
+      SMTP_PASS: your-smtp-password
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./backend/src:/app/src
+    command: npm run start:dev
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: egelove-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:3001
+    volumes:
+      - ./frontend/app:/app/app
+      - ./frontend/components:/app/components
+      - ./frontend/lib:/app/lib
+      - ./frontend/public:/app/public
+    command: npm run dev
+
+volumes:
+  postgres_data:
