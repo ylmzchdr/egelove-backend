@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Heart, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -21,7 +21,19 @@ const languages: { code: Lang; label: string }[] = [
 
 export default function Header({ onOpenLogin, onOpenRegister }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { lang, setLang, t } = useI18n();
+
+  useEffect(() => {
+    setIsLoggedIn(!!localStorage.getItem("accessToken"));
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    setIsLoggedIn(false);
+    window.location.href = "/";
+  };
 
   const navItems = [
     { label: t.nav.home, href: "/" },
@@ -35,14 +47,13 @@ export default function Header({ onOpenLogin, onOpenRegister }: HeaderProps) {
   return (
     <header className="sticky top-0 z-50 bg-[#FFC000] text-black shadow-md border-b border-black/10 font-sans">
       <div className="mx-auto max-w-7xl px-4 py-3 flex justify-between items-center">
-        
-        {/* LOGO */}
         <Link href="/" className="flex items-center gap-2 no-underline">
           <Heart className="w-7 h-7 text-black fill-black" />
-          <span className="text-xl font-black tracking-tighter text-black lowercase">egelove</span>
+          <span className="text-xl font-black tracking-tighter text-black lowercase">
+            egelove
+          </span>
         </Link>
 
-        {/* MASAÜSTÜ NAVİGASYON */}
         <nav className="hidden lg:flex gap-6" aria-label="Ana navigasyon">
           {navItems.map((item) => (
             <Link
@@ -55,7 +66,6 @@ export default function Header({ onOpenLogin, onOpenRegister }: HeaderProps) {
           ))}
         </nav>
 
-        {/* SAĞ TARAF: DİL VE AUTH BUTONLARI */}
         <div className="hidden lg:flex gap-2 items-center">
           <div className="flex items-center bg-white/30 rounded border border-black/10 p-0.5">
             {languages.map((l) => (
@@ -72,29 +82,47 @@ export default function Header({ onOpenLogin, onOpenRegister }: HeaderProps) {
               </button>
             ))}
           </div>
-          
-          <div className="w-px h-6 bg-black/20 mx-2" />
-          
-          {/* MASAÜSTÜ GİRİŞ YAP BUTONU - ARTIK PEMBE PANJUR GİBİ DOĞRUDAN GİRİŞ PENCERESİNİ TETİKLİYOR! */}
-          <Button
-            variant="outline"
-            className="text-black border-black/60 hover:bg-black/10 hover:text-black text-xs font-bold h-8 px-4 bg-transparent"
-            onClick={onOpenLogin}
-          >
-            {t.auth.login}
-          </Button>
 
-          {onOpenRegister && (
-            <Button
-              className="bg-black text-[#FFC000] hover:bg-black/80 font-bold text-xs h-8 px-4 shadow-sm"
-              onClick={onOpenRegister}
-            >
-              {t.auth.register}
-            </Button>
+          <div className="w-px h-6 bg-black/20 mx-2" />
+
+          {isLoggedIn ? (
+            <>
+              <Link
+                href="/dashboard"
+                className="bg-black text-[#FFC000] font-bold text-xs h-8 px-4 rounded flex items-center no-underline"
+              >
+                Panel
+              </Link>
+
+              <Button
+                className="bg-white text-black hover:bg-white/80 font-bold text-xs h-8 px-4 shadow-sm"
+                onClick={handleLogout}
+              >
+                Çıkış
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                variant="outline"
+                className="text-black border-black/60 hover:bg-black/10 hover:text-black text-xs font-bold h-8 px-4 bg-transparent"
+                onClick={onOpenLogin}
+              >
+                {t.auth.login}
+              </Button>
+
+              {onOpenRegister && (
+                <Button
+                  className="bg-black text-[#FFC000] hover:bg-black/80 font-bold text-xs h-8 px-4 shadow-sm"
+                  onClick={onOpenRegister}
+                >
+                  {t.auth.register}
+                </Button>
+              )}
+            </>
           )}
         </div>
 
-        {/* MOBİL MENÜ BUTONU */}
         <button
           className="lg:hidden text-black"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -105,7 +133,6 @@ export default function Header({ onOpenLogin, onOpenRegister }: HeaderProps) {
         </button>
       </div>
 
-      {/* MOBİL MENÜ ALANI */}
       {mobileMenuOpen && (
         <div className="lg:hidden bg-[#FFC000] border-t border-black/10 p-4">
           <nav className="flex flex-col gap-3">
@@ -119,12 +146,15 @@ export default function Header({ onOpenLogin, onOpenRegister }: HeaderProps) {
                 {item.label}
               </Link>
             ))}
-            
+
             <div className="flex gap-2 my-2 bg-white/20 p-1 rounded w-fit">
               {languages.map((l) => (
                 <button
                   key={l.code}
-                  onClick={() => { setLang(l.code); setMobileMenuOpen(false); }}
+                  onClick={() => {
+                    setLang(l.code);
+                    setMobileMenuOpen(false);
+                  }}
                   className={`px-2 py-1 rounded text-xs font-bold ${
                     lang === l.code
                       ? "bg-white text-black"
@@ -135,23 +165,52 @@ export default function Header({ onOpenLogin, onOpenRegister }: HeaderProps) {
                 </button>
               ))}
             </div>
-            
-            {/* MOBİL GİRİŞ YAP BUTONU */}
-            <Button
-              variant="outline"
-              className="w-full text-black border-black/40 bg-transparent font-bold"
-              onClick={() => { if (onOpenLogin) onOpenLogin(); setMobileMenuOpen(false); }}
-            >
-              {t.auth.login}
-            </Button>
 
-            {onOpenRegister && (
-              <Button
-                className="bg-black text-[#FFC000] w-full font-bold"
-                onClick={() => { onOpenRegister(); setMobileMenuOpen(false); }}
-              >
-                {t.auth.register}
-              </Button>
+            {isLoggedIn ? (
+              <>
+                <Link
+                  href="/dashboard"
+                  className="bg-black text-[#FFC000] w-full font-bold text-center rounded px-4 py-2 no-underline"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Panel
+                </Link>
+
+                <Button
+                  className="bg-white text-black w-full font-bold"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    handleLogout();
+                  }}
+                >
+                  Çıkış
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  variant="outline"
+                  className="w-full text-black border-black/40 bg-transparent font-bold"
+                  onClick={() => {
+                    if (onOpenLogin) onOpenLogin();
+                    setMobileMenuOpen(false);
+                  }}
+                >
+                  {t.auth.login}
+                </Button>
+
+                {onOpenRegister && (
+                  <Button
+                    className="bg-black text-[#FFC000] w-full font-bold"
+                    onClick={() => {
+                      onOpenRegister();
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    {t.auth.register}
+                  </Button>
+                )}
+              </>
             )}
           </nav>
         </div>
