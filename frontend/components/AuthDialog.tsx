@@ -156,7 +156,7 @@ export default function AuthDialog({ activeTab, onClose }: AuthDialogProps) {
 
 
   const handleSocialLogin = () => {
-  window.location.href = "http://localhost:5000/auth/google";
+  window.location.href = "https://egelove-backend.onrender.com/auth/google";
 };
 
 
@@ -200,7 +200,7 @@ return (
               {/* Google Butonu */}
               <button 
                 type="button"
-                onClick={() => window.location.href = "http://localhost:5000/auth/google"}
+                onClick={() => window.location.href = "https://egelove-backend.onrender.com/auth/google"}
                 className="w-full h-10 flex items-center justify-center gap-2 bg-white text-black hover:bg-gray-100 font-medium rounded-md text-sm transition-colors duration-200"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24">
