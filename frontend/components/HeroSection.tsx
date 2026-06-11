@@ -13,7 +13,7 @@ export default function HeroSection({ onCtaClick }: HeroSectionProps) {
   // Fotoğraftaki 4 dildeki orijinal metinler (Dil butonuna basınca anında değişir)
   const translations = {
     TR: {
-      title: title: "Türkiye'nin Ege ve Akdeniz'de buluştuğu güvenilir ve samimi arkadaşlık platformu:",,
+      title: "Türkiye'nin Ege ve Akdeniz'de buluştuğu güvenilir ve samimi arkadaşlık platformu:",
       sub: "egelove.tr",
       cta: "Hemen Üye Ol",
     },
