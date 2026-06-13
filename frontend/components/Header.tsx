@@ -22,16 +22,44 @@ const languages: { code: Lang; label: string }[] = [
 export default function Header({ onOpenLogin, onOpenRegister }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState<string | null>(null);
   const { lang, setLang, t } = useI18n();
 
-  useEffect(() => {
-    setIsLoggedIn(!!localStorage.getItem("accessToken"));
+   useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    setIsLoggedIn(!!token);
+    
+    if (token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(
+          window.atob(base64)
+            .split('')
+            .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+            .join('')
+        );
+        
+        const payload = JSON.parse(jsonPayload);
+        
+        if (payload.email) {
+          // e-posta adresinin @ işaretinden önceki kısmını alır (Örn: ylmzchdr)
+          const fallbackName = payload.email.split('@')[0];
+          setUserName(fallbackName);
+        } else {
+          setUserName("Panel");
+        }
+      } catch (e) {
+        setUserName("Panel");
+      }
+    }
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
     setIsLoggedIn(false);
+    setUserName(null);
     window.location.href = "/";
   };
 
@@ -89,9 +117,9 @@ export default function Header({ onOpenLogin, onOpenRegister }: HeaderProps) {
             <>
               <Link
                 href="/dashboard"
-                className="bg-black text-[#FFC000] font-bold text-xs h-8 px-4 rounded flex items-center no-underline"
+                className="bg-black text-[#FFC000] font-bold text-xs h-8 px-4 rounded flex items-center no-underline max-w-[150px] truncate"
               >
-                Panel
+                {userName || "Panel"}
               </Link>
 
               <Button
@@ -170,10 +198,10 @@ export default function Header({ onOpenLogin, onOpenRegister }: HeaderProps) {
               <>
                 <Link
                   href="/dashboard"
-                  className="bg-black text-[#FFC000] w-full font-bold text-center rounded px-4 py-2 no-underline"
+                  className="bg-black text-[#FFC000] w-full font-bold text-center rounded px-4 py-2 no-underline truncate"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Panel
+                  {userName || "Panel"}
                 </Link>
 
                 <Button

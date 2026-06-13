@@ -4,3 +4,6 @@ out/
 .env.local
 .env
 *.zip
+
+.vercel
+.env*

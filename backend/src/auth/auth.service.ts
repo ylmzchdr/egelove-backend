@@ -229,8 +229,17 @@ export class AuthService {
     return { reset: true };
   }
 
-  private async generateTokens(userId: string, email: string) {
-    const payload = { sub: userId, email };
+   private async generateTokens(userId: string, email: string) {
+    // userId zaten string olduğu için doğrudan veri tabanında aratıyoruz
+    const user = await this.prisma.user.findUnique({ where: { id: userId } }) 
+                 || mockUsers.find(u => u.id === userId);
+                 
+    const payload = { 
+      sub: userId, 
+      email, 
+      name: user?.name || "Kullanıcı" 
+    };
+
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, { secret: jwtConstants.secret, expiresIn: "15m" }),
       this.jwtService.signAsync(payload, { secret: jwtConstants.refreshSecret, expiresIn: "7d" }),
