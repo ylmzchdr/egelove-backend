@@ -1,0 +1,498 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import {
+  Loader2,
+  Pencil,
+  UserCircle,
+  MapPin,
+  Mail,
+  Calendar,
+  ShieldCheck,
+  Camera,
+  Heart,
+  Eye,
+  Star,
+} from "lucide-react";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import AuthDialog from "@/components/AuthDialog";
+import { Button } from "@/components/ui/button";
+import { api } from "@/lib/api";
+import { useI18n } from "@/lib/i18n-context";
+
+type CurrentUser = {
+  id: string;
+  email?: string;
+  name?: string;
+  surname?: string;
+  birthDate?: string;
+  city?: { name?: string };
+  district?: { name?: string };
+  bio?: string;
+  aboutMe?: string;
+  lookingFor?: string;
+  avatar?: string | null;
+    photos?: {
+    id?: string;
+    url: string;
+    isMain?: boolean;
+    status?: string;
+  }[];
+  
+  isVerified?: boolean;
+  occupation?: string;
+  education?: string;
+  income?: string;
+  maritalStatus?: string;
+  children?: string;
+  height?: number;
+  weight?: number;
+  eyeColor?: string;
+  hairColor?: string;
+  hobbies?: string[] | string;
+  languages?: string[] | string;
+};
+
+type LangKey = "TR" | "EN" | "RU" | "AR";
+
+const TEXT: Record<LangKey, Record<string, string>> = {
+  TR: {
+    myProfile: "Profilim",
+    previewDesc: "Profilinin diğer kullanıcılara nasıl göründüğünü buradan kontrol et.",
+    editProfile: "Profili Düzenle",
+    mustLogin: "Önce giriş yapmalısın",
+    login: "Giriş Yap",
+    info: "Profil Bilgileri",
+    about: "Hakkımda",
+    lookingFor: "Aradığım Kişi",
+    photos: "Fotoğraflar",
+    addPhoto: "Fotoğraf ekle, profil ziyaretini artır!",
+    email: "E-posta",
+    age: "Yaş",
+    city: "Şehir",
+    district: "İlçe",
+    occupation: "Meslek",
+    education: "Eğitim",
+    income: "Gelir",
+    maritalStatus: "Medeni Durum",
+    children: "Çocuk",
+    height: "Boy",
+    weight: "Kilo",
+    eyeColor: "Göz Rengi",
+    hairColor: "Saç Rengi",
+    hobbies: "İlgi Alanları",
+    languages: "Diller",
+    verified: "Doğrulanmış Profil",
+    online: "Çevrimiçi",
+    favorite: "Favori Yap",
+    wink: "Göz Kırp",
+    visitors: "Profil Ziyaretleri",
+    userFallback: "Kullanıcı",
+  },
+  EN: {
+    myProfile: "My Profile",
+    previewDesc: "Preview how other users see your profile.",
+    editProfile: "Edit Profile",
+    mustLogin: "You must log in first",
+    login: "Log In",
+    info: "Profile Information",
+    about: "About Me",
+    lookingFor: "Looking For",
+    photos: "Photos",
+    addPhoto: "Add photos and increase profile visits!",
+    email: "Email",
+    age: "Age",
+    city: "City",
+    district: "District",
+    occupation: "Occupation",
+    education: "Education",
+    income: "Income",
+    maritalStatus: "Marital Status",
+    children: "Children",
+    height: "Height",
+    weight: "Weight",
+    eyeColor: "Eye Color",
+    hairColor: "Hair Color",
+    hobbies: "Interests",
+    languages: "Languages",
+    verified: "Verified Profile",
+    online: "Online",
+    favorite: "Add Favorite",
+    wink: "Wink",
+    visitors: "Profile Visitors",
+    userFallback: "User",
+  },
+  RU: {
+    myProfile: "Мой профиль",
+    previewDesc: "Посмотрите, как другие пользователи видят ваш профиль.",
+    editProfile: "Редактировать профиль",
+    mustLogin: "Сначала войдите в аккаунт",
+    login: "Войти",
+    info: "Информация профиля",
+    about: "О себе",
+    lookingFor: "Кого ищу",
+    photos: "Фотографии",
+    addPhoto: "Добавьте фото и увеличьте просмотры профиля!",
+    email: "Эл. почта",
+    age: "Возраст",
+    city: "Город",
+    district: "Район",
+    occupation: "Профессия",
+    education: "Образование",
+    income: "Доход",
+    maritalStatus: "Семейное положение",
+    children: "Дети",
+    height: "Рост",
+    weight: "Вес",
+    eyeColor: "Цвет глаз",
+    hairColor: "Цвет волос",
+    hobbies: "Интересы",
+    languages: "Языки",
+    verified: "Проверенный профиль",
+    online: "Онлайн",
+    favorite: "В избранное",
+    wink: "Подмигнуть",
+    visitors: "Посетители профиля",
+    userFallback: "Пользователь",
+  },
+  AR: {
+    myProfile: "ملفي الشخصي",
+    previewDesc: "اعرض كيف يرى المستخدمون الآخرون ملفك الشخصي.",
+    editProfile: "تعديل الملف الشخصي",
+    mustLogin: "يجب تسجيل الدخول أولاً",
+    login: "تسجيل الدخول",
+    info: "معلومات الملف الشخصي",
+    about: "نبذة عني",
+    lookingFor: "أبحث عن",
+    photos: "الصور",
+    addPhoto: "أضف صوراً وزد زيارات ملفك!",
+    email: "البريد الإلكتروني",
+    age: "العمر",
+    city: "المدينة",
+    district: "المنطقة",
+    occupation: "المهنة",
+    education: "التعليم",
+    income: "الدخل",
+    maritalStatus: "الحالة الاجتماعية",
+    children: "الأطفال",
+    height: "الطول",
+    weight: "الوزن",
+    eyeColor: "لون العين",
+    hairColor: "لون الشعر",
+    hobbies: "الاهتمامات",
+    languages: "اللغات",
+    verified: "ملف موثق",
+    online: "متصل",
+    favorite: "إضافة للمفضلة",
+    wink: "غمزة",
+    visitors: "زوار الملف",
+    userFallback: "مستخدم",
+  },
+};
+
+function calculateAge(birthDate?: string) {
+  if (!birthDate) return undefined;
+  const birth = new Date(birthDate);
+  const today = new Date();
+  if (Number.isNaN(birth.getTime())) return undefined;
+
+  let age = today.getFullYear() - birth.getFullYear();
+  const monthDiff = today.getMonth() - birth.getMonth();
+
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+    age--;
+  }
+
+  return age;
+}
+
+function toText(value?: string[] | string) {
+  if (!value) return "-";
+  if (Array.isArray(value)) return value.length ? value.join(", ") : "-";
+  return value || "-";
+}
+
+function InfoRow({ label, value }: { label: string; value?: string | number | null }) {
+  return (
+    <div className="flex items-center justify-between gap-4 border-b border-white/10 py-3">
+      <span className="text-sm text-white/55">{label}</span>
+      <span className="text-sm font-semibold text-white text-right">{value || "-"}</span>
+    </div>
+  );
+}
+
+export default function ProfilePage() {
+  const { lang } = useI18n();
+
+  const currentLang: LangKey = ["TR", "EN", "RU", "AR"].includes(lang)
+    ? (lang as LangKey)
+    : "TR";
+
+  const tx = TEXT[currentLang];
+  const isRtl = currentLang === "AR";
+
+  const [authTab, setAuthTab] = useState<"login" | "register" | null>(null);
+  const [user, setUser] = useState<CurrentUser | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const token = localStorage.getItem("accessToken");
+
+        if (!token) {
+          setLoading(false);
+          return;
+        }
+
+        const me = await api.users.me();
+console.log("ME RESPONSE =", me);
+setUser(me as CurrentUser);
+      } catch (error) {
+        console.error(error);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadUser();
+  }, []);
+
+  const fullName =
+    user?.name && user.name.trim() !== ""
+      ? `${user.name} ${user.surname || ""}`.trim()
+      : user?.email?.split("@")[0] || tx.userFallback;
+
+  const cityName = user?.city?.name || "";
+  const districtName = user?.district?.name || "";
+  const age = calculateAge(user?.birthDate);
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
+
+const normalizePhotoUrl = (url?: string | null) => {
+  if (!url) return "";
+  if (url.startsWith("http")) return url;
+  if (url.startsWith("/")) return `${API_URL}${url}`;
+  return `${API_URL}/${url}`;
+};
+
+const sortedPhotos = [...(user?.photos || [])].sort((a, b) => {
+  if (a.isMain && !b.isMain) return -1;
+  if (!a.isMain && b.isMain) return 1;
+  return 0;
+});
+
+const avatar =
+  normalizePhotoUrl(sortedPhotos[0]?.url || user?.avatar) ||
+  "/images/default-avatar.png";
+
+  return (
+    <div className="min-h-screen bg-[#160012] text-white" dir={isRtl ? "rtl" : "ltr"}>
+      <Header
+        onOpenLogin={() => setAuthTab("login")}
+        onOpenRegister={() => setAuthTab("register")}
+      />
+
+      <section className="py-8 sm:py-12">
+        <div className="mx-auto max-w-7xl px-3 sm:px-4">
+          <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h1 className="text-2xl font-bold sm:text-3xl">{tx.myProfile}</h1>
+              <p className="mt-2 text-white/60">{tx.previewDesc}</p>
+            </div>
+
+            <Link href="/profile/edit" className="w-full sm:w-auto">
+              <Button className="w-full bg-pink-600 hover:bg-pink-700 sm:w-auto">
+                <Pencil className="mr-2 h-4 w-4" />
+                {tx.editProfile}
+              </Button>
+            </Link>
+          </div>
+
+          {loading ? (
+            <div className="flex justify-center py-20">
+              <Loader2 className="h-10 w-10 animate-spin text-pink-400" />
+            </div>
+          ) : !user ? (
+            <div className="rounded-3xl border border-white/10 bg-white/5 py-20 text-center">
+              <UserCircle className="mx-auto mb-4 h-20 w-20 text-white/40" />
+              <p className="mb-4 text-white/60">{tx.mustLogin}</p>
+              <Button
+                onClick={() => setAuthTab("login")}
+                className="bg-pink-600 hover:bg-pink-700"
+              >
+                {tx.login}
+              </Button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-[360px_1fr_300px]">
+              <aside className="space-y-5">
+                <div className="rounded-3xl border border-white/10 bg-white/5 p-4 shadow-2xl">
+                  <div className="aspect-[4/5] overflow-hidden rounded-2xl bg-black/30">
+                    <img
+                      src={avatar}
+                      alt={fullName}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+
+                 <div className="mt-3 grid grid-cols-4 gap-2">
+  {(sortedPhotos.length ? sortedPhotos : [{ url: avatar }])
+    .slice(0, 4)
+    .map((photo, index) => {
+     const src = normalizePhotoUrl(photo.url);
+      return (
+        <div
+          key={photo.id || index}
+          className="aspect-square overflow-hidden rounded-xl border border-white/10 bg-black/30"
+        >
+          <img src={src} alt="" className="h-full w-full object-cover" />
+        </div>
+      );
+    })}
+</div>
+
+                  <Link href="/profile/edit">
+                    <Button
+                      variant="outline"
+                      className="mt-4 w-full border-white/20 bg-white/5 text-white hover:bg-white/10"
+                    >
+                      <Camera className="mr-2 h-4 w-4" />
+                      {tx.addPhoto}
+                    </Button>
+                  </Link>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 rounded-3xl border border-white/10 bg-white/5 p-5">
+                  <button className="flex items-center justify-center gap-2 rounded-2xl border border-pink-400/40 py-3 text-pink-300">
+                    <Heart className="h-4 w-4" />
+                    {tx.wink}
+                  </button>
+                  <button className="flex items-center justify-center gap-2 rounded-2xl border border-white/15 py-3 text-white/80">
+                    <Star className="h-4 w-4" />
+                    {tx.favorite}
+                  </button>
+                </div>
+              </aside>
+
+              <main className="space-y-6">
+                <div className="rounded-3xl border border-white/10 bg-white/5 p-5 sm:p-7">
+                  <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
+                    <div>
+                      <div className="flex flex-wrap items-center gap-3">
+                        <h2 className="text-3xl font-bold">{fullName}</h2>
+                        {user.isVerified && (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 px-3 py-1 text-xs text-emerald-300">
+                            <ShieldCheck className="h-4 w-4" />
+                            {tx.verified}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="mt-3 flex flex-wrap gap-3 text-sm text-white/60">
+                        <span className="inline-flex items-center gap-1">
+                          <Calendar className="h-4 w-4" />
+                          {age ?? "-"}
+                        </span>
+                        <span className="inline-flex items-center gap-1">
+                          <MapPin className="h-4 w-4" />
+                          {districtName || "-"}, {cityName || "-"}
+                        </span>
+                        <span className="text-emerald-300">● {tx.online}</span>
+                      </div>
+                    </div>
+
+                    <Link href="/profile/edit">
+                      <Button className="bg-pink-600 hover:bg-pink-700">
+                        <Pencil className="mr-2 h-4 w-4" />
+                        {tx.editProfile}
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+
+                <div className="grid gap-6 xl:grid-cols-2">
+                  <div className="rounded-3xl border border-white/10 bg-white/5 p-5 sm:p-7">
+                    <h3 className="mb-5 text-lg font-bold">{tx.info}</h3>
+                    <InfoRow label={tx.email} value={user.email} />
+                    <InfoRow label={tx.age} value={age} />
+                    <InfoRow label={tx.city} value={cityName} />
+                    <InfoRow label={tx.district} value={districtName} />
+                    <InfoRow label={tx.occupation} value={user.occupation} />
+                    <InfoRow label={tx.education} value={user.education} />
+                    <InfoRow label={tx.income} value={user.income} />
+                    <InfoRow label={tx.maritalStatus} value={user.maritalStatus} />
+                    <InfoRow label={tx.children} value={user.children} />
+                    <InfoRow label={tx.height} value={user.height ? `${user.height} cm` : "-"} />
+                    <InfoRow label={tx.weight} value={user.weight ? `${user.weight} kg` : "-"} />
+                    <InfoRow label={tx.eyeColor} value={user.eyeColor} />
+                    <InfoRow label={tx.hairColor} value={user.hairColor} />
+                    <InfoRow label={tx.hobbies} value={toText(user.hobbies)} />
+                    <InfoRow label={tx.languages} value={toText(user.languages)} />
+                  </div>
+
+                  <div className="space-y-6">
+                    <div className="rounded-3xl border border-white/10 bg-white/5 p-5 sm:p-7">
+                      <h3 className="mb-4 text-lg font-bold">{tx.about}</h3>
+                      <p className="leading-8 text-white/80">
+                        {user.aboutMe || user.bio || "-"}
+                      </p>
+                    </div>
+
+                    <div className="rounded-3xl border border-white/10 bg-white/5 p-5 sm:p-7">
+                      <h3 className="mb-4 text-lg font-bold">{tx.lookingFor}</h3>
+                      <p className="leading-8 text-white/80">
+                        {user.lookingFor || "-"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </main>
+
+              <aside className="space-y-5">
+                <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
+                  <h3 className="mb-4 flex items-center gap-2 text-lg font-bold">
+                    <Eye className="h-5 w-5 text-pink-300" />
+                    {tx.visitors}
+                  </h3>
+
+                  <div className="space-y-3">
+                    {[1, 2, 3, 4].map((item) => (
+                      <div
+                        key={item}
+                        className="flex items-center gap-3 rounded-2xl bg-white/5 p-3"
+                      >
+                        <div className="h-10 w-10 rounded-full bg-pink-500/30" />
+                        <div>
+                          <div className="text-sm font-semibold">Egelove Üyesi</div>
+                          <div className="text-xs text-white/45">Profilini ziyaret etti</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="rounded-3xl border border-pink-400/20 bg-pink-600/15 p-5">
+                  <h3 className="mb-2 text-lg font-bold">Premium</h3>
+                  <p className="mb-4 text-sm text-white/65">
+                    Profil ziyaretlerini, favorileri ve daha fazlasını öne çıkar.
+                  </p>
+                  <Link href="/premium">
+                    <Button className="w-full bg-pink-600 hover:bg-pink-700">
+                      Premium
+                    </Button>
+                  </Link>
+                </div>
+              </aside>
+            </div>
+          )}
+        </div>
+      </section>
+
+      <Footer />
+      <AuthDialog activeTab={authTab} onClose={() => setAuthTab(null)} />
+    </div>
+  );
+}
