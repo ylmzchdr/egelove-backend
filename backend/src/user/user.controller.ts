@@ -15,6 +15,7 @@ export class UserController {
       where: { id: user.sub },
       include: { photos: true, city: true, district: true },
     });
+
     const { passwordHash, refreshToken, turnstileToken, ...safe } = profile!;
     return safe;
   }
@@ -24,9 +25,9 @@ export class UserController {
   async updateMe(@CurrentUser() user: any, @Body() data: UpdateUserDto) {
     const updated = await this.prisma.user.update({
       where: { id: user.sub },
-            data: data as any,
-
+      data: data as any,
     });
+
     const { passwordHash, refreshToken, turnstileToken, ...safe } = updated;
     return safe;
   }
@@ -38,10 +39,17 @@ export class UserController {
       where: { id: { not: user.sub }, isActive: true },
       take: 20,
       select: {
-        id: true, name: true, birthDate: true, cityId: true,
-        gender: true, bio: true, avatar: true, isVerified: true,
+        id: true,
+        name: true,
+        birthDate: true,
+        cityId: true,
+        gender: true,
+        bio: true,
+        avatar: true,
+        isVerified: true,
       },
     });
+
     return users;
   }
 
@@ -90,20 +98,24 @@ export class UserController {
     if (bloodType) where.bloodType = bloodType;
     if (income) where.income = income;
     if (occupation) where.occupation = { contains: occupation, mode: "insensitive" };
+
     if (username) {
       where.OR = [
         { name: { contains: username, mode: "insensitive" } },
         { surname: { contains: username, mode: "insensitive" } },
       ];
     }
+
     if (hasPhotos === "true") {
       where.photos = { some: { status: "APPROVED" } };
     }
+
     if (minHeight || maxHeight) {
       where.height = {};
       if (minHeight) where.height.gte = parseInt(minHeight);
       if (maxHeight) where.height.lte = parseInt(maxHeight);
     }
+
     if (minWeight || maxWeight) {
       where.weight = {};
       if (minWeight) where.weight.gte = parseInt(minWeight);
@@ -112,12 +124,22 @@ export class UserController {
 
     if (minAge || maxAge) {
       const now = new Date();
+
       if (maxAge) {
-        const minDate = new Date(now.getFullYear() - parseInt(maxAge), now.getMonth(), now.getDate());
+        const minDate = new Date(
+          now.getFullYear() - parseInt(maxAge),
+          now.getMonth(),
+          now.getDate(),
+        );
         where.birthDate = { ...where.birthDate, gte: minDate };
       }
+
       if (minAge) {
-        const maxDate = new Date(now.getFullYear() - parseInt(minAge), now.getMonth(), now.getDate());
+        const maxDate = new Date(
+          now.getFullYear() - parseInt(minAge),
+          now.getMonth(),
+          now.getDate(),
+        );
         where.birthDate = { ...where.birthDate, lte: maxDate };
       }
     }
@@ -125,14 +147,29 @@ export class UserController {
     const users = await this.prisma.user.findMany({
       where,
       take: 50,
-      include: { city: true, district: true, photos: { where: { status: "APPROVED" }, take: 3 } },
+      include: {
+        city: true,
+        district: true,
+        photos: { where: { status: "APPROVED" }, take: 3 },
+      },
     });
 
-    return users.map((u) => {
-      const { passwordHash, refreshToken, turnstileToken, twoFactorSecret, emailVerifyToken, emailVerifySentAt, ...safe } = u;
+    return users.map((u: any) => {
+      const {
+        passwordHash,
+        refreshToken,
+        turnstileToken,
+        twoFactorSecret,
+        emailVerifyToken,
+        emailVerifySentAt,
+        ...safe
+      } = u;
+
       return {
         ...safe,
-        age: Math.floor((Date.now() - new Date(safe.birthDate).getTime()) / 31557600000),
+        age: Math.floor(
+          (Date.now() - new Date(safe.birthDate).getTime()) / 31557600000,
+        ),
         birthDate: undefined,
       };
     });
@@ -142,10 +179,20 @@ export class UserController {
   async getProfile(@Param("id") id: string) {
     const profile = await this.prisma.user.findUnique({
       where: { id },
-      include: { photos: { where: { status: "APPROVED" } }, city: true, district: true },
+      include: { photos: true, city: true, district: true },
     });
+
     if (!profile) return { error: "Kullanıcı bulunamadı" };
-    const { passwordHash, refreshToken, turnstileToken, twoFactorSecret, emailVerifyToken, ...safe } = profile;
+
+    const {
+      passwordHash,
+      refreshToken,
+      turnstileToken,
+      twoFactorSecret,
+      emailVerifyToken,
+      ...safe
+    } = profile;
+
     return safe;
   }
 }
