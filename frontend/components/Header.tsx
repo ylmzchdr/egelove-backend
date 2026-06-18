@@ -12,6 +12,15 @@ type HeaderProps = {
   onOpenRegister?: () => void;
 };
 
+type MeResponse = {
+  name?: string | null;
+  surname?: string | null;
+  email?: string | null;
+};
+
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "https://egelove-backend.onrender.com";
+
 const languages: { code: Lang; label: string }[] = [
   { code: "TR", label: "Türkçe" },
   { code: "EN", label: "English" },
@@ -19,40 +28,65 @@ const languages: { code: Lang; label: string }[] = [
   { code: "AR", label: "العربية" },
 ];
 
+const welcomeByLang: Record<Lang, string> = {
+  TR: "Hoş geldin",
+  EN: "Welcome",
+  RU: "Добро пожаловать",
+  AR: "مرحباً",
+};
+
+function getFirstName(user: MeResponse | null) {
+  const fullName = `${user?.name || ""} ${user?.surname || ""}`.trim();
+
+  if (fullName) {
+    return fullName.split(" ")[0];
+  }
+
+  if (user?.email) {
+    return user.email.split("@")[0];
+  }
+
+  return "Panel";
+}
+
 export default function Header({ onOpenLogin, onOpenRegister }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState<string | null>(null);
   const { lang, setLang, t } = useI18n();
 
-   useEffect(() => {
+  useEffect(() => {
     const token = localStorage.getItem("accessToken");
-    setIsLoggedIn(!!token);
-    
-    if (token) {
+
+    if (!token) {
+      setIsLoggedIn(false);
+      setUserName(null);
+      return;
+    }
+
+    setIsLoggedIn(true);
+
+    const fetchMe = async () => {
       try {
-        const base64Url = token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = decodeURIComponent(
-          window.atob(base64)
-            .split('')
-            .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-            .join('')
-        );
-        
-        const payload = JSON.parse(jsonPayload);
-        
-        if (payload.email) {
-          // e-posta adresinin @ işaretinden önceki kısmını alır (Örn: ylmzchdr)
-          const fallbackName = payload.email.split('@')[0];
-          setUserName(fallbackName);
-        } else {
+        const res = await fetch(`${API_URL}/users/me`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!res.ok) {
           setUserName("Panel");
+          return;
         }
-      } catch (e) {
+
+        const user: MeResponse = await res.json();
+        setUserName(getFirstName(user));
+      } catch {
         setUserName("Panel");
       }
-    }
+    };
+
+    fetchMe();
   }, []);
 
   const handleLogout = () => {
@@ -62,6 +96,11 @@ export default function Header({ onOpenLogin, onOpenRegister }: HeaderProps) {
     setUserName(null);
     window.location.href = "/";
   };
+
+  const loggedInLabel =
+    userName && userName !== "Panel"
+      ? `${welcomeByLang[lang]} ${userName}`
+      : "Panel";
 
   const navItems = [
     { label: t.nav.home, href: "/" },
@@ -117,9 +156,9 @@ export default function Header({ onOpenLogin, onOpenRegister }: HeaderProps) {
             <>
               <Link
                 href="/dashboard"
-                className="bg-black text-[#FFC000] font-bold text-xs h-8 px-4 rounded flex items-center no-underline max-w-[150px] truncate"
+                className="bg-black text-[#FFC000] font-bold text-xs h-8 px-4 rounded flex items-center no-underline max-w-[220px] truncate"
               >
-                {userName || "Panel"}
+                {loggedInLabel}
               </Link>
 
               <Button
@@ -201,7 +240,7 @@ export default function Header({ onOpenLogin, onOpenRegister }: HeaderProps) {
                   className="bg-black text-[#FFC000] w-full font-bold text-center rounded px-4 py-2 no-underline truncate"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  {userName || "Panel"}
+                  {loggedInLabel}
                 </Link>
 
                 <Button
