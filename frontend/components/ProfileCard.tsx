@@ -12,7 +12,7 @@ type ProfileCardProps = {
   city?: string;
   district?: string;
   bio?: string;
-  avatar?: string;
+  avatar?: any; // Esnek obje veya string alabilmesi için any yaptık
   verified?: boolean;
 };
 
@@ -25,20 +25,50 @@ const avatarColors = [
   "from-violet-400 to-indigo-500",
 ];
 
-export default function ProfileCard({ name, age, city, district, bio, verified = false }: ProfileCardProps) {
+export default function ProfileCard({ name, age, city, district, bio, avatar, verified = false }: ProfileCardProps) {
   const { t } = useI18n();
   const gradient = avatarColors[name.length % avatarColors.length];
+
+  // Senin hazırladığın profesyonel URL çözücü mantık
+  const backendUrl = process.env.NEXT_PUBLIC_API_URL || "";
+
+  const databasePhoto =
+    avatar?.photos?.find((p: any) => p.isMain)?.url ||
+    avatar?.photos?.[0]?.url;
+
+  const avatarUrl = databasePhoto
+    ? databasePhoto.startsWith("http")
+      ? databasePhoto
+      : `${backendUrl}${databasePhoto}`
+    : typeof avatar === "string"
+      ? avatar
+      : null;
 
   return (
     <Card className="bg-white/5 border-white/10 backdrop-blur-xl overflow-hidden group hover:border-pink-400/50 transition-all duration-300">
       <div className={`h-48 bg-gradient-to-br ${gradient} relative`}>
+        {/* KARTIN ARKA PLAN RESMİ */}
+        {avatarUrl && (
+          <img 
+            src={avatarUrl} 
+            alt={name} 
+            className="w-full h-full object-cover opacity-80"
+          />
+        )}
+        
         {verified && (
           <div className="absolute top-3 right-3 bg-pink-500 rounded-full p-1.5">
             <Star className="w-3.5 h-3.5 text-white fill-white" />
           </div>
         )}
-        <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-20 h-20 rounded-full border-4 border-pink-900 bg-gradient-to-br from-pink-300 to-pink-500 flex items-center justify-center text-2xl font-bold text-white shadow-lg">
-          {name.charAt(0).toUpperCase()}
+        
+        {/* YUVARLAK PROFİL RESMİ ALANI */}
+        <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-20 h-20 rounded-full border-4 border-pink-900 overflow-hidden bg-gradient-to-br from-pink-300 to-pink-500 flex items-center justify-center shadow-lg">
+          {avatarUrl ? (
+            <img src={avatarUrl} alt={name} className="w-full h-full object-cover" />
+          ) : (
+            <span className="text-2xl font-bold text-white">{name.charAt(0).toUpperCase()}</span>
+          )}
         </div>
       </div>
 

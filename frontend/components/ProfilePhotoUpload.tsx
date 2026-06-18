@@ -2,7 +2,8 @@
 
 import { useState, useRef } from "react";
 import { Upload, X, Check, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 export default function ProfilePhotoUpload() {
   const [photos, setPhotos] = useState<string[]>([]);
@@ -17,14 +18,42 @@ export default function ProfilePhotoUpload() {
       alert("Sadece JPEG, PNG veya WebP formatı");
       return;
     }
+
     if (file.size > 10 * 1024 * 1024) {
       alert("Maksimum 10MB");
       return;
     }
 
-    const url = URL.createObjectURL(file);
-    setPhotos((prev) => [...prev, url]);
-    setUploading(false);
+    try {
+      setUploading(true);
+
+      const token = localStorage.getItem("accessToken");
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch(`${API_URL}/photos/upload`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data?.message || "Upload failed");
+      }
+
+      setPhotos((prev) => [...prev, data.url]);
+
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
+      setUploading(false);
+      if (inputRef.current) inputRef.current.value = "";
+    }
   };
 
   const removePhoto = (index: number) => {
@@ -34,15 +63,15 @@ export default function ProfilePhotoUpload() {
   return (
     <div>
       <div className="grid grid-cols-3 gap-4 mb-4">
+
         {photos.map((url, i) => (
-          <div key={i} className="relative aspect-square rounded-xl overflow-hidden bg-pink-900/40 border border-white/10">
-            <img src={url} alt={`Foto ${i + 1}`} className="w-full h-full object-cover" />
-            <button
-              onClick={() => removePhoto(i)}
-              className="absolute top-2 right-2 bg-black/60 rounded-full p-1 hover:bg-black/80"
-            >
+          <div key={i} className="relative aspect-square rounded-xl overflow-hidden">
+            <img src={url} className="w-full h-full object-cover" />
+
+            <button onClick={() => removePhoto(i)} className="absolute top-2 right-2">
               <X className="w-4 h-4 text-white" />
             </button>
+
             {i === 0 && (
               <div className="absolute bottom-2 left-2 bg-pink-600 text-white text-xs px-2 py-0.5 rounded-full flex items-center gap-1">
                 <Check className="w-3 h-3" /> Ana
@@ -50,19 +79,29 @@ export default function ProfilePhotoUpload() {
             )}
           </div>
         ))}
+
         {photos.length < 6 && (
           <button
             onClick={() => inputRef.current?.click()}
             disabled={uploading}
-            className="aspect-square rounded-xl border-2 border-dashed border-white/20 flex flex-col items-center justify-center gap-2 hover:border-pink-400/50 transition text-white/40 hover:text-pink-300"
+            className="aspect-square border-dashed border flex items-center justify-center"
           >
-            {uploading ? <Loader2 className="w-8 h-8 animate-spin" /> : <Upload className="w-8 h-8" />}
-            <span className="text-xs">Fotoğraf Ekle</span>
+            {uploading ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              <Upload />
+            )}
           </button>
         )}
       </div>
-      <input ref={inputRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handleFile} />
-      <p className="text-xs text-white/40">İlk fotoğraf profil resmin olur. En fazla 6 fotoğraf. JPEG, PNG, WebP - max 10MB.</p>
+
+      <input
+        ref={inputRef}
+        type="file"
+        className="hidden"
+        accept="image/jpeg,image/png,image/webp"
+        onChange={handleFile}
+      />
     </div>
   );
 }

@@ -437,16 +437,24 @@ export default function SearchPage() {
               <p className="text-white/40 text-sm mb-6">{results.length} sonuç bulundu</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {results.map((profile) => (
-                  <ProfileCard
-                    key={profile.id}
-                    id={profile.id}
-                    name={`${profile.name}${profile.surname ? " " + profile.surname : ""}`}
-                    age={profile.age}
-                    city={profile.city?.name || ""}
-                    district={profile.district?.name || ""}
-                    bio={profile.aboutMe || profile.bio || ""}
-                    verified={profile.isVerified}
-                  />
+  results.map((profile) => {
+   const mainPhoto = (profile as any).photos?.[0]?.url;
+  return (
+   <ProfileCard
+  key={profile.id}
+  id={profile.id}
+  name={`${profile.name}${profile.surname ? " " + profile.surname : ""}`}
+  age={profile.age}
+  city={profile.city?.name || ""}
+  district={profile.district?.name || ""}
+  bio={profile.aboutMe || profile.bio || ""}
+  verified={profile.isVerified}
+  avatar={profile as any}
+/>
+
+  );
+})
+
                 ))}
               </div>
             </>
