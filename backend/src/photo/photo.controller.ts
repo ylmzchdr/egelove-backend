@@ -1,5 +1,18 @@
-import { Controller, Post, Get, Param, UseGuards, Body } from "@nestjs/common";
+import {
+  Controller,
+  Post,
+  Get,
+  Param,
+  UseGuards,
+  Body,
+  UploadedFile,
+  UseInterceptors,
+  BadRequestException,
+} from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
 import { Throttle } from "@nestjs/throttler";
+import { diskStorage } from "multer";
+import { extname } from "path";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { CurrentUser } from "../auth/current-user.decorator";
 import { PrismaService } from "../prisma/prisma.service";
@@ -16,17 +29,41 @@ export class PhotoController {
 
   @Post("upload")
   @Throttle({ default: { limit: 10, ttl: 60000 } })
-  async uploadPhoto(@CurrentUser() user: any, @Body("url") url: string, @Body("mimetype") mimetype?: string, @Body("size") size?: number) {
-    if (mimetype && size) {
-      const error = validateImageFile(mimetype, size);
-      if (error) return { error };
+  @UseInterceptors(
+    FileInterceptor("file", {
+      storage: diskStorage({
+        destination: "./uploads",
+        filename: (_req: any, file: any, cb: any) => {
+          const unique = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+          cb(null, `${unique}${extname(file.originalname)}`);
+        },
+      }),
+    }),
+  )
+  async uploadPhoto(@CurrentUser() user: any, @UploadedFile() file: any) {
+    if (!file) {
+      throw new BadRequestException("Fotoğraf dosyası gelmedi");
+    }
+
+    const error = validateImageFile(file.mimetype, file.size);
+    if (error) {
+      throw new BadRequestException(error);
     }
 
     const photo = await this.prisma.photo.create({
-      data: { url, userId: user.sub, status: "PENDING" },
+      data: {
+        url: `/uploads/${file.filename}`,
+        userId: user.sub,
+        status: "APPROVED",
+      },
     });
 
-    this.audit.log({ action: "PHOTO_UPLOAD", userId: user.sub, targetId: photo.id });
+    this.audit.log({
+      action: "PHOTO_UPLOAD",
+      userId: user.sub,
+      targetId: photo.id,
+    });
+
     return photo;
   }
 
@@ -66,7 +103,10 @@ export class PhotoController {
   @Get("pending")
   async getPendingPhotos(@CurrentUser() user: any) {
     if (user.isAdmin) {
-      return this.prisma.photo.findMany({ where: { status: "PENDING" }, include: { user: { select: { id: true, name: true, surname: true, email: true } } } });
+      return this.prisma.photo.findMany({
+        where: { status: "PENDING" },
+        include: { user: { select: { id: true, name: true, surname: true, email: true } } },
+      });
     }
     return this.prisma.photo.findMany({ where: { userId: user.sub, status: "PENDING" } });
   }

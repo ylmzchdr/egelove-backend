@@ -13,7 +13,20 @@ export class UserController {
   async getMe(@CurrentUser() user: any) {
     const profile = await this.prisma.user.findUnique({
       where: { id: user.sub },
-      include: { photos: true, city: true, district: true },
+      include: {
+        photos: {
+          where: {
+            status: { in: ["APPROVED", "PENDING"] }
+          },
+          orderBy: [
+            { isMain: "desc" },
+            { createdAt: "desc" },
+          ],
+          take: 1,
+        },
+        city: true,
+        district: true,
+      },
     });
 
     const { passwordHash, refreshToken, turnstileToken, ...safe } = profile!;

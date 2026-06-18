@@ -35,10 +35,10 @@ async function bootstrap() {
   app.use(helmet.noSniff());
   app.use(helmet.xssFilter());
 
-  app.use(new HttpsRedirectMiddleware().use);
+ // app.use(new HttpsRedirectMiddleware().use);
 
   app.enableCors({
-    origin: process.env.CORS_ORIGIN || "http://localhost:3001",
+  origin: process.env.CORS_ORIGIN || "http://localhost:3000",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization", "x-shopier-signature"],
