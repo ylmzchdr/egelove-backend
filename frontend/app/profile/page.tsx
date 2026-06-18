@@ -338,27 +338,25 @@ const avatar =
                     />
                   </div>
 
-               <div className="mt-3 grid grid-cols-4 gap-2">
-  {((user as any)?.photos?.length ? (user as any).photos : [{ url: (user as any)?.avatar }])
+                 <div className="mt-3 grid grid-cols-4 gap-2">
+  {(sortedPhotos.length ? sortedPhotos : [{ url: avatar }])
     .slice(0, 4)
-    .map((photo: any, index: number) => {
-      const photoUrl = photo.url && photo.url.startsWith("/uploads") ? `https://egelove.tr${photo.url}` : photo.url;
+    .map((photo, index) => {
+      const src =
+        typeof photo.url === "string" && photo.url.startsWith("/uploads")
+          ? `${process.env.NEXT_PUBLIC_API_URL}${photo.url}`
+          : photo.url;
+
       return (
         <div
           key={photo.id || index}
           className="aspect-square overflow-hidden rounded-xl border border-white/10 bg-black/30"
         >
-          {photoUrl ? (
-            <img src={photoUrl} alt="" className="h-full w-full object-cover" />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center text-xs text-white/40">Boş</div>
-          )}
+          <img src={src} alt="" className="h-full w-full object-cover" />
         </div>
       );
     })}
 </div>
-
-
 
                   <Link href="/profile/edit">
                     <Button
