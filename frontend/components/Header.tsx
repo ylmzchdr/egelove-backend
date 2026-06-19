@@ -75,15 +75,16 @@ export default function Header({ onOpenLogin, onOpenRegister }: HeaderProps) {
         });
 
         if (!res.ok) {
-          setUserName("Panel");
-          return;
-        }
+  setUserName(null);
+  return;
+}
 
-        const user: MeResponse = await res.json();
-        setUserName(getFirstName(user));
+const data = await res.json();
+const user = data.user || data.profile || data;
+setUserName(getFirstName(user));
       } catch {
-        setUserName("Panel");
-      }
+  setUserName(null);
+}
     };
 
     fetchMe();
@@ -97,10 +98,9 @@ export default function Header({ onOpenLogin, onOpenRegister }: HeaderProps) {
     window.location.href = "/";
   };
 
-  const loggedInLabel =
-    userName && userName !== "Panel"
-      ? `${welcomeByLang[lang]} ${userName}`
-      : "Panel";
+  const loggedInLabel = userName
+  ? `${welcomeByLang[lang]} ${userName}`
+  : `${welcomeByLang[lang]}`;
 
   const navItems = [
     { label: t.nav.home, href: "/" },
