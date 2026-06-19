@@ -37,8 +37,7 @@ async function bootstrap() {
   );
   app.use(helmet.hsts({ maxAge: 31536000, includeSubDomains: true, preload: true }));
   app.use(helmet.referrerPolicy({ policy: "strict-origin-when-cross-origin" }));
-  app.use(helmet.frameguard({ action: "deny" }));
-  app.use(helmet.noSniff());
+  app.use(helmet.frameguard({ action: "deny" }))
   app.use(helmet.xssFilter());
 
  // app.use(new HttpsRedirectMiddleware().use);
