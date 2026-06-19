@@ -249,6 +249,7 @@ export default function ProfilePage() {
 
         const me = await api.users.me();
 console.log("ME RESPONSE =", me);
+console.log("PHOTOS =", (me as CurrentUser).photos);
 setUser(me as CurrentUser);
       } catch (error) {
         console.error(error);
@@ -269,7 +270,9 @@ setUser(me as CurrentUser);
   const cityName = user?.city?.name || "";
   const districtName = user?.district?.name || "";
   const age = calculateAge(user?.birthDate);
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://egelove-backend.onrender.com";
 
 const normalizePhotoUrl = (url?: string | null) => {
   if (!url) return "";
