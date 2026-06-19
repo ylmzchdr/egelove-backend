@@ -155,7 +155,7 @@ export default function Header({ onOpenLogin, onOpenRegister }: HeaderProps) {
           {isLoggedIn ? (
             <>
               <Link
-                href="/dashboard"
+                href="/profile"
                 className="bg-black text-[#FFC000] font-bold text-xs h-8 px-4 rounded flex items-center no-underline max-w-[220px] truncate"
               >
                 {loggedInLabel}
@@ -236,7 +236,7 @@ export default function Header({ onOpenLogin, onOpenRegister }: HeaderProps) {
             {isLoggedIn ? (
               <>
                 <Link
-                  href="/dashboard"
+                 href="/profile"
                   className="bg-black text-[#FFC000] w-full font-bold text-center rounded px-4 py-2 no-underline truncate"
                   onClick={() => setMobileMenuOpen(false)}
                 >
