@@ -1,4 +1,6 @@
 process.env.DATABASE_URL = "mysql://root:@127.0.0.1:3306/egelove";
+import * as express from "express";
+import { join } from "path";
 import { NestFactory } from "@nestjs/core";
 import { ValidationPipe } from "@nestjs/common";
 import helmet from "helmet";
@@ -42,7 +44,11 @@ async function bootstrap() {
 
  // app.use(new HttpsRedirectMiddleware().use);
 
-  app.enableCors({
+  app.use(
+  "/uploads",
+  express.static(join(process.cwd(), "uploads")),
+);
+ app.enableCors({
   origin: process.env.CORS_ORIGIN || "http://localhost:3000",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
