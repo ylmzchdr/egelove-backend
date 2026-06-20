@@ -269,7 +269,7 @@ export default function ProfileEditPage() {
           <div className="space-y-8">
             <div className="bg-white/5 border border-white/10 rounded-xl p-6">
               <h2 className="text-xl font-semibold mb-4">Fotoğraflar</h2>
-              <ProfilePhotoUpload />
+              <ProfilePhotoUpload initialPhotos={(form as any).photos || []} />/
             </div>
 
             <div className="bg-white/5 border border-white/10 rounded-xl p-6">
