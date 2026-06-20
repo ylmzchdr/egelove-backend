@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Upload, X, Check, Loader2 } from "lucide-react";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "https://egelove-backend.onrender.com";
 
 type PhotoItem = {
   id: string;
