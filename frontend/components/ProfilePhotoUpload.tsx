@@ -1,14 +1,38 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Upload, X, Check, Loader2 } from "lucide-react";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
-export default function ProfilePhotoUpload() {
-  const [photos, setPhotos] = useState<string[]>([]);
+type PhotoItem = {
+  id: string;
+  url: string;
+  status?: string;
+  isMain?: boolean;
+};
+
+type ProfilePhotoUploadProps = {
+  initialPhotos?: PhotoItem[];
+};
+
+export default function ProfilePhotoUpload({
+  initialPhotos = [],
+}: ProfilePhotoUploadProps) {
+  const [photos, setPhotos] = useState<PhotoItem[]>(initialPhotos);
   const [uploading, setUploading] = useState(false);
+  const [removingId, setRemovingId] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setPhotos(initialPhotos || []);
+  }, [initialPhotos]);
+
+  const getImageUrl = (url: string) => {
+    if (!url) return "";
+    if (url.startsWith("http")) return url;
+    return `${API_URL}${url}`;
+  };
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -28,6 +52,7 @@ export default function ProfilePhotoUpload() {
       setUploading(true);
 
       const token = localStorage.getItem("accessToken");
+      if (!token) throw new Error("Oturum bulunamadı");
 
       const formData = new FormData();
       formData.append("file", file);
@@ -46,30 +71,73 @@ export default function ProfilePhotoUpload() {
         throw new Error(data?.message || "Upload failed");
       }
 
-      setPhotos((prev) => [...prev, data.url]);
-
+      setPhotos((prev) => [...prev, data]);
     } catch (err: any) {
-      alert(err.message);
+      alert(err.message || "Fotoğraf yüklenemedi");
     } finally {
       setUploading(false);
       if (inputRef.current) inputRef.current.value = "";
     }
   };
 
-  const removePhoto = (index: number) => {
-    setPhotos((prev) => prev.filter((_, i) => i !== index));
+  const removePhoto = async (photo: PhotoItem) => {
+    if (!photo?.id) {
+      alert("Fotoğraf id bulunamadı");
+      return;
+    }
+
+    try {
+      setRemovingId(photo.id);
+
+      const token = localStorage.getItem("accessToken");
+      if (!token) throw new Error("Oturum bulunamadı");
+
+      const res = await fetch(`${API_URL}/photos/${photo.id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok) {
+        throw new Error(data?.message || "Fotoğraf silinemedi");
+      }
+
+      setPhotos((prev) => prev.filter((p) => p.id !== photo.id));
+    } catch (err: any) {
+      alert(err.message || "Fotoğraf silinemedi");
+    } finally {
+      setRemovingId(null);
+    }
   };
 
   return (
     <div>
       <div className="grid grid-cols-3 gap-4 mb-4">
+        {photos.map((photo, i) => (
+          <div
+            key={photo.id || i}
+            className="relative aspect-square rounded-xl overflow-hidden bg-white/10"
+          >
+            <img
+              src={getImageUrl(photo.url)}
+              className="w-full h-full object-cover"
+              alt="Profil fotoğrafı"
+            />
 
-        {photos.map((url, i) => (
-          <div key={i} className="relative aspect-square rounded-xl overflow-hidden">
-            <img src={url} className="w-full h-full object-cover" />
-
-            <button onClick={() => removePhoto(i)} className="absolute top-2 right-2">
-              <X className="w-4 h-4 text-white" />
+            <button
+              type="button"
+              onClick={() => removePhoto(photo)}
+              disabled={removingId === photo.id}
+              className="absolute top-2 right-2 bg-black/60 rounded-full p-1"
+            >
+              {removingId === photo.id ? (
+                <Loader2 className="w-4 h-4 text-white animate-spin" />
+              ) : (
+                <X className="w-4 h-4 text-white" />
+              )}
             </button>
 
             {i === 0 && (
@@ -82,15 +150,12 @@ export default function ProfilePhotoUpload() {
 
         {photos.length < 6 && (
           <button
+            type="button"
             onClick={() => inputRef.current?.click()}
             disabled={uploading}
-            className="aspect-square border-dashed border flex items-center justify-center"
+            className="aspect-square border border-dashed border-white/30 rounded-xl flex items-center justify-center bg-white/5"
           >
-            {uploading ? (
-              <Loader2 className="animate-spin" />
-            ) : (
-              <Upload />
-            )}
+            {uploading ? <Loader2 className="animate-spin" /> : <Upload />}
           </button>
         )}
       </div>
