@@ -542,17 +542,19 @@ function trOpt(value: string | null | undefined) {
                   </div>
                 </div>
 
-                <div className="rounded-3xl border border-pink-400/20 bg-pink-600/15 p-5">
-                  <h3 className="mb-2 text-lg font-bold">Premium</h3>
-                  <p className="mb-4 text-sm text-white/65">
-                    Profil ziyaretlerini, favorileri ve daha fazlasını öne çıkar.
-                  </p>
-                  <Link href="/premium">
-                    <Button className="w-full bg-pink-600 hover:bg-pink-700">
-                      Premium
-                    </Button>
-                  </Link>
-                </div>
+               <div className="rounded-3xl border border-pink-400/20 bg-pink-600/15 p-5">
+  <h3 className="mb-2 text-lg font-bold">{tx.premium}</h3>
+
+  <p className="mb-4 text-sm text-white/65">
+    {tx.premiumDescription}
+  </p>
+
+  <Link href="/premium">
+    <Button className="w-full bg-pink-600 hover:bg-pink-700">
+      {tx.premium}
+    </Button>
+  </Link>
+</div>
               </aside>
             </div>
           )}
