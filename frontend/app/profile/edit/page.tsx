@@ -238,7 +238,18 @@ export default function ProfileEditPage() {
         occupation: form.occupation || undefined,
         hobbies: hobbiesInput.split(",").map((h) => h.trim()).filter(Boolean),
       };
-      Object.keys(payload).forEach((k) => payload[k] === undefined && delete payload[k]);
+     Object.keys(payload).forEach((k) => {
+  if (
+    payload[k] === undefined ||
+    payload[k] === null ||
+    payload[k] === ""
+  ) {
+    delete payload[k];
+  }
+});
+if (payload.birthDate) {
+  payload.birthDate = new Date(payload.birthDate).toISOString();
+}
       await api.users.update(payload);
       setSuccess("Profil başarıyla güncellendi!");
     } catch (err: any) {
