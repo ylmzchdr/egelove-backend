@@ -8,42 +8,117 @@ import { UpdateUserDto } from "./dto/update-user.dto";
 export class UserController {
   constructor(private prisma: PrismaService) {}
 
-  @Get("me")
-  @UseGuards(JwtAuthGuard)
-  async getMe(@CurrentUser() user: any) {
-    const profile = await this.prisma.user.findUnique({
-      where: { id: user.sub },
-      include: {
-        photos: {
-          where: {
-            status: { in: ["APPROVED", "PENDING"] }
-          },
-          orderBy: [
-            { isMain: "desc" },
-            { createdAt: "desc" },
-          ],
-          take: 1,
+@Get("me")
+@UseGuards(JwtAuthGuard)
+async getMe(@CurrentUser() user: any) {
+  const profile = await this.prisma.user.findUnique({
+    where: { id: user.sub },
+    include: {
+      photos: {
+        where: {
+          status: { in: ["APPROVED", "PENDING"] },
         },
-        city: true,
-        district: true,
+        orderBy: [
+          { isMain: "desc" },
+          { createdAt: "desc" },
+        ],
+        take: 1,
       },
-    });
+      city: true,
+      district: true,
+    },
+  });
 
-    const { passwordHash, refreshToken, turnstileToken, ...safe } = profile!;
-    return safe;
+  if (!profile) {
+    return { error: "Kullanıcı bulunamadı" };
   }
+
+  const {
+    passwordHash,
+    refreshToken,
+    turnstileToken,
+    ...safe
+  } = profile;
+
+  return safe;
+}
 
   @Put("me")
-  @UseGuards(JwtAuthGuard)
-  async updateMe(@CurrentUser() user: any, @Body() data: UpdateUserDto) {
-    const updated = await this.prisma.user.update({
-      where: { id: user.sub },
-      data: data as any,
-    });
+@UseGuards(JwtAuthGuard)
+async updateMe(@CurrentUser() user: any, @Body() data: UpdateUserDto) {
+  const cleanData: any = {};
 
-    const { passwordHash, refreshToken, turnstileToken, ...safe } = updated;
-    return safe;
+  const allowedFields = [
+    "name",
+    "surname",
+    "phone",
+    "birthDate",
+    "gender",
+    "cityId",
+    "districtId",
+    "bio",
+    "aboutMe",
+    "lookingFor",
+    "education",
+    "income",
+    "religion",
+    "smoking",
+    "alcohol",
+    "children",
+    "bodyType",
+    "maritalStatus",
+    "height",
+    "weight",
+    "eyeColor",
+    "hairColor",
+    "bloodType",
+    "occupation",
+  ];
+
+  for (const key of allowedFields) {
+    const value = (data as any)[key];
+
+    if (value !== undefined && value !== null && value !== "") {
+      cleanData[key] = value;
+    }
   }
+
+  if (cleanData.birthDate) {
+    cleanData.birthDate = new Date(cleanData.birthDate);
+  }
+
+  if (cleanData.cityId) {
+    cleanData.cityId = Number(cleanData.cityId);
+  }
+
+  if (cleanData.districtId) {
+    cleanData.districtId = Number(cleanData.districtId);
+  }
+
+  if (cleanData.height) {
+    cleanData.height = Number(cleanData.height);
+  }
+
+  if (cleanData.weight) {
+    cleanData.weight = Number(cleanData.weight);
+  }
+
+  const updated = await this.prisma.user.update({
+    where: { id: user.sub },
+    data: cleanData,
+  });
+
+  const {
+    passwordHash,
+    refreshToken,
+    turnstileToken,
+    twoFactorSecret,
+    emailVerifyToken,
+    ...safe
+  } = updated;
+
+  return safe;
+}
 
   @Get("search")
   @UseGuards(JwtAuthGuard)

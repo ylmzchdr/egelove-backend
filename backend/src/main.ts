@@ -1,28 +1,28 @@
-process.env.DATABASE_URL = "mysql://root:@127.0.0.1:3306/egelove";
-import * as express from "express";
-import { join } from "path";
+import * as dotenv from "dotenv";
+dotenv.config();
 import { NestFactory } from "@nestjs/core";
 import { ValidationPipe } from "@nestjs/common";
 import helmet from "helmet";
+import * as express from "express";
+import { join } from "path";
+
 import { AppModule } from "./app.module";
 import { AllExceptionsFilter } from "./common/filters/all-exceptions.filter";
-import { HttpsRedirectMiddleware } from "./common/middleware/https-redirect.middleware";
-import { validateEnv } from "./common/env.validation";
 
 async function bootstrap() {
-  validateEnv();
-
   const app = await NestFactory.create(AppModule, {
     rawBody: true,
   });
 
- app.use(
-  helmet({
-    crossOriginResourcePolicy: {
-      policy: "cross-origin",
-    },
-  }),
-);
+  // SECURITY
+  app.use(
+    helmet({
+      crossOriginResourcePolicy: {
+        policy: "cross-origin",
+      },
+    }),
+  );
+
   app.use(
     helmet.contentSecurityPolicy({
       directives: {
@@ -37,36 +37,53 @@ async function bootstrap() {
       },
     }),
   );
-  app.use(helmet.hsts({ maxAge: 31536000, includeSubDomains: true, preload: true }));
-  app.use(helmet.referrerPolicy({ policy: "strict-origin-when-cross-origin" }));
-  app.use(helmet.frameguard({ action: "deny" }))
-  app.use(helmet.xssFilter());
-
- // app.use(new HttpsRedirectMiddleware().use);
 
   app.use(
-  "/uploads",
-  express.static(join(process.cwd(), "uploads")),
-);
- app.enableCors({
-  origin: process.env.CORS_ORIGIN || "http://localhost:3000",
+    helmet.hsts({
+      maxAge: 31536000,
+      includeSubDomains: true,
+      preload: true,
+    }),
+  );
+
+  app.use(
+    helmet.referrerPolicy({
+      policy: "strict-origin-when-cross-origin",
+    }),
+  );
+
+  app.use(helmet.frameguard({ action: "deny" }));
+
+  // STATIC FILES
+  app.use(
+    "/uploads",
+    express.static(join(process.cwd(), "uploads")),
+  );
+
+  // CORS
+  app.enableCors({
+    origin: process.env.CORS_ORIGIN || "http://localhost:3000",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-    allowedHeaders: ["Content-Type", "Authorization", "x-shopier-signature"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   });
 
+  // VALIDATION
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
-      forbidNonWhitelisted: false,
       transform: true,
     }),
   );
 
+  // GLOBAL ERROR HANDLER
   app.useGlobalFilters(new AllExceptionsFilter());
 
-  const port = process.env.PORT || 3000;
+  const port = process.env.PORT || 3001;
+
   await app.listen(port);
-  console.log(`Backend çalışıyor: http://localhost:${port}`);
+
+  console.log(`🚀 Backend çalışıyor: http://localhost:${port}`);
 }
+
 bootstrap();
