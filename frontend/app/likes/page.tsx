@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import AuthDialog from "@/components/AuthDialog";
 import ProfileCard from "@/components/ProfileCard";
 import { api } from "@/lib/api";
+import { useI18n } from "@/lib/i18n-context";
 
 function getUserIdFromToken(): string | null {
   if (typeof window === "undefined") return null;
@@ -34,6 +35,7 @@ export default function LikesPage() {
   const [matches, setMatches] = useState<any[]>([]);
   const [myId, setMyId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const { lang } = useI18n();
 
   const load = async () => {
     const uid = getUserIdFromToken();
@@ -69,22 +71,52 @@ const sent = safeMatches.filter(
       <Header onOpenLogin={() => setAuthTab("login")} onOpenRegister={() => setAuthTab("register")} />
       <section className="py-12">
         <div className="mx-auto max-w-7xl px-4">
-          <h1 className="text-3xl font-bold mb-2">Beğeniler</h1>
-          <p className="text-white/50 mb-8">Seni beğenenler ve beğendiklerin</p>
+          <h1 className="text-3xl font-bold mb-2">
+  {lang === "TR"
+    ? "Beğeniler"
+    : lang === "EN"
+    ? "Likes"
+    : lang === "RU"
+    ? "Нравится"
+    : "الإعجابات"}
+</h1>
+          <p className="text-white/50 mb-8">
+  {lang === "TR"
+    ? "Seni beğenenler ve beğendiklerin"
+    : lang === "EN"
+    ? "People who liked you and people you liked"
+    : lang === "RU"
+    ? "Кто лайкнул вас и кого лайкнули вы"
+    : "من أعجبوا بك ومن أعجبت بهم"}
+</p>
 
           <div className="flex gap-4 mb-8 border-b border-white/10">
             <button
               onClick={() => setTab("received")}
               className={`pb-3 text-sm font-medium relative ${tab === "received" ? "text-pink-300" : "text-white/50 hover:text-white"}`}
             >
-              <Heart className="w-4 h-4 inline mr-1" /> Seni Beğenenler ({received.length})
+              <Heart className="w-4 h-4 inline mr-1" />
+{lang === "TR"
+  ? "Seni Beğenenler"
+  : lang === "EN"
+  ? "Liked You"
+  : lang === "RU"
+  ? "Лайкнули вас"
+  : "أعجبوا بك"} ({received.length})
               {tab === "received" && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-pink-500 rounded-full" />}
             </button>
             <button
               onClick={() => setTab("sent")}
               className={`pb-3 text-sm font-medium relative ${tab === "sent" ? "text-pink-300" : "text-white/50 hover:text-white"}`}
             >
-              <ThumbsUp className="w-4 h-4 inline mr-1" /> Beğendiklerin ({sent.length})
+              <ThumbsUp className="w-4 h-4 inline mr-1" />
+{lang === "TR"
+  ? "Beğendiklerin"
+  : lang === "EN"
+  ? "You Liked"
+  : lang === "RU"
+  ? "Вы лайкнули"
+  : "أعجبت بهم"} ({sent.length})
               {tab === "sent" && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-pink-500 rounded-full" />}
             </button>
           </div>
@@ -98,23 +130,63 @@ const sent = safeMatches.filter(
           {!loading && !myId && (
             <div className="text-center py-20 text-white/40">
               <Heart className="w-16 h-16 mx-auto mb-4 opacity-30" />
-              <p className="text-lg">Giriş yapmalısın</p>
+              <p className="text-lg">
+  {lang === "TR"
+    ? "Giriş yapmalısın"
+    : lang === "EN"
+    ? "You must log in"
+    : lang === "RU"
+    ? "Необходимо войти"
+    : "يجب تسجيل الدخول"}
+</p>
             </div>
           )}
 
           {!loading && myId && tab === "received" && received.length === 0 && (
             <div className="text-center py-20 text-white/40">
               <Heart className="w-16 h-16 mx-auto mb-4 opacity-30" />
-              <p className="text-lg">Henüz kimse seni beğenmedi</p>
-              <p className="text-sm">Profilini düzenleyip daha fazla kişiye görün!</p>
+              <p className="text-lg">
+  {lang === "TR"
+    ? "Henüz kimse seni beğenmedi"
+    : lang === "EN"
+    ? "No one has liked you yet"
+    : lang === "RU"
+    ? "Вас пока никто не лайкнул"
+    : "لم يعجب بك أحد بعد"}
+</p>
+              <p className="text-sm">
+  {lang === "TR"
+    ? "Profilini düzenleyip daha fazla kişiye görün!"
+    : lang === "EN"
+    ? "Edit your profile and get seen by more people!"
+    : lang === "RU"
+    ? "Отредактируйте профиль, чтобы вас увидело больше людей!"
+    : "عدّل ملفك الشخصي ليظهر لعدد أكبر من الأشخاص!"}
+</p>
             </div>
           )}
 
           {!loading && myId && tab === "sent" && sent.length === 0 && (
             <div className="text-center py-20 text-white/40">
               <ThumbsUp className="w-16 h-16 mx-auto mb-4 opacity-30" />
-              <p className="text-lg">Henüz kimseyi beğenmedin</p>
-              <p className="text-sm">Keşfet sayfasından üyeleri beğenmeye başla!</p>
+              <p className="text-lg">
+  {lang === "TR"
+    ? "Henüz kimseyi beğenmedin"
+    : lang === "EN"
+    ? "You haven't liked anyone yet"
+    : lang === "RU"
+    ? "Вы пока никого не лайкнули"
+    : "لم تعجب بأي شخص بعد"}
+</p>
+              <p className="text-sm">
+  {lang === "TR"
+    ? "Keşfet sayfasından üyeleri beğenmeye başla!"
+    : lang === "EN"
+    ? "Start liking members from the Discover page!"
+    : lang === "RU"
+    ? "Начните лайкать участников на странице «Открыть»!"
+    : "ابدأ بالإعجاب بالأعضاء من صفحة الاكتشاف!"}
+</p>
             </div>
           )}
 
@@ -137,7 +209,14 @@ const sent = safeMatches.filter(
                       className="w-full mt-2 bg-pink-600 hover:bg-pink-700 text-xs h-8"
                       onClick={() => handleLike(other.id)}
                     >
-                      <Heart className="w-3 h-3 mr-1" /> Karşılık Ver
+                      <Heart className="w-3 h-3 mr-1" />
+{lang === "TR"
+  ? "Karşılık Ver"
+  : lang === "EN"
+  ? "Like Back"
+  : lang === "RU"
+  ? "Ответить лайком"
+  : "رد الإعجاب"}
                     </Button>
                   )}
                   {tab === "received" && match.isMutual && (
@@ -145,7 +224,13 @@ const sent = safeMatches.filter(
                       className="w-full mt-2 bg-green-600 hover:bg-green-700 text-xs h-8"
                       onClick={() => window.location.href = "/messages"}
                     >
-                      Mesaj Gönder
+                    {lang === "TR"
+  ? "Mesaj Gönder"
+  : lang === "EN"
+  ? "Send Message"
+  : lang === "RU"
+  ? "Отправить сообщение"
+  : "إرسال رسالة"}
                     </Button>
                   )}
                 </div>
