@@ -5,13 +5,9 @@ import { useEffect, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import ProfileCard from "@/components/ProfileCard";
 import { useI18n } from "@/lib/i18n-context";
+import { api } from "@/lib/api";
 
-const demoProfiles = [
-  { name: "Elena", age: 29, city: "İstanbul", district: "Kadıköy", bio: "Yeni insanlarla tanışmayı seviyorum ✨", verified: true },
-  { name: "Sofia", age: 31, city: "Antalya", district: "Konyaaltı", bio: "Seyahat ve kahve tutkunu ☕" },
-  { name: "Merve", age: 27, city: "İzmir", district: "Karşıyaka", bio: "Gün batımı yürüyüşlerini seviyorum 🌅", verified: true },
-  { name: "Natalia", age: 33, city: "Muğla", district: "Bodrum", bio: "Deniz, müzik ve eğlence 🌊" },
-];
+
 
 const allCities = [
   "Adana","Adıyaman","Afyonkarahisar","Ağrı","Amasya","Ankara","Antalya","Artvin","Aydın","Balıkesir",
@@ -26,7 +22,26 @@ const allCities = [
 
 export default function DiscoverMembers() {
   const [selectedCity, setSelectedCity] = useState("");
+  const [members, setMembers] = useState<any[]>([]);
+const [loading, setLoading] = useState(true);
   const { t } = useI18n();
+  useEffect(() => {
+  const loadMembers = async () => {
+    try {
+      const data = await api.users.search();
+
+      if (Array.isArray(data)) {
+        setMembers(data);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  loadMembers();
+}, []);
 
   return (
     <section id="discover" className="py-20 bg-gradient-to-b from-pink-950 to-pink-900">
@@ -51,11 +66,34 @@ export default function DiscoverMembers() {
           </Select>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {demoProfiles.map((profile, index) => (
-            <ProfileCard key={index} {...profile} />
-          ))}
-        </div>
+       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+  {loading ? (
+    <p className="text-white/50 col-span-full text-center">
+      Yükleniyor...
+    </p>
+  ) : members.length === 0 ? (
+    <p className="text-white/50 col-span-full text-center">
+     Henüz gösterilecek üye yok
+    </p>
+  ) : (
+    members.map((user) => (
+      <ProfileCard
+        key={user.id}
+        id={user.id}
+        name={`${user.name || ""}${user.surname ? " " + user.surname : ""}`}
+       age={
+  user.birthDate
+    ? new Date().getFullYear() - new Date(user.birthDate).getFullYear()
+    : undefined
+}
+        city={user.city?.name}
+        district={user.district?.name}
+        bio={user.bio}
+        verified={user.isVerified}
+      />
+    ))
+  )}
+</div>
       </div>
     </section>
   );
