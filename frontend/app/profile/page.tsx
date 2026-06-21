@@ -302,13 +302,14 @@ const avatar =
     BLACK: "Siyah",
   },
   EN: {
-    ASSOCIATE: "Associate",
-    MEDIUM: "Medium",
-    DIVORCED: "Divorced",
-    NONE: "None",
-    HAZEL: "Hazel",
-    BLACK: "Black",
-  },
+  ASSOCIATE: "Associate",
+  MEDIUM: "Medium",
+  DIVORCED: "Divorced",
+  NONE: "None",
+  HAZEL: "Hazel",
+  BLACK: "Black",
+  emekli: "Retired",
+},
   RU: {
     ASSOCIATE: "Среднее специальное",
     MEDIUM: "Средний",
@@ -467,7 +468,7 @@ function trOpt(value: string | null | undefined) {
                     <InfoRow label={tx.age} value={age} />
                     <InfoRow label={tx.city} value={cityName} />
                     <InfoRow label={tx.district} value={districtName} />
-                    <InfoRow label={tx.occupation} value={user.occupation} />
+                   <InfoRow label={tx.occupation} value={trOpt(user.occupation)} />
                    <InfoRow label={tx.education} value={trOpt(user.education)} />
 <InfoRow label={tx.income} value={trOpt(user.income)} />
 <InfoRow label={tx.maritalStatus} value={trOpt(user.maritalStatus)} />
