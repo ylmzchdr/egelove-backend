@@ -177,7 +177,13 @@ export default function MessagesPage() {
 </div>
                 )}
                 {!loadingList && myId && filtered.length === 0 && (
-                  <div className="text-center py-12 text-white/40"><p>{tab === "received" ? "Gelen mesajın yok" : tab === "sent" ? "Giden mesajın yok" : "Henüz mesajın yok"}</p></div>
+                  <div className="text-center py-12 text-white/40"><p>
+  {tab === "received"
+    ? lang === "TR" ? "Gelen mesajın yok" : lang === "EN" ? "No received messages" : lang === "RU" ? "Нет входящих сообщений" : "لا توجد رسائل واردة"
+    : tab === "sent"
+    ? lang === "TR" ? "Giden mesajın yok" : lang === "EN" ? "No sent messages" : lang === "RU" ? "Нет отправленных сообщений" : "لا توجد رسائل مرسلة"
+    : lang === "TR" ? "Henüz mesajın yok" : lang === "EN" ? "No messages yet" : lang === "RU" ? "Сообщений пока нет" : "لا توجد رسائل بعد"}
+</p></div>
                 )}
                 {filtered.map((conv) => {
                   const other = otherUser(conv);
@@ -274,7 +280,15 @@ export default function MessagesPage() {
                 </>
               ) : (
                 <div className="flex-1 flex items-center justify-center text-white/40">
-                  <p>Sohbet başlatmak için bir konuşma seç</p>
+                  <p>
+  {lang === "TR"
+    ? "Sohbet başlatmak için bir konuşma seç"
+    : lang === "EN"
+    ? "Select a conversation to start chatting"
+    : lang === "RU"
+    ? "Выберите диалог для начала общения"
+    : "اختر محادثة لبدء الدردشة"}
+</p>
                 </div>
               )}
             </div>
