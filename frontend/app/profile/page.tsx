@@ -235,6 +235,7 @@ export default function ProfilePage() {
 
   const [authTab, setAuthTab] = useState<"login" | "register" | null>(null);
   const [user, setUser] = useState<CurrentUser | null>(null);
+  const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -341,22 +342,21 @@ const avatar =
                     />
                   </div>
 
-                 <div className="mt-3 grid grid-cols-4 gap-2">
+                <div className="mt-3 grid grid-cols-4 gap-2">
   {(sortedPhotos.length ? sortedPhotos : [{ url: avatar }])
     .slice(0, 4)
     .map((photo, index) => {
-      const src =
-        typeof photo.url === "string" && photo.url.startsWith("/uploads")
-          ? `${process.env.NEXT_PUBLIC_API_URL}${photo.url}`
-          : photo.url;
+      const src = normalizePhotoUrl(photo.url);
 
       return (
-        <div
+        <button
+          type="button"
           key={photo.id || index}
-          className="aspect-square overflow-hidden rounded-xl border border-white/10 bg-black/30"
+          onClick={() => setSelectedPhoto(src)}
+          className="aspect-square cursor-pointer overflow-hidden rounded-xl border border-white/10 bg-black/30 transition hover:scale-105 hover:border-pink-400"
         >
           <img src={src} alt="" className="h-full w-full object-cover" />
-        </div>
+        </button>
       );
     })}
 </div>
@@ -499,7 +499,29 @@ const avatar =
       </section>
 
       <Footer />
-      <AuthDialog activeTab={authTab} onClose={() => setAuthTab(null)} />
-    </div>
-  );
+      {selectedPhoto && (
+  <div
+    className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+    onClick={() => setSelectedPhoto(null)}
+  >
+    <button
+      type="button"
+      className="absolute right-5 top-5 text-3xl font-bold text-white"
+      onClick={() => setSelectedPhoto(null)}
+    >
+      ×
+    </button>
+
+    <img
+      src={selectedPhoto}
+      alt=""
+      className="max-h-[85vh] max-w-[92vw] rounded-2xl object-contain shadow-2xl"
+      onClick={(e) => e.stopPropagation()}
+    />
+  </div>
+)}
+
+<AuthDialog activeTab={authTab} onClose={() => setAuthTab(null)} />
+</div>
+);
 }
