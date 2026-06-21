@@ -100,7 +100,9 @@ export default function MessagesPage() {
     return 0;
   };
 
-  const filtered = conversations.filter((c) => {
+  const safeConversations = Array.isArray(conversations) ? conversations : [];
+
+const filtered = safeConversations.filter((c) => {
     const other = otherUser(c);
     const name = `${other.name || ""} ${other.surname || ""}`.toLowerCase();
     if (!name.includes(search.toLowerCase())) return false;
