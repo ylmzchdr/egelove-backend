@@ -8,6 +8,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AuthDialog from "@/components/AuthDialog";
 import { api } from "@/lib/api";
+import { useI18n } from "@/lib/i18n-context";
 
 function getUserId(): string | null {
   if (typeof window === "undefined") return null;
@@ -50,6 +51,7 @@ export default function MessagesPage() {
   const [search, setSearch] = useState("");
   const [tab, setTab] = useState<"all" | "received" | "sent">("all");
   const messagesEnd = useRef<HTMLDivElement>(null);
+  const { lang } = useI18n();
 
   const loadConversations = async () => {
     const uid = getUserId();
@@ -100,9 +102,7 @@ export default function MessagesPage() {
     return 0;
   };
 
-  const safeConversations = Array.isArray(conversations) ? conversations : [];
-
-const filtered = safeConversations.filter((c) => {
+  const filtered = conversations.filter((c) => {
     const other = otherUser(c);
     const name = `${other.name || ""} ${other.surname || ""}`.toLowerCase();
     if (!name.includes(search.toLowerCase())) return false;
@@ -112,26 +112,48 @@ const filtered = safeConversations.filter((c) => {
     return true;
   });
 
-  return (
-    <div className="min-h-screen bg-pink-950 text-white">
-      <Header onOpenLogin={() => setAuthTab("login")} onOpenRegister={() => setAuthTab("register")} />
-      <section className="py-6">
-        <div className="mx-auto max-w-7xl px-4">
-          <div className="flex gap-4 h-[calc(100vh-200px)]">
-            <div className="w-full md:w-96 shrink-0 bg-white/5 border border-white/10 rounded-xl overflow-hidden flex flex-col">
-                <div className="p-4 border-b border-white/10">
-                <h2 className="text-xl font-bold mb-3">Mesajlar</h2>
-                <div className="flex gap-1 mb-3 bg-pink-950/50 rounded-lg p-1">
-                  {([["all", "Tümü"], ["received", "Gelen"], ["sent", "Giden"]] as const).map(([key, label]) => (
-                    <button key={key} onClick={() => setTab(key)} className={`flex-1 py-1.5 text-sm font-medium rounded-md transition ${tab === key ? "bg-pink-600 text-white" : "text-white/50 hover:text-white"}`}>{label}</button>
-                  ))}
-                </div>
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
-                  <Input className="bg-pink-950/50 border-white/10 text-white pl-10" placeholder="Ara..." value={search} onChange={(e) => setSearch(e.target.value)} />
-                </div>
+ return (
+  <div className="min-h-screen bg-pink-950 text-white">
+    <Header onOpenLogin={() => setAuthTab("login")} onOpenRegister={() => setAuthTab("register")} />
+    <section className="py-6">
+      <div className="mx-auto max-w-7xl px-4">
+        <div className="flex gap-4 h-[calc(100vh-200px)]">
+          <div className="w-full md:w-96 shrink-0 bg-white/5 border border-white/10 rounded-xl overflow-hidden flex flex-col">
+            <div className="p-4 border-b border-white/10">
+              <h2 className="text-xl font-bold mb-3">
+                {lang === "TR" ? "Mesajlar" : lang === "EN" ? "Messages" : lang === "RU" ? "Сообщения" : "الرسائل"}
+              </h2>
+
+              <div className="flex gap-1 mb-3 bg-pink-950/50 rounded-lg p-1">
+                {([
+                  ["all", lang === "TR" ? "Tümü" : lang === "EN" ? "All" : lang === "RU" ? "Все" : "الكل"],
+                  ["received", lang === "TR" ? "Gelen" : lang === "EN" ? "Received" : lang === "RU" ? "Входящие" : "الواردة"],
+                  ["sent", lang === "TR" ? "Giden" : lang === "EN" ? "Sent" : lang === "RU" ? "Отправленные" : "المرسلة"],
+                ] as const).map(([key, label]) => (
+                  <button
+                    key={key}
+                    onClick={() => setTab(key)}
+                    className={`flex-1 py-1.5 text-sm font-medium rounded-md transition ${
+                      tab === key ? "bg-pink-600 text-white" : "text-white/50 hover:text-white"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
               </div>
-              <div className="flex-1 overflow-y-auto">
+
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                <Input
+                  className="bg-pink-950/50 border-white/10 text-white pl-10"
+                  placeholder={lang === "TR" ? "Ara..." : lang === "EN" ? "Search..." : lang === "RU" ? "Поиск..." : "بحث..."}
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto">
                 {loadingList && (
                   <div className="flex items-center justify-center py-12"><Loader2 className="w-6 h-6 animate-spin text-white/40" /></div>
                 )}
