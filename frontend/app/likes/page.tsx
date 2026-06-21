@@ -52,8 +52,15 @@ export default function LikesPage() {
     try { await api.matches.like(userId); load(); } catch (e) { console.error(e); }
   };
 
-  const received = matches.filter((m) => m.receiverId === myId);
-  const sent = matches.filter((m) => m.senderId === myId);
+ const safeMatches = Array.isArray(matches) ? matches : [];
+
+const received = safeMatches.filter(
+  (m) => m.receiverId === myId
+);
+
+const sent = safeMatches.filter(
+  (m) => m.senderId === myId
+);
 
   const otherUser = (match: any) => match.senderId === myId ? match.receiver : match.sender;
 
