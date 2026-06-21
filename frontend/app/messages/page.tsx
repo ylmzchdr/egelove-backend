@@ -102,15 +102,21 @@ export default function MessagesPage() {
     return 0;
   };
 
-  const filtered = conversations.filter((c) => {
-    const other = otherUser(c);
-    const name = `${other.name || ""} ${other.surname || ""}`.toLowerCase();
-    if (!name.includes(search.toLowerCase())) return false;
-    const lastMsg = c.messages?.[0];
-    if (tab === "received") return lastMsg && lastMsg.senderId !== myId;
-    if (tab === "sent") return lastMsg && lastMsg.senderId === myId;
-    return true;
-  });
+  const filtered = Array.isArray(conversations)
+  ? conversations.filter((c) => {
+      const other = otherUser(c);
+      const name = `${other?.name || ""} ${other?.surname || ""}`.toLowerCase();
+
+      if (!name.includes(search.toLowerCase())) return false;
+
+      const lastMsg = c.messages?.[0];
+
+      if (tab === "received") return lastMsg && lastMsg.senderId !== myId;
+      if (tab === "sent") return lastMsg && lastMsg.senderId === myId;
+
+      return true;
+    })
+  : [];
 
  return (
   <div className="min-h-screen bg-pink-950 text-white">
@@ -158,7 +164,17 @@ export default function MessagesPage() {
                   <div className="flex items-center justify-center py-12"><Loader2 className="w-6 h-6 animate-spin text-white/40" /></div>
                 )}
                 {!loadingList && !myId && (
-                  <div className="text-center py-12 text-white/40"><p>Giriş yapmalısın</p></div>
+                  <div className="text-center py-12 text-white/40">
+  <p>
+    {lang === "TR"
+      ? "Giriş yapmalısın"
+      : lang === "EN"
+      ? "You must log in"
+      : lang === "RU"
+      ? "Необходимо войти"
+      : "يجب تسجيل الدخول"}
+  </p>
+</div>
                 )}
                 {!loadingList && myId && filtered.length === 0 && (
                   <div className="text-center py-12 text-white/40"><p>{tab === "received" ? "Gelen mesajın yok" : tab === "sent" ? "Giden mesajın yok" : "Henüz mesajın yok"}</p></div>
