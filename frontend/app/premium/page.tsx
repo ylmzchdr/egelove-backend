@@ -53,7 +53,7 @@ const plansTR = [
   },
 ];
 
-const plansUSD = [
+const plansEN = [
   {
     id: "MONTHLY",
     name: "1 Month",
@@ -97,20 +97,144 @@ const plansUSD = [
   },
 ];
 
+const plansRU = [
+  {
+    id: "MONTHLY",
+    name: "1 месяц",
+    price: 12.99,
+    originalPrice: 15.99,
+    currency: "$",
+    paymentUrl: "https://shopier.com/47884827",
+    icon: Star,
+    features: ["Безлимитные сообщения", "Кто вас лайкнул", "Продвижение профиля", "Фильтры"],
+  },
+  {
+    id: "QUARTERLY",
+    name: "3 месяца",
+    price: 29.99,
+    originalPrice: 39.99,
+    currency: "$",
+    paymentUrl: "https://shopier.com/47884852",
+    icon: Zap,
+    popular: true,
+    features: ["Безлимитные сообщения", "Кто вас лайкнул", "Продвижение профиля", "Фильтры", "Расширенный поиск"],
+  },
+  {
+    id: "SEMI_ANNUAL",
+    name: "6 месяцев",
+    price: 49.99,
+    originalPrice: 69.99,
+    currency: "$",
+    paymentUrl: "https://shopier.com/47884878",
+    icon: Sparkles,
+    features: ["Все функции", "Приоритетная поддержка", "VIP-значок"],
+  },
+  {
+    id: "ANNUAL",
+    name: "12 месяцев",
+    price: 79.99,
+    originalPrice: 109.99,
+    currency: "$",
+    paymentUrl: "https://shopier.com/47884893",
+    icon: Crown,
+    features: ["Все функции", "Приоритетная поддержка", "VIP-значок", "Самый выгодный"],
+  },
+];
+
+const plansAR = [
+  {
+    id: "MONTHLY",
+    name: "شهر واحد",
+    price: 12.99,
+    originalPrice: 15.99,
+    currency: "$",
+    paymentUrl: "https://shopier.com/47884827",
+    icon: Star,
+    features: ["رسائل غير محدودة", "اعرف من أعجب بك", "إبراز الملف الشخصي", "الفلاتر"],
+  },
+  {
+    id: "QUARTERLY",
+    name: "3 أشهر",
+    price: 29.99,
+    originalPrice: 39.99,
+    currency: "$",
+    paymentUrl: "https://shopier.com/47884852",
+    icon: Zap,
+    popular: true,
+    features: ["رسائل غير محدودة", "اعرف من أعجب بك", "إبراز الملف الشخصي", "الفلاتر", "بحث متقدم"],
+  },
+  {
+    id: "SEMI_ANNUAL",
+    name: "6 أشهر",
+    price: 49.99,
+    originalPrice: 69.99,
+    currency: "$",
+    paymentUrl: "https://shopier.com/47884878",
+    icon: Sparkles,
+    features: ["كل المميزات", "دعم ذو أولوية", "شارة VIP"],
+  },
+  {
+    id: "ANNUAL",
+    name: "12 شهراً",
+    price: 79.99,
+    originalPrice: 109.99,
+    currency: "$",
+    paymentUrl: "https://shopier.com/47884893",
+    icon: Crown,
+    features: ["كل المميزات", "دعم ذو أولوية", "شارة VIP", "الأكثر توفيراً"],
+  },
+];
+
 export default function PremiumPage() {
   const [authTab, setAuthTab] = useState<"login" | "register" | null>(null);
   const [selected, setSelected] = useState<string>("QUARTERLY");
 
   const { lang } = useI18n();
-  const isTR = lang === "TR";
-  const plans = isTR ? plansTR : plansUSD;
 
-  const title = isTR ? "Premium Üyelik" : "Premium Membership";
-  const subtitle = isTR
-    ? "Gerçek aşkı bulmak için bir adım önde ol"
-    : "Stay one step ahead to find real connection";
-  const popularText = isTR ? "Popüler" : "Popular";
-  const buyText = isTR ? "Satın Al" : "Buy Now";
+  const plans =
+    lang === "TR"
+      ? plansTR
+      : lang === "RU"
+      ? plansRU
+      : lang === "AR"
+      ? plansAR
+      : plansEN;
+
+  const title =
+    lang === "TR"
+      ? "Premium Üyelik"
+      : lang === "RU"
+      ? "Премиум-подписка"
+      : lang === "AR"
+      ? "العضوية المميزة"
+      : "Premium Membership";
+
+  const subtitle =
+    lang === "TR"
+      ? "Gerçek aşkı bulmak için bir adım önde ol"
+      : lang === "RU"
+      ? "Будьте на шаг впереди, чтобы найти настоящую связь"
+      : lang === "AR"
+      ? "كن متقدماً بخطوة للعثور على علاقة حقيقية"
+      : "Stay one step ahead to find real connection";
+
+  const popularText =
+    lang === "TR"
+      ? "Popüler"
+      : lang === "RU"
+      ? "Популярно"
+      : lang === "AR"
+      ? "الأكثر شيوعاً"
+      : "Popular";
+
+  const buyText =
+    lang === "TR"
+      ? "Satın Al"
+      : lang === "RU"
+      ? "Купить"
+      : lang === "AR"
+      ? "اشترِ الآن"
+      : "Buy Now";
 
   const formatPrice = (price: number) => {
     return price % 1 === 0 ? price.toString() : price.toFixed(2);
