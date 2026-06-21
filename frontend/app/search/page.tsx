@@ -12,6 +12,7 @@ import Footer from "@/components/Footer";
 import AuthDialog from "@/components/AuthDialog";
 import ProfileCard from "@/components/ProfileCard";
 import { api } from "@/lib/api";
+import { useI18n } from "@/lib/i18n-context";
 
 const GENDER_OPTIONS = [
   { value: "MALE", label: "Erkek" },
@@ -136,6 +137,7 @@ export default function SearchPage() {
   const [results, setResults] = useState<ProfileResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
+  const { t } = useI18n();
 
   const [filters, setFilters] = useState<FilterState>({
     gender: "", cityId: "", districtId: "", minAge: "", maxAge: "",
@@ -220,17 +222,19 @@ export default function SearchPage() {
         <div className="mx-auto max-w-7xl px-4">
           <div className="bg-white/5 border border-white/10 rounded-xl p-6 mb-8">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-bold">Arama Filtreleri</h2>
+              <h2 className="text-lg font-bold">{t.search.title}</h2>
               {hasActiveFilters && (
                 <button onClick={clearFilters} className="text-sm text-pink-400 hover:text-pink-300 flex items-center gap-1">
-                  <X className="w-3.5 h-3.5" /> Temizle
+                  <X className="w-3.5 h-3.5" /> {t.search.clear}
                 </button>
               )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               <div>
-                <Label className="text-xs text-white/60 mb-2 block">Aradığınız Cinsiyet</Label>
+               <Label className="text-xs text-white/60 mb-2 block">
+  {t.search.gender}
+</Label>
                 <div className="flex gap-2">
                   {GENDER_OPTIONS.map((o) => (
                     <button
@@ -249,7 +253,9 @@ export default function SearchPage() {
               </div>
 
               <div>
-                <Label className="text-xs text-white/60 mb-2 block">Yaş Aralığı</Label>
+              <Label className="text-xs text-white/60 mb-2 block">
+  {t.search.ageRange}
+</Label>
                 <div className="flex items-center gap-3">
                   <Input type="number" min={18} max={99} placeholder="18"
                     className="bg-pink-950/50 border-white/10 text-white w-full text-center"
@@ -262,11 +268,13 @@ export default function SearchPage() {
               </div>
 
               <div>
-                <Label className="text-xs text-white/60 mb-2 block">Yaşadığı Yer</Label>
+               <Label className="text-xs text-white/60 mb-2 block">
+  {t.search.location}
+</Label>
                 <div className="flex gap-2">
                   <Select value={filters.cityId} onValueChange={(v) => { updateFilter("cityId", v); updateFilter("districtId", ""); }}>
                     <SelectTrigger className="bg-pink-950/50 border-white/10 text-white flex-1">
-                      <SelectValue placeholder="İl" />
+                    <SelectValue placeholder={t.search.city} />
                     </SelectTrigger>
                     <SelectContent>
                       {cities.map((c) => <SelectItem key={c.id} value={String(c.id)}>{c.name}</SelectItem>)}
@@ -274,7 +282,7 @@ export default function SearchPage() {
                   </Select>
                   <Select value={filters.districtId} onValueChange={(v) => updateFilter("districtId", v)} disabled={!filters.cityId}>
                     <SelectTrigger className="bg-pink-950/50 border-white/10 text-white flex-1">
-                      <SelectValue placeholder="İlçe" />
+                    <SelectValue placeholder={t.search.district} />
                     </SelectTrigger>
                     <SelectContent>
                       {districts.map((d) => <SelectItem key={d.id} value={String(d.id)}>{d.name}</SelectItem>)}
@@ -284,7 +292,9 @@ export default function SearchPage() {
               </div>
 
               <div>
-                <Label className="text-xs text-white/60 mb-2 block">💍 Medeni durumu</Label>
+            <Label className="text-xs text-white/60 mb-2 block">
+  💍 {t.search.maritalStatus}
+</Label>
                 <Select value={filters.maritalStatus} onValueChange={(v) => updateFilter("maritalStatus", v)}>
                   <SelectTrigger className="bg-pink-950/50 border-white/10 text-white">
                     <SelectValue placeholder="Seçiniz" />
@@ -296,14 +306,18 @@ export default function SearchPage() {
               </div>
 
               <div>
-                <Label className="text-xs text-white/60 mb-2 block">💼 Mesleği</Label>
-                <Input type="text" placeholder="Meslek adı yazın"
+                <Label className="text-xs text-white/60 mb-2 block">
+  💼 {t.search.occupation}
+</Label>
+                <Input type="text" placeholder={t.search.occupationPlaceholder}
                   className="bg-pink-950/50 border-white/10 text-white"
                   value={filters.occupation} onChange={(e) => updateFilter("occupation", e.target.value)} />
               </div>
 
               <div>
-                <Label className="text-xs text-white/60 mb-2 block">🎓 Eğitimi</Label>
+                <Label className="text-xs text-white/60 mb-2 block">
+  🎓 {t.search.education}
+</Label>
                 <Select value={filters.education} onValueChange={(v) => updateFilter("education", v)}>
                   <SelectTrigger className="bg-pink-950/50 border-white/10 text-white">
                     <SelectValue placeholder="Seçiniz" />
@@ -315,7 +329,9 @@ export default function SearchPage() {
               </div>
 
               <div>
-                <Label className="text-xs text-white/60 mb-2 block">💰 Aylık geliri</Label>
+             <Label className="text-xs text-white/60 mb-2 block">
+  💰 {t.search.income}
+</Label>
                 <Select value={filters.income} onValueChange={(v) => updateFilter("income", v)}>
                   <SelectTrigger className="bg-pink-950/50 border-white/10 text-white">
                     <SelectValue placeholder="Seçiniz" />
@@ -327,7 +343,9 @@ export default function SearchPage() {
               </div>
 
               <div>
-                <Label className="text-xs text-white/60 mb-2 block">🛐 Dini inancı</Label>
+           <Label className="text-xs text-white/60 mb-2 block">
+  🛐 {t.search.religion}
+</Label>
                 <Select value={filters.religion} onValueChange={(v) => updateFilter("religion", v)}>
                   <SelectTrigger className="bg-pink-950/50 border-white/10 text-white">
                     <SelectValue placeholder="Seçiniz" />
@@ -339,7 +357,9 @@ export default function SearchPage() {
               </div>
 
               <div>
-                <Label className="text-xs text-white/60 mb-2 block">🚬 Sigara alışkanlığı</Label>
+                <Label className="text-xs text-white/60 mb-2 block">
+  🚬 {t.search.smoking}
+</Label>
                 <Select value={filters.smoking} onValueChange={(v) => updateFilter("smoking", v)}>
                   <SelectTrigger className="bg-pink-950/50 border-white/10 text-white">
                     <SelectValue placeholder="Seçiniz" />
@@ -351,7 +371,9 @@ export default function SearchPage() {
               </div>
 
               <div>
-                <Label className="text-xs text-white/60 mb-2 block">🍺 İçki alışkanlığı</Label>
+                <Label className="text-xs text-white/60 mb-2 block">
+  🍺 {t.search.alcohol}
+</Label>
                 <Select value={filters.alcohol} onValueChange={(v) => updateFilter("alcohol", v)}>
                   <SelectTrigger className="bg-pink-950/50 border-white/10 text-white">
                     <SelectValue placeholder="Seçiniz" />
@@ -363,7 +385,9 @@ export default function SearchPage() {
               </div>
 
               <div>
-                <Label className="text-xs text-white/60 mb-2 block">👶 Çocuk durumu</Label>
+                <Label className="text-xs text-white/60 mb-2 block">
+  👶 {t.search.children}
+</Label>
                 <Select value={filters.children} onValueChange={(v) => updateFilter("children", v)}>
                   <SelectTrigger className="bg-pink-950/50 border-white/10 text-white">
                     <SelectValue placeholder="Seçiniz" />
@@ -375,7 +399,9 @@ export default function SearchPage() {
               </div>
 
               <div>
-                <Label className="text-xs text-white/60 mb-2 block">📏 Boy (cm)</Label>
+               <Label className="text-xs text-white/60 mb-2 block">
+  📏 {t.search.height}
+</Label>
                 <div className="flex items-center gap-2">
                   <Input type="number" placeholder="Min"
                     className="bg-pink-950/50 border-white/10 text-white text-center"
@@ -388,7 +414,9 @@ export default function SearchPage() {
               </div>
 
               <div>
-                <Label className="text-xs text-white/60 mb-2 block">⚖️ Kilo (kg)</Label>
+              <Label className="text-xs text-white/60 mb-2 block">
+  ⚖️ {t.search.weight}
+</Label>
                 <div className="flex items-center gap-2">
                   <Input type="number" placeholder="Min"
                     className="bg-pink-950/50 border-white/10 text-white text-center"
@@ -404,21 +432,21 @@ export default function SearchPage() {
             <div className="flex flex-wrap items-center gap-6 mt-5 pt-5 border-t border-white/10">
               <label className="flex items-center gap-2 text-sm text-white/70 cursor-pointer">
                 <Checkbox checked={filters.hasPhotos} onCheckedChange={(v) => updateFilter("hasPhotos", v === true)} className="border-white/30 data-[state=checked]:bg-pink-600" />
-                Fotoğraflı
+                {t.search.hasPhotos}
               </label>
               <label className="flex items-center gap-2 text-sm text-white/70 cursor-pointer">
                 <Checkbox checked={filters.isOnline} onCheckedChange={(v) => updateFilter("isOnline", v === true)} className="border-white/30 data-[state=checked]:bg-pink-600" />
-                Online
+              {t.search.online}
               </label>
               <label className="flex items-center gap-2 text-sm text-white/70 cursor-pointer">
                 <Checkbox checked={filters.isNewMember} onCheckedChange={(v) => updateFilter("isNewMember", v === true)} className="border-white/30 data-[state=checked]:bg-pink-600" />
-                Yeni Üye
+               {t.search.newMember}
               </label>
             </div>
 
             <div className="flex items-center gap-3 mt-5 pt-5 border-t border-white/10">
               <div className="flex-1 max-w-xs">
-                <Input type="text" placeholder="Kullanıcı adı ile ara"
+                <Input type="text" placeholder={t.search.usernamePlaceholder}
                   className="bg-pink-950/50 border-white/10 text-white"
                   value={filters.username} onChange={(e) => updateFilter("username", e.target.value)} />
               </div>
@@ -434,7 +462,7 @@ export default function SearchPage() {
             </div>
           ) : results.length > 0 ? (
             <>
-              <p className="text-white/40 text-sm mb-6">{results.length} sonuç bulundu</p>
+              <p className="text-white/40 text-sm mb-6">{results.length} {t.search.resultsFound}</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {results.map((profile) => (
   results.map((profile) => {
@@ -461,13 +489,13 @@ export default function SearchPage() {
           ) : searched ? (
             <div className="text-center py-20 text-white/40">
               <Search className="w-12 h-12 mx-auto mb-4 opacity-30" />
-              <p className="text-lg">Sonuç bulunamadı</p>
-              <p className="text-sm mt-1">Filtreleri genişletmeyi dene</p>
+              <p className="text-lg">{t.search.noResults}</p>
+             <p className="text-sm mt-1">{t.search.broadenFilters}</p>
             </div>
           ) : (
             <div className="text-center py-20 text-white/40">
               <Heart className="w-12 h-12 mx-auto mb-4 opacity-30" />
-              <p className="text-lg">Aramaya başlamak için filtreleri kullan</p>
+             <p className="text-lg">{t.search.startSearch}</p>
             </div>
           )}
         </div>
