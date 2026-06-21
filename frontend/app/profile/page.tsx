@@ -89,6 +89,10 @@ const TEXT: Record<LangKey, Record<string, string>> = {
     favorite: "Favori Yap",
     wink: "Göz Kırp",
     visitors: "Profil Ziyaretleri",
+    member: "Egelove Üyesi",
+visitedProfile: "Profilini ziyaret etti",
+premium: "Premium",
+premiumDescription: "Profil ziyaretlerini, favorileri ve daha fazlasını öne çıkar.",
     userFallback: "Kullanıcı",
   },
   EN: {
@@ -122,6 +126,10 @@ const TEXT: Record<LangKey, Record<string, string>> = {
     favorite: "Add Favorite",
     wink: "Wink",
     visitors: "Profile Visitors",
+    member: "Egelove Member",
+visitedProfile: "Visited your profile",
+premium: "Premium",
+premiumDescription: "Highlight profile visits, favorites and more.",
     userFallback: "User",
   },
   RU: {
@@ -155,7 +163,12 @@ const TEXT: Record<LangKey, Record<string, string>> = {
     favorite: "В избранное",
     wink: "Подмигнуть",
     visitors: "Посетители профиля",
+    member: "Участник Egelove",
+visitedProfile: "Посетил ваш профиль",
+premium: "Премиум",
+premiumDescription: "Выделите посещения профиля, избранное и многое другое.",
     userFallback: "Пользователь",
+
   },
   AR: {
     myProfile: "ملفي الشخصي",
@@ -188,6 +201,10 @@ const TEXT: Record<LangKey, Record<string, string>> = {
     favorite: "إضافة للمفضلة",
     wink: "غمزة",
     visitors: "زوار الملف",
+    member: "عضو Egelove",
+visitedProfile: "قام بزيارة ملفك الشخصي",
+premium: "بريميوم",
+premiumDescription: "قم بإبراز زيارات الملف الشخصي والمفضلة والمزيد.",
     userFallback: "مستخدم",
   },
 };
@@ -292,7 +309,8 @@ const sortedPhotos = [...(user?.photos || [])].sort((a, b) => {
 const avatar =
   normalizePhotoUrl(sortedPhotos[0]?.url || user?.avatar) ||
   "/images/default-avatar.png";
-  const optionMap: Record<string, Record<string, string>> = {
+ 
+ const optionMap: Record<string, Record<string, string>> = {
   TR: {
     ASSOCIATE: "Ön lisans",
     MEDIUM: "Orta",
@@ -300,16 +318,17 @@ const avatar =
     NONE: "Yok",
     HAZEL: "Ela",
     BLACK: "Siyah",
+    emekli: "Emekli",
   },
   EN: {
-  ASSOCIATE: "Associate",
-  MEDIUM: "Medium",
-  DIVORCED: "Divorced",
-  NONE: "None",
-  HAZEL: "Hazel",
-  BLACK: "Black",
-  emekli: "Retired",
-},
+    ASSOCIATE: "Associate",
+    MEDIUM: "Medium",
+    DIVORCED: "Divorced",
+    NONE: "None",
+    HAZEL: "Hazel",
+    BLACK: "Black",
+    emekli: "Retired",
+  },
   RU: {
     ASSOCIATE: "Среднее специальное",
     MEDIUM: "Средний",
@@ -317,6 +336,7 @@ const avatar =
     NONE: "Нет",
     HAZEL: "Ореховый",
     BLACK: "Черный",
+    emekli: "Пенсионер",
   },
   AR: {
     ASSOCIATE: "دبلوم",
@@ -325,9 +345,9 @@ const avatar =
     NONE: "لا يوجد",
     HAZEL: "عسلي",
     BLACK: "أسود",
+    emekli: "متقاعد",
   },
 };
-
 function trOpt(value: string | null | undefined) {
   if (!value) return "-";
   return optionMap[lang as keyof typeof optionMap]?.[value] || value;
@@ -514,8 +534,8 @@ function trOpt(value: string | null | undefined) {
                       >
                         <div className="h-10 w-10 rounded-full bg-pink-500/30" />
                         <div>
-                          <div className="text-sm font-semibold">Egelove Üyesi</div>
-                          <div className="text-xs text-white/45">Profilini ziyaret etti</div>
+                          <div className="text-sm font-semibold">{tx.member}</div>
+<div className="text-xs text-white/45">{tx.visitedProfile}</div>
                         </div>
                       </div>
                     ))}
