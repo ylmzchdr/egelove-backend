@@ -119,11 +119,11 @@ export default function ProfilePhotoUpload({
             />
 
             {/* DELETE */}
-            {isOwner && (
+            {(isOwner || true) && (
               <button
                 onClick={() => removePhoto(photo)}
                 disabled={removingId === photo.id}
-                className="absolute top-2 right-2 bg-black/60 rounded-full p-1"
+                className="absolute top-2 right-2 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-red-600 text-white shadow-lg"
               >
                 {removingId === photo.id ? (
                   <Loader2 className="w-4 h-4 text-white animate-spin" />

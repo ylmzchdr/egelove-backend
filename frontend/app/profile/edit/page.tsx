@@ -280,7 +280,7 @@ if (payload.birthDate) {
           <div className="space-y-8">
             <div className="bg-white/5 border border-white/10 rounded-xl p-6">
               <h2 className="text-xl font-semibold mb-4">Fotoğraflar</h2>
-              <ProfilePhotoUpload initialPhotos={(form as any).photos || []} />
+              <ProfilePhotoUpload initialPhotos={(form as any).photos || []} isOwner />
             </div>
 
             <div className="bg-white/5 border border-white/10 rounded-xl p-6">
