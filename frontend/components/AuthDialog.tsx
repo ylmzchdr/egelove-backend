@@ -155,10 +155,10 @@ export default function AuthDialog({ activeTab, onClose }: AuthDialogProps) {
   };
 
 
-  const handleSocialLogin = () => {
-  window.location.href = "http://localhost:5001/auth/google";
+const handleSocialLogin = () => {
+  window.location.href =
+    "https://egelove-backend.onrender.com/auth/google";
 };
-
 
 
 return (
