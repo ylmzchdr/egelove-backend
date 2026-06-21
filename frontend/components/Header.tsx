@@ -103,13 +103,12 @@ setUserName(getFirstName(user));
   : `${welcomeByLang[lang]}`;
 
   const navItems = [
-    { label: t.nav.home, href: "/" },
-    { label: t.nav.dashboard, href: "/dashboard" },
-    { label: t.nav.discover, href: "/#discover" },
-    { label: t.nav.likes, href: "/likes" },
-    { label: t.nav.messages, href: "/messages" },
-    { label: t.nav.premium, href: "/premium" },
-  ];
+  { label: t.nav.home, href: "/" },
+  { label: t.nav.dashboard, href: "/dashboard" },
+  { label: t.nav.likes, href: "/likes" },
+  { label: t.nav.messages, href: "/messages" },
+  { label: t.nav.premium, href: "/premium" },
+];
 
   return (
     <header className="sticky top-0 z-50 bg-[#FFC000] text-black shadow-md border-b border-black/10 font-sans">
