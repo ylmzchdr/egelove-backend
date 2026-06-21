@@ -10,9 +10,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AuthDialog from "@/components/AuthDialog";
-import ProfileCard from "@/components/ProfileCard";
+
 import { api } from "@/lib/api";
 import { useI18n } from "@/lib/i18n-context";
+import ProfileCard from "@/components/ProfileCard";
 
 const GENDER_OPTIONS = [
   { value: "MALE", label: "Erkek" },
@@ -468,9 +469,8 @@ export default function SearchPage() {
   results.map((profile) => {
    const mainPhoto = (profile as any).photos?.[0]?.url;
   return (
-   <ProfileCard
+ <ProfileCard
   key={profile.id}
-  id={profile.id}
   name={`${profile.name}${profile.surname ? " " + profile.surname : ""}`}
   age={profile.age}
   city={profile.city?.name || ""}

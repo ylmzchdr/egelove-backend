@@ -8,7 +8,6 @@ import AuthDialog from "@/components/AuthDialog";
 import { useI18n } from "@/lib/i18n-context";
 
 const cards = [
-  { key: "discover", href: "/#discover", icon: Heart, color: "from-pink-500 to-rose-600" },
   { key: "find", href: "/search", icon: Search, color: "from-purple-500 to-indigo-600" },
   { key: "messages", href: "/messages", icon: MessageCircle, color: "from-blue-500 to-cyan-600" },
   { key: "friends", href: "/likes", icon: Users, color: "from-emerald-500 to-teal-600" },
@@ -40,7 +39,7 @@ export default function DashboardPage() {
             <Heart className="w-12 h-12 text-pink-400 mx-auto mb-3" />
             <h1 className="text-3xl font-bold">egelove</h1>
             <p className="text-white/50 mt-1">
-              {t.nav.discover} &amp; {d.find}
+              {d.find}
             </p>
           </div>
 

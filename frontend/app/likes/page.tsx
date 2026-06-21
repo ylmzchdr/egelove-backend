@@ -154,39 +154,15 @@ const sent = safeMatches.filter(
     ? "Вас пока никто не лайкнул"
     : "لم يعجب بك أحد بعد"}
 </p>
-              <p className="text-sm">
-  {lang === "TR"
-    ? "Profilini düzenleyip daha fazla kişiye görün!"
-    : lang === "EN"
-    ? "Edit your profile and get seen by more people!"
-    : lang === "RU"
-    ? "Отредактируйте профиль, чтобы вас увидело больше людей!"
-    : "عدّل ملفك الشخصي ليظهر لعدد أكبر من الأشخاص!"}
-</p>
+              <p className="text-sm">Profilini düzenleyip daha fazla kişiye görün!</p>
             </div>
           )}
 
           {!loading && myId && tab === "sent" && sent.length === 0 && (
             <div className="text-center py-20 text-white/40">
               <ThumbsUp className="w-16 h-16 mx-auto mb-4 opacity-30" />
-              <p className="text-lg">
-  {lang === "TR"
-    ? "Henüz kimseyi beğenmedin"
-    : lang === "EN"
-    ? "You haven't liked anyone yet"
-    : lang === "RU"
-    ? "Вы пока никого не лайкнули"
-    : "لم تعجب بأي شخص بعد"}
-</p>
-              <p className="text-sm">
-  {lang === "TR"
-    ? "Keşfet sayfasından üyeleri beğenmeye başla!"
-    : lang === "EN"
-    ? "Start liking members from the Discover page!"
-    : lang === "RU"
-    ? "Начните лайкать участников на странице «Открыть»!"
-    : "ابدأ بالإعجاب بالأعضاء من صفحة الاكتشاف!"}
-</p>
+              <p className="text-lg">Henüz kimseyi beğenmedin</p>
+              <p className="text-sm">Keşfet sayfasından üyeleri beğenmeye başla!</p>
             </div>
           )}
 
@@ -209,30 +185,23 @@ const sent = safeMatches.filter(
                       className="w-full mt-2 bg-pink-600 hover:bg-pink-700 text-xs h-8"
                       onClick={() => handleLike(other.id)}
                     >
-                      <Heart className="w-3 h-3 mr-1" />
-{lang === "TR"
-  ? "Karşılık Ver"
-  : lang === "EN"
-  ? "Like Back"
-  : lang === "RU"
-  ? "Ответить лайком"
-  : "رد الإعجاب"}
+                      <Heart className="w-3 h-3 mr-1" /> Karşılık Ver
                     </Button>
                   )}
-                  {tab === "received" && match.isMutual && (
-                    <Button
-                      className="w-full mt-2 bg-green-600 hover:bg-green-700 text-xs h-8"
-                      onClick={() => window.location.href = "/messages"}
-                    >
-                    {lang === "TR"
-  ? "Mesaj Gönder"
-  : lang === "EN"
-  ? "Send Message"
-  : lang === "RU"
-  ? "Отправить сообщение"
-  : "إرسال رسالة"}
-                    </Button>
-                  )}
+                 {tab === "received" && match.isMutual && (
+  <Button
+    className="w-full mt-2 bg-green-600 hover:bg-green-700 text-xs h-8"
+    onClick={() => window.location.href = "/messages"}
+  >
+    {lang === "TR"
+      ? "Mesaj Gönder"
+      : lang === "EN"
+      ? "Send Message"
+      : lang === "RU"
+      ? "Отправить сообщение"
+      : "إرسال رسالة"}
+  </Button>
+)}
                 </div>
               );
             })}
