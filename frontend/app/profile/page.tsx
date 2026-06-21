@@ -209,6 +209,7 @@ function calculateAge(birthDate?: string) {
 }
 
 function toText(value?: string[] | string) {
+  
   if (!value) return "-";
   if (Array.isArray(value)) return value.length ? value.join(", ") : "-";
   return value || "-";
@@ -291,6 +292,45 @@ const sortedPhotos = [...(user?.photos || [])].sort((a, b) => {
 const avatar =
   normalizePhotoUrl(sortedPhotos[0]?.url || user?.avatar) ||
   "/images/default-avatar.png";
+  const optionMap: Record<string, Record<string, string>> = {
+  TR: {
+    ASSOCIATE: "Ön lisans",
+    MEDIUM: "Orta",
+    DIVORCED: "Boşanmış",
+    NONE: "Yok",
+    HAZEL: "Ela",
+    BLACK: "Siyah",
+  },
+  EN: {
+    ASSOCIATE: "Associate",
+    MEDIUM: "Medium",
+    DIVORCED: "Divorced",
+    NONE: "None",
+    HAZEL: "Hazel",
+    BLACK: "Black",
+  },
+  RU: {
+    ASSOCIATE: "Среднее специальное",
+    MEDIUM: "Средний",
+    DIVORCED: "В разводе",
+    NONE: "Нет",
+    HAZEL: "Ореховый",
+    BLACK: "Черный",
+  },
+  AR: {
+    ASSOCIATE: "دبلوم",
+    MEDIUM: "متوسط",
+    DIVORCED: "مطلق",
+    NONE: "لا يوجد",
+    HAZEL: "عسلي",
+    BLACK: "أسود",
+  },
+};
+
+function trOpt(value: string | null | undefined) {
+  if (!value) return "-";
+  return optionMap[lang as keyof typeof optionMap]?.[value] || value;
+}
 
   return (
     <div className="min-h-screen bg-[#160012] text-white" dir={isRtl ? "rtl" : "ltr"}>
@@ -428,14 +468,14 @@ const avatar =
                     <InfoRow label={tx.city} value={cityName} />
                     <InfoRow label={tx.district} value={districtName} />
                     <InfoRow label={tx.occupation} value={user.occupation} />
-                    <InfoRow label={tx.education} value={user.education} />
-                    <InfoRow label={tx.income} value={user.income} />
-                    <InfoRow label={tx.maritalStatus} value={user.maritalStatus} />
-                    <InfoRow label={tx.children} value={user.children} />
-                    <InfoRow label={tx.height} value={user.height ? `${user.height} cm` : "-"} />
-                    <InfoRow label={tx.weight} value={user.weight ? `${user.weight} kg` : "-"} />
-                    <InfoRow label={tx.eyeColor} value={user.eyeColor} />
-                    <InfoRow label={tx.hairColor} value={user.hairColor} />
+                   <InfoRow label={tx.education} value={trOpt(user.education)} />
+<InfoRow label={tx.income} value={trOpt(user.income)} />
+<InfoRow label={tx.maritalStatus} value={trOpt(user.maritalStatus)} />
+<InfoRow label={tx.children} value={trOpt(user.children)} />
+<InfoRow label={tx.height} value={user.height ? `${user.height} cm` : "-"} />
+<InfoRow label={tx.weight} value={user.weight ? `${user.weight} kg` : "-"} />
+<InfoRow label={tx.eyeColor} value={trOpt(user.eyeColor)} />
+<InfoRow label={tx.hairColor} value={trOpt(user.hairColor)} />
                     <InfoRow label={tx.hobbies} value={toText(user.hobbies)} />
                     <InfoRow label={tx.languages} value={toText(user.languages)} />
                   </div>
