@@ -295,16 +295,19 @@ const API_URL =
 
 const normalizePhotoUrl = (url?: string | null) => {
   if (!url) return "";
-  if (url.startsWith("http")) return url;
-  if (url.startsWith("/")) return `${API_URL}${url}`;
-  return `${API_URL}/${url}`;
-};
 
+  if (url.startsWith("http")) return url;
+
+  const cleanUrl = url.startsWith("/") ? url : `/${url}`;
+
+  return `${API_URL}${cleanUrl}`;
+};
 const sortedPhotos = [...(user?.photos || [])].sort((a, b) => {
   if (a.isMain && !b.isMain) return -1;
   if (!a.isMain && b.isMain) return 1;
   return 0;
 });
+console.log("PHOTOS FULL =", sortedPhotos);
 
 const avatar =
   normalizePhotoUrl(sortedPhotos[0]?.url || user?.avatar) ||
