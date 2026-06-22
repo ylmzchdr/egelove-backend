@@ -252,11 +252,11 @@ return (
                   <SelectTrigger className="bg-pink-950/50 border-white/10 text-white">
                     <SelectValue placeholder={t.auth.gender} />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="female">{t.auth.female}</SelectItem>
-                    <SelectItem value="male">{t.auth.male}</SelectItem>
-                    <SelectItem value="other">{t.auth.other}</SelectItem>
-                  </SelectContent>
+                 <SelectContent>
+  <SelectItem value="FEMALE">{t.auth.female}</SelectItem>
+  <SelectItem value="MALE">{t.auth.male}</SelectItem>
+  <SelectItem value="OTHER">{t.auth.other}</SelectItem>
+</SelectContent>
                 </Select>
               </div>
 
