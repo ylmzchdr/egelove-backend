@@ -17,6 +17,7 @@ import { Throttle } from "@nestjs/throttler";
 import { diskStorage } from "multer";
 import { extname, join } from "path";
 import { existsSync, unlinkSync } from "fs";
+import { mkdirSync } from "fs";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { CurrentUser } from "../auth/current-user.decorator";
 import { PrismaService } from "../prisma/prisma.service";
@@ -34,15 +35,35 @@ export class PhotoController {
   @Post("upload")
   @Throttle({ default: { limit: 10, ttl: 60000 } })
   @UseInterceptors(
-    FileInterceptor("file", {
-      storage: diskStorage({
-        destination: "./uploads/photos",
-        filename: (_req: any, file: any, cb: any) => {
-          const unique = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-          cb(null, `${unique}${extname(file.originalname)}`);
-        },
-      }),
-    }),
+   FileInterceptor("file", {
+  limits: {
+    fileSize: 10 * 1024 * 1024,
+  },
+  fileFilter: (_req: any, file: any, cb: any) => {
+    const allowed = ["image/jpeg", "image/png", "image/webp"];
+
+    if (!allowed.includes(file.mimetype)) {
+      return cb(
+        new BadRequestException("Sadece JPEG, PNG veya WebP fotoğraf yüklenebilir"),
+        false,
+      );
+    }
+
+    cb(null, true);
+  },
+  storage: diskStorage({
+    destination: (_req: any, _file: any, cb: any) => {
+      const uploadPath = "./uploads/photos";
+      mkdirSync(uploadPath, { recursive: true });
+      cb(null, uploadPath);
+    },
+    filename: (_req: any, file: any, cb: any) => {
+      const unique = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+      const safeExt = extname(file.originalname).toLowerCase();
+      cb(null, `${unique}${safeExt}`);
+    },
+  }),
+}),
   )
   async uploadPhoto(@CurrentUser() user: any, @UploadedFile() file: any) {
     if (!file) throw new BadRequestException("Fotoğraf dosyası gelmedi");
