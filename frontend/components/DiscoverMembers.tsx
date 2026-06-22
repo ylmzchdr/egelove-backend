@@ -1,13 +1,15 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import ProfileCard from "@/components/ProfileCard";
 import { useI18n } from "@/lib/i18n-context";
-import { api } from "@/lib/api";
-
-
 
 const allCities = [
   "Adana","Adıyaman","Afyonkarahisar","Ağrı","Amasya","Ankara","Antalya","Artvin","Aydın","Balıkesir",
@@ -23,25 +25,13 @@ const allCities = [
 export default function DiscoverMembers() {
   const [selectedCity, setSelectedCity] = useState("");
   const [members, setMembers] = useState<any[]>([]);
-const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const { t } = useI18n();
+
   useEffect(() => {
-  const loadMembers = async () => {
-    try {
-      const data = await api.users.search();
-
-      if (Array.isArray(data)) {
-        setMembers(data);
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  loadMembers();
-}, []);
+    setMembers([]);
+    setLoading(false);
+  }, []);
 
   return (
     <section id="discover" className="py-20 bg-gradient-to-b from-pink-950 to-pink-900">
@@ -60,40 +50,42 @@ const [loading, setLoading] = useState(true);
             </SelectTrigger>
             <SelectContent className="bg-pink-950 text-white border-white/10 max-h-72">
               {allCities.map((city) => (
-                <SelectItem key={city} value={city}>{city}</SelectItem>
+                <SelectItem key={city} value={city}>
+                  {city}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
 
-       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-  {loading ? (
-    <p className="text-white/50 col-span-full text-center">
-      Yükleniyor...
-    </p>
-  ) : members.length === 0 ? (
-    <p className="text-white/50 col-span-full text-center">
-     Henüz gösterilecek üye yok
-    </p>
-  ) : (
-    members.map((user) => (
-      <ProfileCard
-        key={user.id}
-        id={user.id}
-        name={`${user.name || ""}${user.surname ? " " + user.surname : ""}`}
-       age={
-  user.birthDate
-    ? new Date().getFullYear() - new Date(user.birthDate).getFullYear()
-    : undefined
-}
-        city={user.city?.name}
-        district={user.district?.name}
-        bio={user.bio}
-        verified={user.isVerified}
-      />
-    ))
-  )}
-</div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {loading ? (
+            <p className="text-white/50 col-span-full text-center">
+              Yükleniyor...
+            </p>
+          ) : members.length === 0 ? (
+            <p className="text-white/50 col-span-full text-center">
+              Henüz gösterilecek üye yok
+            </p>
+          ) : (
+            members.map((user) => (
+              <ProfileCard
+                key={user.id}
+                id={user.id}
+                name={`${user.name || ""}${user.surname ? " " + user.surname : ""}`}
+                age={
+                  user.birthDate
+                    ? new Date().getFullYear() - new Date(user.birthDate).getFullYear()
+                    : undefined
+                }
+                city={user.city?.name}
+                district={user.district?.name}
+                bio={user.bio}
+                verified={user.isVerified}
+              />
+            ))
+          )}
+        </div>
       </div>
     </section>
   );

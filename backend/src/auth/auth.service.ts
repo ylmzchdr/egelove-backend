@@ -27,48 +27,73 @@ export class AuthService {
     private twofa: TwofaService,
   ) {}
 
-  async register(dto: RegisterDto) {
-    try {
-      const existing = mockUsers.find((u) => u.email === dto.email);
-      if (existing) throw new ConflictException("Bu e-posta zaten kayıtlı");
+async register(dto: RegisterDto) {
+  try {
+    const email = dto.email.toLowerCase().trim();
 
-      const passwordHash = await argon2.hash(dto.password);
-      const emailVerifyToken = crypto.randomBytes(32).toString("hex");
+    const existing = await this.prisma.user.findUnique({
+      where: { email },
+    });
 
-      const user = {
-        id: crypto.randomBytes(16).toString("hex"),
+    if (existing) {
+      throw new ConflictException("Bu e-posta zaten kayıtlı");
+    }
+
+    const passwordHash = await argon2.hash(dto.password);
+    const emailVerifyToken = crypto.randomBytes(32).toString("hex");
+
+    const city = await this.prisma.city.findFirst({
+      where: { name: "Muğla" },
+    });
+
+    const district = city
+      ? await this.prisma.district.findFirst({
+          where: {
+            cityId: city.id,
+            name: "Fethiye",
+          },
+        })
+      : null;
+
+    if (!city || !district) {
+      throw new BadRequestException(
+        "City/District verisi bulunamadı. Önce şehir ve ilçe seed edilmeli.",
+      );
+    }
+
+    const user = await this.prisma.user.create({
+      data: {
         name: dto.name,
         surname: dto.surname,
-        email: dto.email,
-        phone: dto.phone,
+        email,
+        phone: dto.phone || null,
         passwordHash,
         birthDate: new Date(dto.birthDate),
         gender: dto.gender,
-        cityId: 1,
-        districtId: 1,
+        cityId: city.id,
+        districtId: district.id,
         emailVerifyToken,
         emailVerifySentAt: new Date(),
         isEmailVerified: false,
-        refreshToken: null,
-        createdAt: new Date(),
-      };
+      },
+    });
 
-      mockUsers.push(user);
+   const tokens = await this.generateTokens(user.id, user.email);
 
-      const tokens = await this.generateTokens(user.id, user.email);
+console.log(`✅ Kullanıcı veritabanına kaydedildi: ${email}`);
 
-      console.log(`✅ Kullanıcı kaydedildi: ${dto.email}`);
+    console.log(`✅ Kullanıcı veritabanına kaydedildi: ${email}`);
 
-      return {
-        user: this.sanitizeUser(user),
-        ...tokens,
-        emailVerificationSent: true,
-      };
-    } catch (error) {
-      console.error("Register error:", error);
-      throw error;
-    }
+    return {
+      user: this.sanitizeUser(user),
+      ...tokens,
+      emailVerificationSent: true,
+    };
+  } catch (error) {
+    console.error("Register error:", error);
+    throw error;
   }
+}
 
  async login(dto: LoginDto) {
   const user = await this.prisma.user.findFirst({
@@ -158,15 +183,10 @@ export class AuthService {
         existingUser.email,
       );
 
-      const updatedUser = await this.prisma.user.update({
-        where: { id: existingUser.id },
-        data: { refreshToken: tokens.refreshToken },
-      });
-
       return {
-        user: this.sanitizeUser(updatedUser),
-        ...tokens,
-      };
+  user: this.sanitizeUser(existingUser),
+  ...tokens,
+};
     } catch (error) {
       console.error("Google login error:", error);
       throw error;
