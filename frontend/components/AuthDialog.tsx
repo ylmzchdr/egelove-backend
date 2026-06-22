@@ -146,7 +146,8 @@ export default function AuthDialog({ activeTab, onClose }: AuthDialogProps) {
       localStorage.setItem("refreshToken", res.refreshToken);
       setRegisterData({ name: "", surname: "", email: "", phone: "", password: "", birthDate: "", gender: "", city: "", district: "" });
       setAgreeTerms(false);
-      setTab("login");
+      onClose();
+window.location.href = "/dashboard";
     } catch (err: any) {
       alert(err.message || "Kayıt başarısız");
     } finally {
