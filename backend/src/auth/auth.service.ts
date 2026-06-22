@@ -70,27 +70,33 @@ export class AuthService {
     }
   }
 
-  async login(dto: LoginDto) {
-    try {
-      const user = mockUsers.find(
-        (u) => u.email === dto.emailOrPhone || u.phone === dto.emailOrPhone,
-      );
-      if (!user) throw new UnauthorizedException("Geçersiz kimlik bilgileri");
+ async login(dto: LoginDto) {
+  const user = await this.prisma.user.findFirst({
+    where: {
+      OR: [
+        { email: dto.emailOrPhone },
+        { phone: dto.emailOrPhone },
+      ],
+    },
+  });
 
-      const valid = await argon2.verify(user.passwordHash, dto.password);
-      if (!valid) throw new UnauthorizedException("Geçersiz kimlik bilgileri");
-
-      const tokens = await this.generateTokens(user.id, user.email);
-      user.refreshToken = tokens.refreshToken;
-
-      console.log(`✅ Giriş başarılı: ${dto.emailOrPhone}`);
-
-      return { user: this.sanitizeUser(user), ...tokens };
-    } catch (error) {
-      console.error("Login error:", error);
-      throw error;
-    }
+  if (!user) {
+    throw new UnauthorizedException("Geçersiz kimlik bilgileri");
   }
+
+  const valid = await argon2.verify(user.passwordHash, dto.password);
+
+  if (!valid) {
+    throw new UnauthorizedException("Geçersiz kimlik bilgileri");
+  }
+
+  const tokens = await this.generateTokens(user.id, user.email);
+
+  return {
+    user: this.sanitizeUser(user),
+    ...tokens,
+  };
+}
 
   async googleLogin(user: any) {
     try {
