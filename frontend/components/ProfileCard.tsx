@@ -4,6 +4,7 @@ import { Heart, MapPin, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useI18n } from "@/lib/i18n-context";
+import Link from "next/link";
 
 type ProfileCardProps = {
   id?: string;
@@ -89,13 +90,24 @@ export default function ProfileCard({ name, age, city, district, bio, avatar, ve
         <p className="text-white/50 text-sm mt-3 line-clamp-2 min-h-[2.5rem]">{bio || ""}</p>
 
         <div className="flex gap-2 mt-4">
-          <Button className="flex-1 bg-pink-600 hover:bg-pink-700 text-xs h-9">
+          <Button
+  onClick={() => alert("Beğeni sistemi yakında aktif olacak")}
+  className="flex-1 bg-pink-600 hover:bg-pink-700 text-xs h-9"
+>
             <Heart className="w-4 h-4" />
             {t.profile.like}
           </Button>
-          <Button variant="outline" className="flex-1 border-white/20 text-white hover:bg-white/10 text-xs h-9">
-            {t.profile.viewProfile}
-          </Button>
+          <Link
+  href={`/profile/${(avatar as any).id}`}
+  className="flex-1"
+>
+  <Button
+    variant="outline"
+    className="w-full border-white/20 text-white hover:bg-white/10 text-xs h-9"
+  >
+    {t.profile.viewProfile}
+  </Button>
+</Link>
         </div>
       </div>
     </Card>
