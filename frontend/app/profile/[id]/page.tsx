@@ -7,9 +7,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "https://egelove-backend.onrender.com";
-
+const API_URL = "https://egelove-backend.onrender.com";
 export default function PublicProfilePage() {
   const params = useParams();
   const router = useRouter();
