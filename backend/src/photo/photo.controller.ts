@@ -14,10 +14,7 @@ import {
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Throttle } from "@nestjs/throttler";
-import { diskStorage } from "multer";
-import { extname, join } from "path";
-import { existsSync, unlinkSync } from "fs";
-import { mkdirSync } from "fs";
+import { v2 as cloudinary } from "cloudinary";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { CurrentUser } from "../auth/current-user.decorator";
 import { PrismaService } from "../prisma/prisma.service";
@@ -30,40 +27,35 @@ export class PhotoController {
   constructor(
     private prisma: PrismaService,
     private audit: AuditService,
-  ) {}
+  ) {
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
+      secure: true,
+    });
+  }
 
   @Post("upload")
   @Throttle({ default: { limit: 10, ttl: 60000 } })
   @UseInterceptors(
-   FileInterceptor("file", {
-  limits: {
-    fileSize: 10 * 1024 * 1024,
-  },
-  fileFilter: (_req: any, file: any, cb: any) => {
-    const allowed = ["image/jpeg", "image/png", "image/webp"];
+    FileInterceptor("file", {
+      limits: {
+        fileSize: 10 * 1024 * 1024,
+      },
+      fileFilter: (_req: any, file: any, cb: any) => {
+        const allowed = ["image/jpeg", "image/png", "image/webp"];
 
-    if (!allowed.includes(file.mimetype)) {
-      return cb(
-        new BadRequestException("Sadece JPEG, PNG veya WebP fotoğraf yüklenebilir"),
-        false,
-      );
-    }
+        if (!allowed.includes(file.mimetype)) {
+          return cb(
+            new BadRequestException("Sadece JPEG, PNG veya WebP fotoğraf yüklenebilir"),
+            false,
+          );
+        }
 
-    cb(null, true);
-  },
-  storage: diskStorage({
-    destination: (_req: any, _file: any, cb: any) => {
-      const uploadPath = "./uploads/photos";
-      mkdirSync(uploadPath, { recursive: true });
-      cb(null, uploadPath);
-    },
-    filename: (_req: any, file: any, cb: any) => {
-      const unique = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-      const safeExt = extname(file.originalname).toLowerCase();
-      cb(null, `${unique}${safeExt}`);
-    },
-  }),
-}),
+        cb(null, true);
+      },
+    }),
   )
   async uploadPhoto(@CurrentUser() user: any, @UploadedFile() file: any) {
     if (!file) throw new BadRequestException("Fotoğraf dosyası gelmedi");
@@ -71,11 +63,40 @@ export class PhotoController {
     const error = validateImageFile(file.mimetype, file.size);
     if (error) throw new BadRequestException(error);
 
+    if (
+      !process.env.CLOUDINARY_CLOUD_NAME ||
+      !process.env.CLOUDINARY_API_KEY ||
+      !process.env.CLOUDINARY_API_SECRET
+    ) {
+      throw new BadRequestException("Cloudinary ayarları eksik");
+    }
+
+    const uploadResult: any = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          folder: `egelove/users/${user.sub}`,
+          resource_type: "image",
+          overwrite: false,
+        },
+        (err, result) => {
+          if (err) return reject(err);
+          resolve(result);
+        },
+      );
+
+      stream.end(file.buffer);
+    });
+
+    const photoCount = await this.prisma.photo.count({
+      where: { userId: user.sub },
+    });
+
     const photo = await this.prisma.photo.create({
       data: {
-        url: `/uploads/photos/${file.filename}`,
+        url: uploadResult.secure_url,
         userId: user.sub,
         status: "APPROVED",
+        isMain: photoCount === 0,
       },
     });
 
@@ -92,7 +113,7 @@ export class PhotoController {
   async getMyPhotos(@CurrentUser() user: any) {
     return this.prisma.photo.findMany({
       where: { userId: user.sub },
-      orderBy: { createdAt: "desc" },
+      orderBy: [{ isMain: "desc" }, { createdAt: "desc" }],
     });
   }
 
@@ -111,15 +132,6 @@ export class PhotoController {
     await this.prisma.photo.delete({
       where: { id: photoId },
     });
-
-    if (photo.url?.startsWith("/uploads/photos/")) {
-      const fileName = photo.url.replace("/uploads/photos/", "");
-      const filePath = join(process.cwd(), "uploads", "photos", fileName);
-
-      if (existsSync(filePath)) {
-        unlinkSync(filePath);
-      }
-    }
 
     this.audit.log({
       action: "PHOTO_DELETE",
