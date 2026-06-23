@@ -191,18 +191,25 @@ export default function SearchPage() {
     }
   }, [filters.cityId]);
 
-  const handleSearch = async () => {
-    setLoading(true);
-    setSearched(true);
-    try {
-      const data = await api.users.search(buildParams());
-      setResults(data as unknown as ProfileResult[]);
-    } catch {
-      setResults([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+ const handleSearch = async () => {
+  setLoading(true);
+  setSearched(true);
+
+  try {
+    const data: any = await api.users.search(buildParams());
+
+    setResults(
+      Array.isArray(data)
+        ? data
+        : data.users || []
+    );
+  } catch (error) {
+    console.error(error);
+    setResults([]);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const clearFilters = () => {
     setFilters({
