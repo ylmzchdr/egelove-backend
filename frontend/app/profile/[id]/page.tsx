@@ -189,7 +189,7 @@ export default function PublicProfilePage() {
                 <h2 className="text-2xl font-bold mb-5">Profil Bilgileri</h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-                  <InfoRow label="E-posta" value={profile.email} />
+                 
                   <InfoRow label="Şehir" value={profile.city?.name} />
                   <InfoRow label="İlçe" value={profile.district?.name} />
                   <InfoRow label="Meslek" value={profile.occupation} />
