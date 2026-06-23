@@ -145,6 +145,7 @@ export class PhotoController {
   @Post("approve/:id")
   async approvePhoto(@CurrentUser() user: any, @Param("id") photoId: string) {
     const photo = await this.prisma.photo.findUnique({ where: { id: photoId } });
+
     if (!photo || (photo.userId !== user.sub && !user.isAdmin)) {
       return { error: "Erişim reddedildi" };
     }
@@ -158,7 +159,12 @@ export class PhotoController {
       },
     });
 
-    this.audit.log({ action: "PHOTO_APPROVE", userId: user.sub, targetId: photoId });
+    this.audit.log({
+      action: "PHOTO_APPROVE",
+      userId: user.sub,
+      targetId: photoId,
+    });
+
     return updated;
   }
 
@@ -169,6 +175,7 @@ export class PhotoController {
     @Body("reason") reason?: string,
   ) {
     const photo = await this.prisma.photo.findUnique({ where: { id: photoId } });
+
     if (!photo || (photo.userId !== user.sub && !user.isAdmin)) {
       return { error: "Erişim reddedildi" };
     }
