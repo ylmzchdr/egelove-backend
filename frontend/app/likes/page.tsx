@@ -42,8 +42,8 @@ export default function LikesPage() {
     setMyId(uid);
     if (!uid) { setLoading(false); return; }
     try {
-      const data = await api.matches.list();
-      setMatches(data);
+     const data: any = await api.matches.list();
+setMatches(Array.isArray(data) ? data : data.matches || data.data || []);
     } catch (e) { console.error(e); }
     setLoading(false);
   };
@@ -172,7 +172,8 @@ const sent = safeMatches.filter(
               return (
                 <div key={match.id}>
                   <ProfileCard
-                    id={other.id}
+  id={other.id}
+  avatar={other}
                     name={`${other.name}${other.surname ? " " + other.surname : ""}`}
                     age={other.birthDate ? calcAge(other.birthDate) : undefined}
                     city={other.city?.name}
