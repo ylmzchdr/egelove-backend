@@ -134,13 +134,38 @@ export default function PublicProfilePage() {
               )}
 
               <div className="flex gap-3 mt-5">
-                <Button
-                  onClick={() => alert("Beğeni sistemi yakında aktif olacak")}
-                  className="flex-1 bg-pink-600 hover:bg-pink-700"
-                >
-                  <Heart className="w-4 h-4 mr-2" />
-                  Beğen
-                </Button>
+               <Button
+  onClick={async () => {
+    try {
+      const token = localStorage.getItem("accessToken");
+
+      const res = await fetch(
+        `${API_URL}/matches/like/${profile.id}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert("Beğeni gönderildi ❤️");
+      } else {
+        alert(data.message || "Beğeni gönderilemedi");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Sunucu hatası");
+    }
+  }}
+  className="flex-1 bg-pink-600 hover:bg-pink-700"
+>
+  <Heart className="w-4 h-4 mr-2" />
+  Beğen
+</Button>
 
                 <Button
                   onClick={() => alert("Mesaj sistemi yakında bağlanacak")}
