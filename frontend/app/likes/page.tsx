@@ -192,7 +192,7 @@ const sent = safeMatches.filter(
                  {tab === "received" && match.isMutual && (
   <Button
     className="w-full mt-2 bg-green-600 hover:bg-green-700 text-xs h-8"
-    onClick={() => window.location.href = "/messages"}
+   onClick={() => window.location.href = `/messages?userId=${other.id}`}
   >
     {lang === "TR"
       ? "Mesaj Gönder"

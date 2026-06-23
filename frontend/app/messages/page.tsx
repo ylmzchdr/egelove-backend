@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { Search, Send, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,7 @@ import Footer from "@/components/Footer";
 import AuthDialog from "@/components/AuthDialog";
 import { api } from "@/lib/api";
 import { useI18n } from "@/lib/i18n-context";
+import { useSearchParams } from "next/navigation";
 
 function getUserId(): string | null {
   if (typeof window === "undefined") return null;
@@ -39,7 +40,9 @@ function formatTime(d: string) {
   return date.toLocaleDateString("tr-TR", { day: "numeric", month: "short" });
 }
 
-export default function MessagesPage() {
+function MessagesContent() {
+  const searchParams = useSearchParams();
+const targetUserId = searchParams.get("userId");
   const [authTab, setAuthTab] = useState<"login" | "register" | null>(null);
   const [myId, setMyId] = useState<string | null>(null);
   const [conversations, setConversations] = useState<any[]>([]);
@@ -59,7 +62,34 @@ export default function MessagesPage() {
     if (!uid) { setLoadingList(false); return; }
     try {
       const data = await api.conversations.list();
-      setConversations(data);
+setConversations(data);
+
+if (targetUserId) {
+  const existing = data.find((c: any) => {
+    return c.user1Id === targetUserId || c.user2Id === targetUserId;
+  });
+
+  if (existing) {
+    loadMessages(existing.id);
+  } else {
+    const created = await api.conversations.create(targetUserId);
+    setConversations((prev) => [created, ...prev]);
+    loadMessages(created.id);
+  }
+}
+if (targetUserId) {
+  const existing = data.find((c: any) => {
+    return c.user1Id === targetUserId || c.user2Id === targetUserId;
+  });
+
+  if (existing) {
+    loadMessages(existing.id);
+  } else if (api.conversations.create) {
+    const created = await api.conversations.create(targetUserId);
+    setConversations((prev) => [created, ...prev]);
+    loadMessages(created.id);
+  }
+}
     } catch (e) { console.error(e); }
     setLoadingList(false);
   };
@@ -298,5 +328,12 @@ export default function MessagesPage() {
       <Footer />
       <AuthDialog activeTab={authTab} onClose={() => setAuthTab(null)} />
     </div>
+  );
+}
+export default function MessagesPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-pink-950 text-white" />}>
+      <MessagesContent />
+    </Suspense>
   );
 }
