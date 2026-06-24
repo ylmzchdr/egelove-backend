@@ -503,7 +503,7 @@ export default function PublicProfilePage() {
                   <InfoRow label={tx.eyeColor} value={trOpt(profile.eyeColor)} />
                <InfoRow
   label={tx.hairColor}
-  value={"TEST-SAÇ-RENK"}
+  value={trOpt(profile.hairColor)}
 />
                   <InfoRow label={tx.hobbies} value={normalizeArrayText(profile.hobbies)} />
                 </div>
