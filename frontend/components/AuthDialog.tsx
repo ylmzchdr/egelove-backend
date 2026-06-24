@@ -123,6 +123,7 @@ export default function AuthDialog({ activeTab, onClose }: AuthDialogProps) {
       localStorage.setItem("refreshToken", res.refreshToken);
       setLoginData({ emailOrPhone: "", password: "" });
       onClose();
+      window.location.href = "/profile";
     } catch (err: any) {
       alert(err.message || "Giriş başarısız");
     } finally {
