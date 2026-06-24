@@ -307,7 +307,14 @@ const sortedPhotos = [...(user?.photos || [])].sort((a, b) => {
   if (!a.isMain && b.isMain) return 1;
   return 0;
 });
-console.log("PHOTOS FULL =", sortedPhotos);
+console.log(
+  "PHOTOS FULL =",
+  sortedPhotos.map((p) => ({
+    id: p.id,
+    url: p.url,
+    isMain: p.isMain,
+  }))
+);
 
 const avatar =
   normalizePhotoUrl(sortedPhotos[0]?.url || user?.avatar) ||
@@ -404,7 +411,28 @@ function trOpt(value: string | null | undefined) {
                       alt={fullName}
                       className="h-full w-full object-cover"
                     />
+                    {sortedPhotos.length > 1 && (
+  <div className="mt-3 grid grid-cols-4 gap-2">
+    {sortedPhotos.map((photo) => (
+      <button
+        key={photo.id}
+        type="button"
+        onClick={() =>
+          window.open(normalizePhotoUrl(photo.url), "_blank")
+        }
+        className="aspect-square overflow-hidden rounded-xl border border-white/10"
+      >
+        <img
+          src={normalizePhotoUrl(photo.url)}
+          alt=""
+          className="h-full w-full object-cover"
+        />
+      </button>
+    ))}
+  </div>
+)}
                   </div>
+                  <p className="text-white">Foto sayısı: {sortedPhotos.length}</p>
 
                 <div className="mt-3 grid grid-cols-4 gap-2">
   {(sortedPhotos.length ? sortedPhotos : [{ url: avatar }])
