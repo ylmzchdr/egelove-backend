@@ -256,6 +256,8 @@ export default function PublicProfilePage() {
   const currentLang: LangKey = ["TR", "EN", "RU", "AR"].includes(lang)
     ? (lang as LangKey)
     : "TR";
+    console.log("LANG =", lang);
+console.log("CURRENT LANG =", currentLang);
 
   const tx = TEXT[currentLang];
   const isRtl = currentLang === "AR";
@@ -334,6 +336,7 @@ export default function PublicProfilePage() {
     return url.startsWith("http") ? url : `${API_URL}${url}`;
   };
 
+ console.log("HAIR =", profile?.hairColor);
   const photos = (profile?.photos || []).filter((p: any) => {
     const url = p?.url || "";
     return url && !url.includes("/uploads/photos/");

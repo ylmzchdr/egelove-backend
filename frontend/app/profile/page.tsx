@@ -315,14 +315,21 @@ const avatar =
  
  const optionMap: Record<string, Record<string, string>> = {
   TR: {
-    ASSOCIATE: "Ön lisans",
-    MEDIUM: "Orta",
-    DIVORCED: "Boşanmış",
-    NONE: "Yok",
-    HAZEL: "Ela",
-    BLACK: "Siyah",
-    emekli: "Emekli",
-  },
+  ASSOCIATE: "Ön lisans",
+  MEDIUM: "Orta",
+  DIVORCED: "Boşanmış",
+  NONE: "Yok",
+  HAZEL: "Ela",
+  BLACK: "Siyah",
+  emekli: "Emekli",
+
+  WHITE: "Beyaz",
+  RED: "Kızıl",
+  BROWN: "Kahverengi",
+  BLOND: "Sarı",
+  BALD: "Kel",
+  OTHER: "Diğer",
+},
   EN: {
     ASSOCIATE: "Associate",
     MEDIUM: "Medium",
@@ -353,9 +360,14 @@ const avatar =
 };
 function trOpt(value: string | null | undefined) {
   if (!value) return "-";
-  return optionMap[lang as keyof typeof optionMap]?.[value] || value;
-}
 
+  const key = String(value).trim().toUpperCase();
+
+  return (
+    optionMap[lang as keyof typeof optionMap]?.[key] ||
+    value
+  );
+}
   return (
     <div className="min-h-screen bg-[#160012] text-white" dir={isRtl ? "rtl" : "ltr"}>
       <Header
