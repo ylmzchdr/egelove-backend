@@ -189,7 +189,7 @@ export default function ProfileEditPage() {
     ]).then(([profile, cityList]) => {
       setForm((prev) => ({ ...prev, ...profile, birthDate: profile.birthDate?.split("T")[0] || "" }));
       setCities(cityList);
-      setHobbiesInput((profile.hobbies || []).join(", "));
+    setHobbiesInput(Array.isArray(profile.hobbies) ? profile.hobbies.join(", ") : (profile.hobbies || ""));
       setLoading(false);
     }).catch((err) => {
       setError(err.message || "Profil yüklenemedi");

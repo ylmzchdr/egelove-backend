@@ -141,7 +141,7 @@ export default function OnboardingPage() {
         maritalStatus: p.maritalStatus || "", children: p.children || "",
         smoking: p.smoking || "", alcohol: p.alcohol || "", religion: p.religion || "",
         aboutMe: p.aboutMe || "", lookingFor: p.lookingFor || "",
-        hobbies: (p.hobbies || []).join(", "),
+       hobbies: Array.isArray(p.hobbies) ? p.hobbies.join(", ") : (p.hobbies || ""),
       }));
       if (p.cityId) api.cities.districts(p.cityId).then(setDistricts).catch(() => {});
     }).catch(() => router.push("/"));
