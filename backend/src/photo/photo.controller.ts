@@ -78,7 +78,7 @@ export class PhotoController {
           resource_type: "image",
           overwrite: false,
         },
-        (err, result) => {
+        (err: any, result: any) => {
           if (err) return reject(err);
           resolve(result);
         },
