@@ -267,7 +267,8 @@ export default function PublicProfilePage() {
 
   function trOpt(value: string | null | undefined) {
     if (!value) return "-";
-    return OPTION_MAP[currentLang]?.[value] || value;
+    const key = String(value).trim().toUpperCase();
+return OPTION_MAP[currentLang]?.[key] || OPTION_MAP[currentLang]?.[value] || value;
   }
 
   useEffect(() => {
@@ -488,7 +489,14 @@ export default function PublicProfilePage() {
                   <InfoRow label={tx.height} value={profile.height ? `${profile.height} cm` : ""} />
                   <InfoRow label={tx.weight} value={profile.weight ? `${profile.weight} kg` : ""} />
                   <InfoRow label={tx.eyeColor} value={trOpt(profile.eyeColor)} />
-                  <InfoRow label={tx.hairColor} value={trOpt(profile.hairColor)} />
+                  <InfoRow
+  label={tx.hairColor}
+  value={
+    String(profile.hairColor || "").trim().toUpperCase() === "RED"
+      ? OPTION_MAP[currentLang].RED
+      : trOpt(profile.hairColor)
+  }
+/>
                   <InfoRow label={tx.hobbies} value={normalizeArrayText(profile.hobbies)} />
                 </div>
               </div>
