@@ -508,7 +508,7 @@ function trOpt(value: string | null | undefined) {
                 <div className="grid gap-6 xl:grid-cols-2">
                   <div className="rounded-3xl border border-white/10 bg-white/5 p-5 sm:p-7">
                     <h3 className="mb-5 text-lg font-bold">{tx.info}</h3>
-                    <InfoRow label={tx.email} value={user.email} />
+                  
                     <InfoRow label={tx.age} value={age} />
                     <InfoRow label={tx.city} value={cityName} />
                     <InfoRow label={tx.district} value={districtName} />
