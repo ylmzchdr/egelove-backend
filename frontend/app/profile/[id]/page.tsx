@@ -266,10 +266,22 @@ export default function PublicProfilePage() {
   const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
 
   function trOpt(value: string | null | undefined) {
-    if (!value) return "-";
-    const key = String(value).trim().toUpperCase();
-return OPTION_MAP[currentLang]?.[key] || OPTION_MAP[currentLang]?.[value] || value;
+  if (!value) return "-";
+
+  const key = String(value).trim().toUpperCase();
+
+  if (key === "RED") {
+    return currentLang === "TR"
+      ? "Kızıl"
+      : currentLang === "RU"
+      ? "Рыжий"
+      : currentLang === "AR"
+      ? "أحمر"
+      : "Red";
   }
+
+  return OPTION_MAP[currentLang]?.[key] || String(value).trim();
+}
 
   useEffect(() => {
     if (!id) return;
