@@ -307,14 +307,7 @@ const sortedPhotos = [...(user?.photos || [])].sort((a, b) => {
   if (!a.isMain && b.isMain) return 1;
   return 0;
 });
-console.log(
-  "PHOTOS FULL =",
-  sortedPhotos.map((p) => ({
-    id: p.id,
-    url: p.url,
-    isMain: p.isMain,
-  }))
-);
+
 
 const avatar =
   normalizePhotoUrl(sortedPhotos[0]?.url || user?.avatar) ||
@@ -432,7 +425,7 @@ function trOpt(value: string | null | undefined) {
   </div>
 )}
                   </div>
-                  <p className="text-white">Foto sayısı: {sortedPhotos.length}</p>
+            
 
                 <div className="mt-3 grid grid-cols-4 gap-2">
   {(sortedPhotos.length ? sortedPhotos : [{ url: avatar }])
