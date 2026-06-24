@@ -501,13 +501,9 @@ export default function PublicProfilePage() {
                   <InfoRow label={tx.height} value={profile.height ? `${profile.height} cm` : ""} />
                   <InfoRow label={tx.weight} value={profile.weight ? `${profile.weight} kg` : ""} />
                   <InfoRow label={tx.eyeColor} value={trOpt(profile.eyeColor)} />
-                <InfoRow
+               <InfoRow
   label={tx.hairColor}
-  value={
-    String(profile.hairColor || "").trim().toUpperCase() === "RED"
-      ? OPTION_MAP[currentLang].RED
-      : trOpt(profile.hairColor)
-  }
+  value={"TEST-SAÇ-RENK"}
 />
                   <InfoRow label={tx.hobbies} value={normalizeArrayText(profile.hobbies)} />
                 </div>
