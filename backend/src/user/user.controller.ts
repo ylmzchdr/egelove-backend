@@ -22,7 +22,7 @@ async getMe(@CurrentUser() user: any) {
           { isMain: "desc" },
           { createdAt: "desc" },
         ],
-        take: 1,
+       take: 10,
       },
       city: true,
       district: true,
