@@ -47,7 +47,10 @@ export default function PublicProfilePage() {
     return url.startsWith("http") ? url : `${API_URL}${url}`;
   };
 
-  const photos = profile?.photos || [];
+  const photos = (profile?.photos || []).filter((p: any) => {
+  const url = p?.url || "";
+  return url && !url.includes("/uploads/photos/");
+});
   const mainPhoto =
     photos.find((p: any) => p.isMain)?.url || photos[0]?.url || null;
 
@@ -168,7 +171,7 @@ export default function PublicProfilePage() {
 </Button>
 
                 <Button
-                  onClick={() => alert("Mesaj sistemi yakında bağlanacak")}
+                  onClick={() => router.push(`/messages?userId=${profile.id}`)}
                   variant="outline"
                   className="flex-1 border-white/20 text-white hover:bg-white/10"
                 >
