@@ -489,7 +489,7 @@ return OPTION_MAP[currentLang]?.[key] || OPTION_MAP[currentLang]?.[value] || val
                   <InfoRow label={tx.height} value={profile.height ? `${profile.height} cm` : ""} />
                   <InfoRow label={tx.weight} value={profile.weight ? `${profile.weight} kg` : ""} />
                   <InfoRow label={tx.eyeColor} value={trOpt(profile.eyeColor)} />
-                  <InfoRow
+                <InfoRow
   label={tx.hairColor}
   value={
     String(profile.hairColor || "").trim().toUpperCase() === "RED"
