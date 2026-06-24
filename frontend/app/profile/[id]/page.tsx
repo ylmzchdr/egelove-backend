@@ -265,22 +265,43 @@ export default function PublicProfilePage() {
   const [loading, setLoading] = useState(true);
   const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
 
-  function trOpt(value: string | null | undefined) {
+ function trOpt(value: string | null | undefined) {
   if (!value) return "-";
 
   const key = String(value).trim().toUpperCase();
 
-  if (key === "RED") {
-    return currentLang === "TR"
-      ? "Kızıl"
-      : currentLang === "RU"
-      ? "Рыжий"
-      : currentLang === "AR"
-      ? "أحمر"
-      : "Red";
+  const hardMap: any = {
+    WHITE: {
+      TR: "Beyaz",
+      EN: "White",
+      RU: "Белый",
+      AR: "أبيض",
+    },
+    RED: {
+      TR: "Kızıl",
+      EN: "Red",
+      RU: "Рыжий",
+      AR: "أحمر",
+    },
+    BLACK: {
+      TR: "Siyah",
+      EN: "Black",
+      RU: "Черный",
+      AR: "أسود",
+    },
+    HAZEL: {
+      TR: "Ela",
+      EN: "Hazel",
+      RU: "Ореховый",
+      AR: "عسلي",
+    },
+  };
+
+  if (hardMap[key]) {
+    return hardMap[key][currentLang] || hardMap[key].EN;
   }
 
-  return OPTION_MAP[currentLang]?.[key] || String(value).trim();
+  return OPTION_MAP[currentLang]?.[key] || value;
 }
 
   useEffect(() => {
