@@ -338,6 +338,12 @@ const avatar =
     HAZEL: "Hazel",
     BLACK: "Black",
     emekli: "Retired",
+    WHITE: "White",
+RED: "Red",
+BROWN: "Brown",
+BLOND: "Blonde",
+BALD: "Bald",
+OTHER: "Other",
   },
   RU: {
     ASSOCIATE: "Среднее специальное",
@@ -347,6 +353,12 @@ const avatar =
     HAZEL: "Ореховый",
     BLACK: "Черный",
     emekli: "Пенсионер",
+    WHITE: "Белый",
+RED: "Рыжий",
+BROWN: "Коричневый",
+BLOND: "Блонд",
+BALD: "Лысый",
+OTHER: "Другое",
   },
   AR: {
     ASSOCIATE: "دبلوم",
@@ -356,6 +368,12 @@ const avatar =
     HAZEL: "عسلي",
     BLACK: "أسود",
     emekli: "متقاعد",
+    WHITE: "أبيض",
+RED: "أحمر",
+BROWN: "بني",
+BLOND: "أشقر",
+BALD: "أصلع",
+OTHER: "آخر",
   },
 };
 function trOpt(value: string | null | undefined) {
