@@ -41,12 +41,15 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
 
       const result = await this.authService.googleLogin(user);
 
-      done(null, {
-        id: result.user.id,
-        email: result.user.email,
-        accessToken: result.accessToken,
-        refreshToken: result.refreshToken,
-      });
+      // YENİ HALİ (Güncellemeniz Gereken Kod)
+done(null, {
+  id: result.user.id,
+  email: result.user.email,
+  isAdmin: result.user.isAdmin, // <-- BU SATIRI EKLEYİN
+  accessToken: result.accessToken,
+  refreshToken: result.refreshToken,
+});
+
     } catch (err) {
       done(err, undefined);
     }
