@@ -12,20 +12,10 @@ export class AdminController {
     private audit: AuditService,
   ) {}
 
- private async checkAdmin(user: any) {
-  const dbUser = await this.prisma.user.findFirst({
-    where: {
-      OR: [
-        { id: user.sub },
-        { email: user.email },
-        { email: "ylmzchdr@gmail.com" },
-      ],
-    },
-    select: {
-      id: true,
-      email: true,
-      isAdmin: true,
-    },
+  private async checkAdmin(user: any) {
+  const dbUser = await this.prisma.user.findUnique({
+    where: { id: user.sub },
+    select: { isAdmin: true },
   });
 
   if (!dbUser?.isAdmin) {
