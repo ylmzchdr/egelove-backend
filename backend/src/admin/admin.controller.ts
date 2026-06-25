@@ -12,20 +12,13 @@ export class AdminController {
     private audit: AuditService,
   ) {}
 
-  private async checkAdmin(user: any) {
-  const dbUser = await this.prisma.user.findUnique({
-    where: { id: user.sub },
-    select: { isAdmin: true },
-  });
-
-  if (!dbUser?.isAdmin) {
-    throw new UnauthorizedException("Admin yetkisi gerekli");
+  private checkAdmin(user: any) {
+    if (!user.isAdmin) throw new UnauthorizedException("Admin yetkisi gerekli");
   }
-}
 
   @Get("stats")
   async getStats(@CurrentUser() user: any) {
-   await this.checkAdmin(user);
+    this.checkAdmin(user);
     const [totalUsers, pendingPhotos, totalMatches, premiumUsers, totalConversations] = await Promise.all([
       this.prisma.user.count(),
       this.prisma.photo.count({ where: { status: "PENDING" } }),
@@ -38,7 +31,7 @@ export class AdminController {
 
   @Get("users")
   async getUsers(@CurrentUser() user: any) {
-   await this.checkAdmin(user);
+    this.checkAdmin(user);
     return this.prisma.user.findMany({
       orderBy: { createdAt: "desc" },
       select: {
@@ -53,7 +46,7 @@ export class AdminController {
 
   @Post("users/:id/toggle-active")
   async toggleUserActive(@CurrentUser() user: any, @Param("id") targetId: string) {
-   await this.checkAdmin(user);
+    this.checkAdmin(user);
     const target = await this.prisma.user.findUnique({ where: { id: targetId } });
     if (!target) return { error: "Kullanıcı bulunamadı" };
 
@@ -68,7 +61,7 @@ export class AdminController {
 
   @Post("photos/approve/:id")
   async approvePhoto(@CurrentUser() user: any, @Param("id") photoId: string) {
-   await this.checkAdmin(user);
+    this.checkAdmin(user);
     const photo = await this.prisma.photo.findUnique({ where: { id: photoId } });
     if (!photo) return { error: "Fotoğraf bulunamadı" };
 
@@ -83,7 +76,7 @@ export class AdminController {
 
   @Post("photos/reject/:id")
   async rejectPhoto(@CurrentUser() user: any, @Param("id") photoId: string, @Body("reason") reason?: string) {
-   await this.checkAdmin(user);
+    this.checkAdmin(user);
     const photo = await this.prisma.photo.findUnique({ where: { id: photoId } });
     if (!photo) return { error: "Fotoğraf bulunamadı" };
 
@@ -98,7 +91,7 @@ export class AdminController {
 
   @Get("photos/pending")
   async getPendingPhotos(@CurrentUser() user: any) {
-   await this.checkAdmin(user);
+    this.checkAdmin(user);
     return this.prisma.photo.findMany({
       where: { status: "PENDING" },
       include: { user: { select: { id: true, name: true, surname: true, email: true } } },
