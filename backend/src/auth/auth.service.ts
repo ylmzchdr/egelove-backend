@@ -261,12 +261,15 @@ console.log(`✅ Kullanıcı veritabanına kaydedildi: ${email}`);
       (await this.prisma.user.findUnique({ where: { id: userId } })) ||
       mockUsers.find((u) => u.id === userId);
 
-    const payload = {
+   const payload = {
   sub: userId,
   email,
   name: user?.name || "Kullanıcı",
-  isAdmin: user?.isAdmin || false, // <-- BU SATIRI EKLEYİN
+  isAdmin: user?.isAdmin || false,
 };
+
+
+
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
         secret: jwtConstants.secret,
