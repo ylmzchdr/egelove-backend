@@ -12,42 +12,89 @@ export class AdminController {
     private audit: AuditService,
   ) {}
 
-  private checkAdmin(user: any) {
-    if (!user.isAdmin) throw new UnauthorizedException("Admin yetkisi gerekli");
+  private async checkAdmin(user: any) {
+    const dbUser = await this.prisma.user.findFirst({
+      where: {
+        OR: [
+          { id: user.sub },
+          { email: user.email },
+        ],
+      },
+      select: {
+        id: true,
+        email: true,
+        isAdmin: true,
+      },
+    });
+
+    if (!dbUser?.isAdmin) {
+      throw new UnauthorizedException("Admin yetkisi gerekli");
+    }
   }
 
   @Get("stats")
   async getStats(@CurrentUser() user: any) {
-    this.checkAdmin(user);
-    const [totalUsers, pendingPhotos, totalMatches, premiumUsers, totalConversations] = await Promise.all([
+    await this.checkAdmin(user);
+
+    const [
+      totalUsers,
+      pendingPhotos,
+      totalMatches,
+      premiumUsers,
+      totalConversations,
+    ] = await Promise.all([
       this.prisma.user.count(),
       this.prisma.photo.count({ where: { status: "PENDING" } }),
       this.prisma.match.count(),
       this.prisma.user.count({ where: { isPremiumCandidate: true } }),
       this.prisma.conversation.count(),
     ]);
-    return { totalUsers, pendingPhotos, totalMatches, premiumUsers, totalConversations };
+
+    return {
+      totalUsers,
+      pendingPhotos,
+      totalMatches,
+      premiumUsers,
+      totalConversations,
+    };
   }
 
   @Get("users")
   async getUsers(@CurrentUser() user: any) {
-    this.checkAdmin(user);
+    await this.checkAdmin(user);
+
     return this.prisma.user.findMany({
       orderBy: { createdAt: "desc" },
       select: {
-        id: true, name: true, surname: true, email: true, phone: true,
-        gender: true, birthDate: true, isPremiumCandidate: true,
-        isVerified: true, isEmailVerified: true, isActive: true,
-        createdAt: true, lastLoginAt: true,
+        id: true,
+        name: true,
+        surname: true,
+        email: true,
+        phone: true,
+        gender: true,
+        birthDate: true,
+        isPremiumCandidate: true,
+        isVerified: true,
+        isEmailVerified: true,
+        isActive: true,
+        createdAt: true,
+        lastLoginAt: true,
         city: { select: { name: true } },
       },
     });
   }
 
   @Post("users/:id/toggle-active")
-  async toggleUserActive(@CurrentUser() user: any, @Param("id") targetId: string) {
-    this.checkAdmin(user);
-    const target = await this.prisma.user.findUnique({ where: { id: targetId } });
+  async toggleUserActive(
+    @CurrentUser() user: any,
+    @Param("id") targetId: string,
+  ) {
+    await this.checkAdmin(user);
+
+    const target = await this.prisma.user.findUnique({
+      where: { id: targetId },
+    });
+
     if (!target) return { error: "Kullanıcı bulunamadı" };
 
     const updated = await this.prisma.user.update({
@@ -55,46 +102,97 @@ export class AdminController {
       data: { isActive: !target.isActive },
     });
 
-    this.audit.log({ action: "USER_TOGGLE_ACTIVE", userId: user.sub, targetId, metadata: { newStatus: !target.isActive } });
+    this.audit.log({
+      action: "USER_TOGGLE_ACTIVE",
+      userId: user.sub,
+      targetId,
+      metadata: { newStatus: updated.isActive },
+    });
+
     return { isActive: updated.isActive };
   }
 
   @Post("photos/approve/:id")
-  async approvePhoto(@CurrentUser() user: any, @Param("id") photoId: string) {
-    this.checkAdmin(user);
-    const photo = await this.prisma.photo.findUnique({ where: { id: photoId } });
+  async approvePhoto(
+    @CurrentUser() user: any,
+    @Param("id") photoId: string,
+  ) {
+    await this.checkAdmin(user);
+
+    const photo = await this.prisma.photo.findUnique({
+      where: { id: photoId },
+    });
+
     if (!photo) return { error: "Fotoğraf bulunamadı" };
 
     const updated = await this.prisma.photo.update({
       where: { id: photoId },
-      data: { status: "APPROVED", moderatedAt: new Date(), moderatedBy: user.sub },
+      data: {
+        status: "APPROVED",
+        moderatedAt: new Date(),
+        moderatedBy: user.sub,
+      },
     });
 
-    this.audit.log({ action: "PHOTO_APPROVE", userId: user.sub, targetId: photoId });
+    this.audit.log({
+      action: "PHOTO_APPROVE",
+      userId: user.sub,
+      targetId: photoId,
+    });
+
     return updated;
   }
 
   @Post("photos/reject/:id")
-  async rejectPhoto(@CurrentUser() user: any, @Param("id") photoId: string, @Body("reason") reason?: string) {
-    this.checkAdmin(user);
-    const photo = await this.prisma.photo.findUnique({ where: { id: photoId } });
+  async rejectPhoto(
+    @CurrentUser() user: any,
+    @Param("id") photoId: string,
+    @Body("reason") reason?: string,
+  ) {
+    await this.checkAdmin(user);
+
+    const photo = await this.prisma.photo.findUnique({
+      where: { id: photoId },
+    });
+
     if (!photo) return { error: "Fotoğraf bulunamadı" };
 
     const updated = await this.prisma.photo.update({
       where: { id: photoId },
-      data: { status: "REJECTED", rejectedReason: reason, moderatedAt: new Date(), moderatedBy: user.sub },
+      data: {
+        status: "REJECTED",
+        rejectedReason: reason,
+        moderatedAt: new Date(),
+        moderatedBy: user.sub,
+      },
     });
 
-    this.audit.log({ action: "PHOTO_REJECT", userId: user.sub, targetId: photoId, metadata: { reason } });
+    this.audit.log({
+      action: "PHOTO_REJECT",
+      userId: user.sub,
+      targetId: photoId,
+      metadata: { reason },
+    });
+
     return updated;
   }
 
   @Get("photos/pending")
   async getPendingPhotos(@CurrentUser() user: any) {
-    this.checkAdmin(user);
+    await this.checkAdmin(user);
+
     return this.prisma.photo.findMany({
       where: { status: "PENDING" },
-      include: { user: { select: { id: true, name: true, surname: true, email: true } } },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            surname: true,
+            email: true,
+          },
+        },
+      },
     });
   }
 }
