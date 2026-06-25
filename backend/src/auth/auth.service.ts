@@ -262,11 +262,11 @@ console.log(`✅ Kullanıcı veritabanına kaydedildi: ${email}`);
       mockUsers.find((u) => u.id === userId);
 
     const payload = {
-      sub: userId,
-      email,
-      name: user?.name || "Kullanıcı",
-    };
-
+  sub: userId,
+  email,
+  name: user?.name || "Kullanıcı",
+  isAdmin: user?.isAdmin || false, // <-- BU SATIRI EKLEYİN
+};
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
         secret: jwtConstants.secret,
