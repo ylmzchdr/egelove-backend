@@ -262,11 +262,12 @@ console.log(`✅ Kullanıcı veritabanına kaydedildi: ${email}`);
       mockUsers.find((u) => u.id === userId);
 
    const payload = {
-  sub: user?.id,
-  email: user?.email,
-  name: "Kullanıcı",
-  isAdmin: true, // Sizin hesabınız için doğrudan true geçiyoruz
+  sub: userId,
+  email,
+  name: user?.name || "Kullanıcı",
+  isAdmin: user?.isAdmin || false,
 };
+
 
 
     const [accessToken, refreshToken] = await Promise.all([
