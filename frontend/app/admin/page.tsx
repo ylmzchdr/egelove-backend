@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Shield, Check, X, Eye, Users, Image, Activity, CreditCard } from "lucide-react";
+import { Shield, Check, X, Users, Image, Activity, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Header from "@/components/Header";
@@ -30,27 +30,32 @@ export default function AdminPage() {
   const [authTab, setAuthTab] = useState<"login" | "register" | null>(null);
   const [panel, setPanel] = useState<"photos" | "users">("photos");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [pendingPhotos, setPendingPhotos] = useState<PendingPhoto[]>([]);
   const [users, setUsers] = useState<AdminUser[]>([]);
 
-  const loadData = async () => {
-    setLoading(true);
-    try {
-      const [statsData, photosData, usersData] = await Promise.all([
-        api.admin.stats(),
-        api.admin.photos.pending(),
-        api.admin.users(),
-      ]);
-      setStats(statsData);
-      setPendingPhotos(photosData);
-      setUsers(usersData);
-    } catch {
-    } finally {
-      setLoading(false);
-    }
-  };
+   const loadData = async () => {
+  setLoading(true);
+  setError("");
 
+  try {
+    const [statsData, photosData, usersData] = await Promise.all([
+      api.admin.stats(),
+      api.admin.photos.pending(),
+      api.admin.users(),
+    ]);
+
+    setStats(statsData);
+    setPendingPhotos(photosData);
+    setUsers(usersData);
+  } catch (err: any) {
+    console.error("ADMIN LOAD ERROR:", err);
+    setError(err?.message || "Admin verileri yüklenemedi.");
+  } finally {
+    setLoading(false);
+  }
+};
   useEffect(() => { loadData(); }, []);
 
   const handleApprove = async (photoId: string) => {
@@ -115,6 +120,13 @@ export default function AdminPage() {
               Kullanıcılar ({users.length})
             </button>
           </div>
+          {error && (
+  <Card className="mb-6 border-red-500/30 bg-red-500/10 p-4 text-red-200">
+    {error}
+  </Card>
+)}
+
+
 
           {loading ? (
             <div className="flex justify-center py-20">
