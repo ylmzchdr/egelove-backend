@@ -53,6 +53,8 @@ const targetUserId = searchParams.get("userId");
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [search, setSearch] = useState("");
   const [tab, setTab] = useState<"all" | "received" | "sent">("all");
+  const [translations, setTranslations] = useState<Record<string, string>>({});
+const [translatingId, setTranslatingId] = useState<string | null>(null);
   const messagesEnd = useRef<HTMLDivElement>(null);
   const { lang } = useI18n();
 
@@ -119,6 +121,35 @@ if (targetUserId) {
       await api.conversations.send(activeConv, text);
     } catch (e) { console.error(e); }
   };
+  const translateMessage = async (messageId: string, content: string) => {
+  if (!messageId || !content) return;
+
+  try {
+    setTranslatingId(messageId);
+
+    const targetLang =
+      lang === "TR"
+        ? "TR"
+        : lang === "EN"
+        ? "EN"
+        : lang === "RU"
+        ? "RU"
+        : lang === "AR"
+        ? "AR"
+        : "TR";
+
+    const res = await api.translate.text(content, targetLang);
+
+    setTranslations((prev) => ({
+      ...prev,
+      [messageId]: res.translatedText,
+    }));
+  } catch (e) {
+    console.error(e);
+  } finally {
+    setTranslatingId(null);
+  }
+};
 
   const otherUser = (conv: any) => conv.user1Id === myId ? conv.user2 : conv.user1;
 
@@ -287,7 +318,27 @@ if (targetUserId) {
                           msg.senderId === myId ? "bg-pink-600 rounded-br-md" : "bg-white/10 rounded-bl-md"
                         }`}>
                           <p className="text-sm">{msg.content}</p>
-                          <span className="text-[10px] text-white/40 mt-1 block text-right">{formatTime(msg.createdAt)}</span>
+
+{translations[msg.id] && (
+  <div className="mt-2 border-t border-white/10 pt-2 text-xs text-cyan-200">
+    {translations[msg.id]}
+  </div>
+)}
+
+<div className="mt-1 flex items-center justify-between gap-3">
+  <button
+    type="button"
+    onClick={() => translateMessage(msg.id, msg.content)}
+    disabled={translatingId === msg.id}
+    className="text-[10px] text-cyan-300 hover:text-cyan-200 disabled:opacity-50"
+  >
+    {translatingId === msg.id ? "Çevriliyor..." : "🌐 Çevir"}
+  </button>
+
+  <span className="text-[10px] text-white/40">
+    {formatTime(msg.createdAt)}
+  </span>
+</div>
                         </div>
                       </div>
                     ))}
