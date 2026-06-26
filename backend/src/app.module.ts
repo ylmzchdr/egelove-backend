@@ -14,16 +14,21 @@ import { AuditModule } from "./common/audit/audit.module";
 import { EmailModule } from "./email/email.module";
 import { TwofaModule } from "./twofa/twofa.module";
 import { AdminModule } from "./admin/admin.module";
+import { TranslateModule } from "./translate/translate.module";
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+
     ThrottlerModule.forRoot([
       { name: "default", ttl: 60000, limit: 100 },
       { name: "auth", ttl: 60000, limit: 10 },
       { name: "register", ttl: 60000, limit: 5 },
       { name: "upload", ttl: 60000, limit: 20 },
     ]),
+
     PrismaModule,
     AuthModule,
     UserModule,
@@ -37,6 +42,7 @@ import { AdminModule } from "./admin/admin.module";
     EmailModule,
     TwofaModule,
     AdminModule,
+    TranslateModule,
   ],
 })
 export class AppModule {}
