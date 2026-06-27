@@ -8,7 +8,7 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n-context";
 
-const API_URL = "https://egelove-backend.onrender.com";
+const API_URL = "/api";
 
 type LangKey = "TR" | "EN" | "RU" | "AR";
 
