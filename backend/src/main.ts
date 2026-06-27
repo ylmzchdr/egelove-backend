@@ -61,12 +61,18 @@ async function bootstrap() {
   );
 
   // CORS
-  app.enableCors({
-    origin: process.env.CORS_ORIGIN || "http://localhost:3000",
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  });
+app.enableCors({
+  origin: [
+    "https://egelove.tr",
+    "https://www.egelove.tr",
+    "https://egelove.vercel.app",
+    "https://api.egelove.tr",
+    "http://localhost:3000",
+  ],
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+});
 
   // VALIDATION
   app.useGlobalPipes(
