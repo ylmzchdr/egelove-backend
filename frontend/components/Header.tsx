@@ -68,7 +68,7 @@ export default function Header({ onOpenLogin, onOpenRegister }: HeaderProps) {
 
     const fetchMe = async () => {
       try {
-        const res = await fetch(`${API_URL}/users/me`, {
+        const res = await fetch(`/api/users/me`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
