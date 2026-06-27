@@ -12,25 +12,29 @@ export class AdminController {
     private audit: AuditService,
   ) {}
 
-  private async checkAdmin(user: any) {
-    const dbUser = await this.prisma.user.findFirst({
-      where: {
-        OR: [
-          { id: user.sub },
-          { email: user.email },
-        ],
-      },
-      select: {
-        id: true,
-        email: true,
-        isAdmin: true,
-      },
-    });
+ private async checkAdmin(user: any) {
+  console.log("ADMIN CHECK USER:", user);
 
-    if (!dbUser?.isAdmin) {
-      throw new UnauthorizedException("Admin yetkisi gerekli");
-    }
+  const dbUser = await this.prisma.user.findFirst({
+    where: {
+      OR: [
+        { id: user.sub },
+        { email: user.email },
+      ],
+    },
+    select: {
+      id: true,
+      email: true,
+      isAdmin: true,
+    },
+  });
+
+  console.log("ADMIN CHECK DB USER:", dbUser);
+
+  if (!dbUser?.isAdmin) {
+    throw new UnauthorizedException("Admin yetkisi gerekli");
   }
+}
 
   @Get("stats")
   async getStats(@CurrentUser() user: any) {

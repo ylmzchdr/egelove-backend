@@ -17,7 +17,8 @@ import { jwtConstants } from "../common/constants";
   namespace: "/chat",
 })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  @WebSocketServer() server: Server;
+  @WebSocketServer()
+server!: Server;
 
   constructor(
     private jwtService: JwtService,

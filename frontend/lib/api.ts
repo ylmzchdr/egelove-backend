@@ -1,4 +1,4 @@
-const API_URL = "https://egelove-backend.onrender.com";
+const API_URL = "/api";
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token =
