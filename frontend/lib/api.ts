@@ -1,10 +1,60 @@
 const API_URL = "/api";
 
-async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
-  const token =
-    typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+function getAccessToken() {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem("accessToken");
+}
 
-  const res = await fetch(`${API_URL}${path}`, {
+function getRefreshToken() {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem("refreshToken");
+}
+
+function clearTokens() {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken");
+}
+
+async function refreshAccessToken(): Promise<string | null> {
+  const refreshToken = getRefreshToken();
+  if (!refreshToken) return null;
+
+  try {
+    const res = await fetch(`${API_URL}/auth/refresh`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refreshToken }),
+    });
+
+    if (!res.ok) {
+      clearTokens();
+      return null;
+    }
+
+    const data = await res.json();
+
+    if (data.accessToken) {
+      localStorage.setItem("accessToken", data.accessToken);
+    }
+
+    if (data.refreshToken) {
+      localStorage.setItem("refreshToken", data.refreshToken);
+    }
+
+    return data.accessToken || null;
+  } catch {
+    clearTokens();
+    return null;
+  }
+}
+
+async function rawRequest<T>(
+  path: string,
+  options: RequestInit = {},
+  token?: string | null,
+): Promise<Response> {
+  return fetch(`${API_URL}${path}`, {
     ...options,
     headers: {
       "Content-Type": "application/json",
@@ -12,11 +62,26 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
       ...options.headers,
     },
   });
+}
+
+async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+  let token = getAccessToken();
+
+  let res = await rawRequest<T>(path, options, token);
+
+  if (res.status === 401) {
+    const newToken = await refreshAccessToken();
+
+    if (newToken) {
+      res = await rawRequest<T>(path, options, newToken);
+    }
+  }
 
   if (!res.ok) {
     const error = await res
       .json()
       .catch(() => ({ message: "Bir hata oluştu" }));
+
     throw new Error(error.message || `HTTP ${res.status}`);
   }
 
