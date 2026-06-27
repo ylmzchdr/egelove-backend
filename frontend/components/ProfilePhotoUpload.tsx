@@ -4,9 +4,7 @@ import PhotoLightbox from "@/components/PhotoLightbox";
 import { useEffect, useRef, useState } from "react";
 import { Upload, X, Check, Loader2 } from "lucide-react";
 
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "https://egelove-backend.onrender.com";
-
+const API_URL = "/api";
 type PhotoItem = {
   id: string;
   url: string;
@@ -57,14 +55,13 @@ export default function ProfilePhotoUpload({
       const formData = new FormData();
       formData.append("file", file);
 
-      const res = await fetch(`${API_URL}/photos/upload`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
-
+     const res = await fetch(`/api/photos/upload`, {
+  method: "POST",
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
+  body: formData,
+});
       const data = await res.json();
       if (!res.ok) throw new Error();
 
