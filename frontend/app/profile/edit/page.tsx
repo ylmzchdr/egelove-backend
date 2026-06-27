@@ -202,58 +202,53 @@ export default function ProfileEditPage() {
     }
   }, []);
 
-  const handleSubmit = async () => {
-    setSaving(true);
-    setError("");
-    setSuccess("");
-    try {
-      const payload: any = {
-        name: form.name,
-        surname: form.surname,
-        phone: form.phone || undefined,
-        birthDate: form.birthDate || undefined,
-        gender: form.gender || undefined,
-        cityId: form.cityId || undefined,
-        districtId: form.districtId || undefined,
-        bio: form.bio || undefined,
-        aboutMe: form.aboutMe || undefined,
-        lookingFor: form.lookingFor || undefined,
-        education: form.education || undefined,
-        income: form.income || undefined,
-        religion: form.religion || undefined,
-        smoking: form.smoking || undefined,
-        alcohol: form.alcohol || undefined,
-        children: form.children || undefined,
-        bodyType: form.bodyType || undefined,
-        maritalStatus: form.maritalStatus || undefined,
-        height: form.height || undefined,
-        weight: form.weight || undefined,
-        eyeColor: form.eyeColor || undefined,
-        hairColor: form.hairColor || undefined,
-        bloodType: form.bloodType || undefined,
-        occupation: form.occupation || undefined,
-        hobbies: hobbiesInput.split(",").map((h) => h.trim()).filter(Boolean),
-      };
-     Object.keys(payload).forEach((k) => {
-  if (
-    payload[k] === undefined ||
-    payload[k] === null ||
-    payload[k] === ""
-  ) {
-    delete payload[k];
+ const handleSubmit = async () => {
+  setSaving(true);
+  setError("");
+  setSuccess("");
+
+  try {
+    const payload: any = {
+      name: form.name,
+      surname: form.surname,
+      phone: form.phone || undefined,
+      birthDate: form.birthDate || undefined,
+      gender: form.gender || undefined,
+      cityId: form.cityId || undefined,
+      districtId: form.districtId || undefined,
+      bio: form.bio || undefined,
+      aboutMe: form.aboutMe || undefined,
+      lookingFor: form.lookingFor || undefined,
+      education: form.education || undefined,
+      income: form.income || undefined,
+      religion: form.religion || undefined,
+      smoking: form.smoking || undefined,
+      alcohol: form.alcohol || undefined,
+      children: form.children || undefined,
+      bodyType: form.bodyType || undefined,
+      maritalStatus: form.maritalStatus || undefined,
+      height: form.height || undefined,
+      weight: form.weight || undefined,
+      eyeColor: form.eyeColor || undefined,
+      hairColor: form.hairColor || undefined,
+      bloodType: form.bloodType || undefined,
+      occupation: form.occupation || undefined,
+    };
+
+    Object.keys(payload).forEach((k) => {
+      if (payload[k] === undefined || payload[k] === null || payload[k] === "") {
+        delete payload[k];
+      }
+    });
+
+    await api.users.update(payload);
+    setSuccess("Profil başarıyla güncellendi!");
+  } catch (err: any) {
+    setError(err.message || "Kaydedilirken hata oluştu");
+  } finally {
+    setSaving(false);
   }
-});
-if (payload.birthDate) {
-  payload.birthDate = new Date(payload.birthDate).toISOString();
-}
-      await api.users.update(payload);
-      setSuccess("Profil başarıyla güncellendi!");
-    } catch (err: any) {
-      setError(err.message || "Kaydedilirken hata oluştu");
-    } finally {
-      setSaving(false);
-    }
-  };
+};
 
   if (loading) {
     return (
