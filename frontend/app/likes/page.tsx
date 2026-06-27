@@ -14,19 +14,39 @@ function getUserIdFromToken(): string | null {
   if (typeof window === "undefined") return null;
   const token = localStorage.getItem("accessToken");
   if (!token) return null;
+
   try {
     const payload = JSON.parse(atob(token.split(".")[1]));
-    return payload.sub || null;
-  } catch { return null; }
+    return payload.sub || payload.id || null;
+  } catch {
+    return null;
+  }
 }
 
 function calcAge(birthDate: string): number {
   const bd = new Date(birthDate);
   const today = new Date();
+
   let age = today.getFullYear() - bd.getFullYear();
   const m = today.getMonth() - bd.getMonth();
+
   if (m < 0 || (m === 0 && today.getDate() < bd.getDate())) age--;
+
   return age;
+}
+
+function getOtherUser(match: any, myId: string | null) {
+  if (!match || !myId) return null;
+
+  if (match.senderId === myId) {
+    return match.receiver || match.receiverUser || match.likedUser || null;
+  }
+
+  if (match.receiverId === myId) {
+    return match.sender || match.senderUser || match.user || null;
+  }
+
+  return match.receiver || match.sender || match.user || match.likedUser || null;
 }
 
 export default function LikesPage() {
@@ -38,86 +58,121 @@ export default function LikesPage() {
   const { lang } = useI18n();
 
   const load = async () => {
+    setLoading(true);
+
     const uid = getUserIdFromToken();
     setMyId(uid);
-    if (!uid) { setLoading(false); return; }
+
+    if (!uid) {
+      setMatches([]);
+      setLoading(false);
+      return;
+    }
+
     try {
-     const data: any = await api.matches.list();
-setMatches(Array.isArray(data) ? data : data.matches || data.data || []);
-    } catch (e) { console.error(e); }
-    setLoading(false);
+      const data: any = await api.matches.list();
+      setMatches(Array.isArray(data) ? data : data.matches || data.data || []);
+    } catch (e) {
+      console.error(e);
+      setMatches([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+  }, []);
 
   const handleLike = async (userId: string) => {
-    try { await api.matches.like(userId); load(); } catch (e) { console.error(e); }
+    try {
+      await api.matches.like(userId);
+      await load();
+    } catch (e) {
+      console.error(e);
+      alert("Beğeni gönderilemedi");
+    }
   };
 
- const safeMatches = Array.isArray(matches) ? matches : [];
+  const safeMatches = Array.isArray(matches) ? matches : [];
 
-const received = safeMatches.filter(
-  (m) => m.receiverId === myId
-);
+  const received = safeMatches.filter((m) => m.receiverId === myId);
+  const sent = safeMatches.filter((m) => m.senderId === myId);
 
-const sent = safeMatches.filter(
-  (m) => m.senderId === myId
-);
-
-  const otherUser = (match: any) => match.senderId === myId ? match.receiver : match.sender;
+  const visibleMatches = tab === "received" ? received : sent;
 
   return (
     <div className="min-h-screen bg-pink-950 text-white">
-      <Header onOpenLogin={() => setAuthTab("login")} onOpenRegister={() => setAuthTab("register")} />
+      <Header
+        onOpenLogin={() => setAuthTab("login")}
+        onOpenRegister={() => setAuthTab("register")}
+      />
+
       <section className="py-12">
         <div className="mx-auto max-w-7xl px-4">
           <h1 className="text-3xl font-bold mb-2">
-  {lang === "TR"
-    ? "Beğeniler"
-    : lang === "EN"
-    ? "Likes"
-    : lang === "RU"
-    ? "Нравится"
-    : "الإعجابات"}
-</h1>
+            {lang === "TR"
+              ? "Beğeniler"
+              : lang === "EN"
+              ? "Likes"
+              : lang === "RU"
+              ? "Нравится"
+              : "الإعجابات"}
+          </h1>
+
           <p className="text-white/50 mb-8">
-  {lang === "TR"
-    ? "Seni beğenenler ve beğendiklerin"
-    : lang === "EN"
-    ? "People who liked you and people you liked"
-    : lang === "RU"
-    ? "Кто лайкнул вас и кого лайкнули вы"
-    : "من أعجبوا بك ومن أعجبت بهم"}
-</p>
+            {lang === "TR"
+              ? "Seni beğenenler ve beğendiklerin"
+              : lang === "EN"
+              ? "People who liked you and people you liked"
+              : lang === "RU"
+              ? "Кто лайкнул вас и кого лайкнули вы"
+              : "من أعجبوا بك ومن أعجبت بهم"}
+          </p>
 
           <div className="flex gap-4 mb-8 border-b border-white/10">
             <button
               onClick={() => setTab("received")}
-              className={`pb-3 text-sm font-medium relative ${tab === "received" ? "text-pink-300" : "text-white/50 hover:text-white"}`}
+              className={`pb-3 text-sm font-medium relative ${
+                tab === "received"
+                  ? "text-pink-300"
+                  : "text-white/50 hover:text-white"
+              }`}
             >
               <Heart className="w-4 h-4 inline mr-1" />
-{lang === "TR"
-  ? "Seni Beğenenler"
-  : lang === "EN"
-  ? "Liked You"
-  : lang === "RU"
-  ? "Лайкнули вас"
-  : "أعجبوا بك"} ({received.length})
-              {tab === "received" && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-pink-500 rounded-full" />}
+              {lang === "TR"
+                ? "Seni Beğenenler"
+                : lang === "EN"
+                ? "Liked You"
+                : lang === "RU"
+                ? "Лайкнули вас"
+                : "أعجبوا بك"}{" "}
+              ({received.length})
+              {tab === "received" && (
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-pink-500 rounded-full" />
+              )}
             </button>
+
             <button
               onClick={() => setTab("sent")}
-              className={`pb-3 text-sm font-medium relative ${tab === "sent" ? "text-pink-300" : "text-white/50 hover:text-white"}`}
+              className={`pb-3 text-sm font-medium relative ${
+                tab === "sent"
+                  ? "text-pink-300"
+                  : "text-white/50 hover:text-white"
+              }`}
             >
               <ThumbsUp className="w-4 h-4 inline mr-1" />
-{lang === "TR"
-  ? "Beğendiklerin"
-  : lang === "EN"
-  ? "You Liked"
-  : lang === "RU"
-  ? "Вы лайкнули"
-  : "أعجبت بهم"} ({sent.length})
-              {tab === "sent" && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-pink-500 rounded-full" />}
+              {lang === "TR"
+                ? "Beğendiklerin"
+                : lang === "EN"
+                ? "You Liked"
+                : lang === "RU"
+                ? "Вы лайкнули"
+                : "أعجبت بهم"}{" "}
+              ({sent.length})
+              {tab === "sent" && (
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-pink-500 rounded-full" />
+              )}
             </button>
           </div>
 
@@ -131,14 +186,14 @@ const sent = safeMatches.filter(
             <div className="text-center py-20 text-white/40">
               <Heart className="w-16 h-16 mx-auto mb-4 opacity-30" />
               <p className="text-lg">
-  {lang === "TR"
-    ? "Giriş yapmalısın"
-    : lang === "EN"
-    ? "You must log in"
-    : lang === "RU"
-    ? "Необходимо войти"
-    : "يجب تسجيل الدخول"}
-</p>
+                {lang === "TR"
+                  ? "Giriş yapmalısın"
+                  : lang === "EN"
+                  ? "You must log in"
+                  : lang === "RU"
+                  ? "Необходимо войти"
+                  : "يجب تسجيل الدخول"}
+              </p>
             </div>
           )}
 
@@ -146,14 +201,14 @@ const sent = safeMatches.filter(
             <div className="text-center py-20 text-white/40">
               <Heart className="w-16 h-16 mx-auto mb-4 opacity-30" />
               <p className="text-lg">
-  {lang === "TR"
-    ? "Henüz kimse seni beğenmedi"
-    : lang === "EN"
-    ? "No one has liked you yet"
-    : lang === "RU"
-    ? "Вас пока никто не лайкнул"
-    : "لم يعجب بك أحد بعد"}
-</p>
+                {lang === "TR"
+                  ? "Henüz kimse seni beğenmedi"
+                  : lang === "EN"
+                  ? "No one has liked you yet"
+                  : lang === "RU"
+                  ? "Вас пока никто не лайкнул"
+                  : "لم يعجب بك أحد بعد"}
+              </p>
               <p className="text-sm">Profilini düzenleyip daha fazla kişiye görün!</p>
             </div>
           )}
@@ -162,25 +217,30 @@ const sent = safeMatches.filter(
             <div className="text-center py-20 text-white/40">
               <ThumbsUp className="w-16 h-16 mx-auto mb-4 opacity-30" />
               <p className="text-lg">Henüz kimseyi beğenmedin</p>
-              <p className="text-sm">Keşfet sayfasından üyeleri beğenmeye başla!</p>
+              <p className="text-sm">Birini Bul sayfasından üyeleri beğenmeye başla!</p>
             </div>
           )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {(tab === "received" ? received : sent).map((match) => {
-              const other = otherUser(match);
+            {visibleMatches.map((match) => {
+              const other = getOtherUser(match, myId);
+              if (!other?.id) return null;
+
               return (
                 <div key={match.id}>
                   <ProfileCard
-  id={other.id}
-  avatar={other}
-                    name={`${other.name}${other.surname ? " " + other.surname : ""}`}
+                    id={other.id}
+                    avatar={other}
+                    name={`${other.name || ""}${
+                      other.surname ? " " + other.surname : ""
+                    }`}
                     age={other.birthDate ? calcAge(other.birthDate) : undefined}
                     city={other.city?.name}
                     district={other.district?.name}
                     bio={other.bio}
                     verified={other.isVerified}
                   />
+
                   {tab === "received" && !match.isMutual && (
                     <Button
                       className="w-full mt-2 bg-pink-600 hover:bg-pink-700 text-xs h-8"
@@ -189,26 +249,30 @@ const sent = safeMatches.filter(
                       <Heart className="w-3 h-3 mr-1" /> Karşılık Ver
                     </Button>
                   )}
-                 {tab === "received" && match.isMutual && (
-  <Button
-    className="w-full mt-2 bg-green-600 hover:bg-green-700 text-xs h-8"
-   onClick={() => window.location.href = `/messages?userId=${other.id}`}
-  >
-    {lang === "TR"
-      ? "Mesaj Gönder"
-      : lang === "EN"
-      ? "Send Message"
-      : lang === "RU"
-      ? "Отправить сообщение"
-      : "إرسال رسالة"}
-  </Button>
-)}
+
+                  {match.isMutual && (
+                    <Button
+                      className="w-full mt-2 bg-green-600 hover:bg-green-700 text-xs h-8"
+                      onClick={() =>
+                        (window.location.href = `/messages?userId=${other.id}`)
+                      }
+                    >
+                      {lang === "TR"
+                        ? "Mesaj Gönder"
+                        : lang === "EN"
+                        ? "Send Message"
+                        : lang === "RU"
+                        ? "Отправить сообщение"
+                        : "إرسال رسالة"}
+                    </Button>
+                  )}
                 </div>
               );
             })}
           </div>
         </div>
       </section>
+
       <Footer />
       <AuthDialog activeTab={authTab} onClose={() => setAuthTab(null)} />
     </div>
