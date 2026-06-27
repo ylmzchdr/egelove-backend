@@ -13,7 +13,6 @@ import { api } from "@/lib/api";
 
 const EDUCATION_OPTIONS = [
   { value: "PRIMARY", label: "İlkokul" },
-  { value: "SECONDARY", label: "Ortaokul" },
   { value: "HIGH_SCHOOL", label: "Lise" },
   { value: "ASSOCIATE", label: "Ön Lisans" },
   { value: "BACHELOR", label: "Lisans" },
@@ -30,10 +29,9 @@ const INCOME_OPTIONS = [
 ];
 
 const MARITAL_OPTIONS = [
-  { value: "NEVER_MARRIED", label: "Hiç evlenmedi" },
+  { value: "SINGLE", label: "Bekar" },
+  { value: "MARRIED", label: "Evli" },
   { value: "DIVORCED", label: "Boşandı" },
-  { value: "WIDOWED", label: "Eşi vefat etti" },
-  { value: "SEPARATED", label: "Ayrı yaşıyor" },
 ];
 
 const CHILDREN_OPTIONS = [
@@ -75,11 +73,9 @@ const BODY_TYPE_OPTIONS = [
 const HAIR_COLOR_OPTIONS = [
   { value: "BLACK", label: "Siyah" },
   { value: "BROWN", label: "Kahverengi" },
-  { value: "BLOND", label: "Sarı" },
+  { value: "BLONDE", label: "Sarı" },
   { value: "RED", label: "Kızıl" },
   { value: "WHITE", label: "Beyaz" },
-  { value: "BALD", label: "Kel" },
-  { value: "OTHER", label: "Diğer" },
 ];
 
 const EYE_COLOR_OPTIONS = [
