@@ -89,6 +89,18 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 }
 
 export const api = {
+  ai: {
+    egematchMe: () =>
+      request<{
+        score: number;
+        energy: number;
+        interest: number;
+        love: number;
+        label: string;
+        summary: string;
+      }>("/ai/egematch/me"),
+  },
+
   auth: {
     register: (data: any) =>
       request("/auth/register", {

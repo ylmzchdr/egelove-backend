@@ -256,7 +256,15 @@ export default function ProfilePage() {
   const [authTab, setAuthTab] = useState<"login" | "register" | null>(null);
   const [user, setUser] = useState<CurrentUser | null>(null);
   const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true)
+  const [egematch, setEgematch] = useState<{
+  score: number;
+  energy: number;
+  interest: number;
+  love: number;
+  label: string;
+  summary: string;
+} | null>(null);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -272,6 +280,13 @@ export default function ProfilePage() {
 console.log("ME RESPONSE =", me);
 console.log("PHOTOS =", (me as CurrentUser).photos);
 setUser(me as CurrentUser);
+try {
+  const ai = await api.ai.egematchMe();
+  console.log("AI =", ai);
+  setEgematch(ai);
+} catch (err) {
+  console.error("EgeMatch AI:", err);
+}
       } catch (error) {
         console.error(error);
         setUser(null);
@@ -421,7 +436,10 @@ function trOpt(value: string | null | undefined) {
               <UserCircle className="mx-auto mb-4 h-20 w-20 text-white/40" />
               <p className="mb-4 text-white/60">{tx.mustLogin}</p>
               <div className="mx-auto mb-6 max-w-2xl px-4">
-  <EgeMatchAICard score={87} name="Egelove" />
+  <EgeMatchAICard
+  score={egematch?.score ?? 87}
+  name={fullName}
+/>
 </div>
               <Button
                 onClick={() => setAuthTab("login")}
