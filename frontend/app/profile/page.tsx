@@ -280,12 +280,13 @@ export default function ProfilePage() {
 console.log("ME RESPONSE =", me);
 console.log("PHOTOS =", (me as CurrentUser).photos);
 setUser(me as CurrentUser);
+
 try {
   const ai = await api.ai.egematchMe();
-  console.log("AI =", ai);
+  console.log("AI RESPONSE =", ai);
   setEgematch(ai);
-} catch (err) {
-  console.error("EgeMatch AI:", err);
+} catch (aiError) {
+  console.error("AI ERROR =", aiError);
 }
       } catch (error) {
         console.error(error);
@@ -435,12 +436,7 @@ function trOpt(value: string | null | undefined) {
             <div className="rounded-3xl border border-white/10 bg-white/5 py-20 text-center">
               <UserCircle className="mx-auto mb-4 h-20 w-20 text-white/40" />
               <p className="mb-4 text-white/60">{tx.mustLogin}</p>
-              <div className="mx-auto mb-6 max-w-2xl px-4">
-  <EgeMatchAICard
-  score={egematch?.score ?? 87}
-  name={fullName}
-/>
-</div>
+            
               <Button
                 onClick={() => setAuthTab("login")}
                 className="bg-pink-600 hover:bg-pink-700"

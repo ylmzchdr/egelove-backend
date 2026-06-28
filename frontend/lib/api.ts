@@ -1,4 +1,5 @@
-const API_URL = "/api";
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "https://egelove-backend.onrender.com";
 
 function getAccessToken() {
   if (typeof window === "undefined") return null;
