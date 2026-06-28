@@ -7,7 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 enum Gender {
   MALE
   FEMALE
@@ -112,82 +111,83 @@ enum PhotoStatus {
 }
 
 model City {
-  id        Int       @id @default(autoincrement())
+  id        Int        @id @default(autoincrement())
   name      String
   districts District[]
   users     User[]
 }
 
 model District {
-  id      Int    @id @default(autoincrement())
-  name    String
-  cityId  Int
-  city    City   @relation(fields: [cityId], references: [id])
-  users   User[]
+  id     Int    @id @default(autoincrement())
+  name   String
+  cityId Int
+  city   City   @relation(fields: [cityId], references: [id])
+  users  User[]
 }
 
 model User {
-  id                  String         @id @default(cuid())
-  email               String         @unique
-  phone               String?        @unique
-  passwordHash        String
-  name                String
-  surname             String
-  birthDate           DateTime
-  gender              Gender
-  cityId              Int
-  city                City           @relation(fields: [cityId], references: [id])
-  districtId          Int
-  district            District       @relation(fields: [districtId], references: [id])
-  bio                 String?
-  avatar              String?
-  isPremiumCandidate  Boolean        @default(false)
-  premiumExpiresAt    DateTime?
-  isAdmin             Boolean        @default(false)
-  isVerified          Boolean        @default(false)
-  isActive            Boolean        @default(true)
-  turnstileToken      String?
-  refreshToken        String?
-  lastLoginAt         DateTime?
-  isEmailVerified     Boolean        @default(false)
-  emailVerifyToken    String?
-  emailVerifySentAt   DateTime?
-  twoFactorSecret     String?
-  twoFactorEnabled    Boolean        @default(false)
-  createdAt           DateTime       @default(now())
-  updatedAt           DateTime       @updatedAt
+  id                 String    @id @default(cuid())
+  email              String    @unique
+  phone              String?   @unique
+  passwordHash       String
+  name               String
+  surname            String
+  birthDate          DateTime
+  gender             Gender
+  cityId             Int
+  city               City      @relation(fields: [cityId], references: [id])
+  districtId         Int
+  district           District  @relation(fields: [districtId], references: [id])
+  bio                String?
+  avatar             String?
+  isPremiumCandidate Boolean   @default(false)
+  premiumExpiresAt   DateTime?
+  isAdmin            Boolean   @default(false)
+  isVerified         Boolean   @default(false)
+  isActive           Boolean   @default(true)
+  turnstileToken     String?
+  refreshToken       String?
+  lastLoginAt        DateTime?
+  isEmailVerified    Boolean   @default(false)
+  emailVerifyToken   String?
+  emailVerifySentAt  DateTime?
+  twoFactorSecret    String?
+  twoFactorEnabled   Boolean   @default(false)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 
-  photos              Photo[]
-  sentMatches         Match[]        @relation("SentMatches")
-  receivedMatches     Match[]        @relation("ReceivedMatches")
-  sentMessages        Message[]      @relation("SentMessages")
-  conversationsAs1    Conversation[]  @relation("ConversationUser1")
-  conversationsAs2    Conversation[]  @relation("ConversationUser2")
-  conversationReads   ConversationRead[]
+  photos                Photo[]
+  sentMatches           Match[]             @relation("SentMatches")
+  receivedMatches       Match[]             @relation("ReceivedMatches")
+  sentMessages          Message[]           @relation("SentMessages")
+  conversationsAs1      Conversation[]      @relation("ConversationUser1")
+  conversationsAs2      Conversation[]      @relation("ConversationUser2")
+  conversationReads     ConversationRead[]
+  profileVisitsReceived ProfileVisit[]      @relation("ProfileVisitsReceived")
+  profileVisitsMade     ProfileVisit[]      @relation("ProfileVisitsMade")
+  presence              UserPresence?
+  payments              PaymentWebhookLog[]
 
-  presence            UserPresence?
-  payments            PaymentWebhookLog[]
+  education  EducationLevel?
+  income     IncomeLevel?
+  religion   ReligionLevel?
+  smoking    SmokingStatus?
+  alcohol    AlcoholStatus?
+  children   ChildrenStatus?
+  bodyType   BodyType?
+  height     Int?
+  weight     Int?
+  eyeColor   EyeColor?
+  hairColor  HairColor?
+  bloodType  BloodType?
+  occupation String?
+  hobbies    String?         @db.Text
 
-  education           EducationLevel?
-  income              IncomeLevel?
-  religion            ReligionLevel?
-  smoking             SmokingStatus?
-  alcohol             AlcoholStatus?
-  children            ChildrenStatus?
-  bodyType            BodyType?
-  height              Int?
-  weight              Int?
-  eyeColor            EyeColor?
-  hairColor           HairColor?
-  bloodType           BloodType?
-  occupation          String?
-  hobbies             String?   @db.Text
+  aboutMe    String?
+  lookingFor String?
 
-  aboutMe             String?
-  lookingFor          String?
-
-  privacySettings     Json           @default("{}")
-  matchingPreferences Json           @default("{}")
+  privacySettings     Json @default("{}")
+  matchingPreferences Json @default("{}")
 
   @@index([cityId])
   @@index([districtId])
@@ -196,34 +196,34 @@ model User {
 }
 
 model Photo {
-  id         String      @id @default(cuid())
-  url        String
-  thumbnail  String?
-  blurHash   String?
-  status     PhotoStatus @default(PENDING)
-  isMain     Boolean     @default(false)
-  userId     String
-  user       User        @relation(fields: [userId], references: [id])
+  id             String      @id @default(cuid())
+  url            String
+  thumbnail      String?
+  blurHash       String?
+  status         PhotoStatus @default(PENDING)
+  isMain         Boolean     @default(false)
+  userId         String
+  user           User        @relation(fields: [userId], references: [id])
   rejectedReason String?
-  moderatedBy String?
-  moderatedAt DateTime?
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+  moderatedBy    String?
+  moderatedAt    DateTime?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
 
   @@index([userId])
   @@index([status])
 }
 
 model Match {
-  id          String   @id @default(cuid())
-  senderId    String
-  sender      User     @relation("SentMatches", fields: [senderId], references: [id])
-  receiverId  String
-  receiver    User     @relation("ReceivedMatches", fields: [receiverId], references: [id])
-  isMutual    Boolean  @default(false)
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String   @id @default(cuid())
+  senderId   String
+  sender     User     @relation("SentMatches", fields: [senderId], references: [id])
+  receiverId String
+  receiver   User     @relation("ReceivedMatches", fields: [receiverId], references: [id])
+  isMutual   Boolean  @default(false)
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   @@unique([senderId, receiverId])
   @@index([senderId])
@@ -232,15 +232,15 @@ model Match {
 }
 
 model Conversation {
-  id        String              @id @default(cuid())
+  id        String             @id @default(cuid())
   user1Id   String
-  user1     User                @relation("ConversationUser1", fields: [user1Id], references: [id])
+  user1     User               @relation("ConversationUser1", fields: [user1Id], references: [id])
   user2Id   String
-  user2     User                @relation("ConversationUser2", fields: [user2Id], references: [id])
+  user2     User               @relation("ConversationUser2", fields: [user2Id], references: [id])
   messages  Message[]
   reads     ConversationRead[]
-  createdAt DateTime            @default(now())
-  updatedAt DateTime            @updatedAt
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
 
   @@unique([user1Id, user2Id])
   @@index([user1Id])
@@ -274,11 +274,11 @@ model ConversationRead {
 }
 
 model UserPresence {
-  id        String   @id @default(cuid())
-  userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id])
-  isOnline  Boolean  @default(false)
-  lastSeen  DateTime @default(now())
+  id       String   @id @default(cuid())
+  userId   String   @unique
+  user     User     @relation(fields: [userId], references: [id])
+  isOnline Boolean  @default(false)
+  lastSeen DateTime @default(now())
 }
 
 model PaymentWebhookLog {
@@ -297,4 +297,18 @@ model PaymentWebhookLog {
 
   @@index([userId])
   @@index([platformOrderId])
+}
+
+model ProfileVisit {
+  id        String   @id @default(cuid())
+  visitorId String
+  visitedId String
+  createdAt DateTime @default(now())
+
+  visitor User @relation("ProfileVisitsMade", fields: [visitorId], references: [id], onDelete: Cascade)
+  visited User @relation("ProfileVisitsReceived", fields: [visitedId], references: [id], onDelete: Cascade)
+
+  @@index([visitedId])
+  @@index([visitorId])
+  @@index([createdAt])
 }

@@ -264,23 +264,39 @@ async updateMe(@CurrentUser() user: any, @Body() data: UpdateUserDto) {
   }
 
   @Get(":id")
-  async getProfile(@Param("id") id: string) {
-    const profile = await this.prisma.user.findUnique({
-      where: { id },
-      include: { photos: true, city: true, district: true },
-    });
-
-    if (!profile) return { error: "Kullanıcı bulunamadı" };
-
-    const {
-      passwordHash,
-      refreshToken,
-      turnstileToken,
-      twoFactorSecret,
-      emailVerifyToken,
-      ...safe
-    } = profile;
-
-    return safe;
+@UseGuards(JwtAuthGuard)
+async getProfile(@Param("id") id: string, @CurrentUser() user: any) {
+  if (user?.sub && user.sub !== id) {
+    await (this.prisma as any).profileVisit
+      .create({
+        data: {
+          visitorId: user.sub,
+          visitedId: id,
+        },
+      })
+      .catch(() => null);
   }
+
+  const profile = await this.prisma.user.findUnique({
+    where: { id },
+    include: {
+      photos: true,
+      city: true,
+      district: true,
+    },
+  });
+
+  if (!profile) return { error: "Kullanıcı bulunamadı" };
+
+  const {
+    passwordHash,
+    refreshToken,
+    turnstileToken,
+    twoFactorSecret,
+    emailVerifyToken,
+    ...safe
+  } = profile;
+
+  return safe;
+}
 }
