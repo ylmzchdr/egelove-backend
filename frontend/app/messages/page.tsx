@@ -185,7 +185,7 @@ if (targetUserId) {
     <section className="py-6">
       <div className="mx-auto max-w-7xl px-4">
         <div className="flex gap-4 h-[calc(100vh-200px)]">
-          <div className="w-full md:w-96 shrink-0 bg-white/5 border border-white/10 rounded-xl overflow-hidden flex flex-col">
+          <div className={`${activeConv ? "hidden md:flex" : "flex"} w-full md:w-96 shrink-0 bg-white/5 border border-white/10 rounded-xl overflow-hidden flex-col`}>
             <div className="p-4 border-b border-white/10">
               <h2 className="text-xl font-bold mb-3">
                 {lang === "TR" ? "Mesajlar" : lang === "EN" ? "Messages" : lang === "RU" ? "Сообщения" : "الرسائل"}
@@ -285,28 +285,41 @@ if (targetUserId) {
               </div>
             </div>
 
-            <div className="flex-1 bg-white/5 border border-white/10 rounded-xl overflow-hidden hidden md:flex flex-col">
+            <div className={`${activeConv ? "flex" : "hidden md:flex"} flex-1 bg-white/5 border border-white/10 rounded-xl overflow-hidden flex-col`}>
               {activeConv ? (
                 <>
                   <div className="p-4 border-b border-white/10 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      {(() => {
-                        const conv = conversations.find(c => c.id === activeConv);
-                        const other = conv ? otherUser(conv) : null;
-                        const name = other ? `${other.name || ""}${other.surname ? " " + other.surname : ""}` : "";
-                        return (
-                          <>
-                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center text-sm font-bold">
-                              {(other?.name?.[0] || "?").toUpperCase()}
-                            </div>
-                            <div>
-                              <span className="font-semibold">{name}</span>
-                            </div>
-                          </>
-                        );
-                      })()}
-                    </div>
-                  </div>
+  <div className="flex items-center gap-3">
+    <button
+      onClick={() => setActiveConv("")}
+      className="md:hidden text-white text-2xl"
+    >
+      ←
+    </button>
+
+    {(() => {
+      const conv = conversations.find(c => c.id === activeConv);
+      const other = conv ? otherUser(conv) : null;
+      const name = other
+        ? `${other.name || ""}${other.surname ? " " + other.surname : ""}`
+        : "";
+
+      return (
+        <>
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center text-sm font-bold">
+            {(other?.name?.[0] || "?").toUpperCase()}
+          </div>
+
+          <div>
+            <span className="font-semibold">{name}</span>
+          </div>
+        </>
+      );
+    })()}
+  </div>
+</div>
+                  
+                 
 
                   <div className="flex-1 overflow-y-auto p-4 space-y-3">
                     {loadingMessages && (
@@ -345,7 +358,7 @@ if (targetUserId) {
                     <div ref={messagesEnd} />
                   </div>
 
-                  <div className="p-4 border-t border-white/10">
+                  <div className="p-3 border-t border-white/10 bg-pink-950 sticky bottom-0">
                     <form onSubmit={(e) => { e.preventDefault(); sendMessage(); }} className="flex gap-2">
                       <Input
                         className="bg-pink-950/50 border-white/10 text-white"
