@@ -15,12 +15,14 @@ import { EmailModule } from "./email/email.module";
 import { TwofaModule } from "./twofa/twofa.module";
 import { AdminModule } from "./admin/admin.module";
 import { TranslateModule } from "./translate/translate.module";
+import { AiModule } from "./ai/ai.module.js";
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    AiModule,
 
     ThrottlerModule.forRoot([
       { name: "default", ttl: 60000, limit: 100 },
