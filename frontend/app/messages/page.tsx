@@ -112,15 +112,25 @@ if (targetUserId) {
     setLoadingMessages(false);
   };
 
-  const sendMessage = async () => {
-    if (!msgText.trim() || !activeConv) return;
-    const text = msgText.trim();
-    setMsgText("");
-    setMessages((prev) => [...prev, { id: "temp", content: text, senderId: myId, createdAt: new Date().toISOString(), sender: { id: myId, name: "Sen" } }]);
-    try {
-      await api.conversations.send(activeConv, text);
-    } catch (e) { console.error(e); }
-  };
+ const sendMessage = async () => {
+  if (!msgText.trim() || !activeConv) return;
+
+  const text = msgText.trim();
+  setMsgText("");
+
+  try {
+    const saved = await api.conversations.send(activeConv, text);
+
+    setMessages((prev) => [...prev, saved]);
+
+    await loadMessages(activeConv);
+    await loadConversations();
+  } catch (e: any) {
+    console.error(e);
+    setMsgText(text);
+    alert(e?.message || "Mesaj gönderilemedi");
+  }
+};
   const translateMessage = async (messageId: string, content: string) => {
   if (!messageId || !content) return;
 
