@@ -262,6 +262,117 @@ async updateMe(@CurrentUser() user: any, @Body() data: UpdateUserDto) {
       };
     });
   }
+  @Get(":id/compatibility")
+@UseGuards(JwtAuthGuard)
+async getCompatibility(@CurrentUser() user: any, @Param("id") targetId: string) {
+  if (user.sub === targetId) {
+    return {
+      score: 100,
+      summary: "Kendi profiliniz",
+      reasons: ["Bu sizin kendi profiliniz"],
+    };
+  }
+
+  const [me, target] = await Promise.all([
+    this.prisma.user.findUnique({
+      where: { id: user.sub },
+      include: { city: true, district: true },
+    }),
+    this.prisma.user.findUnique({
+      where: { id: targetId },
+      include: { city: true, district: true },
+    }),
+  ]);
+
+  if (!me || !target) {
+    return {
+      score: 0,
+      summary: "Profil bulunamadı",
+      reasons: [],
+    };
+  }
+
+  let score = 35;
+  const reasons: string[] = [];
+
+  if (me.cityId === target.cityId) {
+    score += 15;
+    reasons.push("Aynı şehirde yaşıyorsunuz");
+  }
+
+  if (me.districtId === target.districtId) {
+    score += 10;
+    reasons.push("Aynı ilçedesiniz");
+  }
+
+  const age = (birthDate: Date) =>
+    Math.floor((Date.now() - new Date(birthDate).getTime()) / 31557600000);
+
+  const ageDiff = Math.abs(age(me.birthDate) - age(target.birthDate));
+
+  if (ageDiff <= 3) {
+    score += 20;
+    reasons.push("Yaş farkınız oldukça ideal");
+  } else if (ageDiff <= 7) {
+    score += 15;
+    reasons.push("Yaş farkınız uyumlu görünüyor");
+  } else if (ageDiff <= 12) {
+    score += 8;
+    reasons.push("Yaş farkınız kabul edilebilir seviyede");
+  }
+
+  if (me.education && me.education === target.education) {
+    score += 7;
+    reasons.push("Eğitim seviyeniz benzer");
+  }
+
+  if (me.smoking && me.smoking === target.smoking) {
+    score += 8;
+    reasons.push("Sigara alışkanlığınız benzer");
+  }
+
+  if (me.alcohol && me.alcohol === target.alcohol) {
+    score += 7;
+    reasons.push("Alkol kullanım tercihiniz benzer");
+  }
+
+  if (me.children && me.children === target.children) {
+    score += 8;
+    reasons.push("Çocuk konusundaki durumunuz uyumlu");
+  }
+
+  if (me.religion && me.religion === target.religion) {
+    score += 6;
+    reasons.push("Yaşam değerleriniz benzer görünüyor");
+  }
+
+  if (me.lookingFor && target.lookingFor) {
+    score += 6;
+    reasons.push("İlişki beklentileriniz karşılaştırılabilir");
+  }
+
+  score = Math.min(score, 99);
+
+  const summary =
+    score >= 85
+      ? "Yüksek uyum"
+      : score >= 70
+      ? "Güçlü uyum"
+      : score >= 55
+      ? "Orta seviye uyum"
+      : "Düşük uyum";
+
+  return {
+    brand: "EgeMatch AI",
+    score,
+    summary,
+    reasons: reasons.slice(0, 5),
+    message:
+      score >= 80
+        ? "Bu profil ile sohbet başlatma ihtimaliniz oldukça güçlü görünüyor."
+        : "Uyum orta seviyede. Profili detaylı inceleyip sohbetle keşfetmeniz önerilir.",
+  };
+}
 
  @Get(":id")
 async getProfile(@Param("id") id: string) {
