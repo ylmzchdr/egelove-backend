@@ -267,7 +267,17 @@ async updateMe(@CurrentUser() user: any, @Body() data: UpdateUserDto) {
 async getProfile(@Param("id") id: string) {
   const profile = await this.prisma.user.findUnique({
     where: { id },
-    include: { photos: true, city: true, district: true },
+    include: {
+  photos: {
+    where: { status: "APPROVED" },
+    orderBy: [
+      { isMain: "desc" },
+      { createdAt: "desc" },
+    ],
+  },
+  city: true,
+  district: true,
+},
   });
 
   if (!profile) return { error: "Kullanıcı bulunamadı" };
