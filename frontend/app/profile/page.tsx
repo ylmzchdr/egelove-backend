@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
+
   Loader2,
   Pencil,
   UserCircle,
@@ -21,6 +22,7 @@ import AuthDialog from "@/components/AuthDialog";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
 import { useI18n } from "@/lib/i18n-context";
+import EgeMatchAICard from "@/components/EgeMatchAICard";
 
 type CurrentUser = {
   id: string;
@@ -414,9 +416,13 @@ function trOpt(value: string | null | undefined) {
               <Loader2 className="h-10 w-10 animate-spin text-pink-400" />
             </div>
           ) : !user ? (
+            
             <div className="rounded-3xl border border-white/10 bg-white/5 py-20 text-center">
               <UserCircle className="mx-auto mb-4 h-20 w-20 text-white/40" />
               <p className="mb-4 text-white/60">{tx.mustLogin}</p>
+              <div className="mx-auto mb-6 max-w-2xl px-4">
+  <EgeMatchAICard score={87} name="Egelove" />
+</div>
               <Button
                 onClick={() => setAuthTab("login")}
                 className="bg-pink-600 hover:bg-pink-700"
@@ -534,7 +540,14 @@ function trOpt(value: string | null | undefined) {
                     </Link>
                   </div>
                 </div>
+              
 
+                <div className="mb-6">
+  <EgeMatchAICard
+    score={87}
+    name={fullName}
+  />
+</div>
                 <div className="grid gap-6 xl:grid-cols-2">
                   <div className="rounded-3xl border border-white/10 bg-white/5 p-5 sm:p-7">
                     <h3 className="mb-5 text-lg font-bold">{tx.info}</h3>
