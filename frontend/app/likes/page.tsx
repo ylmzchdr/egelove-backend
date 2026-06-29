@@ -229,18 +229,19 @@ export default function LikesPage() {
               return (
                 <div key={match.id}>
                   <ProfileCard
-                    id={other.id}
-                    avatar={other}
-                    name={`${other.name || ""}${
-                      other.surname ? " " + other.surname : ""
-                    }`}
-                    age={other.birthDate ? calcAge(other.birthDate) : undefined}
-                    city={other.city?.name}
-                    district={other.district?.name}
-                    bio={other.bio}
-                    verified={other.isVerified}
-                  />
-
+  id={other.id}
+  avatar={
+    other.avatar ||
+    other.photos?.find((p: any) => p.isMain)?.url ||
+    other.photos?.[0]?.url
+  }
+  name={`${other.name || ""}${other.surname ? " " + other.surname : ""}`}
+  age={other.birthDate ? calcAge(other.birthDate) : undefined}
+  city={other.city?.name}
+  district={other.district?.name}
+  bio={other.bio}
+  verified={other.isVerified}
+/>
                   {tab === "received" && !match.isMutual && (
                     <Button
                       className="w-full mt-2 bg-pink-600 hover:bg-pink-700 text-xs h-8"

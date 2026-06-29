@@ -151,7 +151,7 @@ export default function AdminPage() {
                         <p className="text-xs text-white/40">{new Date(photo.createdAt).toLocaleDateString("tr-TR")}</p>
                       </div>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex items-center gap-2">
                       <Button size="sm" className="bg-green-600 hover:bg-green-700" onClick={() => handleApprove(photo.id)}>
                         <Check className="w-4 h-4" />
                       </Button>

@@ -41,7 +41,7 @@ export default function ProfileCard({
 
   const profileId = id || avatar?.id;
   const gradient = avatarColors[name.length % avatarColors.length];
-  const backendUrl = process.env.NEXT_PUBLIC_API_URL || "";
+ const backendUrl = "/api";
 
   const databasePhoto =
     avatar?.photos?.find((p: any) => p.isMain)?.url ||
@@ -65,6 +65,7 @@ export default function ProfileCard({
   };
 
   const handleLike = () => {
+    console.log("PROFILE ID =", profileId);
     if (!profileId) {
       alert("Kullanıcı ID bulunamadı");
       return;

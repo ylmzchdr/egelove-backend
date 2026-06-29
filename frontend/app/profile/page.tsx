@@ -281,13 +281,7 @@ console.log("ME RESPONSE =", me);
 console.log("PHOTOS =", (me as CurrentUser).photos);
 setUser(me as CurrentUser);
 
-try {
-  const ai = await api.ai.egematchMe();
-  console.log("AI RESPONSE =", ai);
-  setEgematch(ai);
-} catch (aiError) {
-  console.error("AI ERROR =", aiError);
-}
+
       } catch (error) {
         console.error(error);
         setUser(null);
