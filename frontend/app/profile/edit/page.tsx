@@ -251,7 +251,7 @@ setLoading(false);
   setSuccess("");
 
   try {
-    const payload: any = {
+    const payload: Record<string, any> = {
       name: form.name,
       surname: form.surname,
       phone: form.phone || undefined,
@@ -259,13 +259,31 @@ setLoading(false);
       gender: form.gender || undefined,
       cityId: form.cityId || undefined,
       districtId: form.districtId || undefined,
+
       bio: form.bio || undefined,
       aboutMe: form.aboutMe || undefined,
       lookingFor: form.lookingFor || undefined,
+
       education: form.education || undefined,
-height: form.height || undefined,
-weight: form.weight || undefined,
-occupation: form.occupation || undefined,
+      income: form.income || undefined,
+      religion: form.religion || undefined,
+      smoking: form.smoking || undefined,
+      alcohol: form.alcohol || undefined,
+      children: form.children || undefined,
+      bodyType: form.bodyType || undefined,
+      maritalStatus: form.maritalStatus || undefined,
+
+      height: form.height || undefined,
+      weight: form.weight || undefined,
+      eyeColor: form.eyeColor || undefined,
+      hairColor: form.hairColor || undefined,
+      bloodType: form.bloodType || undefined,
+      occupation: form.occupation || undefined,
+
+      hobbies: hobbiesInput
+        .split(",")
+        .map((h: string) => h.trim())
+        .filter(Boolean),
     };
 
     Object.keys(payload).forEach((k) => {
@@ -273,7 +291,8 @@ occupation: form.occupation || undefined,
         payload[k] === undefined ||
         payload[k] === null ||
         payload[k] === "" ||
-        payload[k] === 0
+        payload[k] === 0 ||
+        (Array.isArray(payload[k]) && payload[k].length === 0)
       ) {
         delete payload[k];
       }
