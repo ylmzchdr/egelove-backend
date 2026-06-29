@@ -557,11 +557,19 @@ function trOpt(value: string | null | undefined) {
               
 
                <div className="mb-6">
+                <p className="text-red-500 text-3xl font-bold">
+  SCORE = {egematch?.score}
+</p>
   <EgeMatchAICard
-    key={egematch?.score ?? 87}
-    score={egematch?.score ?? 87}
-    name={fullName}
-  />
+  key={egematch?.score ?? 87}
+  score={egematch?.score ?? 87}
+  energy={egematch?.energy ?? 92}
+  interest={egematch?.interest ?? 84}
+  love={egematch?.love ?? 89}
+  label={egematch?.label}
+  summary={egematch?.summary}
+  name={fullName}
+/>
 </div>
                 <div className="grid gap-6 xl:grid-cols-2">
                   <div className="rounded-3xl border border-white/10 bg-white/5 p-5 sm:p-7">

@@ -5,11 +5,21 @@ import { Heart, Sparkles, Zap, BrainCircuit } from "lucide-react";
 
 type EgeMatchAICardProps = {
   score?: number;
+  energy?: number;
+  interest?: number;
+  love?: number;
+  label?: string;
+  summary?: string;
   name?: string;
 };
 
 export default function EgeMatchAICard({
   score = 87,
+  energy = 92,
+  interest = 84,
+  love = 89,
+  label,
+  summary,
   name = "bu profil",
 }: EgeMatchAICardProps) {
   const [animatedScore, setAnimatedScore] = useState(0);
@@ -30,12 +40,19 @@ export default function EgeMatchAICard({
     return () => clearInterval(timer);
   }, [score]);
 
-  const getLabel = () => {
-    if (score >= 90) return "Mükemmel Uyum";
-    if (score >= 75) return "Yüksek Uyum";
-    if (score >= 55) return "Orta Uyum";
-    return "Düşük Uyum";
-  };
+  const finalLabel =
+    label ||
+    (score >= 90
+      ? "Mükemmel Uyum"
+      : score >= 75
+        ? "Yüksek Uyum"
+        : score >= 55
+          ? "Orta Uyum"
+          : "Düşük Uyum");
+
+  const finalSummary =
+    summary ||
+    `EgeMatch AI, senin profil bilgilerinle ${name} arasındaki ilgi, yaşam tarzı ve ilişki beklentisi uyumunu analiz eder.`;
 
   return (
     <div className="group relative overflow-hidden rounded-3xl border border-pink-300/40 bg-gradient-to-br from-[#3b001f] via-[#760052] to-[#05051f] p-5 shadow-2xl shadow-pink-950/50">
@@ -73,7 +90,7 @@ export default function EgeMatchAICard({
           </div>
 
           <div className="mb-3 rounded-full border border-pink-300/30 bg-pink-500/20 px-4 py-1.5 text-sm font-bold text-pink-50 shadow-lg shadow-pink-500/20">
-            {getLabel()}
+            {finalLabel}
           </div>
         </div>
 
@@ -90,26 +107,23 @@ export default function EgeMatchAICard({
             AI kısa yorum
           </div>
 
-          <p className="text-sm leading-7 text-pink-50/85">
-            EgeMatch AI, senin profil bilgilerinle {name} arasındaki ilgi,
-            yaşam tarzı ve ilişki beklentisi uyumunu analiz eder.
-          </p>
+          <p className="text-sm leading-7 text-pink-50/85">{finalSummary}</p>
         </div>
 
         <div className="grid grid-cols-3 gap-2 text-center">
           <div className="rounded-2xl border border-white/10 bg-white/10 p-3">
             <p className="text-xs text-pink-100/60">Enerji</p>
-            <p className="text-lg font-black text-white">%92</p>
+            <p className="text-lg font-black text-white">%{energy}</p>
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-white/10 p-3">
             <p className="text-xs text-pink-100/60">İlgi</p>
-            <p className="text-lg font-black text-white">%84</p>
+            <p className="text-lg font-black text-white">%{interest}</p>
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-white/10 p-3">
             <p className="text-xs text-pink-100/60">Aşk</p>
-            <p className="text-lg font-black text-white">%89</p>
+            <p className="text-lg font-black text-white">%{love}</p>
           </div>
         </div>
 
