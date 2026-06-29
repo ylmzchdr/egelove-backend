@@ -630,7 +630,6 @@ loadCompatibility();
     </div>
   )}
 </div>
-
       <Button
         onClick={() => router.push(`/messages?userId=${profile.id}`)}
         className="w-full mt-5 bg-pink-600 hover:bg-pink-700"
