@@ -29,9 +29,10 @@ const INCOME_OPTIONS = [
 ];
 
 const MARITAL_OPTIONS = [
-  { value: "SINGLE", label: "Bekar" },
-  { value: "MARRIED", label: "Evli" },
+  { value: "NEVER_MARRIED", label: "Bekar" },
   { value: "DIVORCED", label: "Boşandı" },
+  { value: "WIDOWED", label: "Eşi vefat etti" },
+  { value: "SEPARATED", label: "Ayrı yaşıyor" },
 ];
 
 const CHILDREN_OPTIONS = [
@@ -73,11 +74,12 @@ const BODY_TYPE_OPTIONS = [
 const HAIR_COLOR_OPTIONS = [
   { value: "BLACK", label: "Siyah" },
   { value: "BROWN", label: "Kahverengi" },
-  { value: "BLONDE", label: "Sarı" },
+  { value: "BLOND", label: "Sarı" },
   { value: "RED", label: "Kızıl" },
   { value: "WHITE", label: "Beyaz" },
+  { value: "BALD", label: "Kel" },
+  { value: "OTHER", label: "Diğer" },
 ];
-
 const EYE_COLOR_OPTIONS = [
   { value: "BROWN", label: "Kahverengi" },
   { value: "BLUE", label: "Mavi" },
@@ -233,6 +235,10 @@ export default function ProfileEditPage() {
       hairColor: form.hairColor || undefined,
       bloodType: form.bloodType || undefined,
       occupation: form.occupation || undefined,
+      hobbies: hobbiesInput
+  .split(",")
+  .map((x) => x.trim())
+  .filter(Boolean),
     };
 
     Object.keys(payload).forEach((k) => {

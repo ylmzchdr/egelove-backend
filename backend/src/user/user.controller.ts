@@ -49,32 +49,32 @@ async updateMe(@CurrentUser() user: any, @Body() data: UpdateUserDto) {
   const cleanData: any = {};
 
   const allowedFields = [
-    "name",
-    "surname",
-    "phone",
-    "birthDate",
-    "gender",
-    "cityId",
-    "districtId",
-    "bio",
-    "aboutMe",
-    "lookingFor",
-    "education",
-    "income",
-    "religion",
-    "smoking",
-    "alcohol",
-    "children",
-    "bodyType",
-    "maritalStatus",
-    "height",
-    "weight",
-    "eyeColor",
-    "hairColor",
-    "bloodType",
-    "occupation",
-  ];
-
+  "name",
+  "surname",
+  "phone",
+  "birthDate",
+  "gender",
+  "cityId",
+  "districtId",
+  "bio",
+  "aboutMe",
+  "lookingFor",
+  "education",
+  "income",
+  "religion",
+  "smoking",
+  "alcohol",
+  "children",
+  "bodyType",
+  "maritalStatus",
+  "height",
+  "weight",
+  "eyeColor",
+  "hairColor",
+  "bloodType",
+  "occupation",
+  "hobbies",
+];
   for (const key of allowedFields) {
     const value = (data as any)[key];
 
@@ -102,6 +102,9 @@ async updateMe(@CurrentUser() user: any, @Body() data: UpdateUserDto) {
   if (cleanData.weight) {
     cleanData.weight = Number(cleanData.weight);
   }
+  if (Array.isArray(cleanData.hobbies)) {
+  cleanData.hobbies = cleanData.hobbies.join(", ");
+}
 
   const updated = await this.prisma.user.update({
     where: { id: user.sub },
