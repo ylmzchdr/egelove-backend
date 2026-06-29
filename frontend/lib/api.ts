@@ -100,6 +100,19 @@ export const api = {
         label: string;
         summary: string;
       }>("/ai/egematch/me"),
+       egematchUser: (userId: string) =>
+    request<{
+      score: number;
+      energy: number;
+      interest: number;
+      love: number;
+      label: string;
+      summary: string;
+      strengths?: string[];
+      risks?: string[];
+      suggestions?: string[];
+      commonHobbies?: string[];
+    }>(`/ai/egematch/${userId}`),
   },
 
   auth: {

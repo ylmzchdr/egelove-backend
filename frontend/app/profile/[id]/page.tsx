@@ -7,6 +7,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n-context";
+import { api } from "@/lib/api";
+import EgeMatchAICard from "@/components/EgeMatchAICard";
 
 const API_URL = "/api";
 
@@ -266,6 +268,10 @@ console.log("CURRENT LANG =", currentLang);
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
+  const [compatibility, setCompatibility] = useState<any>(null);
+const [compatLoading, setCompatLoading] = useState(false);
+const [egematch, setEgematch] = useState<any | null>(null);
+  
 
  function trOpt(value: string | null | undefined) {
   if (!value) return "-";
@@ -310,25 +316,49 @@ console.log("CURRENT LANG =", currentLang);
     if (!id) return;
 
     const loadProfile = async () => {
-      try {
-        const res = await fetch(`${API_URL}/users/${id}`);
+  try {
+    const res = await fetch(`${API_URL}/users/${id}`);
 
-        if (!res.ok) {
-          setProfile(null);
-          return;
-        }
+    if (!res.ok) {
+      setProfile(null);
+      return;
+    }
 
-        const data = await res.json();
-        setProfile(data);
-      } catch (error) {
-        console.error("Profil yüklenemedi:", error);
-        setProfile(null);
-      } finally {
-        setLoading(false);
-      }
-    };
+    const data = await res.json();
+    setProfile(data);
 
+    try {
+      const ai = await api.ai.egematchUser(id);
+      setEgematch(ai);
+    } catch (err) {
+      console.error("EgeMatch AI yüklenemedi:", err);
+    }
+  } catch (error) {
+    console.error("Profil yüklenemedi:", error);
+    setProfile(null);
+  } finally {
+    setLoading(false);
+  }
+};
     loadProfile();
+   const loadCompatibility = async () => {
+  const token = localStorage.getItem("accessToken");
+  if (!token || !id) return;
+
+  try {
+    setCompatLoading(true);
+
+    const data = await api.ai.egematchUser(id);
+
+    setCompatibility(data);
+  } catch (e) {
+    console.error(e);
+  } finally {
+    setCompatLoading(false);
+  }
+};
+
+loadCompatibility();
   }, [id]);
 
   const getPhotoUrl = (url?: string) => {
@@ -480,6 +510,84 @@ console.log("CURRENT LANG =", currentLang);
                 </Button>
               </div>
             </section>
+            <section className="lg:col-span-1 rounded-3xl border border-pink-400/40 p-5 bg-gradient-to-br from-pink-950 via-purple-950 to-black shadow-2xl shadow-pink-900/30">
+  <div className="flex items-center justify-between mb-4">
+    <div>
+      <h2 className="text-2xl font-black text-pink-200">
+        ❤️ EgeMatch AI™
+      </h2>
+      <p className="text-xs text-white/60 mt-1">
+        Aşk tesadüf olabilir... uyum değildir.
+      </p>
+    </div>
+
+    <div className="text-xs px-3 py-1 rounded-full bg-pink-500/20 border border-pink-300/30 text-pink-100">
+      BETA
+    </div>
+  </div>
+
+  {compatLoading && (
+    <div className="py-8 text-center">
+      <div className="mx-auto mb-4 w-16 h-16 rounded-full border-4 border-pink-400/30 border-t-pink-400 animate-spin" />
+      <p className="text-pink-100 font-semibold">AI analiz ediyor...</p>
+      <p className="text-white/50 text-sm mt-1">Profil uyumu hesaplanıyor</p>
+    </div>
+  )}
+
+  {!compatLoading && compatibility && (
+    <div>
+      <div className="flex items-end justify-center gap-2 my-4">
+        <span className="text-6xl font-black text-white drop-shadow-lg">
+          %{compatibility.score}
+        </span>
+      </div>
+
+      <div className="w-full h-4 bg-white/10 rounded-full overflow-hidden mb-4">
+        <div
+          className="h-full bg-gradient-to-r from-pink-400 via-fuchsia-400 to-purple-400 rounded-full transition-all duration-1000"
+          style={{ width: `${compatibility.score}%` }}
+        />
+      </div>
+
+      <div className="text-center mb-5">
+        <div className="inline-flex px-4 py-2 rounded-full bg-white/10 border border-white/20 text-pink-100 font-bold">
+          {compatibility.summary}
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        {(compatibility.reasons || []).map((reason: string, i: number) => (
+          <div
+            key={i}
+            className="flex items-start gap-2 text-sm text-white/85 bg-white/5 rounded-xl p-3 border border-white/10"
+          >
+            <span className="text-pink-300">✔</span>
+            <span>{reason}</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-5 rounded-2xl bg-black/25 border border-pink-300/20 p-4">
+        <p className="text-sm text-white/80 leading-relaxed">
+          🤖 {compatibility.message}
+        </p>
+      </div>
+
+      <Button
+        onClick={() => router.push(`/messages?userId=${profile.id}`)}
+        className="w-full mt-5 bg-pink-600 hover:bg-pink-700"
+      >
+        💬 Uyumlu Sohbet Başlat
+      </Button>
+    </div>
+  )}
+
+  {!compatLoading && !compatibility && (
+    <div className="py-6 text-center text-white/60">
+      EgeMatch AI analizi için giriş yapmalısın.
+    </div>
+  )}
+</section>
 
             <section className="lg:col-span-2 space-y-6">
               <div className="rounded-3xl border border-white/30 p-8 bg-white/5">
