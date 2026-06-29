@@ -556,9 +556,10 @@ function trOpt(value: string | null | undefined) {
                 </div>
               
 
-                <div className="mb-6">
+               <div className="mb-6">
   <EgeMatchAICard
-    score={87}
+    key={egematch?.score ?? 87}
+    score={egematch?.score ?? 87}
     name={fullName}
   />
 </div>
