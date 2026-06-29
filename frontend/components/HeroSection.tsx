@@ -12,26 +12,26 @@ export default function HeroSection({ onCtaClick }: HeroSectionProps) {
 
   // Fotoğraftaki 4 dildeki orijinal metinler (Dil butonuna basınca anında değişir)
   const translations = {
-    TR: {
-      title: "Türkiye'nin Ege ve Akdeniz'de buluştuğu güvenilir ve samimi arkadaşlık platformu:",
-      sub: "egelove.tr",
-      cta: "Hemen Üye Ol",
-    },
-    EN: {
-      title: "Turkey's reliable and friendly dating platform where the Aegean and Mediterranean meet:",
-      sub: "egelove.tr",
-      cta: "Sign Up Now",
-    },
-    RU: {
-      title: "Надежная и дружелюбная платформа для знакомств, где встречаются Эгейское и Средиземное моря Турции:",
-      sub: "egelove.tr",
-      cta: "Зарегистрироваться",
-    },
-    AR: {
-      title: "منصة تعارف موثوقة وودية في تركيا حيث يلتقي بحر إيجة والبحر المتوسط:",
-      sub: "egelove.tr",
-      cta: "سجل الآن",
-    },
+  TR: {
+  title: "Binlerce gerçek üye • Güvenli • AI Destekli",
+  sub: "❤️ EgeMatch AI ile Akıllı Tanışma",
+  cta: "Hemen Üye Ol",
+},
+EN: {
+  title: "Thousands of real members • Secure • AI Powered",
+  sub: "❤️ Smart Dating with EgeMatch AI",
+  cta: "Sign Up Now",
+},
+RU: {
+  title: "Тысячи реальных участников • Безопасно • На базе ИИ",
+  sub: "❤️ Умные знакомства с EgeMatch AI",
+  cta: "Зарегистрироваться",
+},
+AR: {
+  title: "آلاف الأعضاء الحقيقيين • آمن • مدعوم بالذكاء الاصطناعي",
+  sub: "❤️ تعارف ذكي مع EgeMatch AI",
+  cta: "سجل الآن",
+},
   };
 
   const currentText = translations[lang as keyof typeof translations] || translations.TR;
