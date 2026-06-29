@@ -12,34 +12,44 @@ type HeroSectionProps = {
 export default function HeroSection({ onCtaClick }: HeroSectionProps) {
   const { lang } = useI18n();
 
-  const translations: Record<
-    LangKey,
-    {
-      title: string;
-      sub: string;
-      cta: string;
-    }
-  > = {
-    TR: {
-      title: "Binlerce gerçek üye • Güvenli • AI Destekli",
-      sub: "❤️ EgeMatch AI ile Akıllı Tanışma",
-      cta: "Hemen Üye Ol",
-    },
+const translations: Record<
+  LangKey,
+  {
+    title: string;
+    sub: string;
+    badge: string;
+    ai: string;
+    cta: string;
+  }
+> = {
+   TR: {
+  title: "İngilizce, Rusça veya Arapça bilmenize gerek yok.",
+  sub: "EgeLove AI, mesajlarınızı anında çevirir. Siz kendi dilinizde yazın, karşınızdaki kendi dilinde okusun. Türkçe, İngilizce, Rusça ve Arapça konuşan üyelerle doğal ve akıcı iletişimin keyfini çıkarın.",
+  badge: "👥 Binlerce Gerçek Üye • 🛡️ Güvenli • 🧠 AI Destekli",
+  ai: "❤️ EgeMatch AI ile Akıllı Tanışma",
+  cta: "Hemen Üye Ol",
+},
     EN: {
-      title: "Thousands of real members • Secure • AI Powered",
-      sub: "❤️ Smart Dating with EgeMatch AI",
-      cta: "Sign Up Now",
-    },
-    RU: {
-      title: "Тысячи реальных участников • Безопасно • На базе ИИ",
-      sub: "❤️ Умные знакомства с EgeMatch AI",
-      cta: "Зарегистрироваться",
-    },
+  title: "No need to know English, Russian or Arabic.",
+  sub: "EgeLove AI instantly translates your messages. Write in your own language while your match reads them in theirs. Enjoy natural conversations in Turkish, English, Russian and Arabic.",
+  badge: "👥 Thousands of Real Members • 🛡️ Secure • 🧠 AI Powered",
+  ai: "❤️ Smart Dating with EgeMatch AI",
+  cta: "Sign Up Now",
+},
+   RU: {
+  title: "Вам не нужно знать английский, русский или арабский язык.",
+  sub: "EgeLove AI мгновенно переводит ваши сообщения. Пишите на своем языке, а собеседник будет читать их на своем. Общайтесь свободно на турецком, английском, русском и арабском языках.",
+  badge: "👥 Тысячи реальных участников • 🛡️ Безопасно • 🧠 На базе ИИ",
+  ai: "❤️ Умные знакомства с EgeMatch AI",
+  cta: "Зарегистрироваться",
+},
     AR: {
-      title: "آلاف الأعضاء الحقيقيين • آمن • مدعوم بالذكاء الاصطناعي",
-      sub: "❤️ تعارف ذكي مع EgeMatch AI",
-      cta: "سجل الآن",
-    },
+  title: "لست بحاجة إلى معرفة الإنجليزية أو الروسية أو العربية.",
+  sub: "يقوم EgeLove AI بترجمة رسائلك فورًا. اكتب بلغتك وسيقرأ الطرف الآخر الرسالة بلغته. استمتع بمحادثات طبيعية بالتركية والإنجليزية والروسية والعربية.",
+  badge: "👥 آلاف الأعضاء الحقيقيين • 🛡️ آمن • 🧠 مدعوم بالذكاء الاصطناعي",
+  ai: "❤️ تعارف ذكي مع EgeMatch AI",
+  cta: "سجل الآن",
+},
   };
 
   const currentLang: LangKey = ["TR", "EN", "RU", "AR"].includes(lang)
