@@ -1,32 +1,70 @@
 "use client";
 
-import { Mail, Phone, MapPin } from "lucide-react";
-import { useI18n } from "@/lib/i18n-context";
+import { Mail, Globe, Sparkles } from "lucide-react";
 
 export default function ContactSection() {
-  const { t } = useI18n();
-
   return (
-    <section id="contact" className="py-16 bg-pink-950">
-      <div className="mx-auto max-w-7xl px-4">
-        <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">{t.contact.title}</h2>
-          <p className="text-white/70 mb-8">{t.contact.subtitle}</p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            <div className="flex flex-col items-center p-4 bg-pink-900/40 border border-white/10 rounded-xl">
-              <Mail className="w-6 h-6 text-pink-300 mb-2" />
-              <span className="text-sm text-white/80">{t.contact.email}</span>
-            </div>
-            <div className="flex flex-col items-center p-4 bg-pink-900/40 border border-white/10 rounded-xl">
-              <Phone className="w-6 h-6 text-pink-300 mb-2" />
-              <span className="text-sm text-white/80">{t.contact.phone}</span>
-            </div>
-            <div className="flex flex-col items-center p-4 bg-pink-900/40 border border-white/10 rounded-xl">
-              <MapPin className="w-6 h-6 text-pink-300 mb-2" />
-              <span className="text-sm text-white/80">{t.contact.location}</span>
-            </div>
-          </div>
+    <section className="bg-[#210014] py-20">
+      <div className="mx-auto max-w-6xl px-6">
+
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-extrabold text-white">
+            İletişim
+          </h2>
+
+          <p className="mt-4 text-lg text-white/70 max-w-2xl mx-auto">
+            Sorularınız, önerileriniz veya iş birlikleri için bizimle iletişime geçebilirsiniz.
+          </p>
         </div>
+
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+
+          <div className="rounded-2xl border border-[#FFC000]/20 bg-[#2b0620] p-8 text-center shadow-xl">
+            <Mail className="mx-auto mb-4 h-10 w-10 text-[#FFC000]" />
+
+            <h3 className="mb-3 text-xl font-bold text-white">
+              E-Posta
+            </h3>
+
+            <a
+              href="mailto:hello@egelove.tr"
+              className="text-[#FFC000] hover:underline break-all"
+            >
+              hello@egelove.tr
+            </a>
+          </div>
+
+          <div className="rounded-2xl border border-[#FFC000]/20 bg-[#2b0620] p-8 text-center shadow-xl">
+            <Globe className="mx-auto mb-4 h-10 w-10 text-[#FFC000]" />
+
+            <h3 className="mb-3 text-xl font-bold text-white">
+              Web Sitesi
+            </h3>
+
+            <a
+              href="https://egelove.tr"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#FFC000] hover:underline break-all"
+            >
+              https://egelove.tr
+            </a>
+          </div>
+
+          <div className="rounded-2xl border border-[#FFC000]/20 bg-[#2b0620] p-8 text-center shadow-xl">
+            <Sparkles className="mx-auto mb-4 h-10 w-10 text-[#FFC000]" />
+
+            <h3 className="mb-3 text-xl font-bold text-white">
+              Teknoloji
+            </h3>
+
+            <p className="text-[#FFC000] font-semibold">
+              ❤️ EgeMatch AI Destekli
+            </p>
+          </div>
+
+        </div>
+
       </div>
     </section>
   );
