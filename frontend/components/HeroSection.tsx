@@ -73,9 +73,7 @@ AR: {
           </div>
 
           {/* Dinamik Diller Arası Küçük Hatırlatma / Çeviri Yazısı (Fotoğraftaki gibi alt alta şık durur) */}
-          <p className="text-sm md:text-base text-gray-300 italic max-w-xl opacity-90">
-            {lang === "TR" ? translations.EN.title + " " + translations.EN.sub : translations.TR.title + " " + translations.TR.sub}
-          </p>
+          
 
           {/* Orijinal Oval Sapsarı "Hemen Üye Ol" Butonu */}
           <div className="pt-4">
