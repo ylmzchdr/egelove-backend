@@ -109,8 +109,8 @@ const GENDER_OPTIONS = [
 interface City {
   id: number;
   name: string;
+  districts?: District[];
 }
-
 interface District {
   id: number;
   name: string;
@@ -185,24 +185,65 @@ export default function ProfileEditPage() {
       api.users.me() as Promise<ProfileData>,
       api.cities.list() as Promise<City[]>,
     ]).then(([profile, cityList]) => {
-      setForm((prev) => ({ ...prev, ...profile, birthDate: profile.birthDate?.split("T")[0] || "" }));
-      setCities(cityList);
-    setHobbiesInput(Array.isArray(profile.hobbies) ? profile.hobbies.join(", ") : (profile.hobbies || ""));
-      setLoading(false);
+     setForm((prev) => ({
+  ...prev,
+  ...profile,
+  birthDate: profile.birthDate?.split("T")[0] || "",
+}));
+
+setCities(cityList);
+
+
+
+const selectedCity = cityList.find((c) => c.id === profile.cityId);
+
+if (selectedCity?.districts?.length) {
+  setDistricts(selectedCity.districts);
+} else if (profile.cityId) {
+  api.cities
+    .districts(profile.cityId)
+    .then(setDistricts)
+    .catch(() => setDistricts([]));
+}
+
+setHobbiesInput(
+  Array.isArray(profile.hobbies)
+    ? profile.hobbies.join(", ")
+    : (profile.hobbies || "")
+);
+
+setLoading(false);
     }).catch((err) => {
       setError(err.message || "Profil yüklenemedi");
       setLoading(false);
     });
   }, []);
 
-  const handleCityChange = useCallback((cityIdStr: string) => {
-    const cityId = parseInt(cityIdStr);
-    setForm((prev) => ({ ...prev, cityId, districtId: 0 }));
-    setDistricts([]);
-    if (cityId) {
-      api.cities.districts(cityId).then(setDistricts).catch(() => {});
-    }
-  }, []);
+ const handleCityChange = useCallback((cityIdStr: string) => {
+  const cityId = parseInt(cityIdStr);
+
+  setForm((prev) => ({
+    ...prev,
+    cityId,
+    districtId: 0,
+  }));
+
+  const selectedCity = cities.find((c) => c.id === cityId);
+
+  if (selectedCity?.districts?.length) {
+    setDistricts(selectedCity.districts);
+    return;
+  }
+
+  setDistricts([]);
+
+  if (cityId) {
+    api.cities
+      .districts(cityId)
+      .then(setDistricts)
+      .catch(() => setDistricts([]));
+  }
+}, [cities]);
 
  const handleSubmit = async () => {
   setSaving(true);
@@ -221,6 +262,10 @@ export default function ProfileEditPage() {
       bio: form.bio || undefined,
       aboutMe: form.aboutMe || undefined,
       lookingFor: form.lookingFor || undefined,
+      education: form.education || undefined,
+height: form.height || undefined,
+weight: form.weight || undefined,
+occupation: form.occupation || undefined,
     };
 
     Object.keys(payload).forEach((k) => {
