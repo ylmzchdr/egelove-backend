@@ -566,11 +566,70 @@ loadCompatibility();
         ))}
       </div>
 
-      <div className="mt-5 rounded-2xl bg-black/25 border border-pink-300/20 p-4">
-        <p className="text-sm text-white/80 leading-relaxed">
-          🤖 {compatibility.message}
-        </p>
+     <div className="mt-5 space-y-3">
+  {compatibility.strengths?.length > 0 && (
+    <div className="rounded-2xl bg-emerald-500/10 border border-emerald-300/20 p-4">
+      <p className="mb-2 text-sm font-bold text-emerald-200">
+        ✅ Güçlü Yönler
+      </p>
+      <div className="space-y-2">
+        {compatibility.strengths.map((item: string, i: number) => (
+          <p key={i} className="text-sm text-white/80 leading-relaxed">
+            • {item}
+          </p>
+        ))}
       </div>
+    </div>
+  )}
+
+  {compatibility.risks?.length > 0 && (
+    <div className="rounded-2xl bg-yellow-500/10 border border-yellow-300/20 p-4">
+      <p className="mb-2 text-sm font-bold text-yellow-200">
+        ⚠️ Dikkat Edilecekler
+      </p>
+      <div className="space-y-2">
+        {compatibility.risks.map((item: string, i: number) => (
+          <p key={i} className="text-sm text-white/80 leading-relaxed">
+            • {item}
+          </p>
+        ))}
+      </div>
+    </div>
+  )}
+
+  {compatibility.suggestions?.length > 0 && (
+    <div className="rounded-2xl bg-sky-500/10 border border-sky-300/20 p-4">
+      <p className="mb-2 text-sm font-bold text-sky-200">
+        💡 AI Önerisi
+      </p>
+      <div className="space-y-2">
+        {compatibility.suggestions.map((item: string, i: number) => (
+          <p key={i} className="text-sm text-white/80 leading-relaxed">
+            • {item}
+          </p>
+        ))}
+      </div>
+    </div>
+  )}
+
+  {compatibility.commonHobbies?.length > 0 && (
+    <div className="rounded-2xl bg-pink-500/10 border border-pink-300/20 p-4">
+      <p className="mb-2 text-sm font-bold text-pink-200">
+        🎯 Ortak İlgi Alanları
+      </p>
+      <div className="flex flex-wrap gap-2">
+        {compatibility.commonHobbies.map((item: string, i: number) => (
+          <span
+            key={i}
+            className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white/85"
+          >
+            {item}
+          </span>
+        ))}
+      </div>
+    </div>
+  )}
+</div>
 
       <Button
         onClick={() => router.push(`/messages?userId=${profile.id}`)}
