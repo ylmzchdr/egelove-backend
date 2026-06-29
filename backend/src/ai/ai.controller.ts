@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from "@nestjs/common";
+import { Controller, Get, Param, UseGuards } from "@nestjs/common";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard.js";
 import { CurrentUser } from "../auth/current-user.decorator.js";
 import { AiService } from "./ai.service.js";
@@ -11,5 +11,14 @@ export class AiController {
   @UseGuards(JwtAuthGuard)
   async getMyEgeMatch(@CurrentUser() user: any) {
     return this.aiService.calculateMyEgeMatch(user.sub);
+  }
+
+  @Get("egematch/:targetUserId")
+  @UseGuards(JwtAuthGuard)
+  async getUserToUserEgeMatch(
+    @CurrentUser() user: any,
+    @Param("targetUserId") targetUserId: string,
+  ) {
+    return this.aiService.calculateUserToUserEgeMatch(user.sub, targetUserId);
   }
 }
