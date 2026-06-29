@@ -341,9 +341,8 @@ const [egematch, setEgematch] = useState<any | null>(null);
   }
 };
     loadProfile();
-   const loadCompatibility = async () => {
-  const token = localStorage.getItem("accessToken");
-  if (!token || !id) return;
+    const loadCompatibility = async () => {
+  if (!id) return;
 
   try {
     setCompatLoading(true);
@@ -352,7 +351,7 @@ const [egematch, setEgematch] = useState<any | null>(null);
 
     setCompatibility(data);
   } catch (e) {
-    console.error(e);
+    console.error("EgeMatch AI yüklenemedi:", e);
   } finally {
     setCompatLoading(false);
   }
