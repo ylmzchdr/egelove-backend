@@ -8,7 +8,6 @@ import {
   Pencil,
   UserCircle,
   MapPin,
-  Mail,
   Calendar,
   ShieldCheck,
   Camera,
@@ -256,7 +255,7 @@ export default function ProfilePage() {
   const [authTab, setAuthTab] = useState<"login" | "register" | null>(null);
   const [user, setUser] = useState<CurrentUser | null>(null);
   const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true);
   const [egematch, setEgematch] = useState<{
   score: number;
   energy: number;
@@ -277,8 +276,6 @@ export default function ProfilePage() {
         }
 
         const me = await api.users.me();
-console.log("ME RESPONSE =", me);
-console.log("PHOTOS =", (me as CurrentUser).photos);
 setUser(me as CurrentUser);
 
 
@@ -327,74 +324,277 @@ const avatar =
  
  const optionMap: Record<string, Record<string, string>> = {
   TR: {
-  ASSOCIATE: "Ön lisans",
-  MEDIUM: "Orta",
-  DIVORCED: "Boşanmış",
-  NONE: "Yok",
-  HAZEL: "Ela",
-  BLACK: "Siyah",
-  emekli: "Emekli",
+    PRIMARY: "İlkokul",
+    SECONDARY: "Ortaokul",
+    HIGH_SCHOOL: "Lise",
+    ASSOCIATE: "Ön Lisans",
+    BACHELOR: "Lisans",
+    MASTER: "Yüksek Lisans",
+    DOCTORATE: "Doktora",
 
-  WHITE: "Beyaz",
-  RED: "Kızıl",
-  BROWN: "Kahverengi",
-  BLOND: "Sarı",
-  BALD: "Kel",
-  OTHER: "Diğer",
-},
+    VERY_LOW: "Çok Düşük",
+    LOW: "Düşük",
+    MEDIUM: "Orta",
+    HIGH: "Yüksek",
+    VERY_HIGH: "Çok Yüksek",
+
+    NEVER_MARRIED: "Hiç Evlenmedi",
+    DIVORCED: "Boşanmış",
+    WIDOWED: "Dul",
+    SEPARATED: "Ayrı Yaşıyor",
+
+    HAS_LIVING_WITH: "Var (Birlikte Yaşıyor)",
+    HAS_NOT_LIVING: "Var (Birlikte Yaşamıyor)",
+    NONE: "Yok",
+
+    VERY_RELIGIOUS: "Çok Dindar",
+    RELIGIOUS: "Dindar",
+    MODERATE: "Orta",
+    NOT_RELIGIOUS: "Dindar Değil",
+    ATHEIST: "Ateist",
+
+    NEVER: "Hiç",
+    QUIT: "Bıraktı",
+    OCCASIONAL: "Ara Sıra",
+    REGULAR: "Düzenli",
+
+    SLIM: "Zayıf",
+    ATHLETIC: "Atletik",
+    NORMAL: "Normal",
+    CURVY: "Kıvrımlı",
+    PLUS: "Balık Etli",
+
+    BROWN: "Kahverengi",
+    BLUE: "Mavi",
+    GREEN: "Yeşil",
+    HAZEL: "Ela",
+    BLACK: "Siyah",
+    OTHER: "Diğer",
+
+    BLOND: "Sarı",
+    RED: "Kızıl",
+    WHITE: "Beyaz",
+    BALD: "Kel",
+
+    A_POSITIVE: "A+",
+    A_NEGATIVE: "A-",
+    B_POSITIVE: "B+",
+    B_NEGATIVE: "B-",
+    AB_POSITIVE: "AB+",
+    AB_NEGATIVE: "AB-",
+    ZERO_POSITIVE: "0+",
+    ZERO_NEGATIVE: "0-",
+
+    EMEKLI: "Emekli",
+    emekli: "Emekli",
+  },
+
   EN: {
-    ASSOCIATE: "Associate",
+    PRIMARY: "Primary School",
+    SECONDARY: "Secondary School",
+    HIGH_SCHOOL: "High School",
+    ASSOCIATE: "Associate Degree",
+    BACHELOR: "Bachelor's Degree",
+    MASTER: "Master's Degree",
+    DOCTORATE: "Doctorate",
+
+    VERY_LOW: "Very Low",
+    LOW: "Low",
     MEDIUM: "Medium",
+    HIGH: "High",
+    VERY_HIGH: "Very High",
+
+    NEVER_MARRIED: "Never Married",
     DIVORCED: "Divorced",
+    WIDOWED: "Widowed",
+    SEPARATED: "Separated",
+
+    HAS_LIVING_WITH: "Has Children (Living Together)",
+    HAS_NOT_LIVING: "Has Children (Living Separately)",
     NONE: "None",
+
+    VERY_RELIGIOUS: "Very Religious",
+    RELIGIOUS: "Religious",
+    MODERATE: "Moderate",
+    NOT_RELIGIOUS: "Not Religious",
+    ATHEIST: "Atheist",
+
+    NEVER: "Never",
+    QUIT: "Quit",
+    OCCASIONAL: "Occasionally",
+    REGULAR: "Regularly",
+
+    SLIM: "Slim",
+    ATHLETIC: "Athletic",
+    NORMAL: "Average",
+    CURVY: "Curvy",
+    PLUS: "Plus Size",
+
+    BROWN: "Brown",
+    BLUE: "Blue",
+    GREEN: "Green",
     HAZEL: "Hazel",
     BLACK: "Black",
-    emekli: "Retired",
+    OTHER: "Other",
+
+    BLOND: "Blonde",
+    RED: "Red",
     WHITE: "White",
-RED: "Red",
-BROWN: "Brown",
-BLOND: "Blonde",
-BALD: "Bald",
-OTHER: "Other",
+    BALD: "Bald",
+
+    A_POSITIVE: "A+",
+    A_NEGATIVE: "A-",
+    B_POSITIVE: "B+",
+    B_NEGATIVE: "B-",
+    AB_POSITIVE: "AB+",
+    AB_NEGATIVE: "AB-",
+    ZERO_POSITIVE: "O+",
+    ZERO_NEGATIVE: "O-",
+
+    EMEKLI: "Retired",
+    emekli: "Retired",
   },
+
   RU: {
-    ASSOCIATE: "Среднее специальное",
+    PRIMARY: "Начальная школа",
+    SECONDARY: "Средняя школа",
+    HIGH_SCHOOL: "Старшая школа",
+    ASSOCIATE: "Колледж",
+    BACHELOR: "Бакалавр",
+    MASTER: "Магистр",
+    DOCTORATE: "Докторантура",
+
+    VERY_LOW: "Очень низкий",
+    LOW: "Низкий",
     MEDIUM: "Средний",
+    HIGH: "Высокий",
+    VERY_HIGH: "Очень высокий",
+
+    NEVER_MARRIED: "Никогда не состоял(а) в браке",
     DIVORCED: "В разводе",
+    WIDOWED: "Вдовец / Вдова",
+    SEPARATED: "Живёт отдельно",
+
+    HAS_LIVING_WITH: "Есть дети (живут вместе)",
+    HAS_NOT_LIVING: "Есть дети (живут отдельно)",
     NONE: "Нет",
+
+    VERY_RELIGIOUS: "Очень религиозный",
+    RELIGIOUS: "Религиозный",
+    MODERATE: "Умеренный",
+    NOT_RELIGIOUS: "Нерелигиозный",
+    ATHEIST: "Атеист",
+
+    NEVER: "Никогда",
+    QUIT: "Бросил(а)",
+    OCCASIONAL: "Иногда",
+    REGULAR: "Регулярно",
+
+    SLIM: "Стройный",
+    ATHLETIC: "Спортивный",
+    NORMAL: "Обычный",
+    CURVY: "Пышный",
+    PLUS: "Полный",
+
+    BROWN: "Карий",
+    BLUE: "Голубой",
+    GREEN: "Зелёный",
     HAZEL: "Ореховый",
-    BLACK: "Черный",
-    emekli: "Пенсионер",
+    BLACK: "Чёрный",
+    OTHER: "Другое",
+
+    BLOND: "Блондин",
+    RED: "Рыжий",
     WHITE: "Белый",
-RED: "Рыжий",
-BROWN: "Коричневый",
-BLOND: "Блонд",
-BALD: "Лысый",
-OTHER: "Другое",
+    BALD: "Лысый",
+
+    A_POSITIVE: "A+",
+    A_NEGATIVE: "A-",
+    B_POSITIVE: "B+",
+    B_NEGATIVE: "B-",
+    AB_POSITIVE: "AB+",
+    AB_NEGATIVE: "AB-",
+    ZERO_POSITIVE: "O+",
+    ZERO_NEGATIVE: "O-",
+
+    EMEKLI: "Пенсионер",
+    emekli: "Пенсионер",
   },
+
   AR: {
+    PRIMARY: "ابتدائي",
+    SECONDARY: "إعدادي",
+    HIGH_SCHOOL: "ثانوي",
     ASSOCIATE: "دبلوم",
+    BACHELOR: "بكالوريوس",
+    MASTER: "ماجستير",
+    DOCTORATE: "دكتوراه",
+
+    VERY_LOW: "منخفض جداً",
+    LOW: "منخفض",
     MEDIUM: "متوسط",
+    HIGH: "مرتفع",
+    VERY_HIGH: "مرتفع جداً",
+
+    NEVER_MARRIED: "لم يسبق له الزواج",
     DIVORCED: "مطلق",
+    WIDOWED: "أرمل",
+    SEPARATED: "منفصل",
+
+    HAS_LIVING_WITH: "لديه أطفال ويعيشون معه",
+    HAS_NOT_LIVING: "لديه أطفال ولا يعيشون معه",
     NONE: "لا يوجد",
+
+    VERY_RELIGIOUS: "متدين جداً",
+    RELIGIOUS: "متدين",
+    MODERATE: "معتدل",
+    NOT_RELIGIOUS: "غير متدين",
+    ATHEIST: "ملحد",
+
+    NEVER: "أبداً",
+    QUIT: "أقلع",
+    OCCASIONAL: "أحياناً",
+    REGULAR: "بانتظام",
+
+    SLIM: "نحيف",
+    ATHLETIC: "رياضي",
+    NORMAL: "عادي",
+    CURVY: "ممتلئ",
+    PLUS: "وزن زائد",
+
+    BROWN: "بني",
+    BLUE: "أزرق",
+    GREEN: "أخضر",
     HAZEL: "عسلي",
     BLACK: "أسود",
-    emekli: "متقاعد",
+    OTHER: "آخر",
+
+    BLOND: "أشقر",
+    RED: "أحمر",
     WHITE: "أبيض",
-RED: "أحمر",
-BROWN: "بني",
-BLOND: "أشقر",
-BALD: "أصلع",
-OTHER: "آخر",
+    BALD: "أصلع",
+
+    A_POSITIVE: "A+",
+    A_NEGATIVE: "A-",
+    B_POSITIVE: "B+",
+    B_NEGATIVE: "B-",
+    AB_POSITIVE: "AB+",
+    AB_NEGATIVE: "AB-",
+    ZERO_POSITIVE: "O+",
+    ZERO_NEGATIVE: "O-",
+
+    EMEKLI: "متقاعد",
+    emekli: "متقاعد",
   },
 };
+
 function trOpt(value: string | null | undefined) {
   if (!value) return "-";
 
   const key = String(value).trim().toUpperCase();
 
   return (
-    optionMap[lang as keyof typeof optionMap]?.[key] ||
+    optionMap[currentLang]?.[key] ||
     value
   );
 }

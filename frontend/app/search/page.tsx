@@ -198,11 +198,19 @@ export default function SearchPage() {
   try {
     const data: any = await api.users.search(buildParams());
 
-    setResults(
-      Array.isArray(data)
-        ? data
-        : data.users || []
+    console.log("SEARCH DATA =", data);
+    console.log(
+      "SEARCH IDS =",
+      (Array.isArray(data) ? data : data.users || []).map((u: any) => u.id)
     );
+
+    const list = Array.isArray(data) ? data : data.users || [];
+
+    const uniqueList = Array.from(
+      new Map(list.map((user: any) => [user.id, user])).values()
+    ) as ProfileResult[];
+
+    setResults(uniqueList);
   } catch (error) {
     console.error(error);
     setResults([]);
@@ -210,7 +218,6 @@ export default function SearchPage() {
     setLoading(false);
   }
 };
-
   const clearFilters = () => {
     setFilters({
       gender: "", cityId: "", districtId: "", minAge: "", maxAge: "",
@@ -472,25 +479,23 @@ export default function SearchPage() {
             <>
               <p className="text-white/40 text-sm mb-6">{results.length} {t.search.resultsFound}</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {results.map((profile) => (
-  results.map((profile) => {
-   const mainPhoto = (profile as any).photos?.[0]?.url;
+              {results.map((profile) => {
+  const mainPhoto = (profile as any).photos?.[0]?.url;
+
   return (
- <ProfileCard
-  key={profile.id}
-  name={`${profile.name}${profile.surname ? " " + profile.surname : ""}`}
-  age={profile.age}
-  city={profile.city?.name || ""}
-  district={profile.district?.name || ""}
-  bio={profile.aboutMe || profile.bio || ""}
-  verified={profile.isVerified}
-  avatar={profile as any}
-/>
-
+    <ProfileCard
+      key={profile.id}
+      id={profile.id}
+      name={`${profile.name}${profile.surname ? " " + profile.surname : ""}`}
+      age={profile.age}
+      city={profile.city?.name || ""}
+      district={profile.district?.name || ""}
+      bio={profile.aboutMe || profile.bio || ""}
+      verified={profile.isVerified}
+      avatar={mainPhoto}
+    />
   );
-})
-
-                ))}
+})}
               </div>
             </>
           ) : searched ? (
