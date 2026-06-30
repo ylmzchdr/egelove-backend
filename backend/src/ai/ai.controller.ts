@@ -18,7 +18,12 @@ export class AiController {
   async getUserToUserEgeMatch(
     @CurrentUser() user: any,
     @Param("targetUserId") targetUserId: string,
+    @Query("lang") lang = "TR",
   ) {
-    return this.aiService.calculateUserToUserEgeMatch(user.sub, targetUserId);
+    return this.aiService.calculateUserToUserEgeMatch(
+      user.sub,
+      targetUserId,
+      lang,
+    );
   }
 }
