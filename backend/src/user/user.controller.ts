@@ -54,8 +54,7 @@ async updateMe(@CurrentUser() user: any, @Body() data: UpdateUserDto) {
   "phone",
   "birthDate",
   "gender",
-  "cityId",
-  "districtId",
+  
   "bio",
   "aboutMe",
   "lookingFor",
@@ -87,13 +86,7 @@ async updateMe(@CurrentUser() user: any, @Body() data: UpdateUserDto) {
     cleanData.birthDate = new Date(cleanData.birthDate);
   }
 
-  if (cleanData.cityId) {
-    cleanData.cityId = Number(cleanData.cityId);
-  }
-
-  if (cleanData.districtId) {
-    cleanData.districtId = Number(cleanData.districtId);
-  }
+ 
 
   if (cleanData.height) {
     cleanData.height = Number(cleanData.height);
