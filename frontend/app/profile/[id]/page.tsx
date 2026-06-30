@@ -40,6 +40,15 @@ const TEXT: Record<LangKey, Record<string, string>> = {
     liked: "Beğeni gönderildi ❤️",
     likeFailed: "Beğeni gönderilemedi",
     serverError: "Sunucu hatası",
+     egematchSlogan: "Aşk tesadüf olabilir... uyum değildir.",
+  aiAnalyzing: "AI analiz ediyor...",
+  compatCalculating: "Profil uyumu hesaplanıyor",
+  strengths: "Güçlü Yönler",
+  risks: "Dikkat Edilecekler",
+  aiSuggestion: "AI Önerisi",
+  commonHobbies: "Ortak İlgi Alanları",
+  startCompatibleChat: "Uyumlu Sohbet Başlat",
+  loginForEgematch: "EgeMatch AI analizi için giriş yapmalısın.",
   },
   EN: {
     loading: "Loading profile...",
@@ -66,6 +75,15 @@ const TEXT: Record<LangKey, Record<string, string>> = {
     liked: "Like sent ❤️",
     likeFailed: "Could not send like",
     serverError: "Server error",
+     egematchSlogan: "Love may be coincidence... compatibility is not.",
+  aiAnalyzing: "AI is analyzing...",
+  compatCalculating: "Calculating profile compatibility",
+  strengths: "Strengths",
+  risks: "Things to Watch",
+  aiSuggestion: "AI Suggestion",
+  commonHobbies: "Common Interests",
+  startCompatibleChat: "Start Compatible Chat",
+  loginForEgematch: "You must log in for EgeMatch AI analysis.",
   },
   RU: {
     loading: "Профиль загружается...",
@@ -92,6 +110,15 @@ const TEXT: Record<LangKey, Record<string, string>> = {
     liked: "Лайк отправлен ❤️",
     likeFailed: "Не удалось отправить лайк",
     serverError: "Ошибка сервера",
+    egematchSlogan: "Любовь может быть случайностью... совместимость — нет.",
+    aiAnalyzing: "ИИ анализирует...",
+    compatCalculating: "Вычисляется совместимость профилей",
+    strengths: "Сильные стороны",
+    risks: "На что обратить внимание",
+    aiSuggestion: "Рекомендация ИИ",
+    commonHobbies: "Общие интересы",
+    startCompatibleChat: "Начать совместимый чат",
+    loginForEgematch: "Для анализа EgeMatch AI необходимо войти в систему.",
   },
   AR: {
     loading: "جارٍ تحميل الملف...",
@@ -118,6 +145,15 @@ const TEXT: Record<LangKey, Record<string, string>> = {
     liked: "تم إرسال الإعجاب ❤️",
     likeFailed: "تعذر إرسال الإعجاب",
     serverError: "خطأ في الخادم",
+    egematchSlogan: "قد يكون الحب صدفة... لكن التوافق ليس كذلك.",
+    aiAnalyzing: "يقوم الذكاء الاصطناعي بالتحليل...",
+    compatCalculating: "جارٍ حساب توافق الملف الشخصي",
+    strengths: "نقاط القوة",
+    risks: "أمور يجب الانتباه إليها",
+    aiSuggestion: "اقتراح الذكاء الاصطناعي",
+    commonHobbies: "الاهتمامات المشتركة",
+    startCompatibleChat: "ابدأ محادثة متوافقة",
+    loginForEgematch: "يجب تسجيل الدخول لتحليل EgeMatch AI.",
   },
 };
 
@@ -258,9 +294,6 @@ export default function PublicProfilePage() {
   const currentLang: LangKey = ["TR", "EN", "RU", "AR"].includes(lang)
     ? (lang as LangKey)
     : "TR";
-    console.log("LANG =", lang);
-console.log("CURRENT LANG =", currentLang);
-
   const tx = TEXT[currentLang];
   const isRtl = currentLang === "AR";
   const id = params?.id as string;
@@ -365,7 +398,6 @@ loadCompatibility();
     return url.startsWith("http") ? url : `${API_URL}${url}`;
   };
 
- console.log("HAIR =", profile?.hairColor);
   const photos = (profile?.photos || []).filter((p: any) => {
     const url = p?.url || "";
     return url && !url.includes("/uploads/photos/");
@@ -516,7 +548,7 @@ loadCompatibility();
         ❤️ EgeMatch AI™
       </h2>
       <p className="text-xs text-white/60 mt-1">
-        Aşk tesadüf olabilir... uyum değildir.
+        {tx.egematchSlogan}
       </p>
     </div>
 
@@ -528,8 +560,8 @@ loadCompatibility();
   {compatLoading && (
     <div className="py-8 text-center">
       <div className="mx-auto mb-4 w-16 h-16 rounded-full border-4 border-pink-400/30 border-t-pink-400 animate-spin" />
-      <p className="text-pink-100 font-semibold">AI analiz ediyor...</p>
-      <p className="text-white/50 text-sm mt-1">Profil uyumu hesaplanıyor</p>
+      <p className="text-pink-100 font-semibold">{tx.aiAnalyzing}</p>
+      <p className="text-white/50 text-sm mt-1">{tx.compatCalculating}</p>
     </div>
   )}
 
@@ -570,7 +602,7 @@ loadCompatibility();
   {compatibility.strengths?.length > 0 && (
     <div className="rounded-2xl bg-emerald-500/10 border border-emerald-300/20 p-4">
       <p className="mb-2 text-sm font-bold text-emerald-200">
-        ✅ Güçlü Yönler
+        ✅ {tx.strengths}
       </p>
       <div className="space-y-2">
         {compatibility.strengths.map((item: string, i: number) => (
@@ -585,7 +617,7 @@ loadCompatibility();
   {compatibility.risks?.length > 0 && (
     <div className="rounded-2xl bg-yellow-500/10 border border-yellow-300/20 p-4">
       <p className="mb-2 text-sm font-bold text-yellow-200">
-        ⚠️ Dikkat Edilecekler
+        ⚠️ {tx.risks}
       </p>
       <div className="space-y-2">
         {compatibility.risks.map((item: string, i: number) => (
@@ -600,7 +632,7 @@ loadCompatibility();
   {compatibility.suggestions?.length > 0 && (
     <div className="rounded-2xl bg-sky-500/10 border border-sky-300/20 p-4">
       <p className="mb-2 text-sm font-bold text-sky-200">
-        💡 AI Önerisi
+        💡 {tx.aiSuggestion}
       </p>
       <div className="space-y-2">
         {compatibility.suggestions.map((item: string, i: number) => (
@@ -615,7 +647,7 @@ loadCompatibility();
   {compatibility.commonHobbies?.length > 0 && (
     <div className="rounded-2xl bg-pink-500/10 border border-pink-300/20 p-4">
       <p className="mb-2 text-sm font-bold text-pink-200">
-        🎯 Ortak İlgi Alanları
+        🎯 {tx.commonHobbies}
       </p>
       <div className="flex flex-wrap gap-2">
         {compatibility.commonHobbies.map((item: string, i: number) => (
@@ -634,14 +666,14 @@ loadCompatibility();
         onClick={() => router.push(`/messages?userId=${profile.id}`)}
         className="w-full mt-5 bg-pink-600 hover:bg-pink-700"
       >
-        💬 Uyumlu Sohbet Başlat
+        💬 {tx.startCompatibleChat}
       </Button>
     </div>
   )}
 
   {!compatLoading && !compatibility && (
     <div className="py-6 text-center text-white/60">
-      EgeMatch AI analizi için giriş yapmalısın.
+      {tx.loginForEgematch}
     </div>
   )}
 </section>
