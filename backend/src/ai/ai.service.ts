@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service.js";
 
+type EgeMatchLang = "TR" | "EN" | "RU" | "AR";
+
 @Injectable()
 export class AiService {
   constructor(private readonly prisma: PrismaService) {}
@@ -105,17 +107,21 @@ export class AiService {
     };
   }
 
-  async calculateUserToUserEgeMatch(myUserId: string, targetUserId: string) {
+  async calculateUserToUserEgeMatch(
+    myUserId: string,
+    targetUserId: string,
+    lang: EgeMatchLang | string = "TR",
+  ) {
+    const safeLang = this.normalizeLang(lang);
     if (myUserId === targetUserId) {
       const myResult = await this.calculateMyEgeMatch(myUserId);
 
       return {
         ...myResult,
-        summary:
-          "Bu senin kendi profilin. EgeMatch AI, kendi profil doluluğunu ve eşleşme potansiyelini analiz ediyor.",
-        strengths: ["Kendi profil analizi"],
+        summary: this.t(safeLang, "selfSummary"),
+        strengths: [this.t(safeLang, "selfStrength")],
         risks: [],
-        suggestions: ["Daha iyi eşleşmeler için profilini güncel tut."],
+        suggestions: [this.t(safeLang, "selfSuggestion")],
       };
     }
 
@@ -266,11 +272,13 @@ export class AiService {
       energy,
       interest,
       love,
-      label: this.getLabel(score),
-      summary: this.createUserToUserSummary(score, b),
-      strengths: strengths.slice(0, 5),
-      risks: risks.slice(0, 5),
-      suggestions: suggestions.slice(0, 4),
+      label: this.getLabel(score, safeLang),
+      summary: this.createUserToUserSummary(score, b, safeLang),
+      strengths: strengths.slice(0, 5).map((item) => this.translateText(item, safeLang)),
+      risks: risks.slice(0, 5).map((item) => this.translateText(item, safeLang)),
+      suggestions: suggestions.slice(0, 4).map((item) =>
+        this.translateText(item, safeLang),
+      ),
       commonHobbies,
     };
   }
@@ -279,11 +287,11 @@ export class AiService {
     return Math.max(0, Math.min(99, value));
   }
 
-  private getLabel(score: number) {
-    if (score >= 90) return "Mükemmel Uyum";
-    if (score >= 75) return "Yüksek Uyum";
-    if (score >= 55) return "Orta Uyum";
-    return "Geliştirilebilir Uyum";
+  private getLabel(score: number, lang: EgeMatchLang = "TR") {
+    if (score >= 90) return this.t(lang, "labelPerfect");
+    if (score >= 75) return this.t(lang, "labelHigh");
+    if (score >= 55) return this.t(lang, "labelMedium");
+    return this.t(lang, "labelImprove");
   }
 
   private createSummary(score: number) {
@@ -302,23 +310,23 @@ export class AiService {
     return "Profilin henüz zayıf görünüyor. Fotoğraf, hakkımda ve aradığım kişi alanlarını doldurman EgeMatch AI puanını ciddi şekilde yükseltir.";
   }
 
-  private createUserToUserSummary(score: number, target: any) {
+  private createUserToUserSummary(score: number, target: any, lang: EgeMatchLang = "TR") {
     const targetName =
       target.name && target.name.trim() ? target.name.trim() : "bu profil";
 
     if (score >= 90) {
-      return `${targetName} ile uyum çok güçlü görünüyor. EgeMatch AI, ortak beklentiler ve profil sinyallerine göre bu eşleşmenin yüksek potansiyel taşıdığını düşünüyor.`;
+      return this.t(lang, "summary90", { name: targetName });
     }
 
     if (score >= 75) {
-      return `${targetName} ile uyum iyi seviyede. Ortak ilgi alanları ve profil bilgileri sohbet başlatmak için yeterli sinyal veriyor.`;
+      return this.t(lang, "summary75", { name: targetName });
     }
 
     if (score >= 55) {
-      return `${targetName} ile orta seviyede uyum var. Daha fazla sohbet ve ortak ilgi alanı keşfi bu eşleşmeyi güçlendirebilir.`;
+      return this.t(lang, "summary55", { name: targetName });
     }
 
-    return `${targetName} ile uyum şu an düşük görünüyor. Profil bilgileri eksik olabilir veya beklentiler yeterince örtüşmüyor olabilir.`;
+    return this.t(lang, "summaryLow", { name: targetName });
   }
 
   private createSuggestions(risks: string[]) {
@@ -345,6 +353,236 @@ export class AiService {
     }
 
     return suggestions;
+  }
+
+
+  private normalizeLang(lang?: string): EgeMatchLang {
+    const upper = String(lang || "TR").toUpperCase();
+
+    if (upper === "EN" || upper === "RU" || upper === "AR") {
+      return upper;
+    }
+
+    return "TR";
+  }
+
+  private t(
+    lang: EgeMatchLang,
+    key: string,
+    vars: Record<string, string> = {},
+  ) {
+    const dictionary: Record<EgeMatchLang, Record<string, string>> = {
+      TR: {
+        selfSummary:
+          "Bu senin kendi profilin. EgeMatch AI, kendi profil doluluğunu ve eşleşme potansiyelini analiz ediyor.",
+        selfStrength: "Kendi profil analizi",
+        selfSuggestion: "Daha iyi eşleşmeler için profilini güncel tut.",
+        labelPerfect: "Mükemmel Uyum",
+        labelHigh: "Yüksek Uyum",
+        labelMedium: "Orta Uyum",
+        labelImprove: "Geliştirilebilir Uyum",
+        summary90:
+          "{name} ile uyum çok güçlü görünüyor. EgeMatch AI, ortak beklentiler ve profil sinyallerine göre bu eşleşmenin yüksek potansiyel taşıdığını düşünüyor.",
+        summary75:
+          "{name} ile uyum iyi seviyede. Ortak ilgi alanları ve profil bilgileri sohbet başlatmak için yeterli sinyal veriyor.",
+        summary55:
+          "{name} ile orta seviyede uyum var. Daha fazla sohbet ve ortak ilgi alanı keşfi bu eşleşmeyi güçlendirebilir.",
+        summaryLow:
+          "{name} ile uyum şu an düşük görünüyor. Profil bilgileri eksik olabilir veya beklentiler yeterince örtüşmüyor olabilir.",
+      },
+      EN: {
+        selfSummary:
+          "This is your own profile. EgeMatch AI is analyzing your profile completeness and matching potential.",
+        selfStrength: "Own profile analysis",
+        selfSuggestion: "Keep your profile updated for better matches.",
+        labelPerfect: "Perfect Match",
+        labelHigh: "High Match",
+        labelMedium: "Medium Match",
+        labelImprove: "Could Improve",
+        summary90:
+          "Compatibility with {name} looks very strong. Based on shared expectations and profile signals, EgeMatch AI sees high potential in this match.",
+        summary75:
+          "Compatibility with {name} is at a good level. Shared interests and profile details provide enough signals to start a conversation.",
+        summary55:
+          "Compatibility with {name} is moderate. More conversation and discovering shared interests could strengthen this match.",
+        summaryLow:
+          "Compatibility with {name} currently looks low. Profile details may be missing or expectations may not overlap enough.",
+      },
+      RU: {
+        selfSummary:
+          "Это ваш собственный профиль. EgeMatch AI анализирует заполненность профиля и потенциал совпадений.",
+        selfStrength: "Анализ собственного профиля",
+        selfSuggestion: "Обновляйте профиль, чтобы получать более подходящие совпадения.",
+        labelPerfect: "Идеальная совместимость",
+        labelHigh: "Высокая совместимость",
+        labelMedium: "Средняя совместимость",
+        labelImprove: "Можно улучшить",
+        summary90:
+          "Совместимость с {name} выглядит очень сильной. По общим ожиданиям и сигналам профиля EgeMatch AI видит высокий потенциал этой пары.",
+        summary75:
+          "Совместимость с {name} на хорошем уровне. Общие интересы и данные профиля дают достаточно сигналов, чтобы начать общение.",
+        summary55:
+          "Совместимость с {name} на среднем уровне. Больше общения и поиск общих интересов могут усилить это совпадение.",
+        summaryLow:
+          "Совместимость с {name} сейчас выглядит низкой. Возможно, в профиле не хватает данных или ожидания недостаточно совпадают.",
+      },
+      AR: {
+        selfSummary:
+          "هذا ملفك الشخصي. يقوم EgeMatch AI بتحليل اكتمال ملفك وإمكانات التوافق.",
+        selfStrength: "تحليل الملف الشخصي",
+        selfSuggestion: "حافظ على تحديث ملفك للحصول على توافقات أفضل.",
+        labelPerfect: "توافق ممتاز",
+        labelHigh: "توافق عالٍ",
+        labelMedium: "توافق متوسط",
+        labelImprove: "قابل للتحسين",
+        summary90:
+          "يبدو التوافق مع {name} قوياً جداً. بناءً على التوقعات المشتركة وإشارات الملف، يرى EgeMatch AI أن هذا التوافق يحمل إمكانات عالية.",
+        summary75:
+          "التوافق مع {name} جيد. الاهتمامات المشتركة ومعلومات الملف تعطي إشارات كافية لبدء محادثة.",
+        summary55:
+          "التوافق مع {name} متوسط. المزيد من الحديث واكتشاف الاهتمامات المشتركة قد يقوي هذا التوافق.",
+        summaryLow:
+          "يبدو التوافق مع {name} منخفضاً حالياً. قد تكون معلومات الملف ناقصة أو أن التوقعات لا تتقاطع بما يكفي.",
+      },
+    };
+
+    const text = dictionary[lang]?.[key] || dictionary.TR[key] || key;
+
+    return Object.entries(vars).reduce(
+      (result, [varKey, value]) =>
+        result.replace(new RegExp(`{${varKey}}`, "g"), value),
+      text,
+    );
+  }
+
+  private translateText(text: string, lang: EgeMatchLang) {
+    if (lang === "TR") return text;
+
+    const exact: Record<string, Record<Exclude<EgeMatchLang, "TR">, string>> = {
+      "Yaş uyumu güçlü görünüyor": {
+        EN: "Age compatibility looks strong",
+        RU: "Возрастная совместимость выглядит сильной",
+        AR: "يبدو توافق العمر قوياً",
+      },
+      "Yaş farkı yönetilebilir seviyede": {
+        EN: "The age difference looks manageable",
+        RU: "Разница в возрасте выглядит приемлемой",
+        AR: "يبدو فرق العمر قابلاً للتعامل معه",
+      },
+      "Yaş farkı bazı beklenti farklılıkları oluşturabilir": {
+        EN: "The age difference may create some expectation differences",
+        RU: "Разница в возрасте может создать различия в ожиданиях",
+        AR: "قد يسبب فرق العمر بعض الاختلافات في التوقعات",
+      },
+      "Aynı şehirde olmak tanışmayı kolaylaştırır": {
+        EN: "Being in the same city makes meeting easier",
+        RU: "Один город облегчает знакомство",
+        AR: "الوجود في نفس المدينة يسهل التعارف",
+      },
+      "Farklı şehirlerde olmak görüşme sıklığını etkileyebilir": {
+        EN: "Being in different cities may affect how often you can meet",
+        RU: "Разные города могут влиять на частоту встреч",
+        AR: "الوجود في مدن مختلفة قد يؤثر على تكرار اللقاءات",
+      },
+      "Aynı ilçede olmak yakınlık avantajı sağlar": {
+        EN: "Being in the same district gives a closeness advantage",
+        RU: "Один район даёт преимущество близости",
+        AR: "الوجود في نفس المنطقة يعطي ميزة القرب",
+      },
+      "Ortak hobiler güçlü sohbet potansiyeli yaratıyor": {
+        EN: "Shared hobbies create strong conversation potential",
+        RU: "Общие хобби создают хороший потенциал для общения",
+        AR: "الهوايات المشتركة تخلق فرصة قوية للحوار",
+      },
+      "Ortak ilgi alanları var": {
+        EN: "There are shared interests",
+        RU: "Есть общие интересы",
+        AR: "هناك اهتمامات مشتركة",
+      },
+      "Ortak hobi az görünüyor": {
+        EN: "There seem to be few shared hobbies",
+        RU: "Похоже, общих хобби мало",
+        AR: "يبدو أن الهوايات المشتركة قليلة",
+      },
+      "Hobi bilgileri eksik olduğu için ortak ilgi analizi zayıf": {
+        EN: "Shared interest analysis is weak because hobby information is missing",
+        RU: "Анализ общих интересов слабый, потому что не хватает информации о хобби",
+        AR: "تحليل الاهتمامات المشتركة ضعيف بسبب نقص معلومات الهوايات",
+      },
+      "Eğitim seviyesi benzer": {
+        EN: "Education levels are similar",
+        RU: "Уровень образования похож",
+        AR: "مستوى التعليم متشابه",
+      },
+      "Çocuk konusundaki beklentiler uyumlu görünüyor": {
+        EN: "Expectations about children look compatible",
+        RU: "Ожидания по поводу детей выглядят совместимыми",
+        AR: "تبدو التوقعات حول الأطفال متوافقة",
+      },
+      "İki profil de ilişki beklentisini belirtmiş": {
+        EN: "Both profiles have stated relationship expectations",
+        RU: "Оба профиля указали ожидания от отношений",
+        AR: "كلا الملفين أوضحا توقعات العلاقة",
+      },
+      "İlişki beklentisi alanı iki tarafta da net olmayabilir": {
+        EN: "Relationship expectations may not be clear on both sides",
+        RU: "Ожидания от отношений могут быть неясны у обеих сторон",
+        AR: "قد لا تكون توقعات العلاقة واضحة لدى الطرفين",
+      },
+      "İki profil de kendini anlatıyor": {
+        EN: "Both profiles describe themselves",
+        RU: "Оба профиля рассказывают о себе",
+        AR: "كلا الملفين يصفان نفسيهما",
+      },
+      "Profil açıklaması eksikliği ilk izlenimi zayıflatabilir": {
+        EN: "Missing profile descriptions may weaken the first impression",
+        RU: "Отсутствие описания профиля может ослабить первое впечатление",
+        AR: "نقص وصف الملف قد يضعف الانطباع الأول",
+      },
+      "Karşı profil fotoğraflarla daha güvenilir görünüyor": {
+        EN: "The other profile looks more trustworthy with photos",
+        RU: "Профиль собеседника выглядит надёжнее благодаря фотографиям",
+        AR: "يبدو الملف الآخر أكثر موثوقية بفضل الصور",
+      },
+      "Karşı profilde onaylı fotoğraf görünmüyor": {
+        EN: "The other profile does not seem to have approved photos",
+        RU: "В другом профиле не видно одобренных фотографий",
+        AR: "لا تظهر صور معتمدة في الملف الآخر",
+      },
+      "İlk mesajda profilindeki şehir veya ilgi alanları sorulabilir.": {
+        EN: "In the first message, you can ask about their city or interests.",
+        RU: "В первом сообщении можно спросить о городе или интересах.",
+        AR: "في الرسالة الأولى، يمكنك السؤال عن المدينة أو الاهتمامات.",
+      },
+      "Aynı şehir avantajı kullanılarak kısa bir kahve buluşması önerilebilir.": {
+        EN: "You can use the same-city advantage and suggest a short coffee meetup.",
+        RU: "Можно использовать преимущество одного города и предложить короткую встречу за кофе.",
+        AR: "يمكن استغلال ميزة نفس المدينة واقتراح لقاء قصير على القهوة.",
+      },
+      "Farklı şehir varsa önce rahat bir sohbet temposu kurulmalı.": {
+        EN: "If you are in different cities, first build a comfortable conversation rhythm.",
+        RU: "Если вы в разных городах, сначала стоит выстроить комфортный темп общения.",
+        AR: "إذا كنتما في مدن مختلفة، فمن الأفضل أولاً بناء وتيرة مريحة للمحادثة.",
+      },
+    };
+
+    const dynamicCommonHobby = text.match(
+      /^İlk mesajda (.+) konusundan sohbet başlatılabilir\.$/,
+    );
+
+    if (dynamicCommonHobby) {
+      const hobby = dynamicCommonHobby[1];
+
+      const dynamicMap: Record<Exclude<EgeMatchLang, "TR">, string> = {
+        EN: `You can start the first message by talking about ${hobby}.`,
+        RU: `Первое сообщение можно начать с темы «${hobby}».`,
+        AR: `يمكنك بدء الرسالة الأولى بالحديث عن ${hobby}.`,
+      };
+
+      return dynamicMap[lang];
+    }
+
+    return exact[text]?.[lang] || text;
   }
 
   private getAge(birthDate?: Date | string | null) {

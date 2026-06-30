@@ -361,7 +361,7 @@ const [egematch, setEgematch] = useState<any | null>(null);
     setProfile(data);
 
     try {
-      const ai = await api.ai.egematchUser(id);
+      const ai = await api.ai.egematchUser(id, currentLang);
       setEgematch(ai);
     } catch (err) {
       console.error("EgeMatch AI yüklenemedi:", err);
@@ -380,7 +380,7 @@ const [egematch, setEgematch] = useState<any | null>(null);
   try {
     setCompatLoading(true);
 
-    const data = await api.ai.egematchUser(id);
+    const data = await api.ai.egematchUser(id, currentLang);
 
     setCompatibility(data);
   } catch (e) {
