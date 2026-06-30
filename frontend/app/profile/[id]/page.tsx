@@ -290,10 +290,33 @@ export default function PublicProfilePage() {
   const params = useParams();
   const router = useRouter();
   const { lang } = useI18n();
+  const [pageLang, setPageLang] = useState<LangKey>("TR");
 
-  const currentLang: LangKey = ["TR", "EN", "RU", "AR"].includes(lang)
-    ? (lang as LangKey)
-    : "TR";
+useEffect(() => {
+  const readLang = () => {
+    const saved =
+      typeof window !== "undefined"
+        ? localStorage.getItem("egelove-lang") || localStorage.getItem("lang")
+        : null;
+
+    if (saved === "EN" || saved === "RU" || saved === "AR" || saved === "TR") {
+      setPageLang(saved);
+    } else if (lang === "EN" || lang === "RU" || lang === "AR" || lang === "TR") {
+      setPageLang(lang as LangKey);
+    }
+  };
+
+  readLang();
+  window.addEventListener("storage", readLang);
+  window.addEventListener("focus", readLang);
+
+  return () => {
+    window.removeEventListener("storage", readLang);
+    window.removeEventListener("focus", readLang);
+  };
+}, [lang]);
+
+ const currentLang: LangKey = pageLang;
   const tx = TEXT[currentLang];
   const isRtl = currentLang === "AR";
   const id = params?.id as string;
@@ -381,6 +404,8 @@ const [egematch, setEgematch] = useState<any | null>(null);
     setCompatLoading(true);
 
     const data = await api.ai.egematchUser(id, currentLang);
+    console.log("EGEMATCH LANG =", currentLang);
+console.log("EGEMATCH DATA =", data);
 
     setCompatibility(data);
   } catch (e) {
@@ -391,7 +416,7 @@ const [egematch, setEgematch] = useState<any | null>(null);
 };
 
 loadCompatibility();
-  }, [id]);
+ }, [id, currentLang]);
 
   const getPhotoUrl = (url?: string) => {
     if (!url) return null;
