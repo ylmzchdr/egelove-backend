@@ -175,6 +175,7 @@ model User {
   alcohol    AlcoholStatus?
   children   ChildrenStatus?
   bodyType   BodyType?
+  maritalStatus MaritalStatus?
   height     Int?
   weight     Int?
   eyeColor   EyeColor?
