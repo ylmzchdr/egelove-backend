@@ -117,6 +117,8 @@ if ((data as any).districtId) {
   };
 }
 console.log("UPDATE DATA =", updateData);
+console.log("CLEAN DATA:", JSON.stringify(cleanData, null, 2));
+console.log("UPDATE DATA:", JSON.stringify(updateData, null, 2));
 const updated = await this.prisma.user.update({
     where: { id: user.sub },
     data: updateData,
