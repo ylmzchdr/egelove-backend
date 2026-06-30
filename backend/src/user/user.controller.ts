@@ -116,6 +116,7 @@ if ((data as any).districtId) {
     connect: { id: Number((data as any).districtId) },
   };
 }
+console.log("UPDATE DATA =", updateData);
 const updated = await this.prisma.user.update({
     where: { id: user.sub },
     data: updateData,
