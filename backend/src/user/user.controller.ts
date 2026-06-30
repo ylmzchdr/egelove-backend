@@ -48,13 +48,14 @@ async getMe(@CurrentUser() user: any) {
 async updateMe(@CurrentUser() user: any, @Body() data: UpdateUserDto) {
   const cleanData: any = {};
 
-  const allowedFields = [
+ const allowedFields = [
   "name",
   "surname",
   "phone",
   "birthDate",
   "gender",
-  
+  "cityId",
+  "districtId",
   "bio",
   "aboutMe",
   "lookingFor",
@@ -99,9 +100,25 @@ async updateMe(@CurrentUser() user: any, @Body() data: UpdateUserDto) {
   cleanData.hobbies = cleanData.hobbies.join(", ");
 }
 
-  const updated = await this.prisma.user.update({
+  const updateData: any = { ...cleanData };
+
+delete updateData.cityId;
+delete updateData.districtId;
+
+if ((data as any).cityId) {
+  updateData.city = {
+    connect: { id: Number((data as any).cityId) },
+  };
+}
+
+if ((data as any).districtId) {
+  updateData.district = {
+    connect: { id: Number((data as any).districtId) },
+  };
+}
+const updated = await this.prisma.user.update({
     where: { id: user.sub },
-    data: cleanData,
+    data: updateData,
   });
 
   const {
