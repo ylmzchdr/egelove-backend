@@ -326,7 +326,7 @@ useEffect(() => {
   const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
   const [compatibility, setCompatibility] = useState<any>(null);
 const [compatLoading, setCompatLoading] = useState(false);
-const [egematch, setEgematch] = useState<any | null>(null);
+
   
 
  function trOpt(value: string | null | undefined) {
@@ -369,54 +369,52 @@ const [egematch, setEgematch] = useState<any | null>(null);
 }
 
   useEffect(() => {
-    if (!id) return;
-
-    const loadProfile = async () => {
-  try {
-    const res = await fetch(`${API_URL}/users/${id}`);
-
-    if (!res.ok) {
-      setProfile(null);
-      return;
-    }
-
-    const data = await res.json();
-    setProfile(data);
-
-    try {
-      const ai = await api.ai.egematchUser(id, currentLang);
-      setEgematch(ai);
-    } catch (err) {
-      console.error("EgeMatch AI yüklenemedi:", err);
-    }
-  } catch (error) {
-    console.error("Profil yüklenemedi:", error);
-    setProfile(null);
-  } finally {
-    setLoading(false);
-  }
-};
-    loadProfile();
-    const loadCompatibility = async () => {
   if (!id) return;
 
-  try {
-    setCompatLoading(true);
+  const loadProfile = async () => {
+    try {
+      setLoading(true);
 
-    const data = await api.ai.egematchUser(id, currentLang);
-    console.log("EGEMATCH LANG =", currentLang);
-console.log("EGEMATCH DATA =", data);
+      const res = await fetch(`${API_URL}/users/${id}`);
 
-    setCompatibility(data);
-  } catch (e) {
-    console.error("EgeMatch AI yüklenemedi:", e);
-  } finally {
-    setCompatLoading(false);
-  }
-};
+      if (!res.ok) {
+        setProfile(null);
+        return;
+      }
 
-loadCompatibility();
- }, [id, currentLang]);
+      const data = await res.json();
+      setProfile(data);
+    } catch (error) {
+      console.error("Profil yüklenemedi:", error);
+      setProfile(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  loadProfile();
+}, [id]);
+
+useEffect(() => {
+  if (!id) return;
+
+  const loadCompatibility = async () => {
+    try {
+      setCompatLoading(true);
+      setCompatibility(null);
+
+      const data = await api.ai.egematchUser(id, currentLang);
+      setCompatibility(data);
+    } catch (e) {
+      console.error("EgeMatch AI yüklenemedi:", e);
+      setCompatibility(null);
+    } finally {
+      setCompatLoading(false);
+    }
+  };
+
+  loadCompatibility();
+}, [id, currentLang]);
 
   const getPhotoUrl = (url?: string) => {
     if (!url) return null;
