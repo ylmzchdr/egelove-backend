@@ -90,15 +90,37 @@ export default function RootLayout({
   return (
     <html lang="tr">
       <body>
-        <Providers>
-          {children}
-          <CookieConsent />
-        </Providers>
 
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-KTRDMEPHEK"
-          strategy="afterInteractive"
-        />
+  <Script
+    id="schema-org"
+    type="application/ld+json"
+    dangerouslySetInnerHTML={{
+      __html: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        name: "Egelove",
+        url: "https://egelove.tr",
+        description:
+          "Ege ve Akdeniz bölgesinde yeni insanlarla tanışmak ve arkadaşlık kurmak için modern platform.",
+        inLanguage: "tr-TR",
+        publisher: {
+          "@type": "Organization",
+          name: "Egelove",
+          url: "https://egelove.tr",
+        },
+      }),
+    }}
+  />
+
+  <Providers>
+    {children}
+    <CookieConsent />
+  </Providers>
+
+  <Script
+    src="https://www.googletagmanager.com/gtag/js?id=G-KTRDMEPHEK"
+    strategy="afterInteractive"
+  />
         <Script id="google-analytics" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
