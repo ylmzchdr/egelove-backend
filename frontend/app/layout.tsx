@@ -6,26 +6,97 @@ import CookieConsent from "@/components/CookieConsent";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "egelove - Mutlu Birlikteliklerin Başlangıcı",
-  description:
-    "Türkiye'nin en köklü evlilik sitesi egelove ile mutlu birlikteliklerin başlangıcına siz de adım atın.",
-};
+  metadataBase: new URL("https://egelove.tr"),
 
+  title: {
+    default: "Egelove | Ege ve Akdeniz’in Arkadaşlık Platformu",
+    template: "%s | Egelove",
+  },
+
+  description:
+    "Egelove, Ege ve Akdeniz bölgesinde yeni insanlarla tanışmak, arkadaşlık kurmak ve güvenli bağlantılar oluşturmak isteyenler için modern bir arkadaşlık platformudur.",
+
+  keywords: [
+    "Egelove",
+    "arkadaşlık sitesi",
+    "tanışma sitesi",
+    "Ege arkadaşlık",
+    "Akdeniz arkadaşlık",
+    "Muğla arkadaşlık",
+    "Fethiye arkadaşlık",
+    "İzmir arkadaşlık",
+    "Antalya arkadaşlık",
+    "Aydın arkadaşlık",
+    "Mersin arkadaşlık",
+  ],
+
+  applicationName: "Egelove",
+  authors: [{ name: "Egelove" }],
+  creator: "Egelove",
+  publisher: "Egelove",
+
+  alternates: {
+    canonical: "https://egelove.tr",
+  },
+
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-video-preview": -1,
+      "max-snippet": -1,
+    },
+  },
+
+  openGraph: {
+    type: "website",
+    locale: "tr_TR",
+    url: "https://egelove.tr",
+    siteName: "Egelove",
+    title: "Egelove | Ege ve Akdeniz’in Arkadaşlık Platformu",
+    description:
+      "Ege ve Akdeniz bölgesinde yeni insanlarla tanışmak, arkadaşlık kurmak ve güvenli bağlantılar oluşturmak için Egelove.",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Egelove arkadaşlık platformu",
+      },
+    ],
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Egelove | Ege ve Akdeniz’in Arkadaşlık Platformu",
+    description:
+      "Ege ve Akdeniz bölgesinde yeni insanlarla tanışmak için modern arkadaşlık platformu.",
+    images: ["/og-image.jpg"],
+  },
+
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/apple-icon.png",
+  },
+};
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="tr" suppressHydrationWarning>
-      <body className="min-h-screen bg-background text-foreground antialiased">
+    <html lang="tr">
+      <body>
         <Providers>
           {children}
           <CookieConsent />
         </Providers>
 
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-NX31XDZBXB"
+          src="https://www.googletagmanager.com/gtag/js?id=G-KTRDMEPHEK"
           strategy="afterInteractive"
         />
         <Script id="google-analytics" strategy="afterInteractive">
@@ -33,7 +104,7 @@ export default function RootLayout({
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-NX31XDZBXB');
+            gtag('config', 'G-KTRDMEPHEK');
           `}
         </Script>
       </body>
