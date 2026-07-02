@@ -273,7 +273,7 @@ console.log(`✅ Kullanıcı veritabanına kaydedildi: ${email}`);
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
         secret: jwtConstants.secret,
-        expiresIn: "15m",
+        expiresIn: "3h",
       }),
       this.jwtService.signAsync(payload, {
         secret: jwtConstants.refreshSecret,
