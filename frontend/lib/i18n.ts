@@ -1,7 +1,7 @@
 export type Lang = "TR" | "EN" | "RU" | "AR";
 
 const tr = {
-  nav: { home: "Ana Sayfa", discover: "Keşfet", likes: "Beğeniler", messages: "Mesajlar", premium: "Premium", dashboard: "Panel" },
+  nav: { home: "Ana Sayfa", discover: "Keşfet", likes: "Beğeniler", messages: "Mesajlar", premium: "Premium", dashboard: "Benim Sayfam" },
   dashboard: { find: "Birini Bul", friends: "Arkadaşlar", loveGame: "Aşk Oyunu", findDesc: "Aradığın kriterlere uygun üyeleri bul", friendsDesc: "Eşleştiğin üyelerle sohbet et", loveGameDesc: "Eğlenceli sorularla yeni insanlarla tanış" },
   auth: { login: "Giriş Yap", register: "Üye Ol", logout: "Çıkış Yap", emailOrPhone: "E-posta veya Telefon Numarası", password: "Şifre", name: "Ad", surname: "Soyad", email: "E-posta", phone: "Telefon", birthDate: "Doğum Tarihi", gender: "Cinsiyet", city: "İl", district: "İlçe", noAccount: "Hesabınız yok mu?", hasAccount: "Zaten hesabınız var mı?", terms: "Üyelik şartlarını kabul ediyorum", google: "Google ile Devam Et", female: "Kadın", male: "Erkek", other: "Diğer", selectCity: "İl seçin", selectDistrict: "İlçe seçin", selectCityFirst: "Önce il seçin" },
   hero: { title: "Mutlu Birlikteliklerin Başlangıcı", subtitle: "Türkiye'nin en köklü evlilik sitesi egelove ile gerçek aşkı bulun", cta: "Hemen Üye Ol" },

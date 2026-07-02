@@ -46,7 +46,7 @@ function getFirstName(user: MeResponse | null) {
     return user.email.split("@")[0];
   }
 
-  return "Panel";
+  return "Benim Sayfam";
 }
 
 export default function Header({ onOpenLogin, onOpenRegister }: HeaderProps) {
