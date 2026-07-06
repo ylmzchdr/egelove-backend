@@ -187,9 +187,28 @@ return (
                   </button>
                 </div>
               </div>
-              <Button type="submit" disabled={loading} className="w-full bg-white text-pink-600 hover:bg-gray-100 font-bold">
-                {loading ? "..." : t.auth.login}
-              </Button>
+
+              
+             <div className="flex justify-end mt-1 mb-3">
+  <button
+    type="button"
+    onClick={() => {
+      onClose();
+      window.location.href = "/forgot-password";
+    }}
+    className="text-sm text-pink-300 hover:text-pink-200 hover:underline transition-colors"
+  >
+    Şifremi Unuttum?
+  </button>
+</div>
+
+<Button
+  type="submit"
+  disabled={loading}
+  className="w-full bg-white text-pink-600 hover:bg-gray-100 font-bold"
+>
+  {loading ? "..." : t.auth.login}
+</Button>
 
               {/* Çizgi Ayırıcı */}
               <div className="relative my-4 flex items-center justify-center w-full">
