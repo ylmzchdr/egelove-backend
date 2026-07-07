@@ -4,7 +4,7 @@ import * as nodemailer from "nodemailer";
 @Injectable()
 export class EmailService {
   private readonly logger = new Logger(EmailService.name);
-  private transporter: nodemailer.Transporter;
+  private transporter: nodemailer.Transporter | null = null;
 
   constructor() {
     if (process.env.SMTP_HOST && process.env.SMTP_USER) {
@@ -29,7 +29,9 @@ export class EmailService {
         ...options,
       });
     } else {
-      this.logger.log(`[EMAIL SIMULATION] To: ${options.to}, Subject: ${options.subject}`);
+      this.logger.log(
+        `[EMAIL SIMULATION] To: ${options.to}, Subject: ${options.subject}`,
+      );
     }
   }
 
@@ -64,7 +66,44 @@ export class EmailService {
           <div style="background:#222;padding:16px;border-radius:8px;font-size:24px;text-align:center;letter-spacing:4px;font-family:monospace">
             ${backupCode}
           </div>
-          <p style="color:#a1a1aa;font-size:12px">Bu kodu güvenli bir yerde sakla. Telefonuna erişemezsen kurtarma kodu olarak kullanılır.</p>
+          <p style="color:#a1a1aa;font-size:12px">
+            Bu kodu güvenli bir yerde sakla. Telefonuna erişemezsen kurtarma kodu olarak kullanılır.
+          </p>
+        </div>
+      `,
+    });
+  }
+
+  async sendPasswordResetCode(email: string, code: string) {
+    if (!this.transporter) {
+      this.logger.log(`🔐 Şifre sıfırlama kodu: ${email} -> ${code}`);
+      return;
+    }
+
+    await this.transporter.sendMail({
+      from:
+        process.env.SMTP_FROM ||
+        process.env.SMTP_USER ||
+        "noreply@egelove.com",
+      to: email,
+      subject: "Egelove - Şifre Sıfırlama Kodu",
+      html: `
+        <div style="font-family:sans-serif;max-width:480px;margin:auto;padding:20px;background:#1a0a1e;border-radius:12px;color:white">
+          <h1 style="color:#ec4899">Egelove</h1>
+
+          <p>Şifreni sıfırlamak için aşağıdaki kodu kullan:</p>
+
+          <div style="background:#222;padding:16px;border-radius:8px;font-size:32px;text-align:center;letter-spacing:6px;font-family:monospace;font-weight:bold">
+            ${code}
+          </div>
+
+          <p style="margin-top:20px;color:#a1a1aa">
+            Bu kod <strong>15 dakika</strong> geçerlidir.
+          </p>
+
+          <p style="color:#a1a1aa;font-size:12px">
+            Eğer bu isteği sen yapmadıysan bu e-postayı dikkate alma.
+          </p>
         </div>
       `,
     });
