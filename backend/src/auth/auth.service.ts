@@ -241,20 +241,78 @@ console.log(`✅ Kullanıcı veritabanına kaydedildi: ${email}`);
   }
 
   async forgotPassword(email: string) {
-    const user = mockUsers.find((u) => u.email === email);
-    if (user) console.log(`✅ Şifre sıfırlama e-postası gönderildi: ${email}`);
+  const cleanEmail = email.toLowerCase().trim();
+
+  console.log("📧 FORGOT PASSWORD GELDİ:", cleanEmail);
+
+  const user = await this.prisma.user.findUnique({
+    where: { email: cleanEmail },
+  });
+
+  if (!user) {
+    console.log("❌ Kullanıcı bulunamadı:", cleanEmail);
     return { sent: true };
   }
 
-  async resetPassword(email: string, code: string, newPassword: string) {
-    const user = mockUsers.find((u) => u.email === email);
-    if (!user) throw new BadRequestException("Kullanıcı bulunamadı");
+  const code = Math.floor(100000 + Math.random() * 900000).toString();
+  const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
 
-    user.passwordHash = await argon2.hash(newPassword);
-    user.emailVerifyToken = null;
-    console.log(`✅ Şifre sıfırlandı: ${email}`);
-    return { reset: true };
+  await this.prisma.user.update({
+    where: { id: user.id },
+    data: {
+      emailVerifyToken: code,
+      emailVerifySentAt: expiresAt,
+    },
+  });
+
+  console.log("🔐 Kod oluşturuldu:", cleanEmail, code);
+
+  try {
+    await this.email.sendPasswordResetCode(cleanEmail, code);
+    console.log("✅ Mail gönderme fonksiyonu bitti:", cleanEmail);
+  } catch (error) {
+    console.error("❌ Mail gönderme hatası:", error);
+    throw error;
   }
+
+  return { sent: true };
+}
+
+async resetPassword(email: string, code: string, newPassword: string) {
+  const cleanEmail = email.toLowerCase().trim();
+
+  const user = await this.prisma.user.findUnique({
+    where: { email: cleanEmail },
+  });
+
+  if (!user) {
+    throw new BadRequestException("Kullanıcı bulunamadı");
+  }
+
+  if (!user.emailVerifyToken || user.emailVerifyToken !== code) {
+    throw new BadRequestException("Geçersiz kod");
+  }
+
+  if (
+    !user.emailVerifySentAt ||
+    user.emailVerifySentAt.getTime() < Date.now()
+  ) {
+    throw new BadRequestException("Kodun süresi dolmuş");
+  }
+
+  const passwordHash = await argon2.hash(newPassword);
+
+  await this.prisma.user.update({
+    where: { id: user.id },
+    data: {
+      passwordHash,
+      emailVerifyToken: null,
+      emailVerifySentAt: null,
+    },
+  });
+
+  return { reset: true };
+}
 
   private async generateTokens(userId: string, email: string) {
     const user =
