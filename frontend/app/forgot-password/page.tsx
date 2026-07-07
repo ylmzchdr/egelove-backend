@@ -5,24 +5,53 @@ import { Mail, ArrowLeft, CheckCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
+import { api } from "@/lib/api";
 
 export default function ForgotPasswordPage() {
   const [step, setStep] = useState<"email" | "sent" | "reset">("email");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
+const handleSendCode = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-  const handleSendCode = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) return;
+  const cleanEmail = email.toLowerCase().trim();
+
+  if (!cleanEmail) {
+    alert("Lütfen e-posta adresinizi girin.");
+    return;
+  }
+
+  try {
+    await api.auth.forgotPassword(cleanEmail);
+    setEmail(cleanEmail);
     setStep("sent");
-  };
+  } catch (err: any) {
+    alert(err.message || "Kod gönderilemedi.");
+  }
+};
 
-  const handleReset = (e: React.FormEvent) => {
-    e.preventDefault();
-    alert("Şifreniz başarıyla sıfırlandı! Yeni şifrenizle giriş yapabilirsiniz.");
-  };
+const handleReset = async (e: React.FormEvent) => {
+  e.preventDefault();
 
+  if (!email || !code || !newPassword) {
+    alert("Lütfen tüm alanları doldurun.");
+    return;
+  }
+
+  try {
+    await api.auth.resetPassword({
+      email,
+      code,
+      newPassword,
+    });
+
+    alert("Şifreniz başarıyla sıfırlandı!");
+    window.location.href = "/";
+  } catch (err: any) {
+    alert(err.message || "Şifre sıfırlanamadı.");
+  }
+};
   return (
     <div className="min-h-screen bg-pink-950 text-white flex items-center justify-center">
       <div className="w-full max-w-md px-4">

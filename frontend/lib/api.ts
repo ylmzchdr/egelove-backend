@@ -115,7 +115,7 @@ export const api = {
   }>(`/ai/egematch/${userId}?lang=${encodeURIComponent(lang)}`),
   },
 
-  auth: {
+    auth: {
     register: (data: any) =>
       request("/auth/register", {
         method: "POST",
@@ -138,7 +138,20 @@ export const api = {
       request("/auth/logout", {
         method: "POST",
       }),
+
+    forgotPassword: (email: string) =>
+      request("/auth/forgot-password", {
+        method: "POST",
+        body: JSON.stringify({ email }),
+      }),
+
+    resetPassword: (data: { email: string; code: string; newPassword: string }) =>
+      request("/auth/reset-password", {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
   },
+  
 
   users: {
     me: () => request("/users/me"),
