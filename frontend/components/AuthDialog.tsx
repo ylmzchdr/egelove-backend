@@ -134,15 +134,36 @@ export default function AuthDialog({ activeTab, onClose }: AuthDialogProps) {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!agreeTerms) { alert("Lütfen şartları kabul edin"); return; }
-    if (!registerData.name || !registerData.surname || !registerData.email || !registerData.phone || !registerData.password || !registerData.birthDate || !registerData.gender) {
-      alert("Lütfen tüm alanları doldurun"); return;
+    
+    // 1. Adım: username kontrolünü if bloğundan kaldırdık
+    if (
+      !registerData.name ||
+      !registerData.email ||
+      !registerData.password
+    ) {
+      alert("Lütfen tüm alanları doldurun");
+      return;
     }
+
     setLoading(true);
     try {
+      // 2. Adım: API'ye gönderirken eksik olan alanları varsayılan değerlerle dolduruyoruz
       const res: any = await api.auth.register({
         ...registerData,
+        // E-postanın ilk kısmını veya rastgele bir sayıyı geçici kullanıcı adı yapıyoruz
+        username: registerData.email.split('@')[0] + Math.floor(1000 + Math.random() * 9000),
+        // Profil sayfasındaki diğer zorunlu alanlar için boş veya varsayılan değerler:
+        surname: registerData.surname || "",
+        phone: registerData.phone || "",
+        birthDate: registerData.birthDate || "2000-01-01",
+        gender: registerData.gender || "Belirtilmemiş",
+        city: registerData.city || "",
+        district: registerData.district || "",
         turnstileToken: "demo-token",
       });
+
+      // Kayıt başarılı olduktan sonraki işlemleriniz (örn: yönlendirme veya login)
+
       localStorage.setItem("accessToken", res.accessToken);
       localStorage.setItem("refreshToken", res.refreshToken);
       setRegisterData({ name: "", surname: "", email: "", phone: "", password: "", birthDate: "", gender: "", city: "", district: "" });

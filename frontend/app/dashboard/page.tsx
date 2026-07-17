@@ -17,13 +17,36 @@ export default function DashboardPage() {
   const [authTab, setAuthTab] = useState<"login" | "register" | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [userName, setUserName] = useState("Üye");
   const { t } = useI18n();
 
   useEffect(() => {
-    setToken(localStorage.getItem("accessToken"));
-    setLoading(false);
-  }, []);
+  const accessToken = localStorage.getItem("accessToken");
 
+  setToken(accessToken);
+
+  if (accessToken) {
+    fetch("/api/users/me", {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        const user = data.user || data.profile || data;
+
+        setUserName(
+          user?.name ||
+          user?.username ||
+          user?.email?.split("@")[0] ||
+          "Üye"
+        );
+      })
+      .catch(() => {});
+  }
+
+  setLoading(false);
+}, []);
   const d = t.dashboard;
 
   return (
@@ -61,6 +84,33 @@ export default function DashboardPage() {
             </div>
           ) : (
             <div className="flex flex-col gap-4">
+              <div className="mb-2 rounded-3xl border border-white/10 bg-gradient-to-br from-pink-600 via-fuchsia-600 to-purple-700 p-6 shadow-2xl">
+  <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-white/70">
+    Profilini tamamla
+  </p>
+
+  <h2 className="text-2xl font-black">
+    🎉 Egelove&apos;a Hoş Geldin {userName}
+  </h2>
+
+  <p className="mt-3 text-sm leading-6 text-white/85">
+    Profilini tamamla; diğer üyeler seni daha kolay keşfetsin.
+  </p>
+
+  <div className="mt-5 space-y-2 text-sm text-white/90">
+    <p>✓ Profil fotoğrafı yükle</p>
+    <p>✓ Hakkında kısmını doldur</p>
+    <p>✓ İlk beğenini gönder</p>
+    <p>✓ Premium özellikleri keşfet</p>
+  </div>
+
+  <Link
+    href="/profile/edit"
+    className="mt-6 inline-flex w-full items-center justify-center rounded-2xl bg-white px-6 py-3 font-black text-pink-700 shadow-lg transition hover:bg-yellow-100 sm:w-auto"
+  >
+    Profilimi Tamamla
+  </Link>
+</div>
               {cards.map((card) => {
                 const Icon = card.icon;
 
