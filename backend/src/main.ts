@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import * as dotenv from "dotenv";
 dotenv.config();
 import { NestFactory } from "@nestjs/core";
@@ -10,6 +11,14 @@ import { AppModule } from "./app.module";
 import { AllExceptionsFilter } from "./common/filters/all-exceptions.filter";
 
 async function bootstrap() {
+  const userModel = Prisma.dmmf.datamodel.models.find(
+  (model) => model.name === "User",
+);
+
+console.log(
+  "RENDER PRISMA USER FIELDS:",
+  userModel?.fields.map((field) => field.name),
+);
   const app = await NestFactory.create(AppModule, {
     rawBody: true,
   });
