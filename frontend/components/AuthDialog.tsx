@@ -108,7 +108,14 @@ export default function AuthDialog({ activeTab, onClose }: AuthDialogProps) {
 
   const [loginData, setLoginData] = useState({ emailOrPhone: "", password: "" });
   const [registerData, setRegisterData] = useState({
-    name: "", surname: "", email: "", phone: "", password: "", birthDate: "", gender: "", city: "", district: "",
+    name: "",
+    username: "",
+    email: "",
+    password: "",
+    birthDate: "",
+    gender: "",
+    city: "",
+    district: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -133,11 +140,15 @@ export default function AuthDialog({ activeTab, onClose }: AuthDialogProps) {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!agreeTerms) { alert("Lütfen şartları kabul edin"); return; }
-    
-    // 1. Adım: username kontrolünü if bloğundan kaldırdık
+
+    if (!agreeTerms) {
+      alert("Lütfen şartları kabul edin");
+      return;
+    }
+
     if (
       !registerData.name ||
+      !registerData.username ||
       !registerData.email ||
       !registerData.password
     ) {
@@ -146,30 +157,37 @@ export default function AuthDialog({ activeTab, onClose }: AuthDialogProps) {
     }
 
     setLoading(true);
+
     try {
-      // 2. Adım: API'ye gönderirken eksik olan alanları varsayılan değerlerle dolduruyoruz
       const res: any = await api.auth.register({
-        ...registerData,
-        // E-postanın ilk kısmını veya rastgele bir sayıyı geçici kullanıcı adı yapıyoruz
-        username: registerData.email.split('@')[0] + Math.floor(1000 + Math.random() * 9000),
-        // Profil sayfasındaki diğer zorunlu alanlar için boş veya varsayılan değerler:
-        surname: registerData.surname || "",
-        phone: registerData.phone || "",
+        name: registerData.name,
+        username: registerData.username,
+        email: registerData.email,
+        password: registerData.password,
         birthDate: registerData.birthDate || "2000-01-01",
-        gender: registerData.gender || "Belirtilmemiş",
+        gender: registerData.gender || "OTHER",
         city: registerData.city || "",
         district: registerData.district || "",
         turnstileToken: "demo-token",
       });
 
-      // Kayıt başarılı olduktan sonraki işlemleriniz (örn: yönlendirme veya login)
-
       localStorage.setItem("accessToken", res.accessToken);
       localStorage.setItem("refreshToken", res.refreshToken);
-      setRegisterData({ name: "", surname: "", email: "", phone: "", password: "", birthDate: "", gender: "", city: "", district: "" });
+
+      setRegisterData({
+        name: "",
+        username: "",
+        email: "",
+        password: "",
+        birthDate: "",
+        gender: "",
+        city: "",
+        district: "",
+      });
+
       setAgreeTerms(false);
       onClose();
-window.location.href = "/dashboard";
+      window.location.href = "/dashboard";
     } catch (err: any) {
       alert(err.message || "Kayıt başarısız");
     } finally {
@@ -273,19 +291,53 @@ return (
 
             <form onSubmit={handleRegister} className="space-y-4 mt-4 text-gray-200">
               <div className="grid grid-cols-2 gap-4">
-                <div><Label className="text-white">{t.auth.name}</Label>
-                  <Input placeholder={t.auth.name} className="bg-pink-950/50 border-white/10 text-white placeholder:text-white/40"
-                    value={registerData.name} onChange={(e) => setRegisterData({ ...registerData, name: e.target.value })} /></div>
-                <div><Label className="text-white">{t.auth.surname}</Label>
-                  <Input placeholder={t.auth.surname} className="bg-pink-950/50 border-white/10 text-white placeholder:text-white/40"
-                    value={registerData.surname} onChange={(e) => setRegisterData({ ...registerData, surname: e.target.value })} /></div>
+                <div>
+                  <Label className="text-white">{t.auth.name}</Label>
+                  <Input
+                    placeholder={t.auth.name}
+                    className="bg-pink-950/50 border-white/10 text-white placeholder:text-white/40"
+                    value={registerData.name}
+                    onChange={(e) =>
+                      setRegisterData({ ...registerData, name: e.target.value })
+                    }
+                  />
+                </div>
+
+                <div>
+                  <Label className="text-white">Kullanıcı Adı</Label>
+                  <Input
+                    placeholder="Kullanıcı Adı"
+                    className="bg-pink-950/50 border-white/10 text-white placeholder:text-white/40"
+                    value={registerData.username}
+                    onChange={(e) =>
+                      setRegisterData({
+                        ...registerData,
+                        username: e.target.value,
+                      })
+                    }
+                  />
+                </div>
               </div>
-              <Input type="email" placeholder={t.auth.email} className="bg-pink-950/50 border-white/10 text-white placeholder:text-white/40"
-                value={registerData.email} onChange={(e) => setRegisterData({ ...registerData, email: e.target.value })} />
-              <Input placeholder={t.auth.phone} className="bg-pink-950/50 border-white/10 text-white placeholder:text-white/40"
-                value={registerData.phone} onChange={(e) => setRegisterData({ ...registerData, phone: e.target.value })} />
-              <Input type="password" placeholder={t.auth.password} className="bg-pink-950/50 border-white/10 text-white placeholder:text-white/40"
-                value={registerData.password} onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })} />
+
+              <Input
+                type="email"
+                placeholder={t.auth.email}
+                className="bg-pink-950/50 border-white/10 text-white placeholder:text-white/40"
+                value={registerData.email}
+                onChange={(e) =>
+                  setRegisterData({ ...registerData, email: e.target.value })
+                }
+              />
+
+              <Input
+                type={showPassword ? "text" : "password"}
+                placeholder={t.auth.password}
+                className="bg-pink-950/50 border-white/10 text-white placeholder:text-white/40"
+                value={registerData.password}
+                onChange={(e) =>
+                  setRegisterData({ ...registerData, password: e.target.value })
+                }
+              />
 
               <div className="grid grid-cols-2 gap-4">
                 <Input type="date" className="bg-pink-950/50 border-white/10 text-white"
