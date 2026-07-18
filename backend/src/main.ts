@@ -11,10 +11,14 @@ import { AppModule } from "./app.module";
 import { AllExceptionsFilter } from "./common/filters/all-exceptions.filter";
 
 async function bootstrap() {
-  const userModel = Prisma.dmmf.datamodel.models.find(
+ const userModel = Prisma.dmmf.datamodel.models.find(
   (model) => model.name === "User",
 );
 
+console.log(
+  "RENDER_PRISMA_USER_FIELDS_JSON=" +
+    JSON.stringify(userModel?.fields.map((field) => field.name)),
+);
 console.log(
   "RENDER PRISMA USER FIELDS:",
   userModel?.fields.map((field) => field.name),
