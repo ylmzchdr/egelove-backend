@@ -69,22 +69,21 @@ export class AdminController {
 
     return this.prisma.user.findMany({
       orderBy: { createdAt: "desc" },
-      select: {
-        id: true,
-        name: true,
-        surname: true,
-        email: true,
-        phone: true,
-        gender: true,
-        birthDate: true,
-        isPremiumCandidate: true,
-        isVerified: true,
-        isEmailVerified: true,
-        isActive: true,
-        createdAt: true,
-        lastLoginAt: true,
-        city: { select: { name: true } },
-      },
+     select: {
+  id: true,
+  name: true,
+  username: true,
+  email: true,
+  gender: true,
+  birthDate: true,
+  isPremiumCandidate: true,
+  isVerified: true,
+  isEmailVerified: true,
+  isActive: true,
+  createdAt: true,
+  lastLoginAt: true,
+  city: { select: { name: true } },
+},
     });
   }
 
@@ -192,7 +191,7 @@ export class AdminController {
           select: {
             id: true,
             name: true,
-            surname: true,
+            username: true,
             email: true,
           },
         },
