@@ -206,7 +206,7 @@ export class PhotoController {
       return this.prisma.photo.findMany({
         where: { status: "PENDING" },
         include: {
-          user: { select: { id: true, name: true, surname: true, email: true } },
+          user: { select: { id: true, name: true, username: true, email: true } },
         },
       });
     }

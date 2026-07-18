@@ -62,7 +62,7 @@ export class MatchService {
     include: {
       sender: {
         select: {
-          id: true, name: true, surname: true, birthDate: true, avatar: true,
+          id: true, name: true, username: true, birthDate: true, avatar: true,
           bio: true, isVerified: true, cityId: true, districtId: true,
           isActive: true,
           city: { select: { name: true } },
@@ -77,7 +77,7 @@ export class MatchService {
       },
       receiver: {
         select: {
-          id: true, name: true, surname: true, birthDate: true, avatar: true,
+          id: true, name: true, username: true, birthDate: true, avatar: true,
           bio: true, isVerified: true, cityId: true, districtId: true,
           isActive: true,
           city: { select: { name: true } },
@@ -99,7 +99,7 @@ export class MatchService {
       include: {
         sender: {
           select: {
-            id: true, name: true, surname: true, birthDate: true, avatar: true,
+            id: true, name: true, username: true, birthDate: true, avatar: true,
             bio: true, isVerified: true, cityId: true, districtId: true,
             city: { select: { name: true } },
             district: { select: { name: true } },
@@ -108,7 +108,7 @@ export class MatchService {
         },
         receiver: {
           select: {
-            id: true, name: true, surname: true, birthDate: true, avatar: true,
+            id: true, name: true, username: true, birthDate: true, avatar: true,
             bio: true, isVerified: true, cityId: true, districtId: true,
             city: { select: { name: true } },
             district: { select: { name: true } },
