@@ -76,8 +76,7 @@ if (existingUsername) {
     username,
     email,
     passwordHash,
-    birthDate: new Date(dto.birthDate),
-    gender: dto.gender,
+    
     cityId: city.id,
     districtId: district.id,
     emailVerifyToken,
