@@ -321,11 +321,17 @@ async getCompatibility(@CurrentUser() user: any, @Param("id") targetId: string) 
     reasons.push("Aynı ilçedesiniz");
   }
 
-  const age = (birthDate: Date) =>
-    Math.floor((Date.now() - new Date(birthDate).getTime()) / 31557600000);
+ const age = (birthDate: Date) =>
+  Math.floor(
+    (Date.now() - new Date(birthDate).getTime()) / 31557600000,
+  );
 
-  const ageDiff = Math.abs(age(me.birthDate) - age(target.birthDate));
+const ageDiff =
+  me.birthDate && target.birthDate
+    ? Math.abs(age(me.birthDate) - age(target.birthDate))
+    : null;
 
+if (ageDiff !== null) {
   if (ageDiff <= 3) {
     score += 20;
     reasons.push("Yaş farkınız oldukça ideal");
@@ -336,7 +342,7 @@ async getCompatibility(@CurrentUser() user: any, @Param("id") targetId: string) 
     score += 8;
     reasons.push("Yaş farkınız kabul edilebilir seviyede");
   }
-
+}
   if (me.education && me.education === target.education) {
     score += 7;
     reasons.push("Eğitim seviyeniz benzer");
