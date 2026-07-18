@@ -29,15 +29,24 @@ export class AuthService {
 
 async register(dto: RegisterDto) {
   try {
-    const email = dto.email.toLowerCase().trim();
+   const email = dto.email.toLowerCase().trim();
+const username = dto.username.trim();
 
-    const existing = await this.prisma.user.findUnique({
-      where: { email },
-    });
+const existing = await this.prisma.user.findUnique({
+  where: { email },
+});
 
-    if (existing) {
-      throw new ConflictException("Bu e-posta zaten kayıtlı");
-    }
+if (existing) {
+  throw new ConflictException("Bu e-posta zaten kayıtlı");
+}
+
+const existingUsername = await this.prisma.user.findUnique({
+  where: { username },
+});
+
+if (existingUsername) {
+  throw new ConflictException("Bu kullanıcı adı zaten kullanılıyor");
+}
 
     const passwordHash = await argon2.hash(dto.password);
     const emailVerifyToken = crypto.randomBytes(32).toString("hex");
@@ -61,22 +70,21 @@ async register(dto: RegisterDto) {
       );
     }
 
-    const user = await this.prisma.user.create({
-      data: {
-        name: dto.name,
-        surname: dto.surname,
-        email,
-        phone: dto.phone || null,
-        passwordHash,
-        birthDate: new Date(dto.birthDate),
-        gender: dto.gender,
-        cityId: city.id,
-        districtId: district.id,
-        emailVerifyToken,
-        emailVerifySentAt: new Date(),
-        isEmailVerified: false,
-      },
-    });
+   const user = await this.prisma.user.create({
+  data: {
+    name: dto.name,
+    username,
+    email,
+    passwordHash,
+    birthDate: new Date(dto.birthDate),
+    gender: dto.gender,
+    cityId: city.id,
+    districtId: district.id,
+    emailVerifyToken,
+    emailVerifySentAt: new Date(),
+    isEmailVerified: false,
+  },
+});
 
    const tokens = await this.generateTokens(user.id, user.email);
 
@@ -96,11 +104,13 @@ console.log(`✅ Kullanıcı veritabanına kaydedildi: ${email}`);
 }
 
  async login(dto: LoginDto) {
+  const loginValue = dto.emailOrPhone.trim();
+
   const user = await this.prisma.user.findFirst({
     where: {
       OR: [
-        { email: dto.emailOrPhone },
-        { phone: dto.emailOrPhone },
+        { email: loginValue.toLowerCase() },
+        { username: loginValue },
       ],
     },
   });
@@ -150,23 +160,41 @@ console.log(`✅ Kullanıcı veritabanına kaydedildi: ${email}`);
           );
         }
 
-        existingUser = await this.prisma.user.create({
-          data: {
-            email,
-            name: user.firstName || user.displayName || "Google",
-            surname: user.lastName || "",
-            phone: null,
-            passwordHash: await argon2.hash(
-              crypto.randomBytes(16).toString("hex"),
-            ),
-            birthDate: new Date("2000-01-01"),
-            gender: "OTHER",
-            cityId: city.id,
-            districtId: district.id,
-            isEmailVerified: true,
-            lastLoginAt: new Date(),
-          },
-        });
+        const usernameBase = (
+  user.displayName ||
+  user.firstName ||
+  email.split("@")[0]
+)
+  .toLowerCase()
+  .replace(/[^a-z0-9]/g, "")
+  .slice(0, 20);
+
+let username = usernameBase || `user${Date.now()}`;
+
+const usernameExists = await this.prisma.user.findUnique({
+  where: { username },
+});
+
+if (usernameExists) {
+  username = `${username}${Date.now().toString().slice(-5)}`;
+}
+
+existingUser = await this.prisma.user.create({
+  data: {
+    email,
+    name: user.firstName || user.displayName || "Google",
+    username,
+    passwordHash: await argon2.hash(
+      crypto.randomBytes(16).toString("hex"),
+    ),
+    birthDate: new Date("2000-01-01"),
+    gender: "OTHER",
+    cityId: city.id,
+    districtId: district.id,
+    isEmailVerified: true,
+    lastLoginAt: new Date(),
+  },
+});
 
         console.log(`✅ Google kullanıcısı oluşturuldu: ${email}`);
       } else {
