@@ -2,10 +2,8 @@ import {
   IsEmail,
   IsString,
   MinLength,
-  IsEnum,
-  IsDateString,
+  IsOptional,
 } from "class-validator";
-import { Gender } from "@prisma/client";
 
 export class RegisterDto {
   @IsString()
@@ -23,12 +21,7 @@ export class RegisterDto {
   @MinLength(8)
   password!: string;
 
-  @IsDateString()
-  birthDate!: string;
-
-  @IsEnum(Gender)
-  gender!: Gender;
-
+  @IsOptional()
   @IsString()
-  turnstileToken!: string;
+  turnstileToken?: string;
 }
