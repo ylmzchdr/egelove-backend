@@ -137,7 +137,10 @@ setUserName(getFirstName(user));
             {languages.map((l) => (
               <button
                 key={l.code}
-                onClick={() => setLang(l.code)}
+             onClick={() => {
+  console.log("LANG:", l.code);
+  setLang(l.code);
+}}
                 className={`px-2 py-1 rounded text-xs font-bold transition ${
                   lang === l.code
                     ? "bg-white text-black shadow-sm"

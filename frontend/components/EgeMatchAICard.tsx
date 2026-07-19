@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { Heart, Sparkles, Zap, BrainCircuit } from "lucide-react";
+import { useI18n } from "@/lib/i18n-context";
+import type { Lang } from "@/lib/i18n";
 
 type EgeMatchAICardProps = {
   score?: number;
@@ -13,6 +15,91 @@ type EgeMatchAICardProps = {
   name?: string;
 };
 
+type MatchText = {
+  subtitle: string;
+  perfectMatch: string;
+  highMatch: string;
+  mediumMatch: string;
+  lowMatch: string;
+  shortComment: string;
+  energy: string;
+  interest: string;
+  love: string;
+  premiumMessage: string;
+  profileFallback: string;
+  summary: (name: string) => string;
+};
+
+const TEXT: Record<Lang, MatchText> = {
+  TR: {
+    subtitle: "Yapay zekâ uyum analizi",
+    perfectMatch: "Mükemmel Uyum",
+    highMatch: "Yüksek Uyum",
+    mediumMatch: "Orta Uyum",
+    lowMatch: "Düşük Uyum",
+    shortComment: "AI kısa yorum",
+    energy: "Enerji",
+    interest: "İlgi",
+    love: "Aşk",
+    premiumMessage:
+      "Premium üyeler detaylı AI aşk analizini görebilir.",
+    profileFallback: "bu profil",
+    summary: (name) =>
+      `EgeMatch AI, senin profil bilgilerinle ${name} arasındaki ilgi, yaşam tarzı ve ilişki beklentisi uyumunu analiz eder.`,
+  },
+
+  EN: {
+    subtitle: "AI compatibility analysis",
+    perfectMatch: "Perfect Match",
+    highMatch: "High Match",
+    mediumMatch: "Medium Match",
+    lowMatch: "Low Match",
+    shortComment: "AI quick insight",
+    energy: "Energy",
+    interest: "Interest",
+    love: "Love",
+    premiumMessage:
+      "Premium members can view the detailed AI love analysis.",
+    profileFallback: "this profile",
+    summary: (name) =>
+      `EgeMatch AI analyzes the compatibility between your profile and ${name} based on interests, lifestyle and relationship expectations.`,
+  },
+
+  RU: {
+    subtitle: "Анализ совместимости с помощью ИИ",
+    perfectMatch: "Идеальная совместимость",
+    highMatch: "Высокая совместимость",
+    mediumMatch: "Средняя совместимость",
+    lowMatch: "Низкая совместимость",
+    shortComment: "Краткий комментарий ИИ",
+    energy: "Энергия",
+    interest: "Интерес",
+    love: "Любовь",
+    premiumMessage:
+      "Премиум-участники могут просматривать подробный анализ совместимости.",
+    profileFallback: "этим профилем",
+    summary: (name) =>
+      `EgeMatch AI анализирует совместимость между вашим профилем и ${name}, учитывая интересы, образ жизни и ожидания от отношений.`,
+  },
+
+  AR: {
+    subtitle: "تحليل التوافق بالذكاء الاصطناعي",
+    perfectMatch: "توافق مثالي",
+    highMatch: "توافق مرتفع",
+    mediumMatch: "توافق متوسط",
+    lowMatch: "توافق منخفض",
+    shortComment: "تعليق سريع بالذكاء الاصطناعي",
+    energy: "الطاقة",
+    interest: "الاهتمام",
+    love: "الحب",
+    premiumMessage:
+      "يمكن لأعضاء بريميوم مشاهدة تحليل الحب المفصل بالذكاء الاصطناعي.",
+    profileFallback: "هذا الملف الشخصي",
+    summary: (name) =>
+      `يحلل EgeMatch AI التوافق بين ملفك الشخصي و${name} بناءً على الاهتمامات ونمط الحياة وتوقعات العلاقة.`,
+  },
+};
+
 export default function EgeMatchAICard({
   score = 87,
   energy = 92,
@@ -20,9 +107,17 @@ export default function EgeMatchAICard({
   love = 89,
   label,
   summary,
-  name = "bu profil",
+  name,
 }: EgeMatchAICardProps) {
+  const { lang } = useI18n();
   const [animatedScore, setAnimatedScore] = useState(0);
+
+  const currentLang: Lang = ["TR", "EN", "RU", "AR"].includes(lang)
+    ? (lang as Lang)
+    : "TR";
+
+  const tx = TEXT[currentLang];
+  const profileName = name?.trim() || tx.profileFallback;
 
   useEffect(() => {
     const target = Math.max(0, Math.min(score, 100));
@@ -30,10 +125,12 @@ export default function EgeMatchAICard({
 
     const timer = setInterval(() => {
       current += 2;
+
       if (current >= target) {
         current = target;
         clearInterval(timer);
       }
+
       setAnimatedScore(current);
     }, 18);
 
@@ -43,16 +140,14 @@ export default function EgeMatchAICard({
   const finalLabel =
     label ||
     (score >= 90
-      ? "Mükemmel Uyum"
+      ? tx.perfectMatch
       : score >= 75
-        ? "Yüksek Uyum"
+        ? tx.highMatch
         : score >= 55
-          ? "Orta Uyum"
-          : "Düşük Uyum");
+          ? tx.mediumMatch
+          : tx.lowMatch);
 
-  const finalSummary =
-    summary ||
-    `EgeMatch AI, senin profil bilgilerinle ${name} arasındaki ilgi, yaşam tarzı ve ilişki beklentisi uyumunu analiz eder.`;
+  const finalSummary = summary || tx.summary(profileName);
 
   return (
     <div className="group relative overflow-hidden rounded-3xl border border-pink-300/40 bg-gradient-to-br from-[#3b001f] via-[#760052] to-[#05051f] p-5 shadow-2xl shadow-pink-950/50">
@@ -66,15 +161,19 @@ export default function EgeMatchAICard({
           <div className="flex items-center gap-3">
             <div className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-pink-500/20 shadow-lg shadow-pink-500/20">
               <div className="absolute inset-0 animate-ping rounded-2xl bg-pink-400/20" />
-              <Heart className="relative h-6 w-6 text-pink-300" fill="currentColor" />
+              <Heart
+                className="relative h-6 w-6 text-pink-300"
+                fill="currentColor"
+              />
             </div>
 
             <div>
               <h3 className="flex items-center gap-2 text-xl font-black text-white">
                 <span>❤️ EgeMatch AI</span>
               </h3>
+
               <p className="text-xs font-medium text-pink-100/70">
-                Yapay zeka uyum analizi
+                {tx.subtitle}
               </p>
             </div>
           </div>
@@ -104,32 +203,34 @@ export default function EgeMatchAICard({
         <div className="mb-5 rounded-2xl border border-white/10 bg-black/15 p-4">
           <div className="mb-2 flex items-center gap-2 text-sm font-bold text-pink-100">
             <BrainCircuit className="h-4 w-4 text-yellow-200" />
-            AI kısa yorum
+            {tx.shortComment}
           </div>
 
-          <p className="text-sm leading-7 text-pink-50/85">{finalSummary}</p>
+          <p className="text-sm leading-7 text-pink-50/85">
+            {finalSummary}
+          </p>
         </div>
 
         <div className="grid grid-cols-3 gap-2 text-center">
           <div className="rounded-2xl border border-white/10 bg-white/10 p-3">
-            <p className="text-xs text-pink-100/60">Enerji</p>
+            <p className="text-xs text-pink-100/60">{tx.energy}</p>
             <p className="text-lg font-black text-white">%{energy}</p>
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-white/10 p-3">
-            <p className="text-xs text-pink-100/60">İlgi</p>
+            <p className="text-xs text-pink-100/60">{tx.interest}</p>
             <p className="text-lg font-black text-white">%{interest}</p>
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-white/10 p-3">
-            <p className="text-xs text-pink-100/60">Aşk</p>
+            <p className="text-xs text-pink-100/60">{tx.love}</p>
             <p className="text-lg font-black text-white">%{love}</p>
           </div>
         </div>
 
         <div className="mt-4 flex items-center gap-2 rounded-2xl border border-yellow-300/30 bg-yellow-300/10 p-3 text-xs font-semibold text-yellow-100">
-          <Zap className="h-4 w-4" />
-          Premium üyeler detaylı AI aşk analizini görebilir.
+          <Zap className="h-4 w-4 shrink-0" />
+          <span>{tx.premiumMessage}</span>
         </div>
       </div>
     </div>
