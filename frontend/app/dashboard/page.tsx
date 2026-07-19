@@ -31,7 +31,7 @@ type DashboardUser = {
   name?: string;
   username?: string;
   email?: string;
-  city?: string;
+  city?: string | { id?: string; name?: string };
   profilePhoto?: string;
   avatar?: string;
   photo?: string;
@@ -52,7 +52,7 @@ type DashboardCard = {
 
 export default function DashboardPage() {
   const [authTab, setAuthTab] = useState<AuthTab>(null);
-  const [token, setToken] = useState<string | null>("demo");
+  const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState("Üye");
   const [userCity, setUserCity] = useState("Türkiye");
@@ -235,12 +235,13 @@ export default function DashboardPage() {
     const controller = new AbortController();
     const accessToken = localStorage.getItem("accessToken");
 
-    setToken("demo");
-
     if (!accessToken) {
+      setToken(null);
       setLoading(false);
       return;
     }
+
+    setToken(accessToken);
 
     const loadUser = async () => {
       try {
@@ -252,6 +253,11 @@ export default function DashboardPage() {
         });
 
         if (!response.ok) {
+          if (response.status === 401 || response.status === 403) {
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            setToken(null);
+          }
           return;
         }
 
@@ -262,7 +268,12 @@ export default function DashboardPage() {
           user?.name || user?.username || user?.email?.split("@")[0] || "Üye",
         );
 
-        setUserCity(user?.city || "Türkiye");
+        const resolvedCity =
+          typeof user?.city === "string"
+            ? user.city
+            : user?.city?.name || "Türkiye";
+
+        setUserCity(resolvedCity);
 
         setProfilePhoto(
           user?.profilePhoto || user?.avatar || user?.photo || null,
