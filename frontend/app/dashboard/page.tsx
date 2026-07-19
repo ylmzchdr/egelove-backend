@@ -325,7 +325,7 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-background text-foreground dark:text-white">
+    <div className="min-h-screen bg-[#e8eef6] text-foreground dark:bg-[#080b14] dark:text-white">
       <div className="lg:hidden">
         <Header
           onOpenLogin={() => setAuthTab("login")}
@@ -342,25 +342,25 @@ export default function DashboardPage() {
           </div>
         )}
 
-        <main className="relative min-w-0 flex-1 overflow-hidden">
+        <main className="relative min-w-0 flex-1 overflow-hidden bg-[radial-gradient(circle_at_10%_5%,rgba(56,189,248,0.14),transparent_28%),radial-gradient(circle_at_92%_14%,rgba(217,70,239,0.12),transparent_30%),linear-gradient(135deg,#e9f1f8_0%,#f7f4fb_48%,#e9eef7_100%)] dark:bg-[radial-gradient(circle_at_10%_5%,rgba(56,189,248,0.10),transparent_28%),radial-gradient(circle_at_92%_14%,rgba(217,70,239,0.10),transparent_30%),linear-gradient(135deg,#070a12_0%,#0d101a_52%,#090c15_100%)]">
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -left-40 -top-48 h-[500px] w-[500px] rounded-full bg-pink-500/[0.12] blur-[140px]"
+            className="pointer-events-none absolute -left-40 -top-48 h-[500px] w-[500px] rounded-full bg-pink-500/[0.16] blur-[130px] dark:bg-pink-500/[0.10]"
           />
 
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -right-48 top-40 h-[520px] w-[520px] rounded-full bg-violet-500/[0.10] blur-[150px]"
+            className="pointer-events-none absolute -right-48 top-40 h-[520px] w-[520px] rounded-full bg-violet-500/[0.14] blur-[140px] dark:bg-violet-500/[0.09]"
           />
 
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute bottom-0 left-1/3 h-[400px] w-[400px] rounded-full bg-cyan-500/[0.06] blur-[140px]"
+            className="pointer-events-none absolute bottom-0 left-1/3 h-[400px] w-[400px] rounded-full bg-cyan-500/[0.10] blur-[130px] dark:bg-cyan-500/[0.06]"
           />
 
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.018)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.018)_1px,transparent_1px)] bg-[size:42px_42px] opacity-35"
+            className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(15,23,42,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(15,23,42,0.025)_1px,transparent_1px)] bg-[size:42px_42px] opacity-60 dark:bg-[linear-gradient(rgba(255,255,255,0.018)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.018)_1px,transparent_1px)] dark:opacity-35"
           />
 
           <div className="relative z-10 mx-auto w-full max-w-[1500px] px-4 py-6 sm:px-6 sm:py-8 xl:px-10">
@@ -458,7 +458,7 @@ export default function DashboardPage() {
                 />
 
                 <section className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                  <div className="rounded-[24px] border border-white/[0.07] bg-white/[0.035] p-5 backdrop-blur-xl">
+                  <div className="rounded-[24px] border border-slate-300/65 bg-white/72 p-5 shadow-[0_16px_45px_rgba(71,85,105,0.10)] backdrop-blur-2xl dark:border-white/[0.07] dark:bg-white/[0.035] dark:shadow-[0_18px_50px_rgba(0,0,0,0.28)]">
                     <div className="flex items-center justify-between">
                       <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-pink-500/10 text-pink-300">
                         <Heart
@@ -481,7 +481,7 @@ export default function DashboardPage() {
                     </p>
                   </div>
 
-                  <div className="rounded-[24px] border border-white/[0.07] bg-white/[0.035] p-5 backdrop-blur-xl">
+                  <div className="rounded-[24px] border border-slate-300/65 bg-white/72 p-5 shadow-[0_16px_45px_rgba(71,85,105,0.10)] backdrop-blur-2xl dark:border-white/[0.07] dark:bg-white/[0.035] dark:shadow-[0_18px_50px_rgba(0,0,0,0.28)]">
                     <div className="flex items-center justify-between">
                       <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-300">
                         <MessageCircle className="h-5 w-5" strokeWidth={1.8} />
@@ -500,7 +500,7 @@ export default function DashboardPage() {
                     </p>
                   </div>
 
-                  <div className="rounded-[24px] border border-white/[0.07] bg-white/[0.035] p-5 backdrop-blur-xl">
+                  <div className="rounded-[24px] border border-slate-300/65 bg-white/72 p-5 shadow-[0_16px_45px_rgba(71,85,105,0.10)] backdrop-blur-2xl dark:border-white/[0.07] dark:bg-white/[0.035] dark:shadow-[0_18px_50px_rgba(0,0,0,0.28)]">
                     <div className="flex items-center justify-between">
                       <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-violet-500/10 text-violet-300">
                         <Users className="h-5 w-5" strokeWidth={1.8} />
@@ -519,7 +519,7 @@ export default function DashboardPage() {
                     </p>
                   </div>
 
-                  <div className="rounded-[24px] border border-white/[0.07] bg-white/[0.035] p-5 backdrop-blur-xl">
+                  <div className="rounded-[24px] border border-slate-300/65 bg-white/72 p-5 shadow-[0_16px_45px_rgba(71,85,105,0.10)] backdrop-blur-2xl dark:border-white/[0.07] dark:bg-white/[0.035] dark:shadow-[0_18px_50px_rgba(0,0,0,0.28)]">
                     <div className="flex items-center justify-between">
                       <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-300">
                         <MapPin className="h-5 w-5" strokeWidth={1.8} />
@@ -632,7 +632,7 @@ export default function DashboardPage() {
                             <Link
                               key={card.key}
                               href={card.href}
-                              className={`group relative overflow-hidden rounded-[26px] border border-white/[0.07] bg-gradient-to-br ${card.gradient} p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-white/[0.14] hover:shadow-[0_22px_60px_rgba(0,0,0,0.25)]`}
+                              className={`group relative overflow-hidden rounded-[26px] border border-white/[0.07] bg-gradient-to-br ${card.gradient} p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-slate-300/80 hover:shadow-[0_24px_65px_rgba(71,85,105,0.18)] dark:hover:border-white/[0.14] dark:hover:shadow-[0_22px_60px_rgba(0,0,0,0.25)]`}
                             >
                               <div
                                 aria-hidden="true"
@@ -675,7 +675,7 @@ export default function DashboardPage() {
                   </div>
 
                   <aside className="space-y-6">
-                    <div className="relative overflow-hidden rounded-[28px] border border-amber-300/[0.12] bg-gradient-to-br from-amber-400/[0.11] via-pink-500/[0.08] to-violet-500/[0.08] p-6 backdrop-blur-xl">
+                    <div className="relative overflow-hidden rounded-[28px] border border-amber-300/35 bg-gradient-to-br from-white/78 via-amber-50/72 to-fuchsia-50/72 p-6 shadow-[0_20px_65px_rgba(168,85,247,0.12)] backdrop-blur-2xl dark:border-amber-300/[0.12] dark:from-amber-400/[0.11] dark:via-pink-500/[0.08] dark:to-violet-500/[0.08] dark:shadow-[0_20px_60px_rgba(0,0,0,0.30)]">
                       <div
                         aria-hidden="true"
                         className="pointer-events-none absolute -right-16 -top-16 h-44 w-44 rounded-full bg-amber-300/15 blur-[60px]"
@@ -727,7 +727,7 @@ export default function DashboardPage() {
                       </div>
                     </div>
 
-                    <div className="rounded-[28px] border border-white/[0.07] bg-white/[0.035] p-6 backdrop-blur-xl">
+                    <div className="rounded-[28px] border border-slate-300/65 bg-white/72 p-6 shadow-[0_18px_55px_rgba(71,85,105,0.11)] backdrop-blur-2xl dark:border-white/[0.07] dark:bg-white/[0.035] dark:shadow-[0_20px_60px_rgba(0,0,0,0.30)]">
                       <div className="flex items-center gap-3">
                         <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-400/[0.08] text-emerald-300">
                           <ShieldCheck className="h-5 w-5" strokeWidth={1.8} />
