@@ -75,23 +75,41 @@ export default function ProfileCard({
   };
 
   return (
-    <Card className="bg-white/5 border-white/10 backdrop-blur-xl overflow-hidden group hover:border-pink-400/50 transition-all duration-300">
-      <div className={`h-48 bg-gradient-to-br ${gradient} relative`}>
+   <Card
+  className="
+    overflow-hidden
+    rounded-3xl
+    border
+    border-cyan-400/15
+    bg-gradient-to-b
+    from-[#13283f]/95
+    via-[#102235]/95
+    to-[#0b1b2d]/95
+    backdrop-blur-2xl
+    transition-all
+    duration-500
+    shadow-xl
+    hover:-translate-y-2
+    hover:border-cyan-300/50
+    hover:shadow-[0_0_45px_rgba(0,255,255,.22)]
+"
+>
+     <div className={`relative h-56 overflow-hidden bg-gradient-to-br ${gradient}`}>
         {avatarUrl && (
           <img
             src={avatarUrl}
             alt={name}
-            className="w-full h-full object-cover opacity-80"
+            className="h-full w-full object-cover transition-all duration-700 group-hover:scale-110"
           />
         )}
 
         {verified && (
-          <div className="absolute top-3 right-3 bg-pink-500 rounded-full p-1.5">
+         <div className="absolute top-4 right-4 rounded-full bg-gradient-to-r from-cyan-400 to-fuchsia-500 p-2 shadow-lg">
             <Star className="w-3.5 h-3.5 text-white fill-white" />
           </div>
         )}
 
-        <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-20 h-20 rounded-full border-4 border-pink-900 overflow-hidden bg-gradient-to-br from-pink-300 to-pink-500 flex items-center justify-center shadow-lg">
+        <div className="absolute -bottom-11 left-1/2 h-24 w-24 -translate-x-1/2 overflow-hidden rounded-full border-4 border-cyan-400 bg-slate-900 shadow-[0_0_30px_rgba(0,255,255,.35)]">
           {avatarUrl ? (
             <img src={avatarUrl} alt={name} className="w-full h-full object-cover" />
           ) : (
@@ -103,7 +121,7 @@ export default function ProfileCard({
       </div>
 
       <div className="pt-12 pb-5 px-5 text-center">
-        <h3 className="text-white text-xl font-bold">
+        <h3 className="text-2xl font-black tracking-wide text-white">
           {name}
           {age !== undefined ? (
             <>
@@ -116,7 +134,7 @@ export default function ProfileCard({
 
         {(city || district) && (
           <div className="flex items-center justify-center gap-1 mt-1.5 text-white/60 text-sm">
-            <MapPin className="w-3.5 h-3.5 text-pink-300" />
+           <MapPin className="h-4 w-4 text-cyan-300" />
             <span>
               {city || ""}
               {city && district ? " • " : ""}
@@ -133,7 +151,7 @@ export default function ProfileCard({
           <Button
             type="button"
             onClick={handleLike}
-            className="flex-1 bg-pink-600 hover:bg-pink-700 text-xs h-9"
+          className="flex-1 h-10 rounded-xl bg-gradient-to-r from-fuchsia-600 to-pink-500 text-xs font-bold shadow-lg transition-all hover:scale-105"
           >
             <Heart className="w-4 h-4" />
             {t.profile.like}
@@ -143,7 +161,7 @@ export default function ProfileCard({
             type="button"
             onClick={handleViewProfile}
             variant="outline"
-            className="flex-1 border-white/20 text-white hover:bg-white/10 text-xs h-9"
+            className="flex-1 h-10 rounded-xl border border-cyan-400/30 bg-cyan-400/5 text-cyan-200 transition-all hover:border-cyan-300 hover:bg-cyan-400/10"
           >
             {t.profile.viewProfile}
           </Button>

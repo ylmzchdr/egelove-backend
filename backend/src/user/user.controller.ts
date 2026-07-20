@@ -160,6 +160,7 @@ const updated = await this.prisma.user.update({
   @Get("search/filter")
   @UseGuards(JwtAuthGuard)
   async filterUsers(
+    
     @CurrentUser() user: any,
     @Query("city") city?: string,
     @Query("district") district?: string,
@@ -248,17 +249,20 @@ const updated = await this.prisma.user.update({
       }
     }
 
-    const users = await this.prisma.user.findMany({
-      where,
-      take: 50,
-      include: {
-        city: true,
-        district: true,
-        photos: { where: { status: "APPROVED" }, take: 3 },
-      },
-    });
+  const users = await this.prisma.user.findMany({
+  where,
+  take: 50,
+  include: {
+    city: true,
+    district: true,
+    photos: { where: { status: "APPROVED" }, take: 3 },
+  },
+});
 
-    return users.map((u: any) => {
+console.log("WHERE =", JSON.stringify(where, null, 2));
+console.log("FOUND USERS =", users.length);
+
+return users.map((u: any) => {
       const {
         passwordHash,
         refreshToken,
