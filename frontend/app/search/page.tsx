@@ -1059,31 +1059,32 @@ interface StyledSelectProps {
 }
 
 function StyledSelect({
-  value,
+  value = "",
   onValueChange,
   placeholder = "Seçiniz",
   options = [],
   disabled = false,
 }: StyledSelectProps) {
   return (
-    <Select value={value} onValueChange={onValueChange} disabled={disabled}>
-      <SelectTrigger>
-        <SelectValue placeholder={placeholder} />
-      </SelectTrigger>
-      <SelectContent>
-        {options.length === 0 ? (
-          <div className="p-2 text-xs text-white/40 text-center">Seçenek yok</div>
-        ) : (
-          options.map((opt) => (
-            <SelectItem key={opt.value} value={opt.value}>
-              {opt.label}
-            </SelectItem>
-          ))
-        )}
-      </SelectContent>
-    </Select>
+    <select
+      value={value}
+      disabled={disabled}
+      onChange={(event) => onValueChange?.(event.target.value)}
+      className="h-11 w-full rounded-xl border border-white/20 bg-[#171b26] px-4 text-sm font-medium text-white outline-none transition focus:border-cyan-300/60 focus:ring-2 focus:ring-cyan-300/20 disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      <option value="" disabled>
+        {placeholder}
+      </option>
+
+      {options.map((opt) => (
+        <option key={opt.value} value={opt.value}>
+          {opt.label}
+        </option>
+      ))}
+    </select>
   );
 }
+
 
 
 interface RangeInputsProps {
