@@ -220,22 +220,30 @@ existingUser = await this.prisma.user.create({
     }
   }
 
-  async refresh(refreshToken: string) {
-    try {
-      const payload = this.jwtService.verify(refreshToken, {
-        secret: jwtConstants.refreshSecret,
-      });
-      const user = mockUsers.find((u) => u.id === payload.sub);
-      if (!user) throw new UnauthorizedException();
+ async refresh(refreshToken: string) {
+  try {
+    const payload = this.jwtService.verify(refreshToken, {
+      secret: jwtConstants.refreshSecret,
+    });
 
-      const tokens = await this.generateTokens(user.id, user.email);
-      user.refreshToken = tokens.refreshToken;
+    const user = await this.prisma.user.findUnique({
+      where: { id: payload.sub },
+    });
 
-      return { user: this.sanitizeUser(user), ...tokens };
-    } catch {
-      throw new UnauthorizedException("Geçersiz refresh token");
+    if (!user) {
+      throw new UnauthorizedException("Kullanıcı bulunamadı");
     }
+
+    const tokens = await this.generateTokens(user.id, user.email);
+
+    return {
+      user: this.sanitizeUser(user),
+      ...tokens,
+    };
+  } catch (e) {
+    throw new UnauthorizedException("Geçersiz refresh token");
   }
+}
 
   async logout(userId: string) {
     const user = mockUsers.find((u) => u.id === userId);

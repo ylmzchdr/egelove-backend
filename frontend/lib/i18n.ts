@@ -8,6 +8,16 @@ const tr = {
   discover: { title: "Türkiye'den Üyeleri Keşfet", subtitle: "Şehrindeki yeni insanlarla tanış" },
   search: {
   title: "Arama Filtreleri",
+  heroTitle: "Yeni insanları keşfetmeye başla.",
+heroSubtitle:
+  "Ege'nin sıcaklığı, Akdeniz'in özgürlüğü. Sana uygun profiller, yeni üyeler ve çevrimiçi kişiler burada.",
+exploreBtn: "Üyeleri Keşfet",
+filterBtn: "Gelişmiş Filtreler",
+specialForYou: "Sana özel",
+newMembers: "Yeni / Bugün katılanlar",
+premium: "Premium / Özel profiller",
+   recommendationsTitle: "Bugünün önerileri",
+   recommendationsSubtitle: "Profilleri incele, sana uygun kişileri bul ve yeni bir hikayeye ilk adımı at.",
   clear: "Temizle",
   gender: "Aradığınız Cinsiyet",
   male: "Erkek",
@@ -16,6 +26,7 @@ const tr = {
   location: "Yaşadığı Yer",
   city: "İl",
   district: "İlçe",
+  
   select: "Seçiniz",
   maritalStatus: "Medeni durumu",
   occupation: "Mesleği",
@@ -66,6 +77,16 @@ const tr = {
 const en: typeof tr = {
   search: {
   title: "Search Filters",
+  heroTitle: "Start discovering new people.",
+heroSubtitle:
+  "The warmth of the Aegean, the freedom of the Mediterranean. Profiles suitable for you, new members and online people are here.",
+exploreBtn: "Explore Members",
+filterBtn: "Advanced Filters",
+specialForYou: "Special for you",
+newMembers: "New / Joined today",
+premium: "Premium / Special profiles",
+   recommendationsTitle: "Today's recommendations",
+   recommendationsSubtitle: "View profiles, find suitable people for you and take the first step toward a new story.",
   clear: "Clear",
   gender: "Gender",
   male: "Male",
@@ -129,6 +150,16 @@ premium: {
 const ru: typeof tr = {
   search: {
   title: "Фильтры поиска",
+  heroTitle: "Начните знакомиться с новыми людьми.",
+heroSubtitle:
+  "Тепло Эгейского моря, свобода Средиземноморья. Подходящие вам профили, новые участники и люди онлайн здесь.",
+exploreBtn: "Исследовать участников",
+filterBtn: "Расширенные фильтры",
+specialForYou: "Специально для вас",
+newMembers: "Новые / Присоединились сегодня",
+premium: "Премиум / Особые профили",
+   recommendationsTitle: "Рекомендации на сегодня",
+   recommendationsSubtitle: "Просматривайте профили, находите подходящих людей и сделайте первый шаг к новой истории.",
   clear: "Очистить",
   gender: "Пол",
   male: "Мужчина",
@@ -192,6 +223,16 @@ const ru: typeof tr = {
 const ar: typeof tr = {
   search: {
   title: "فلاتر البحث",
+  heroTitle: "ابدأ باكتشاف أشخاص جدد.",
+heroSubtitle:
+  "دفء إيجه وحرية البحر الأبيض المتوسط. الملفات المناسبة لك، والأعضاء الجدد والأشخاص المتصلون بالإنترنت هنا.",
+exploreBtn: "اكتشف الأعضاء",
+filterBtn: "المرشحات المتقدمة",
+specialForYou: "خاص بك",
+newMembers: "جديد / انضم اليوم",
+premium: "بريميوم / ملفات شخصية مميزة",
+   recommendationsTitle: "اقتراحات اليوم",
+   recommendationsSubtitle: "تصفح الملفات الشخصية، اعثر على الأشخاص المناسبين لك وابدأ قصة جديدة.",
   clear: "مسح",
   gender: "الجنس",
   male: "ذكر",

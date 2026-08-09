@@ -1,5 +1,52 @@
 
 "use client";
+const searchTranslations = {
+  tr: {
+    title: "Yeni insanları keşfetmeye başla.",
+    subtitle: "Ege'nin sıcaklığı, Akdeniz'in özgürlüğü. Sana uygun profiller, yeni üyeler ve çevrimiçi kişiler burada.",
+    exploreBtn: "Üyeleri Keşfet",
+    filterBtn: "Gelişmiş Filtreler",
+    online: "Çevrimiçi",
+    specialForYou: "Sana özel",
+    newMembers: "Yeni / Bugün katılanlar",
+    premium: "Premium / Özel profiller",
+    flightMode: "Uçak modu açık"
+  },
+  en: {
+    title: "Start discovering new people.",
+    subtitle: "The warmth of the Aegean, the freedom of the Mediterranean. Profiles suitable for you, new members and online people are here.",
+    exploreBtn: "Explore Members",
+    filterBtn: "Advanced Filters",
+    online: "Online",
+    specialForYou: "Special for you",
+    newMembers: "New / Joined today",
+    premium: "Premium / Special profiles",
+    flightMode: "Airplane mode is on"
+  },
+  ru: {
+    title: "Начните знакомиться с новыми людьми.",
+    subtitle: "Тепло Эгейского моря, свобода Средиземноморья. Подходящие вам профили, новые участники и люди онлайн здесь.",
+    exploreBtn: "Исследовать участников",
+    filterBtn: "Расширенные фильтры",
+    online: "В сети",
+    specialForYou: "Специально для вас",
+    newMembers: "Новые / Присоединились сегодня",
+    premium: "Премиум / Особые профили",
+    flightMode: "Авиарежим включен"
+  },
+  ar: {
+    title: "ابدأ في اكتشاف أشخاص جدد.",
+    subtitle: "دفء إيجة، حرية البحر الأبيض المتوسط. تتوفر هنا الملفات الشخصية المناسبة لك، والأعضاء الجدد والأشخاص المتصلون بالإنترنت.",
+    exploreBtn: "اكتشف الأعضاء",
+    filterBtn: "مرشحات متقدمة",
+    online: "متصل",
+    specialForYou: "خاص لك",
+    newMembers: "جديد / انضم اليوم",
+    premium: "بريميوم / ملفات شخصية مميزة",
+    flightMode: "وضع الطيران مفعّل"
+  }
+};
+
 
 import {
   useCallback,
@@ -34,6 +81,7 @@ import Footer from "@/components/Footer";
 import AuthDialog from "@/components/AuthDialog";
 import ProfileCard from "@/components/ProfileCard";
 
+
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -44,6 +92,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
 
 import { api } from "@/lib/api";
 import { useI18n } from "@/lib/i18n-context";
@@ -214,6 +263,7 @@ function normalizeProfiles(data: unknown): ProfileResult[] {
 }
 
 export default function SearchPage() {
+  console.log("SEARCH PAGE LOADED");
   const [authTab, setAuthTab] = useState<"login" | "register" | null>(null);
   const [cities, setCities] = useState<City[]>([]);
   const [districts, setDistricts] = useState<District[]>([]);
@@ -222,7 +272,15 @@ export default function SearchPage() {
   const [searched, setSearched] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
   const [filters, setFilters] = useState<FilterState>(EMPTY_FILTERS);
-  const { t } = useI18n();
+const { lang, t } = useI18n();
+
+console.log("SEARCH LANG =>", lang);
+console.log(
+  "SEARCH RECOMMENDATION =>",
+  t.search.recommendationsTitle
+);
+  
+
 
   const updateFilter = <K extends keyof FilterState>(
     key: K,
@@ -234,34 +292,79 @@ export default function SearchPage() {
     }));
   };
 
-  const buildParams = useCallback(() => {
-    const params: Record<string, string> = {};
+const buildParams = useCallback(() => {
+  const params: Record<string, any> = {};
 
-    if (filters.gender) params.gender = filters.gender;
-    if (filters.cityId) params.city = filters.cityId;
-    if (filters.districtId) params.district = filters.districtId;
-    if (filters.minAge) params.minAge = filters.minAge;
-    if (filters.maxAge) params.maxAge = filters.maxAge;
-    if (filters.education) params.education = filters.education;
-    if (filters.smoking) params.smoking = filters.smoking;
-    if (filters.alcohol) params.alcohol = filters.alcohol;
-    if (filters.maritalStatus) params.maritalStatus = filters.maritalStatus;
-    if (filters.children) params.children = filters.children;
-    if (filters.religion) params.religion = filters.religion;
-    if (filters.bodyType) params.bodyType = filters.bodyType;
-    if (filters.income) params.income = filters.income;
-    if (filters.minHeight) params.minHeight = filters.minHeight;
-    if (filters.maxHeight) params.maxHeight = filters.maxHeight;
-    if (filters.minWeight) params.minWeight = filters.minWeight;
-    if (filters.maxWeight) params.maxWeight = filters.maxWeight;
-    if (filters.occupation) params.occupation = filters.occupation;
-    if (filters.username) params.username = filters.username;
-    if (filters.hasPhotos) params.hasPhotos = "true";
-    if (filters.isOnline) params.isOnline = "true";
-    if (filters.isNewMember) params.isNewMember = "true";
+  if (filters.gender)
+    params.gender = filters.gender;
+if (filters.cityId)
+  params.cityId = Number(filters.cityId);
 
-    return params;
-  }, [filters]);
+if (filters.districtId)
+  params.districtId = Number(filters.districtId);
+  if (filters.minAge)
+    params.minAge = Number(filters.minAge);
+
+  if (filters.maxAge)
+    params.maxAge = Number(filters.maxAge);
+
+  if (filters.education)
+    params.education = filters.education;
+
+  if (filters.smoking)
+    params.smoking = filters.smoking;
+
+  if (filters.alcohol)
+    params.alcohol = filters.alcohol;
+
+  if (filters.maritalStatus)
+    params.maritalStatus = filters.maritalStatus;
+
+  if (filters.children)
+    params.children = filters.children;
+
+  if (filters.religion)
+    params.religion = filters.religion;
+
+  if (filters.bodyType)
+    params.bodyType = filters.bodyType;
+
+  if (filters.income)
+    params.income = filters.income;
+
+  if (filters.minHeight)
+    params.minHeight = Number(filters.minHeight);
+
+  if (filters.maxHeight)
+    params.maxHeight = Number(filters.maxHeight);
+
+  if (filters.minWeight)
+    params.minWeight = Number(filters.minWeight);
+
+  if (filters.maxWeight)
+    params.maxWeight = Number(filters.maxWeight);
+
+  if (filters.occupation)
+    params.occupation = filters.occupation;
+
+  if (filters.username)
+    params.username = filters.username;
+
+  if (filters.hasPhotos)
+  params.hasPhoto = true;
+
+ 
+
+  if (filters.isNewMember)
+    params.isNewMember = true;
+
+  params.page = 1;
+  params.limit = 20;
+
+  console.log("🔎 FİLTRE PARAMETRELERİ =", params);
+
+  return params;
+}, [filters]);
 
   const loadProfiles = useCallback(
     async (params: Record<string, string>, markAsSearch: boolean) => {
@@ -303,35 +406,44 @@ export default function SearchPage() {
   };
 
   useEffect(() => {
-    api.cities
-      .list()
-      .then((data: City[]) => setCities(data))
-      .catch((error: unknown) => {
-        console.error("Şehirler yüklenemedi:", error);
-      });
-  }, []);
+  api.cities
+    .list()
+    .then((data: City[]) => {
+      console.log("ŞEHİRLER GELDİ:", data);
+console.log("ŞEHİR SAYISI:", data.length);
+      console.log("ŞEHİRLER GELDİ:", data);
+      setCities(data);
+    })
+    .catch((error: unknown) => {
+      console.error("Şehirler yüklenemedi:", error);
+    });
+}, []);
 
-  useEffect(() => {
-    if (!filters.cityId) {
+ useEffect(() => {
+  console.log("CITY ID =", filters.cityId);
+
+  if (!filters.cityId) {
+    setDistricts([]);
+    return;
+  }
+
+  api.cities
+    .districts(Number.parseInt(filters.cityId, 10))
+    .then((data: District[]) => {
+      console.log("DISTRICTS =", data);
+
+      setDistricts(
+        data.map((district) => ({
+          id: district.id,
+          name: district.name,
+        }))
+      );
+    })
+    .catch((error) => {
+      console.error("ERROR =", error);
       setDistricts([]);
-      return;
-    }
-
-    api.cities
-      .districts(Number.parseInt(filters.cityId, 10))
-      .then((data: District[]) => {
-        setDistricts(
-          data.map((district) => ({
-            id: district.id,
-            name: district.name,
-          }))
-        );
-      })
-      .catch((error: unknown) => {
-        console.error("İlçeler yüklenemedi:", error);
-        setDistricts([]);
-      });
-  }, [filters.cityId]);
+    });
+}, [filters.cityId]);
 
   useEffect(() => {
     void loadProfiles({}, false);
@@ -404,18 +516,13 @@ export default function SearchPage() {
                   Bugün senin için seçildi
                 </div>
 
-               <h1 className="max-w-3xl text-5xl font-black leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl drop-shadow-[0_0_35px_rgba(255,255,255,.12)]">
-                  Yeni insanları
-                  <span className="block bg-gradient-to-r from-cyan-300 via-sky-300 to-fuchsia-400 bg-clip-text text-transparent animate-pulse">
-                    keşfetmeye başla.
-                  </span>
-                </h1>
+              <h1 className="max-w-3xl text-5xl font-black leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl drop-shadow-[0_0_35px_rgba(255,255,255,.12)]">
+  {t.search.heroTitle}
+</h1>
 
               <p className="mt-6 max-w-2xl text-lg leading-8 text-white/80">
-                  Ege&apos;nin sıcaklığı, Akdeniz&apos;in özgürlüğü. Sana uygun
-                  profiller, yeni üyeler ve çevrimiçi kişiler burada.
-                </p>
-
+ {t.search.heroSubtitle}
+</p>
                 <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                   <button
                     type="button"
@@ -488,15 +595,13 @@ export default function SearchPage() {
                   <Heart className="h-4 w-4 fill-current" />
                   Sana özel üyeler
                 </div>
-
-                <h2 className="text-3xl font-black sm:text-4xl">
-                  Bugünün önerileri
-                </h2>
+<h2 className="text-3xl font-black sm:text-4xl">
+  {t.search.recommendationsTitle}
+</h2>
 
                 <p className="mt-2 max-w-2xl text-white/55">
-                  Profilleri incele, sana uygun kişileri bul ve yeni bir
-                  hikâyeye ilk adımı at.
-                </p>
+  {t.search.recommendationsSubtitle}
+</p>
               </div>
 
               <div className="flex flex-wrap gap-3">
@@ -860,7 +965,9 @@ function FilterDrawer({
         className="absolute inset-0 bg-slate-950/75 backdrop-blur-sm"
       />
 
-      <aside className="absolute right-0 top-0 flex h-full w-full max-w-2xl animate-[slideInRight_300ms_ease-out] flex-col border-l border-white/10 bg-[#10141f] shadow-2xl shadow-black/50">
+     <aside className="absolute right-0 top-0 z-50 pointer-events-auto flex h-full w-full max-w-2xl animate-[slideInRight_300ms_ease-out] flex-col border-l border-white/10 bg-[#10141f] shadow-2xl shadow-black/50">
+
+
         <div className="flex items-center justify-between border-b border-white/10 px-5 py-5 sm:px-7">
           <div>
             <div className="flex items-center gap-2 text-sm font-bold text-cyan-300">
@@ -874,6 +981,7 @@ function FilterDrawer({
           </button>
         </div>
 
+
         <div className="flex-1 overflow-y-auto px-5 py-8 sm:px-7 space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <FilterBlock label="Cinsiyet">
@@ -882,6 +990,7 @@ function FilterDrawer({
             <FilterBlock label="Yaş Aralığı">
               <RangeInputs minValue={filters.minAge} maxValue={filters.maxAge} onMinChange={(v) => updateFilter("minAge", v)} onMaxChange={(v) => updateFilter("maxAge", v)} />
             </FilterBlock>
+
             <FilterBlock label="Şehir">
               <StyledSelect value={filters.cityId} placeholder="Şehir seçin" onValueChange={(v) => updateFilter("cityId", v)} options={cities.map(c => ({ value: c.id.toString(), label: c.name }))} />
             </FilterBlock>
@@ -942,44 +1051,44 @@ function StyledInput({
 }
 
 interface StyledSelectProps {
-  value: string;
-  placeholder: string;
-  onValueChange: (value: string) => void;
-  options: SelectOption[];
+  value?: string;
+  onValueChange?: (value: string) => void;
+  placeholder?: string;
+  options?: { value: string; label: string }[];
   disabled?: boolean;
 }
 
 function StyledSelect({
   value,
-  placeholder,
   onValueChange,
-  options,
+  placeholder = "Seçiniz",
+  options = [],
   disabled = false,
 }: StyledSelectProps) {
   return (
-    <Select
-      value={value}
-      onValueChange={onValueChange}
-      disabled={disabled}
-    >
-      <SelectTrigger className="h-11 rounded-xl border-white/12 bg-white/[0.05] text-white focus:ring-cyan-300/20">
+    <Select value={value} onValueChange={onValueChange} disabled={disabled}>
+      <SelectTrigger>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
-
       <SelectContent>
-        {options.map((option) => (
-          <SelectItem key={option.value} value={option.value}>
-            {option.label}
-          </SelectItem>
-        ))}
+        {options.length === 0 ? (
+          <div className="p-2 text-xs text-white/40 text-center">Seçenek yok</div>
+        ) : (
+          options.map((opt) => (
+            <SelectItem key={opt.value} value={opt.value}>
+              {opt.label}
+            </SelectItem>
+          ))
+        )}
       </SelectContent>
     </Select>
   );
 }
 
+
 interface RangeInputsProps {
-  minValue: string;
-  maxValue: string;
+  minValue: string | number; // <-- Bu satırın varlığından emin olun
+  maxValue: string | number;
   onMinChange: (value: string) => void;
   onMaxChange: (value: string) => void;
   minPlaceholder?: string;
@@ -987,7 +1096,7 @@ interface RangeInputsProps {
 }
 
 function RangeInputs({
-  minValue,
+  minValue, // <-- Eksik olan bu satırı ekleyin
   maxValue,
   onMinChange,
   onMaxChange,
@@ -995,25 +1104,26 @@ function RangeInputs({
   maxPlaceholder = "Max",
 }: RangeInputsProps) {
   return (
-    <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-      <StyledInput
-        type="number"
-        placeholder={minPlaceholder}
-        value={minValue}
-        onChange={(event) => onMinChange(event.target.value)}
-      />
+   <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+  <StyledInput
+    type="number"
+    placeholder={minPlaceholder}
+    value={minValue}
+    onChange={(event) => onMinChange(event.target.value)}
+  />
 
-      <span className="text-white/25">—</span>
+  <span className="text-white/50">-</span>
 
-      <StyledInput
-        type="number"
-        placeholder={maxPlaceholder}
-        value={maxValue}
-        onChange={(event) => onMaxChange(event.target.value)}
-      />
-    </div>
+  <StyledInput
+    type="number"
+    placeholder={maxPlaceholder}
+    value={maxValue}
+    onChange={(event) => onMaxChange(event.target.value)}
+  />
+</div>
   );
 }
+
 
 interface FilterCheckboxProps {
   checked: boolean;

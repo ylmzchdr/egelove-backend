@@ -9,6 +9,7 @@ import { join } from "path";
 
 import { AppModule } from "./app.module";
 import { AllExceptionsFilter } from "./common/filters/all-exceptions.filter";
+import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 
 async function bootstrap() {
  const userModel = Prisma.dmmf.datamodel.models.find(
@@ -91,6 +92,15 @@ app.enableCors({
 
   // GLOBAL ERROR HANDLER
   app.useGlobalFilters(new AllExceptionsFilter());
+  const config = new DocumentBuilder()
+  .setTitle("EGELOVE API")
+  .setDescription("EGELOVE Backend API")
+  .setVersion("1.0")
+  .build();
+
+const document = SwaggerModule.createDocument(app, config);
+
+SwaggerModule.setup("api", app, document);
 
   const port = process.env.PORT || 3001;
 

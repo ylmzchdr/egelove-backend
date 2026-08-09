@@ -16,6 +16,7 @@ import { TwofaModule } from "./twofa/twofa.module";
 import { AdminModule } from "./admin/admin.module";
 import { TranslateModule } from "./translate/translate.module";
 import { AiModule } from "./ai/ai.module.js";
+import { SearchModule } from "./search/search.module";
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { AiModule } from "./ai/ai.module.js";
     TwofaModule,
     AdminModule,
     TranslateModule,
+    SearchModule,
   ],
 })
 export class AppModule {}

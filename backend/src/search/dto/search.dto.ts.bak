@@ -1,0 +1,66 @@
+import { IsBoolean, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
+import { Type } from 'class-transformer';
+
+export class SearchDto {
+  @IsOptional()
+  @IsString()
+  username?: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  cityId?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  districtId?: number;
+
+  @IsOptional()
+  @IsString()
+  gender?: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(18)
+  @Max(99)
+  minAge?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(18)
+  @Max(99)
+  maxAge?: number;
+
+  @IsOptional()
+  @Type(() => Boolean)
+  @IsBoolean()
+  online?: boolean;
+
+  @IsOptional()
+  @Type(() => Boolean)
+  @IsBoolean()
+  premium?: boolean;
+
+  @IsOptional()
+  @Type(() => Boolean)
+  @IsBoolean()
+  verified?: boolean;
+
+  @IsOptional()
+  @Type(() => Boolean)
+  @IsBoolean()
+  hasPhoto?: boolean;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  page = 1;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  limit = 20;
+}

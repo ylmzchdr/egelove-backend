@@ -137,10 +137,14 @@ const updated = await this.prisma.user.update({
 }
 
   @Get("search")
-  @UseGuards(JwtAuthGuard)
-  async searchUsers(@CurrentUser() user: any) {
+async searchUsers(@CurrentUser() user?: any) {
     const users = await this.prisma.user.findMany({
-      where: { id: { not: user.sub }, isActive: true },
+      where: {
+  isActive: true,
+  ...(user?.sub && {
+    id: { not: user.sub },
+  }),
+},
       take: 20,
       select: {
         id: true,
@@ -158,10 +162,8 @@ const updated = await this.prisma.user.update({
   }
 
   @Get("search/filter")
-  @UseGuards(JwtAuthGuard)
-  async filterUsers(
-    
-    @CurrentUser() user: any,
+async filterUsers(
+  @CurrentUser() user?: any,
     @Query("city") city?: string,
     @Query("district") district?: string,
     @Query("gender") gender?: string,
@@ -186,8 +188,14 @@ const updated = await this.prisma.user.update({
     @Query("hasPhotos") hasPhotos?: string,
     @Query("username") username?: string,
   ) {
-    const where: any = { id: { not: user.sub }, isActive: true };
+   const where: any = {
+  isActive: true,
+};
+console.log("FILTER ENDPOINT CALLED");
 
+if (user?.sub) {
+  where.id = { not: user.sub };
+}
     if (gender) where.gender = gender;
     if (city) where.cityId = parseInt(city);
     if (district) where.districtId = parseInt(district);
@@ -207,7 +215,7 @@ const updated = await this.prisma.user.update({
     if (username) {
       where.OR = [
         { name: { contains: username, mode: "insensitive" } },
-        { surname: { contains: username, mode: "insensitive" } },
+       
       ];
     }
 

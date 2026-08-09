@@ -165,10 +165,11 @@ export const api = {
         body: JSON.stringify(data),
       }),
 
-    search: (params?: Record<string, string>) => {
-      const query = params ? "?" + new URLSearchParams(params).toString() : "";
-      return request<any[]>(`/users/search/filter${query}`);
-    },
+    search: (data?: any) =>
+  request<any>("/search", {
+    method: "POST",
+    body: JSON.stringify(data ?? {}),
+  }),
 
     get: (id: string) => request(`/users/${id}`),
   },

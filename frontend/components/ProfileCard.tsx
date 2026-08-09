@@ -41,18 +41,22 @@ export default function ProfileCard({
 
   const profileId = id || avatar?.id;
   const gradient = avatarColors[name.length % avatarColors.length];
- const backendUrl = "/api";
+ const backendUrl =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
-  const databasePhoto =
-    avatar?.photos?.find((p: any) => p.isMain)?.url ||
-    avatar?.photos?.[0]?.url;
+ const databasePhoto =
+  avatar?.photos?.find((p: any) => p.isMain)?.url ||
+  avatar?.photos?.[0]?.url;
 
-  const avatarUrl = databasePhoto
+const avatarUrl =
+  databasePhoto
     ? databasePhoto.startsWith("http")
       ? databasePhoto
-      : `${backendUrl}${databasePhoto}`
+      : `${backendUrl}${databasePhoto.startsWith("/") ? "" : "/"}${databasePhoto}`
     : typeof avatar === "string"
-      ? avatar
+      ? avatar.startsWith("http")
+        ? avatar
+        : `${backendUrl}${avatar.startsWith("/") ? "" : "/"}${avatar}`
       : null;
 
   const handleViewProfile = () => {
