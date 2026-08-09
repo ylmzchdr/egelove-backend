@@ -965,7 +965,7 @@ function FilterDrawer({
         className="absolute inset-0 bg-slate-950/75 backdrop-blur-sm"
       />
 
-     <aside className="absolute right-0 top-0 z-50 pointer-events-auto flex h-full w-full max-w-2xl animate-[slideInRight_300ms_ease-out] flex-col border-l border-white/10 bg-[#10141f] shadow-2xl shadow-black/50">
+     <aside className="fixed inset-y-0 right-0 z-50 pointer-events-auto flex h-screen w-full max-w-2xl flex-col border-l border-white/10 bg-[#10141f] shadow-2xl shadow-black/50">
 
 
         <div className="flex items-center justify-between border-b border-white/10 px-5 py-5 sm:px-7">
@@ -982,7 +982,7 @@ function FilterDrawer({
         </div>
 
 
-        <div className="flex-1 overflow-y-auto px-5 py-8 sm:px-7 space-y-6">
+      <div className="min-h-0 flex-1 overflow-y-auto px-5 py-8 sm:px-7 space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <FilterBlock label="Cinsiyet">
               <StyledSelect value={filters.gender} placeholder="Seçiniz" onValueChange={(v) => updateFilter("gender", v)} options={GENDER_OPTIONS} />
