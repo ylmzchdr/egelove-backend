@@ -991,18 +991,17 @@ function FilterDrawer({
               <RangeInputs minValue={filters.minAge} maxValue={filters.maxAge} onMinChange={(v) => updateFilter("minAge", v)} onMaxChange={(v) => updateFilter("maxAge", v)} />
             </FilterBlock>
 
-            <FilterBlock label="Şehir">
-              <StyledSelect value={filters.cityId} placeholder="Şehir seçin" onValueChange={(v) => updateFilter("cityId", v)} options={cities.map(c => ({ value: c.id.toString(), label: c.name }))} />
-            </FilterBlock>
-            <FilterBlock label="İlçe">
-              <StyledSelect value={filters.districtId} placeholder="İlçe seçin" onValueChange={(v) => updateFilter("districtId", v)} options={districts.map(d => ({ value: d.id.toString(), label: d.name }))} disabled={!filters.cityId} />
-            </FilterBlock>
-            <FilterBlock label="Eğitim">
-              <StyledSelect value={filters.education} placeholder="Seçiniz" onValueChange={(v) => updateFilter("education", v)} options={EDUCATION_OPTIONS} />
-            </FilterBlock>
-            <FilterBlock label="Medeni Durum">
-              <StyledSelect value={filters.maritalStatus} placeholder="Seçiniz" onValueChange={(v) => updateFilter("maritalStatus", v)} options={MARITAL_OPTIONS} />
-            </FilterBlock>
+           <FilterBlock label="Şehir">
+  <StyledSelect
+    value={filters.cityId}
+    placeholder="Şehir seçin"
+    onValueChange={(v) => updateFilter("cityId", v)}
+    options={cities.map((c) => ({
+      value: c.id.toString(),
+      label: c.name,
+    }))}
+  />
+</FilterBlock>
           </div>
         </div>
 
