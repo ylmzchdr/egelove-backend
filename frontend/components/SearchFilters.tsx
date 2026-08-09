@@ -42,7 +42,7 @@ export default function SearchFilters({
 }: Props) {
   return (
     <div className="space-y-5">
-
+      {/* Cinsiyet */}
       <div>
         <label className="text-sm text-white/70">
           Cinsiyet
@@ -51,7 +51,9 @@ export default function SearchFilters({
         <select
           className="w-full mt-2 h-11 rounded-xl bg-white/5 border border-white/20 px-3 text-white"
           value={filters.gender}
-          onChange={(e)=>updateFilter("gender",e.target.value)}
+          onChange={(e) =>
+            updateFilter("gender", e.target.value)
+          }
         >
           <option value="">Seçiniz</option>
           <option value="MALE">Erkek</option>
@@ -59,7 +61,7 @@ export default function SearchFilters({
         </select>
       </div>
 
-
+      {/* Şehir */}
       <div>
         <label className="text-sm text-white/70">
           Şehir
@@ -68,25 +70,21 @@ export default function SearchFilters({
         <select
           className="w-full mt-2 h-11 rounded-xl bg-white/5 border border-white/20 px-3 text-white"
           value={filters.cityId}
-          onChange={(e)=>updateFilter("cityId",e.target.value)}
+          onChange={(e) =>
+            updateFilter("cityId", e.target.value)
+          }
         >
-          <option value="">
-            Şehir seçin
-          </option>
+          <option value="">Şehir seçin</option>
 
-          {cities.map((city)=>(
-            <option
-              key={city.id}
-              value={city.id}
-            >
+          {cities.map((city) => (
+            <option key={city.id} value={city.id}>
               {city.name}
             </option>
           ))}
-
         </select>
       </div>
 
-
+      {/* İlçe */}
       <div>
         <label className="text-sm text-white/70">
           İlçe
@@ -96,46 +94,71 @@ export default function SearchFilters({
           className="w-full mt-2 h-11 rounded-xl bg-white/5 border border-white/20 px-3 text-white"
           value={filters.districtId}
           disabled={!filters.cityId}
-          onChange={(e)=>updateFilter("districtId",e.target.value)}
+          onChange={(e) =>
+            updateFilter("districtId", e.target.value)
+          }
         >
+          <option value="">İlçe seçin</option>
 
-          <option value="">
-            İlçe seçin
-          </option>
-
-          {districts.map((district)=>(
-            <option
-              key={district.id}
-              value={district.id}
-            >
+          {districts.map((district) => (
+            <option key={district.id} value={district.id}>
               {district.name}
             </option>
           ))}
-
         </select>
-
       </div>
 
+      {/* Yaş */}
+      <div>
+        <label className="text-sm text-white/70">
+          Yaş aralığı
+        </label>
 
-      <div className="flex gap-3 pt-5">
+        <div className="grid grid-cols-2 gap-3 mt-2">
+          <input
+            type="number"
+            min="18"
+            max="100"
+            placeholder="Minimum"
+            value={filters.minAge}
+            onChange={(e) =>
+              updateFilter("minAge", e.target.value)
+            }
+            className="w-full h-11 rounded-xl bg-white/5 border border-white/20 px-3 text-white placeholder:text-white/40"
+          />
 
+          <input
+            type="number"
+            min="18"
+            max="100"
+            placeholder="Maksimum"
+            value={filters.maxAge}
+            onChange={(e) =>
+              updateFilter("maxAge", e.target.value)
+            }
+            className="w-full h-11 rounded-xl bg-white/5 border border-white/20 px-3 text-white placeholder:text-white/40"
+          />
+        </div>
+      </div>
+
+      {/* Butonlar */}
+      <div className="flex gap-3 pt-3 pb-2">
         <button
+          type="button"
           onClick={clearFilters}
-          className="flex-1 h-12 rounded-xl border border-white/20"
+          className="flex-1 h-12 rounded-xl border border-white/20 text-white"
         >
           Temizle
         </button>
 
-
         <button
+          type="button"
           onClick={handleSearch}
           className="flex-1 h-12 rounded-xl bg-cyan-500 text-white"
         >
           Uygula
         </button>
-
       </div>
-
     </div>
   );
 }
