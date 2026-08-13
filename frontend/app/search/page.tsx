@@ -2,49 +2,87 @@
 "use client";
 const searchTranslations = {
   tr: {
-    title: "Yeni insanları keşfetmeye başla.",
-    subtitle: "Ege'nin sıcaklığı, Akdeniz'in özgürlüğü. Sana uygun profiller, yeni üyeler ve çevrimiçi kişiler burada.",
-    exploreBtn: "Üyeleri Keşfet",
-    filterBtn: "Gelişmiş Filtreler",
-    online: "Çevrimiçi",
-    specialForYou: "Sana özel",
-    newMembers: "Yeni / Bugün katılanlar",
-    premium: "Premium / Özel profiller",
-    flightMode: "Uçak modu açık"
-  },
+  title: "Yeni insanları keşfetmeye başla.",
+  subtitle: "Ege'nin sıcaklığı, Akdeniz'in özgürlüğü. Sana uygun profiller, yeni üyeler ve çevrimiçi kişiler burada.",
+  exploreBtn: "Üyeleri Keşfet",
+ filterBtn: "💕 Bana Uygun Üyeleri Bul",
+  online: "Çevrimiçi",
+  specialForYou: "Sana özel",
+  newMembers: "Yeni / Bugün katılanlar",
+  premium: "Premium / Özel profiller",
+  flightMode: "Uçak modu açık"
+},
   en: {
-    title: "Start discovering new people.",
-    subtitle: "The warmth of the Aegean, the freedom of the Mediterranean. Profiles suitable for you, new members and online people are here.",
-    exploreBtn: "Explore Members",
-    filterBtn: "Advanced Filters",
-    online: "Online",
-    specialForYou: "Special for you",
-    newMembers: "New / Joined today",
-    premium: "Premium / Special profiles",
-    flightMode: "Airplane mode is on"
-  },
+  title: "Start discovering new people.",
+  subtitle:
+    "The warmth of the Aegean, the freedom of the Mediterranean. Profiles suitable for you, new members and online people are here.",
+
+  exploreBtn: "Explore Members",
+filterBtn: "💕 Find Members for Me",
+
+  online: "Online",
+  specialForYou: "Special for you",
+  newMembers: "New / Joined today",
+  premium: "Premium / Special profiles",
+  flightMode: "Airplane mode is on",
+
+  gender: "Gender",
+  ageRange: "Age Range",
+  city: "City",
+  district: "District",
+
+  select: "Select",
+  selectCity: "Select city",
+  selectDistrict: "Select district"
+},
   ru: {
-    title: "Начните знакомиться с новыми людьми.",
-    subtitle: "Тепло Эгейского моря, свобода Средиземноморья. Подходящие вам профили, новые участники и люди онлайн здесь.",
-    exploreBtn: "Исследовать участников",
-    filterBtn: "Расширенные фильтры",
-    online: "В сети",
-    specialForYou: "Специально для вас",
-    newMembers: "Новые / Присоединились сегодня",
-    premium: "Премиум / Особые профили",
-    flightMode: "Авиарежим включен"
-  },
-  ar: {
-    title: "ابدأ في اكتشاف أشخاص جدد.",
-    subtitle: "دفء إيجة، حرية البحر الأبيض المتوسط. تتوفر هنا الملفات الشخصية المناسبة لك، والأعضاء الجدد والأشخاص المتصلون بالإنترنت.",
-    exploreBtn: "اكتشف الأعضاء",
-    filterBtn: "مرشحات متقدمة",
-    online: "متصل",
-    specialForYou: "خاص لك",
-    newMembers: "جديد / انضم اليوم",
-    premium: "بريميوم / ملفات شخصية مميزة",
-    flightMode: "وضع الطيران مفعّل"
-  }
+  title: "Начните знакомиться с новыми людьми.",
+  subtitle:
+    "Тепло Эгейского моря, свобода Средиземноморья. Подходящие вам профили, новые участники и люди онлайн здесь.",
+
+  exploreBtn: "Исследовать участников",
+filterBtn: "💕 Найти подходящих мне участников",
+
+  online: "В сети",
+  specialForYou: "Специально для вас",
+  newMembers: "Новые / Присоединились сегодня",
+  premium: "Премиум / Особые профили",
+  flightMode: "Авиарежим включен",
+
+  gender: "Пол",
+  ageRange: "Возраст",
+  city: "Город",
+  district: "Район",
+
+  select: "Выберите",
+  selectCity: "Выберите город",
+  selectDistrict: "Выберите район"
+},
+ ar: {
+  title: "ابدأ في اكتشاف أشخاص جدد.",
+  subtitle:
+    "دفء إيجة، حرية البحر الأبيض المتوسط. تتوفر هنا الملفات الشخصية المناسبة لك، والأعضاء الجدد والأشخاص المتصلون بالإنترنت.",
+  exploreBtn: "اكتشف الأعضاء",
+filterBtn: "💕 العثور على الأعضاء المناسبين لي",
+  online: "متصل",
+  specialForYou: "خاص لك",
+  newMembers: "جديد / انضم اليوم",
+  premium: "بريميوم / ملفات شخصية مميزة",
+  flightMode: "وضع الطيران مفعّل",
+
+  clear: "مسح",
+  gender: "اختر الجنس",
+  male: "رجل",
+  female: "امرأة",
+  ageRange: "الفئة العمرية",
+  location: "الموقع",
+  city: "المدينة",
+  district: "المنطقة",
+
+  select: "اختر",
+  selectCity: "اختر المدينة",
+  selectDistrict: "اختر المنطقة",
+},
 };
 
 
@@ -534,7 +572,7 @@ console.log("ŞEHİR SAYISI:", data.length);
                    className="group inline-flex min-h-14 items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-cyan-400 via-sky-400 to-fuchsia-500 px-7 font-black text-white shadow-[0_0_35px_rgba(0,255,255,.25)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.03] hover:shadow-[0_0_45px_rgba(0,255,255,.45)]"
                   >
                     <Compass className="h-5 w-5" />
-                    Üyeleri Keşfet
+                    {t.search.exploreBtn}
                     <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                   </button>
 
@@ -544,7 +582,7 @@ console.log("ŞEHİR SAYISI:", data.length);
                    className="inline-flex min-h-14 items-center justify-center gap-3 rounded-2xl border border-cyan-400/30 bg-gradient-to-r from-[#13283f]/90 to-[#0b1f34]/90 px-7 font-bold text-cyan-100 backdrop-blur-xl shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-cyan-300 hover:shadow-[0_0_30px_rgba(0,255,255,.20)]"
                   >
                     <SlidersHorizontal className="h-5 w-5 text-cyan-300" />
-                    Gelişmiş Filtreler
+                    {t.search.filterBtn}
 
                     {activeFilterCount > 0 && (
                       <span className="flex h-6 min-w-6 items-center justify-center rounded-full bg-cyan-300 px-2 text-xs font-black text-slate-950">
@@ -559,27 +597,27 @@ console.log("ŞEHİR SAYISI:", data.length);
                 <HeroStatCard
                   icon={<Users className="h-5 w-5" />}
                   value={`${onlineCount}+`}
-                  label="Çevrimiçi"
+                label={t.search.online}
                   pulse
                 />
 
                 <HeroStatCard
                   icon={<Heart className="h-5 w-5" />}
                   value={`${results.length}`}
-                  label="Sana özel"
+                label={t.search.specialForYou}
                 />
 
-                <HeroStatCard
-                  icon={<Flame className="h-5 w-5" />}
-                  value="Yeni"
-                  label="Bugün katılanlar"
-                />
+               <HeroStatCard
+  icon={<Flame className="h-5 w-5" />}
+ value={t.search.newMembers.split(" / ")[0]}
+label={t.search.newMembers.split(" / ")[1]}
+/>
 
-                <HeroStatCard
-                  icon={<Star className="h-5 w-5" />}
-                  value="Premium"
-                  label="Özel profiller"
-                />
+               <HeroStatCard
+  icon={<Star className="h-5 w-5" />}
+  value={t.search.premium.split(" / ")[0]}
+  label={t.search.premium.split(" / ")[1]}
+/>
               </div>
             </div>
           </div>
@@ -984,14 +1022,14 @@ function FilterDrawer({
 
       <div className="min-h-0 flex-1 overflow-y-auto px-5 py-8 sm:px-7 space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <FilterBlock label="Cinsiyet">
+          <FilterBlock label={t.search.gender}>
               <StyledSelect value={filters.gender} placeholder="Seçiniz" onValueChange={(v) => updateFilter("gender", v)} options={GENDER_OPTIONS} />
             </FilterBlock>
-            <FilterBlock label="Yaş Aralığı">
+            <FilterBlock label={t.search.ageRange}>
               <RangeInputs minValue={filters.minAge} maxValue={filters.maxAge} onMinChange={(v) => updateFilter("minAge", v)} onMaxChange={(v) => updateFilter("maxAge", v)} />
             </FilterBlock>
 
-           <FilterBlock label="Şehir">
+           <FilterBlock label={t.search.city}>
   <StyledSelect
     value={filters.cityId}
     placeholder="Şehir seçin"
