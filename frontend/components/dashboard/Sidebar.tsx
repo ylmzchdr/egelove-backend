@@ -45,7 +45,7 @@ export default function Sidebar() {
   const copy = {
     TR: {
       home: "Ana Sayfa",
-      discover: "Keşfet",
+   discover: "Sana Uygun Kişiyi Bul",
       likes: "Beğeniler",
       messages: "Mesajlar",
       notifications: "Bildirimler",

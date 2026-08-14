@@ -4,7 +4,7 @@ const searchTranslations = {
   tr: {
   title: "Yeni insanları keşfetmeye başla.",
   subtitle: "Ege'nin sıcaklığı, Akdeniz'in özgürlüğü. Sana uygun profiller, yeni üyeler ve çevrimiçi kişiler burada.",
-  exploreBtn: "Üyeleri Keşfet",
+  exploreBtn: "Sana Uygun Kişiyi Bul",
  filterBtn: "💕 Bana Uygun Üyeleri Bul",
   online: "Çevrimiçi",
   specialForYou: "Sana özel",
@@ -302,6 +302,7 @@ function normalizeProfiles(data: unknown): ProfileResult[] {
 
 export default function SearchPage() {
   console.log("SEARCH PAGE LOADED");
+  
   const [authTab, setAuthTab] = useState<"login" | "register" | null>(null);
   const [cities, setCities] = useState<City[]>([]);
   const [districts, setDistricts] = useState<District[]>([]);
@@ -726,7 +727,7 @@ hover:shadow-[0_0_25px_rgba(0,255,255,.25)]
                   <ProfileSection
                     eyebrow="Aramıza yeni katıldılar"
                     title="Yeni Üyeler"
-                    description="EGELOVE ailesine yakın zamanda katılan profilleri keşfet."
+                   description="EGELOVE ailesine yakın zamanda katılan profilleri bul."
                     icon={<Flame className="h-5 w-5" />}
                     profiles={newProfiles}
                   />

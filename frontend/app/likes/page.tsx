@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Bell,
   Check,
@@ -26,19 +27,6 @@ import { useI18n } from "@/lib/i18n-context";
 
 type TabType = "received" | "sent";
 
-function getUserIdFromToken(): string | null {
-  if (typeof window === "undefined") return null;
-
-  const token = localStorage.getItem("accessToken");
-  if (!token) return null;
-
-  try {
-    const payload = JSON.parse(atob(token.split(".")[1]));
-    return payload.sub || payload.id || null;
-  } catch {
-    return null;
-  }
-}
 
 function calcAge(birthDate: string): number {
   const bd = new Date(birthDate);
@@ -139,6 +127,9 @@ function getDistrict(user: any): string {
 }
 
 export default function LikesPage() {
+
+  const [searchText, setSearchText] = useState("");
+  const router = useRouter();
   const { lang } = useI18n();
 
   const [authTab, setAuthTab] = useState<
@@ -168,8 +159,8 @@ export default function LikesPage() {
           "Profilini tamamla ve EgeLove'da daha fazla kişiye görün.",
         youLikedNobody: "Henüz kimseyi beğenmedin",
         youLikedNobodyDesc:
-          "Yeni insanları keşfet ve ilgini çeken profillere göz at.",
-        explore: "Üyeleri Keşfet",
+      "Sana uygun kişileri bul ve ilgini çeken profillere göz at.",
+       explore: "Sana Uygun Kişiyi Bul",
         editProfile: "Profilimi Düzenle",
         profile: "Profili Gör",
         respond: "Karşılık Ver",
@@ -177,8 +168,8 @@ export default function LikesPage() {
         sendMessage: "Mesaj Gönder",
         online: "Çevrimiçi",
         home: "Ana Sayfa",
-        discover: "Keşfet",
-        likesMenu: "Beğeniler",
+       discover: "Sana Uygun Kişiyi Bul",
+likesMenu: "Beğeniler",
         messages: "Mesajlar",
         premium: "Premium",
         myProfile: "Profilim",
@@ -302,35 +293,43 @@ export default function LikesPage() {
     return translations[lang] || translations.TR;
   }, [lang]);
 
-  const load = async () => {
-    setLoading(true);
+ const load = async () => {
+  setLoading(true);
 
-    const uid = getUserIdFromToken();
-    setMyId(uid);
+  try {
+    // Giriş yapan gerçek kullanıcıyı API'den al
+    const me: any = await api.users.me();
+
+    const uid =
+      me?.id ??
+      me?.user?.id ??
+      me?.data?.id ??
+      null;
+
+    setMyId(uid ? String(uid) : null);
 
     if (!uid) {
       setMatches([]);
-      setLoading(false);
       return;
     }
 
-    try {
-      const data: any = await api.matches.list();
+    const data: any = await api.matches.list();
 
-      const list = Array.isArray(data)
-        ? data
-        : data?.matches ||
-          data?.data ||
-          [];
+    const list = Array.isArray(data)
+      ? data
+      : data?.matches ??
+        data?.data ??
+        [];
 
-      setMatches(Array.isArray(list) ? list : []);
-    } catch (error) {
-      console.error("Likes yüklenemedi:", error);
-      setMatches([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+    setMatches(Array.isArray(list) ? list : []);
+  } catch (error) {
+    console.error("Likes yüklenemedi:", error);
+    setMatches([]);
+    setMyId(null);
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     load();
@@ -515,7 +514,7 @@ export default function LikesPage() {
         {/* MAIN */}
         <main className="flex-1 md:ml-[282px] min-w-0">
           {/* TOP BAR */}
-          <header className="sticky top-0 z-40 px-4 md:px-8 pt-4">
+        <header className="sticky top-0 z-[100] px-4 md:px-8 pt-4 pointer-events-auto">
             <div className="h-[70px] rounded-2xl border border-white/15 bg-[#0c111d]/90 backdrop-blur-xl flex items-center gap-3 px-3 md:px-5 shadow-2xl shadow-black/20">
               {/* MOBILE MENU */}
               <button
@@ -525,18 +524,7 @@ export default function LikesPage() {
                 <Users className="w-5 h-5" />
               </button>
 
-              {/* SEARCH */}
-              <div className="hidden sm:flex flex-1 h-11 rounded-xl border border-white/10 bg-white/[0.025] items-center px-4 gap-3">
-                <Search className="w-5 h-5 text-white/30" />
-
-                <span className="text-sm text-white/25 flex-1">
-                  {t.search}
-                </span>
-
-                <span className="hidden lg:block text-[9px] text-white/25 border border-white/10 rounded-md px-2 py-1">
-                  ENTER
-                </span>
-              </div>
+           
 
               <div className="flex items-center gap-2 ml-auto">
                 {/* LANGUAGE */}

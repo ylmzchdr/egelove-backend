@@ -66,7 +66,7 @@ export default function DashboardPage() {
       loading: "{copy.loading}",
       loginTitle: "Dashboard’a erişmek için giriş yap",
       loginDesc:
-        "Üyeleri keşfetmek, beğenilerini görmek ve mesajlarına ulaşmak için hesabına giriş yapmalısın.",
+       "Sana uygun kişileri bulmak, beğenilerini görmek ve mesajlarına ulaşmak için hesabına giriş yapmalısın.",
       login: "Giriş Yap",
       register: "Ücretsiz Kayıt Ol",
       secureMembership: "Güvenli üyelik",
@@ -75,7 +75,7 @@ export default function DashboardPage() {
       newLike: "Yeni beğeni",
       unread: "Okunmamış mesaj",
       discovery: "Keşif",
-      nationwide: "İl genelinde keşfet",
+      nationwide: "İl genelinde bul",
       currentLocation: "Mevcut konum",
       firstStep: "İlk adımını tamamla",
       welcome: "EGELOVE’a hoş geldin",
