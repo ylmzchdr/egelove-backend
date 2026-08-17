@@ -5,9 +5,11 @@ import { useRouter } from "next/navigation";
 import {
   Bell,
   Check,
+  ChevronDown,
   ChevronRight,
   Heart,
   Home,
+  Languages,
   Loader2,
   MapPin,
   MessageCircle,
@@ -27,7 +29,6 @@ import { useI18n } from "@/lib/i18n-context";
 
 type TabType = "received" | "sent";
 
-
 function calcAge(birthDate: string): number {
   const bd = new Date(birthDate);
   const today = new Date();
@@ -35,10 +36,7 @@ function calcAge(birthDate: string): number {
   let age = today.getFullYear() - bd.getFullYear();
   const month = today.getMonth() - bd.getMonth();
 
-  if (
-    month < 0 ||
-    (month === 0 && today.getDate() < bd.getDate())
-  ) {
+  if (month < 0 || (month === 0 && today.getDate() < bd.getDate())) {
     age--;
   }
 
@@ -64,20 +62,12 @@ function getOtherUser(match: any, myId: string | null) {
 
   if (receiverId === currentId) {
     return (
-      match.sender ||
-      match.senderUser ||
-      match.user ||
-      match.likedUser ||
-      null
+      match.sender || match.senderUser || match.user || match.likedUser || null
     );
   }
 
   return (
-    match.receiver ||
-    match.sender ||
-    match.user ||
-    match.likedUser ||
-    null
+    match.receiver || match.sender || match.user || match.likedUser || null
   );
 }
 
@@ -109,32 +99,21 @@ function getFullName(user: any): string {
 }
 
 function getCity(user: any): string {
-  return (
-    user?.city?.name ||
-    user?.cityName ||
-    user?.location?.city ||
-    ""
-  );
+  return user?.city?.name || user?.cityName || user?.location?.city || "";
 }
 
 function getDistrict(user: any): string {
   return (
-    user?.district?.name ||
-    user?.districtName ||
-    user?.location?.district ||
-    ""
+    user?.district?.name || user?.districtName || user?.location?.district || ""
   );
 }
 
 export default function LikesPage() {
-
   const [searchText, setSearchText] = useState("");
   const router = useRouter();
-  const { lang } = useI18n();
+  const { lang, setLang } = useI18n();
 
-  const [authTab, setAuthTab] = useState<
-    "login" | "register" | null
-  >(null);
+  const [authTab, setAuthTab] = useState<"login" | "register" | null>(null);
 
   const [tab, setTab] = useState<TabType>("received");
   const [matches, setMatches] = useState<any[]>([]);
@@ -143,12 +122,10 @@ export default function LikesPage() {
   const [likingId, setLikingId] = useState<string | null>(null);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [languageOpen, setLanguageOpen] = useState(false);
 
   const t = useMemo(() => {
-    const translations: Record<
-      string,
-      Record<string, string>
-    > = {
+    const translations: Record<string, Record<string, string>> = {
       TR: {
         likes: "Beğeniler",
         subtitle: "Seni beğenenler ve senin beğendiklerin",
@@ -159,8 +136,8 @@ export default function LikesPage() {
           "Profilini tamamla ve EgeLove'da daha fazla kişiye görün.",
         youLikedNobody: "Henüz kimseyi beğenmedin",
         youLikedNobodyDesc:
-      "Sana uygun kişileri bul ve ilgini çeken profillere göz at.",
-       explore: "Sana Uygun Kişiyi Bul",
+          "Sana uygun kişileri bul ve ilgini çeken profillere göz at.",
+        explore: "Sana Uygun Kişiyi Bul",
         editProfile: "Profilimi Düzenle",
         profile: "Profili Gör",
         respond: "Karşılık Ver",
@@ -168,8 +145,8 @@ export default function LikesPage() {
         sendMessage: "Mesaj Gönder",
         online: "Çevrimiçi",
         home: "Ana Sayfa",
-       discover: "Sana Uygun Kişiyi Bul",
-likesMenu: "Beğeniler",
+        discover: "Sana Uygun Kişiyi Bul",
+        likesMenu: "Beğeniler",
         messages: "Mesajlar",
         premium: "Premium",
         myProfile: "Profilim",
@@ -225,8 +202,7 @@ likesMenu: "Beğeniler",
         likedYou: "Лайкнули вас",
         youLiked: "Вы лайкнули",
         noOneLiked: "Вас пока никто не лайкнул",
-        noOneLikedDesc:
-          "Заполните профиль и станьте заметнее на EgeLove.",
+        noOneLikedDesc: "Заполните профиль и станьте заметнее на EgeLove.",
         youLikedNobody: "Вы пока никого не лайкнули",
         youLikedNobodyDesc:
           "Откройте для себя новых людей и интересные профили.",
@@ -260,11 +236,9 @@ likesMenu: "Beğeniler",
         likedYou: "من أعجبوا بك",
         youLiked: "من أعجبت بهم",
         noOneLiked: "لم يعجب بك أحد بعد",
-        noOneLikedDesc:
-          "أكمل ملفك الشخصي وكن أكثر ظهورًا على EgeLove.",
+        noOneLikedDesc: "أكمل ملفك الشخصي وكن أكثر ظهورًا على EgeLove.",
         youLikedNobody: "لم تعجب بأحد بعد",
-        youLikedNobodyDesc:
-          "اكتشف أشخاصًا جدد وتصفح الملفات التي تهمك.",
+        youLikedNobodyDesc: "اكتشف أشخاصًا جدد وتصفح الملفات التي تهمك.",
         explore: "اكتشف الأعضاء",
         editProfile: "تعديل الملف الشخصي",
         profile: "عرض الملف",
@@ -292,44 +266,37 @@ likesMenu: "Beğeniler",
 
     return translations[lang] || translations.TR;
   }, [lang]);
+  const load = async () => {
+    setLoading(true);
 
- const load = async () => {
-  setLoading(true);
+    try {
+      // Giriş yapan gerçek kullanıcıyı API'den al
+      const me: any = await api.users.me();
 
-  try {
-    // Giriş yapan gerçek kullanıcıyı API'den al
-    const me: any = await api.users.me();
+      const uid = me?.id ?? me?.user?.id ?? me?.data?.id ?? null;
 
-    const uid =
-      me?.id ??
-      me?.user?.id ??
-      me?.data?.id ??
-      null;
+      setMyId(uid ? String(uid) : null);
 
-    setMyId(uid ? String(uid) : null);
+      if (!uid) {
+        setMatches([]);
+        return;
+      }
 
-    if (!uid) {
+      const data: any = await api.matches.list();
+
+      const list = Array.isArray(data)
+        ? data
+        : (data?.matches ?? data?.data ?? []);
+
+      setMatches(Array.isArray(list) ? list : []);
+    } catch (error) {
+      console.error("Likes yüklenemedi:", error);
       setMatches([]);
-      return;
+      setMyId(null);
+    } finally {
+      setLoading(false);
     }
-
-    const data: any = await api.matches.list();
-
-    const list = Array.isArray(data)
-      ? data
-      : data?.matches ??
-        data?.data ??
-        [];
-
-    setMatches(Array.isArray(list) ? list : []);
-  } catch (error) {
-    console.error("Likes yüklenemedi:", error);
-    setMatches([]);
-    setMyId(null);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   useEffect(() => {
     load();
@@ -350,34 +317,27 @@ likesMenu: "Beğeniler",
         lang === "TR"
           ? "Beğeni gönderilemedi."
           : lang === "EN"
-          ? "Like could not be sent."
-          : lang === "RU"
-          ? "Не удалось отправить лайк."
-          : "تعذر إرسال الإعجاب."
+            ? "Like could not be sent."
+            : lang === "RU"
+              ? "Не удалось отправить лайк."
+              : "تعذر إرسال الإعجاب.",
       );
     } finally {
       setLikingId(null);
     }
   };
 
-  const safeMatches = Array.isArray(matches)
-    ? matches
-    : [];
+  const safeMatches = Array.isArray(matches) ? matches : [];
 
   const received = safeMatches.filter(
-    (match) =>
-      String(match?.receiverId ?? "") ===
-      String(myId ?? "")
+    (match) => String(match?.receiverId ?? "") === String(myId ?? ""),
   );
 
   const sent = safeMatches.filter(
-    (match) =>
-      String(match?.senderId ?? "") ===
-      String(myId ?? "")
+    (match) => String(match?.senderId ?? "") === String(myId ?? ""),
   );
 
-  const visibleMatches =
-    tab === "received" ? received : sent;
+  const visibleMatches = tab === "received" ? received : sent;
 
   const navigate = (url: string) => {
     window.location.href = url;
@@ -420,11 +380,7 @@ likesMenu: "Beğeniler",
               </button>
             </div>
 
-            <SidebarLinks
-              t={t}
-              active="likes"
-              navigate={navigate}
-            />
+            <SidebarLinks t={t} active="likes" navigate={navigate} />
           </aside>
         </div>
       )}
@@ -461,11 +417,7 @@ likesMenu: "Beğeniler",
               Menü
             </div>
 
-            <SidebarLinks
-              t={t}
-              active="likes"
-              navigate={navigate}
-            />
+            <SidebarLinks t={t} active="likes" navigate={navigate} />
 
             <div className="px-4 mt-9 mb-4 text-[10px] tracking-[3px] text-white/25 uppercase">
               Hesabım
@@ -476,9 +428,7 @@ likesMenu: "Beğeniler",
               className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-white/60 hover:text-white hover:bg-white/5 transition"
             >
               <User className="w-5 h-5" />
-              <span className="text-sm font-medium">
-                {t.myProfile}
-              </span>
+              <span className="text-sm font-medium">{t.myProfile}</span>
             </button>
 
             <button
@@ -486,9 +436,7 @@ likesMenu: "Beğeniler",
               className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-white/60 hover:text-white hover:bg-white/5 transition"
             >
               <Settings className="w-5 h-5" />
-              <span className="text-sm font-medium">
-                {t.settings}
-              </span>
+              <span className="text-sm font-medium">{t.settings}</span>
             </button>
           </div>
 
@@ -514,7 +462,7 @@ likesMenu: "Beğeniler",
         {/* MAIN */}
         <main className="flex-1 md:ml-[282px] min-w-0">
           {/* TOP BAR */}
-        <header className="sticky top-0 z-[100] px-4 md:px-8 pt-4 pointer-events-auto">
+          <header className="sticky top-0 z-[100] px-4 md:px-8 pt-4 pointer-events-auto">
             <div className="h-[70px] rounded-2xl border border-white/15 bg-[#0c111d]/90 backdrop-blur-xl flex items-center gap-3 px-3 md:px-5 shadow-2xl shadow-black/20">
               {/* MOBILE MENU */}
               <button
@@ -524,16 +472,56 @@ likesMenu: "Beğeniler",
                 <Users className="w-5 h-5" />
               </button>
 
-           
-
               <div className="flex items-center gap-2 ml-auto">
-                {/* LANGUAGE */}
-                <div className="hidden lg:flex h-11 items-center gap-2 rounded-xl border border-white/10 px-3 text-xs text-white/60">
-                  <span className="font-bold">
-                    {lang}
-                  </span>
+                {/* LANGUAGES */}
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setLang("TR")}
+                    className={`h-10 px-3 rounded-xl border text-xs font-bold transition ${
+                      lang === "TR"
+                        ? "border-pink-400/40 bg-pink-500/15 text-pink-300"
+                        : "border-white/10 bg-white/[0.02] text-white/50 hover:text-white hover:bg-white/5"
+                    }`}
+                  >
+                    🇹🇷 TR
+                  </button>
 
-                  <ChevronRight className="w-3 h-3 rotate-90" />
+                  <button
+                    type="button"
+                    onClick={() => setLang("EN")}
+                    className={`h-10 px-3 rounded-xl border text-xs font-bold transition ${
+                      lang === "EN"
+                        ? "border-pink-400/40 bg-pink-500/15 text-pink-300"
+                        : "border-white/10 bg-white/[0.02] text-white/50 hover:text-white hover:bg-white/5"
+                    }`}
+                  >
+                    🇬🇧 EN
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setLang("RU")}
+                    className={`h-10 px-3 rounded-xl border text-xs font-bold transition ${
+                      lang === "RU"
+                        ? "border-pink-400/40 bg-pink-500/15 text-pink-300"
+                        : "border-white/10 bg-white/[0.02] text-white/50 hover:text-white hover:bg-white/5"
+                    }`}
+                  >
+                    🇷🇺 RU
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setLang("AR")}
+                    className={`h-10 px-3 rounded-xl border text-xs font-bold transition ${
+                      lang === "AR"
+                        ? "border-pink-400/40 bg-pink-500/15 text-pink-300"
+                        : "border-white/10 bg-white/[0.02] text-white/50 hover:text-white hover:bg-white/5"
+                    }`}
+                  >
+                    🇸🇦 AR
+                  </button>
                 </div>
 
                 {/* NOTIFICATION */}
@@ -583,9 +571,7 @@ likesMenu: "Beğeniler",
                       {t.likes}
                     </h1>
 
-                    <p className="text-sm text-white/40 mt-1">
-                      {t.subtitle}
-                    </p>
+                    <p className="text-sm text-white/40 mt-1">{t.subtitle}</p>
                   </div>
                 </div>
               </div>
@@ -603,9 +589,7 @@ likesMenu: "Beğeniler",
                     </div>
 
                     <h2 className="mt-4 text-xl md:text-2xl font-bold">
-                      {tab === "received"
-                        ? t.likedYou
-                        : t.youLiked}
+                      {tab === "received" ? t.likedYou : t.youLiked}
                     </h2>
 
                     <p className="text-sm text-white/40 mt-1">
@@ -638,9 +622,7 @@ likesMenu: "Beğeniler",
                   >
                     <Heart
                       className={`w-4 h-4 ${
-                        tab === "received"
-                          ? "text-pink-400"
-                          : ""
+                        tab === "received" ? "text-pink-400" : ""
                       }`}
                     />
 
@@ -671,9 +653,7 @@ likesMenu: "Beğeniler",
                   >
                     <ThumbsUp
                       className={`w-4 h-4 ${
-                        tab === "sent"
-                          ? "text-cyan-400"
-                          : ""
+                        tab === "sent" ? "text-cyan-400" : ""
                       }`}
                     />
 
@@ -707,10 +687,10 @@ likesMenu: "Beğeniler",
                     {lang === "TR"
                       ? "Beğeniler yükleniyor..."
                       : lang === "EN"
-                      ? "Loading likes..."
-                      : lang === "RU"
-                      ? "Загрузка лайков..."
-                      : "جاري تحميل الإعجابات..."}
+                        ? "Loading likes..."
+                        : lang === "RU"
+                          ? "Загрузка лайков..."
+                          : "جاري تحميل الإعجابات..."}
                   </p>
                 </div>
               )}
@@ -718,26 +698,24 @@ likesMenu: "Beğeniler",
               {/* NOT LOGGED IN */}
               {!loading && !myId && (
                 <EmptyState
-                  icon={
-                    <Heart className="w-10 h-10 text-pink-400" />
-                  }
+                  icon={<Heart className="w-10 h-10 text-pink-400" />}
                   title={
                     lang === "TR"
                       ? "Giriş yapmalısın"
                       : lang === "EN"
-                      ? "You must log in"
-                      : lang === "RU"
-                      ? "Необходимо войти"
-                      : "يجب تسجيل الدخول"
+                        ? "You must log in"
+                        : lang === "RU"
+                          ? "Необходимо войти"
+                          : "يجب تسجيل الدخول"
                   }
                   description={
                     lang === "TR"
                       ? "Beğenilerini görmek için hesabına giriş yap."
                       : lang === "EN"
-                      ? "Log in to see your likes."
-                      : lang === "RU"
-                      ? "Войдите, чтобы увидеть свои лайки."
-                      : "سجل الدخول لرؤية إعجاباتك."
+                        ? "Log in to see your likes."
+                        : lang === "RU"
+                          ? "Войдите, чтобы увидеть свои лайки."
+                          : "سجل الدخول لرؤية إعجاباتك."
                   }
                   buttonText={t.login}
                   onClick={() => setAuthTab("login")}
@@ -750,9 +728,7 @@ likesMenu: "Beğeniler",
                 tab === "received" &&
                 received.length === 0 && (
                   <EmptyState
-                    icon={
-                      <Heart className="w-10 h-10 text-pink-400" />
-                    }
+                    icon={<Heart className="w-10 h-10 text-pink-400" />}
                     title={t.noOneLiked}
                     description={t.noOneLikedDesc}
                     buttonText={t.editProfile}
@@ -761,204 +737,172 @@ likesMenu: "Beğeniler",
                 )}
 
               {/* EMPTY SENT */}
-              {!loading &&
-                myId &&
-                tab === "sent" &&
-                sent.length === 0 && (
-                  <EmptyState
-                    icon={
-                      <Search className="w-10 h-10 text-cyan-400" />
-                    }
-                    title={t.youLikedNobody}
-                    description={t.youLikedNobodyDesc}
-                    buttonText={t.explore}
-                    onClick={() => navigate("/search")}
-                  />
-                )}
+              {!loading && myId && tab === "sent" && sent.length === 0 && (
+                <EmptyState
+                  icon={<Search className="w-10 h-10 text-cyan-400" />}
+                  title={t.youLikedNobody}
+                  description={t.youLikedNobodyDesc}
+                  buttonText={t.explore}
+                  onClick={() => navigate("/search")}
+                />
+              )}
 
               {/* PROFILE GRID */}
-              {!loading &&
-                myId &&
-                visibleMatches.length > 0 && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
-                    {visibleMatches.map((match) => {
-                      const other = getOtherUser(match, myId);
+              {!loading && myId && visibleMatches.length > 0 && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+                  {visibleMatches.map((match) => {
+                    const other = getOtherUser(match, myId);
 
-                      if (!other?.id) return null;
+                    if (!other?.id) return null;
 
-                      const avatar = getAvatar(other);
-                      const name = getFullName(other);
-                      const age = other.birthDate
-                        ? calcAge(other.birthDate)
-                        : undefined;
+                    const avatar = getAvatar(other);
+                    const name = getFullName(other);
+                    const age = other.birthDate
+                      ? calcAge(other.birthDate)
+                      : undefined;
 
-                      const city = getCity(other);
-                      const district = getDistrict(other);
+                    const city = getCity(other);
+                    const district = getDistrict(other);
 
-                      const location =
-                        city && district
-                          ? `${city} • ${district}`
-                          : city || district || "";
+                    const location =
+                      city && district
+                        ? `${city} • ${district}`
+                        : city || district || "";
 
-                      const isMutual =
-                        match?.isMutual === true ||
-                        match?.mutual === true;
+                    const isMutual =
+                      match?.isMutual === true || match?.mutual === true;
 
-                      return (
-                        <article
-                          key={match.id}
-                          className="group relative overflow-hidden rounded-3xl border border-white/10 bg-[#0d1422] hover:border-pink-400/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-pink-500/10"
+                    return (
+                      <article
+                        key={match.id}
+                        className="group relative overflow-hidden rounded-3xl border border-white/10 bg-[#0d1422] hover:border-pink-400/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-pink-500/10"
+                      >
+                        {/* IMAGE */}
+                        <button
+                          onClick={() => navigate(`/profile/${other.id}`)}
+                          className="relative block w-full aspect-[4/4.2] overflow-hidden bg-gradient-to-br from-[#172035] to-[#101522]"
                         >
-                          {/* IMAGE */}
-                          <button
-                            onClick={() =>
-                              navigate(
-                                `/profile/${other.id}`
-                              )
-                            }
-                            className="relative block w-full aspect-[4/4.2] overflow-hidden bg-gradient-to-br from-[#172035] to-[#101522]"
-                          >
-                            {avatar ? (
-                              <img
-                                src={avatar}
-                                alt={name}
-                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                              />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-pink-500/20 via-purple-500/10 to-cyan-500/10">
-                                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-pink-500 to-orange-400 flex items-center justify-center text-3xl font-black shadow-xl">
-                                  {getInitials(other)}
-                                </div>
-                              </div>
-                            )}
-
-                            {/* GRADIENT */}
-                            <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/80 to-transparent" />
-
-                            {/* VERIFIED */}
-                            {other?.isVerified && (
-                              <div className="absolute top-4 left-4 w-8 h-8 rounded-full bg-cyan-500 flex items-center justify-center border-2 border-white/30 shadow-lg">
-                                <Check className="w-4 h-4 text-white" />
-                              </div>
-                            )}
-
-                            {/* ONLINE */}
-                            {other?.isOnline && (
-                              <div className="absolute top-4 right-4 flex items-center gap-1.5 rounded-full bg-black/50 backdrop-blur-md px-2.5 py-1.5 border border-white/10">
-                                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-
-                                <span className="text-[9px] font-semibold text-white/80">
-                                  {t.online}
-                                </span>
-                              </div>
-                            )}
-                          </button>
-
-                          {/* CONTENT */}
-                          <div className="p-5">
-                            <div className="flex items-start justify-between gap-2">
-                              <div className="min-w-0">
-                                <h3 className="text-lg font-bold truncate">
-                                  {name}
-                                  {age !== undefined && (
-                                    <span className="text-cyan-400 ml-1">
-                                      {age}
-                                    </span>
-                                  )}
-                                </h3>
-
-                                {location && (
-                                  <div className="flex items-center gap-1.5 mt-1.5 text-xs text-white/35">
-                                    <MapPin className="w-3.5 h-3.5 text-cyan-400" />
-                                    <span className="truncate">
-                                      {location}
-                                    </span>
-                                  </div>
-                                )}
+                          {avatar ? (
+                            <img
+                              src={avatar}
+                              alt={name}
+                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-pink-500/20 via-purple-500/10 to-cyan-500/10">
+                              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-pink-500 to-orange-400 flex items-center justify-center text-3xl font-black shadow-xl">
+                                {getInitials(other)}
                               </div>
                             </div>
+                          )}
 
-                            {other?.bio && (
-                              <p className="text-xs text-white/35 line-clamp-2 mt-3 min-h-[32px]">
-                                {other.bio}
-                              </p>
-                            )}
+                          {/* GRADIENT */}
+                          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/80 to-transparent" />
 
-                            {/* ACTIONS */}
-                            <div className="mt-5 flex gap-2">
-                              <button
-                                onClick={() =>
-                                  navigate(
-                                    `/profile/${other.id}`
-                                  )
-                                }
-                                className="flex-1 h-10 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.07] text-xs font-semibold text-white/70 hover:text-white transition"
-                              >
-                                {t.profile}
-                              </button>
+                          {/* VERIFIED */}
+                          {other?.isVerified && (
+                            <div className="absolute top-4 left-4 w-8 h-8 rounded-full bg-cyan-500 flex items-center justify-center border-2 border-white/30 shadow-lg">
+                              <Check className="w-4 h-4 text-white" />
+                            </div>
+                          )}
 
-                              {tab === "received" &&
-                                !isMutual && (
-                                  <button
-                                    disabled={
-                                      likingId ===
-                                      String(other.id)
-                                    }
-                                    onClick={() =>
-                                      handleLike(
-                                        String(other.id)
-                                      )
-                                    }
-                                    className="flex-1 h-10 rounded-xl bg-gradient-to-r from-pink-500 to-fuchsia-500 hover:from-pink-400 hover:to-fuchsia-400 text-xs font-bold transition shadow-lg shadow-pink-500/10 disabled:opacity-50 flex items-center justify-center gap-1.5"
-                                  >
-                                    {likingId ===
-                                    String(other.id) ? (
-                                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                                    ) : (
-                                      <Heart className="w-3.5 h-3.5 fill-white" />
-                                    )}
+                          {/* ONLINE */}
+                          {other?.isOnline && (
+                            <div className="absolute top-4 right-4 flex items-center gap-1.5 rounded-full bg-black/50 backdrop-blur-md px-2.5 py-1.5 border border-white/10">
+                              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
 
-                                    {t.respond}
-                                  </button>
+                              <span className="text-[9px] font-semibold text-white/80">
+                                {t.online}
+                              </span>
+                            </div>
+                          )}
+                        </button>
+
+                        {/* CONTENT */}
+                        <div className="p-5">
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="min-w-0">
+                              <h3 className="text-lg font-bold truncate">
+                                {name}
+                                {age !== undefined && (
+                                  <span className="text-cyan-400 ml-1">
+                                    {age}
+                                  </span>
                                 )}
+                              </h3>
 
-                              {isMutual && (
-                                <button
-                                  onClick={() =>
-                                    navigate(
-                                      `/messages?userId=${other.id}`
-                                    )
-                                  }
-                                  className="flex-1 h-10 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-xs font-bold transition shadow-lg shadow-emerald-500/10 flex items-center justify-center gap-1.5"
-                                >
-                                  <MessageCircle className="w-3.5 h-3.5" />
-                                  {t.sendMessage}
-                                </button>
+                              {location && (
+                                <div className="flex items-center gap-1.5 mt-1.5 text-xs text-white/35">
+                                  <MapPin className="w-3.5 h-3.5 text-cyan-400" />
+                                  <span className="truncate">{location}</span>
+                                </div>
                               )}
                             </div>
+                          </div>
 
-                            {/* MUTUAL LABEL */}
+                          {other?.bio && (
+                            <p className="text-xs text-white/35 line-clamp-2 mt-3 min-h-[32px]">
+                              {other.bio}
+                            </p>
+                          )}
+
+                          {/* ACTIONS */}
+                          <div className="mt-5 flex gap-2">
+                            <button
+                              onClick={() => navigate(`/profile/${other.id}`)}
+                              className="flex-1 h-10 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.07] text-xs font-semibold text-white/70 hover:text-white transition"
+                            >
+                              {t.profile}
+                            </button>
+
+                            {tab === "received" && !isMutual && (
+                              <button
+                                disabled={likingId === String(other.id)}
+                                onClick={() => handleLike(String(other.id))}
+                                className="flex-1 h-10 rounded-xl bg-gradient-to-r from-pink-500 to-fuchsia-500 hover:from-pink-400 hover:to-fuchsia-400 text-xs font-bold transition shadow-lg shadow-pink-500/10 disabled:opacity-50 flex items-center justify-center gap-1.5"
+                              >
+                                {likingId === String(other.id) ? (
+                                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                ) : (
+                                  <Heart className="w-3.5 h-3.5 fill-white" />
+                                )}
+
+                                {t.respond}
+                              </button>
+                            )}
+
                             {isMutual && (
-                              <div className="mt-3 flex items-center justify-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-emerald-300">
-                                <Heart className="w-3 h-3 fill-emerald-400 text-emerald-400" />
-                                {t.mutual}
-                              </div>
+                              <button
+                                onClick={() =>
+                                  navigate(`/messages?userId=${other.id}`)
+                                }
+                                className="flex-1 h-10 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-xs font-bold transition shadow-lg shadow-emerald-500/10 flex items-center justify-center gap-1.5"
+                              >
+                                <MessageCircle className="w-3.5 h-3.5" />
+                                {t.sendMessage}
+                              </button>
                             )}
                           </div>
-                        </article>
-                      );
-                    })}
-                  </div>
-                )}
+
+                          {/* MUTUAL LABEL */}
+                          {isMutual && (
+                            <div className="mt-3 flex items-center justify-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-emerald-300">
+                              <Heart className="w-3 h-3 fill-emerald-400 text-emerald-400" />
+                              {t.mutual}
+                            </div>
+                          )}
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </section>
         </main>
       </div>
 
-      <AuthDialog
-        activeTab={authTab}
-        onClose={() => setAuthTab(null)}
-      />
+      <AuthDialog activeTab={authTab} onClose={() => setAuthTab(null)} />
     </div>
   );
 }
@@ -1029,17 +973,9 @@ function SidebarLinks({
               <span className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-gradient-to-b from-pink-400 to-purple-500" />
             )}
 
-            <Icon
-              className={`w-5 h-5 ${
-                isActive
-                  ? "text-pink-400"
-                  : ""
-              }`}
-            />
+            <Icon className={`w-5 h-5 ${isActive ? "text-pink-400" : ""}`} />
 
-            <span className="text-sm font-semibold">
-              {item.label}
-            </span>
+            <span className="text-sm font-semibold">{item.label}</span>
 
             {isActive && (
               <ChevronRight className="w-4 h-4 ml-auto text-pink-400" />
@@ -1077,13 +1013,9 @@ function EmptyState({
           {icon}
         </div>
 
-        <h3 className="text-xl font-bold text-white mb-2">
-          {title}
-        </h3>
+        <h3 className="text-xl font-bold text-white mb-2">{title}</h3>
 
-        <p className="text-sm leading-6 text-white/35 mb-7">
-          {description}
-        </p>
+        <p className="text-sm leading-6 text-white/35 mb-7">{description}</p>
 
         <button
           onClick={onClick}
