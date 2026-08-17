@@ -236,7 +236,7 @@ export default function Topbar({
             onChange={(event) => setSearchValue(event.target.value)}
             placeholder="İsim, şehir veya kullanıcı adı ara..."
             aria-label="Üye ara"
-            className="h-11 w-full rounded-2xl border border-white/[0.07] bg-white/[0.035] pl-11 pr-20 text-sm font-medium text-white outline-none transition-all duration-300 placeholder:text-slate-600 hover:border-white/10 focus:border-pink-400/25 focus:bg-white/[0.055] focus:shadow-[0_0_0_4px_rgba(244,114,182,0.05)]"
+            className="h-11 w-full rounded-2xl border border-white/[0.07] bg-white/[0.035] pl-11 pr-20 text-base font-medium text-white outline-none transition-all duration-300 placeholder:text-slate-600 hover:border-white/10 focus:border-pink-400/25 focus:bg-white/[0.055] focus:shadow-[0_0_0_4px_rgba(244,114,182,0.05)]"
           />
 
           <span className="pointer-events-none absolute right-3 top-1/2 hidden -translate-y-1/2 rounded-lg border border-white/[0.07] bg-white/[0.035] px-2 py-1 text-[9px] font-bold text-slate-600 xl:block">
@@ -380,7 +380,7 @@ export default function Topbar({
               <div className="absolute right-0 top-[calc(100%+12px)] w-[320px] max-w-[calc(100vw-24px)] overflow-hidden rounded-[24px] border border-white/[0.09] bg-[#0d101b]/95 shadow-[0_28px_90px_rgba(0,0,0,0.5)] backdrop-blur-2xl">
                 <div className="flex items-center justify-between border-b border-white/[0.065] px-4 py-4">
                   <div>
-                    <p className="text-sm font-extrabold text-white">
+                    <p className="text-base font-extrabold text-white">
                       Mesajlar
                     </p>
 
@@ -458,7 +458,7 @@ export default function Topbar({
               <div className="absolute right-0 top-[calc(100%+12px)] w-[340px] max-w-[calc(100vw-24px)] overflow-hidden rounded-[24px] border border-white/[0.09] bg-[#0d101b]/95 shadow-[0_28px_90px_rgba(0,0,0,0.5)] backdrop-blur-2xl">
                 <div className="flex items-center justify-between border-b border-white/[0.065] px-4 py-4">
                   <div>
-                    <p className="text-sm font-extrabold text-white">
+                    <p className="text-base font-extrabold text-white">
                       Bildirimler
                     </p>
 
@@ -570,7 +570,7 @@ export default function Topbar({
 
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5">
-                        <p className="truncate text-sm font-extrabold text-white">
+                        <p className="truncate text-base font-extrabold text-white">
                           {userName}
                         </p>
 

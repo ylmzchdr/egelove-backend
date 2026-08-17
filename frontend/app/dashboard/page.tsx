@@ -375,7 +375,7 @@ export default function DashboardPage() {
                     </div>
                   </div>
 
-                  <p className="mt-5 text-sm font-medium text-slate-400">
+                  <p className="mt-5 text-basefont-medium text-slate-400">
                     {copy.loading}
                   </p>
                 </div>
@@ -476,7 +476,7 @@ export default function DashboardPage() {
                     <p className="mt-5 text-2xl font-black text-foreground dark:text-white">
                       —
                     </p>
-                    <p className="mt-1 text-xs font-medium text-slate-500">
+                    <p className="mt-1 text-sm font-medium text-slate-400">
                       {copy.newLike}
                     </p>
                   </div>
@@ -495,7 +495,7 @@ export default function DashboardPage() {
                     <p className="mt-5 text-2xl font-black text-foreground dark:text-white">
                       —
                     </p>
-                    <p className="mt-1 text-xs font-medium text-slate-500">
+                    <p className="mt-1 text-sm font-medium text-slate-400">
                       {copy.unread}
                     </p>
                   </div>
@@ -514,7 +514,7 @@ export default function DashboardPage() {
                     <p className="mt-5 text-2xl font-black text-foreground dark:text-white">
                       81
                     </p>
-                    <p className="mt-1 text-xs font-medium text-slate-500">
+                    <p className="mt-1 text-sm font-medium text-slate-400">
                       {copy.nationwide}
                     </p>
                   </div>
@@ -532,7 +532,7 @@ export default function DashboardPage() {
                       {userCity}
                     </p>
 
-                    <p className="mt-1 text-xs font-medium text-slate-500">
+                    <p className="mt-1 text-sm font-medium text-slate-400">
                       {copy.currentLocation}
                     </p>
                   </div>
@@ -552,20 +552,21 @@ export default function DashboardPage() {
                       />
 
                       <div className="relative z-10">
-                        <div className="flex flex-col gap-7 lg:flex-row lg:items-center lg:justify-between">
-                          <div className="max-w-2xl">
-                            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-foreground dark:text-white/85 backdrop-blur-xl">
-                              <Sparkles className="h-3.5 w-3.5" />
-                              {copy.firstStep}
-                            </div>
+  <div className="flex flex-col gap-7 lg:flex-row lg:items-center lg:justify-between">
+    <div className="max-w-2xl">
 
-                            <h2 className="text-2xl font-black leading-tight tracking-tight text-foreground dark:text-white sm:text-3xl">
-                              {copy.welcome}, {userName}
-                            </h2>
+      <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 py-2">
+        <Sparkles className="h-3.5 w-3.5" />
+        {copy.firstStep}
+      </div>
 
-                            <p className="mt-3 max-w-xl text-sm leading-7 text-foreground dark:text-white/80">
-                              {copy.welcomeDesc}
-                            </p>
+      <h2 className="text-3xl sm:text-4xl font-black leading-tight tracking-tight text-white">
+        {copy.welcome}, {userName}
+      </h2>
+
+      <p className="mt-3 max-w-xl text-base leading-7 text-white/75">
+        {copy.welcomeDesc}
+      </p>
 
                             <div className="mt-6 grid gap-3 text-sm text-foreground dark:text-white/90 sm:grid-cols-2">
                               <div className="flex items-center gap-2.5">
@@ -618,7 +619,7 @@ export default function DashboardPage() {
                             {copy.quickAccess}
                           </h2>
 
-                          <p className="mt-1 text-xs text-slate-500">
+                          <p className="mt-1 text-sm text-slate-400">
                             {copy.quickDesc}
                           </p>
                         </div>
@@ -649,16 +650,15 @@ export default function DashboardPage() {
                                   />
                                 </div>
 
-                                <h3 className="mt-5 text-base font-extrabold text-foreground dark:text-white">
-                                  {card.title}
-                                </h3>
-
-                                <p className="mt-2 min-h-10 text-xs leading-5 text-slate-400">
-                                  {card.description}
-                                </p>
+                              <h3 className="mt-5 text-lg font-black text-foreground dark:text-white">
+  {card.title}
+</h3>
+                           <p className="mt-3 min-h-10 text-xl leading-8 text-slate-200">
+  {card.description}
+</p>
 
                                 <div className="mt-5 flex items-center justify-between">
-                                  <span className="text-xs font-bold text-slate-300">
+                                 <span className="text-sm font-bold text-slate-300">
                                     {copy.open}
                                   </span>
 
@@ -766,7 +766,7 @@ export default function DashboardPage() {
                       className="flex min-h-12 flex-col items-center justify-center gap-1 rounded-2xl bg-pink-500/10 text-pink-300"
                     >
                       <Heart className="h-4 w-4 fill-pink-400/20" />
-                      <span className="text-[9px] font-bold">{t.nav.home}</span>
+                     <span className="text-sm font-bold"> {t.nav.home}</span>
                     </Link>
 
                     <Link
@@ -774,8 +774,7 @@ export default function DashboardPage() {
                       className="flex min-h-12 flex-col items-center justify-center gap-1 rounded-2xl text-slate-500 transition hover:bg-white/[0.05] hover:text-foreground dark:text-white"
                     >
                       <Search className="h-4 w-4" />
-                      <span className="text-[9px] font-bold">
-                        {t.nav.discover}
+                      <span className="text-sm font-bold">                        {t.nav.discover}
                       </span>
                     </Link>
 

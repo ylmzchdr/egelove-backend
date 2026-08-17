@@ -136,7 +136,7 @@ export default function SearchFilters({
     >
       {/* Cinsiyet */}
       <div>
-        <label className="text-sm text-white/70">
+        <label className="text-base text-white/70">
           {t.gender}
         </label>
 
@@ -163,7 +163,7 @@ export default function SearchFilters({
 
       {/* Şehir */}
       <div>
-        <label className="text-sm text-white/70">
+        <label className="text-base text-white/70">
           {t.city}
         </label>
 
@@ -191,7 +191,7 @@ export default function SearchFilters({
 
       {/* İlçe */}
       <div>
-        <label className="text-sm text-white/70">
+        <label className="text-base text-white/70">
           {t.district}
         </label>
 
@@ -220,7 +220,7 @@ export default function SearchFilters({
 
       {/* Yaş */}
       <div>
-        <label className="text-sm text-white/70">
+        <label className="text-base text-white/70">
           {t.ageRange}
         </label>
 

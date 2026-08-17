@@ -235,7 +235,7 @@ return (
       onClose();
       window.location.href = "/forgot-password";
     }}
-    className="text-sm text-pink-300 hover:text-pink-200 hover:underline transition-colors"
+    className="text-base text-pink-300 hover:text-pink-200 hover:underline transition-colors"
   >
     Şifremi Unuttum?
   </button>
@@ -261,7 +261,7 @@ return (
               <button 
                 type="button"
                 onClick={() => window.location.href = "https://egelove-backend.onrender.com/auth/google"}
-                className="w-full h-10 flex items-center justify-center gap-2 bg-white text-black hover:bg-gray-100 font-medium rounded-md text-sm transition-colors duration-200"
+                className="w-full h-10 flex items-center justify-center gap-2 bg-white text-black hover:bg-gray-100 font-medium rounded-md text-base transition-colors duration-200"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24">
                   <path fill="#EA4335" d="M12 5.04c1.64 0 3.12.56 4.28 1.67l3.2-3.2C17.52 1.58 14.97 1 12 1 7.24 1 3.2 3.74 1.25 7.74l3.76 2.92C5.9 7.42 8.7 5.04 12 5.04z"/>
@@ -272,7 +272,7 @@ return (
                 Google ile Devam Et
               </button>
 
-              <p className="text-center text-sm text-white/60">
+              <p className="text-center text-base text-white/60">
                 {t.auth.noAccount}{" "}
                 <button type="button" className="text-pink-300 underline" onClick={() => setTab("register")}>{t.auth.register}</button>
               </p>
@@ -378,7 +378,7 @@ return (
                 </Select>
               </div>
 
-              <div className="flex items-center gap-2 text-sm">
+              <div className="flex items-center gap-2 text-base">
                 <Checkbox checked={agreeTerms} onCheckedChange={(checked) => setAgreeTerms(!!checked)} />
                 <span>{t.auth.terms}</span>
               </div>
@@ -386,7 +386,7 @@ return (
               <Button type="submit" disabled={loading} className="w-full bg-white text-pink-600 hover:bg-gray-100 font-bold">
                 {loading ? "..." : t.auth.register}
               </Button>
-              <p className="text-center text-sm text-white/60">
+              <p className="text-center text-base text-white/60">
                 {t.auth.hasAccount}{" "}
                 <button type="button" className="text-pink-300 underline" onClick={() => setTab("login")}>{t.auth.login}</button>
               </p>

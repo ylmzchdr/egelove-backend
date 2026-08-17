@@ -246,8 +246,8 @@ function InfoRow({
 }) {
   return (
     <div className="flex items-center justify-between gap-4 border-b border-white/10 py-3">
-      <span className="text-sm text-white/55">{label}</span>
-      <span className="text-sm font-semibold text-white text-right">
+      <span className="text-base text-white/55">{label}</span>
+      <span className="text-base font-semibold text-white text-right">
         {value || "-"}
       </span>
     </div>
@@ -636,7 +636,7 @@ export default function ProfilePage() {
                 <h1 className="text-3xl font-black tracking-tight sm:text-4xl lg:text-5xl">
                   {tx.myProfile}
                 </h1>
-                <p className="mt-3 max-w-2xl text-sm leading-6 text-white/55 sm:text-base">
+                <p className="mt-3 max-w-2xl text-base leading-6 text-white/55 sm:text-base">
                   {tx.previewDesc}
                 </p>
               </div>
@@ -657,7 +657,7 @@ export default function ProfilePage() {
               >
                 <div className="text-center">
                   <Loader2 className="mx-auto h-11 w-11 animate-spin text-pink-400" />
-                  <p className="mt-4 text-sm text-white/45">EGELOVE</p>
+                  <p className="mt-4 text-base text-white/45">EGELOVE</p>
                 </div>
               </div>
             ) : !user ? (
@@ -710,7 +710,7 @@ export default function ProfilePage() {
                         )}
                       </div>
 
-                      <div className="mt-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-white/60 lg:justify-start rtl:lg:justify-end">
+                      <div className="mt-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-base text-white/60 lg:justify-start rtl:lg:justify-end">
                         <span className="inline-flex items-center gap-2">
                           <Calendar className="h-4 w-4 text-pink-300" />
                           {age ?? "-"}
@@ -727,7 +727,7 @@ export default function ProfilePage() {
                         </span>
                       </div>
 
-                      <p className="mx-auto mt-5 max-w-3xl text-sm leading-7 text-white/65 lg:mx-0">
+                      <p className="mx-auto mt-5 max-w-3xl text-base leading-7 text-white/65 lg:mx-0">
                         {user.aboutMe || user.bio || tx.member}
                       </p>
                     </div>
@@ -772,7 +772,7 @@ export default function ProfilePage() {
   {value}
 </span>
                       </div>
-                      <p className="mt-4 truncate text-xs font-semibold uppercase tracking-[0.12em] text-white/40 sm:text-sm">
+                      <p className="mt-4 truncate text-xs font-semibold uppercase tracking-[0.12em] text-white/40 sm:text-base">
                         {label}
                       </p>
                     </div>
@@ -830,11 +830,11 @@ export default function ProfilePage() {
                     </div>
 
                     <div className={`${glassCard} grid grid-cols-2 gap-3 p-4`}>
-                      <button className="flex items-center justify-center gap-2 rounded-2xl border border-pink-400/25 bg-pink-500/10 py-3 text-sm font-bold text-pink-200 transition hover:bg-pink-500/20">
+                      <button className="flex items-center justify-center gap-2 rounded-2xl border border-pink-400/25 bg-pink-500/10 py-3 text-base font-bold text-pink-200 transition hover:bg-pink-500/20">
                         <Heart className="h-4 w-4" />
                         {tx.wink}
                       </button>
-                      <button className="flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 py-3 text-sm font-bold text-white/75 transition hover:bg-white/10">
+                      <button className="flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 py-3 text-base font-bold text-white/75 transition hover:bg-white/10">
                         <Star className="h-4 w-4" />
                         {tx.favorite}
                       </button>
@@ -869,7 +869,7 @@ export default function ProfilePage() {
                     <div className="grid gap-6 lg:grid-cols-2">
                       <div className={`${glassCard} p-5 sm:p-7`}>
                         <h3 className="mb-5 text-lg font-black">{tx.about}</h3>
-                        <p className="whitespace-pre-line text-sm leading-8 text-white/68 sm:text-base">
+                        <p className="whitespace-pre-line text-base leading-8 text-white/68 sm:text-base">
                           {user.aboutMe || user.bio || "-"}
                         </p>
                       </div>
@@ -878,7 +878,7 @@ export default function ProfilePage() {
                         <h3 className="mb-5 text-lg font-black">
                           {tx.lookingFor}
                         </h3>
-                        <p className="whitespace-pre-line text-sm leading-8 text-white/68 sm:text-base">
+                        <p className="whitespace-pre-line text-base leading-8 text-white/68 sm:text-base">
                           {user.lookingFor || "-"}
                         </p>
                       </div>
@@ -958,7 +958,7 @@ export default function ProfilePage() {
                               <UserCircle className="h-6 w-6 text-white/55" />
                             </div>
                             <div className="min-w-0">
-                              <div className="truncate text-sm font-bold">
+                              <div className="truncate text-base font-bold">
                                 {tx.member}
                               </div>
                               <div className="truncate text-xs text-white/40">
@@ -979,7 +979,7 @@ export default function ProfilePage() {
                         <h3 className="mb-2 text-xl font-black text-amber-100">
                           {tx.premium}
                         </h3>
-                        <p className="mb-5 text-sm leading-6 text-white/60">
+                        <p className="mb-5 text-base leading-6 text-white/60">
                           {tx.premiumDescription}
                         </p>
                         <Link href="/premium">

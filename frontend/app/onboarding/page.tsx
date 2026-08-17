@@ -196,7 +196,7 @@ export default function OnboardingPage() {
           <div className="bg-white/5 border border-white/10 rounded-xl p-8">
             <div className="flex justify-between mb-2">
               <h1 className="text-2xl font-bold">Profilini Oluştur</h1>
-              <span className="text-white/40 text-sm">{step + 1}/{STEPS.length}</span>
+              <span className="text-white/40 text-base">{step + 1}/{STEPS.length}</span>
             </div>
 
             <div className="w-full bg-white/10 rounded-full h-2 mb-8">
@@ -336,7 +336,7 @@ export default function OnboardingPage() {
               <div>
                 <Label className="text-lg mb-4 block">Profil fotoğrafların</Label>
                 <ProfilePhotoUpload />
-                <p className="text-white/40 text-sm mt-4">En az 1 fotoğraf yüklemen önerilir. Fotoğraflar onaylandıktan sonra profilin görünür olacak.</p>
+                <p className="text-white/40 text-base mt-4">En az 1 fotoğraf yüklemen önerilir. Fotoğraflar onaylandıktan sonra profilin görünür olacak.</p>
               </div>
             )}
 

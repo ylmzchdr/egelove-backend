@@ -210,7 +210,7 @@ if (targetUserId) {
                   <button
                     key={key}
                     onClick={() => setTab(key)}
-                    className={`flex-1 py-1.5 text-sm font-medium rounded-md transition ${
+                    className={`flex-1 py-1.5 text-base font-medium rounded-md transition ${
                       tab === key ? "bg-pink-600 text-white" : "text-white/50 hover:text-white"
                     }`}
                   >
@@ -316,7 +316,7 @@ if (targetUserId) {
 
       return (
         <>
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center text-sm font-bold">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center text-base font-bold">
             {(other?.name?.[0] || "?").toUpperCase()}
           </div>
 
@@ -340,7 +340,7 @@ if (targetUserId) {
                         <div className={`max-w-[70%] p-3 rounded-2xl ${
                           msg.senderId === myId ? "bg-pink-600 rounded-br-md" : "bg-white/10 rounded-bl-md"
                         }`}>
-                          <p className="text-sm">{msg.content}</p>
+                          <p className="text-base">{msg.content}</p>
 
 {translations[msg.id] && (
   <div className="mt-2 border-t border-white/10 pt-2 text-xs text-cyan-200">

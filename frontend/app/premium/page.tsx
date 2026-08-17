@@ -295,7 +295,7 @@ export default function PremiumPage() {
                       {formatPrice(plan.price)}
                     </span>
 
-                    <span className="text-white/40 text-sm"> {plan.currency}</span>
+                    <span className="text-white/40 text-base"> {plan.currency}</span>
 
                     {plan.originalPrice && (
                       <span className="block text-white/30 text-xs line-through">
@@ -304,7 +304,7 @@ export default function PremiumPage() {
                     )}
                   </div>
 
-                  <ul className="text-left text-sm space-y-2 mb-6">
+                  <ul className="text-left text-base space-y-2 mb-6">
                     {plan.features.map((feature, index) => (
                       <li key={index} className="flex items-center gap-2 text-white/70">
                         <Check className="w-4 h-4 text-pink-400" />

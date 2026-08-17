@@ -550,7 +550,7 @@ console.log("ŞEHİR SAYISI:", data.length);
           <div className="mx-auto flex min-h-[560px] max-w-7xl items-center px-4 py-16 sm:px-6 lg:px-8">
             <div className="grid w-full items-end gap-10 lg:grid-cols-[1fr_360px]">
               <div className="max-w-3xl">
-                <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-cyan-300/25 bg-cyan-300/10 px-4 py-2 text-sm font-semibold text-cyan-100 backdrop-blur-xl">
+                <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-cyan-300/25 bg-cyan-300/10 px-4 py-2 text-base font-semibold text-cyan-100 backdrop-blur-xl">
                   <Sparkles className="h-4 w-4 animate-pulse text-cyan-300" />
                   Bugün senin için seçildi
                 </div>
@@ -630,7 +630,7 @@ label={t.search.newMembers.split(" / ")[1]}
           <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="mb-8 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
               <div>
-                <div className="mb-2 flex items-center gap-2 text-sm font-bold uppercase tracking-[0.2em] text-cyan-300">
+                <div className="mb-2 flex items-center gap-2 text-base font-bold uppercase tracking-[0.2em] text-cyan-300">
                   <Heart className="h-4 w-4 fill-current" />
                   Sana özel üyeler
                 </div>
@@ -696,7 +696,7 @@ hover:shadow-[0_0_25px_rgba(0,255,255,.25)]
 
             {activeFilterCount > 0 && (
               <div className="mb-8 flex flex-wrap items-center gap-3 rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.07] px-4 py-3 backdrop-blur-xl">
-                <div className="flex items-center gap-2 text-sm font-bold text-cyan-100">
+                <div className="flex items-center gap-2 text-base font-bold text-cyan-100">
                   <Check className="h-4 w-4" />
                   {activeFilterCount} filtre uygulanıyor
                 </div>
@@ -704,7 +704,7 @@ hover:shadow-[0_0_25px_rgba(0,255,255,.25)]
                 <button
                   type="button"
                   onClick={() => void clearAndSearch()}
-                  className="ml-auto text-sm font-bold text-white/60 underline-offset-4 transition hover:text-white hover:underline"
+                  className="ml-auto text-base font-bold text-white/60 underline-offset-4 transition hover:text-white hover:underline"
                 >
                   Tümünü temizle
                 </button>
@@ -830,16 +830,16 @@ function ProfileSection({
       </div>
       <div className="mb-6 flex items-end justify-between gap-5">
         <div>
-          <div className="flex items-center gap-2 text-sm font-bold text-cyan-300">
+          <div className="flex items-center gap-2 text-base font-bold text-cyan-300">
             {icon}
             {eyebrow}
           </div>
 
           <h3 className="mt-2 text-2xl font-black sm:text-3xl">{title}</h3>
-          <p className="mt-2 text-sm text-white/45">{description}</p>
+          <p className="mt-2 text-base text-white/45">{description}</p>
         </div>
 
-        <div className="hidden items-center gap-2 text-sm font-semibold text-white/35 sm:flex">
+        <div className="hidden items-center gap-2 text-base font-semibold text-white/35 sm:flex">
           <MapPin className="h-4 w-4" />
           Türkiye
         </div>
@@ -918,7 +918,7 @@ function LoadingState() {
         <Loader2 className="absolute inset-0 m-auto h-10 w-10 animate-spin text-cyan-300" />
       </div>
 
-      <p className="mt-5 text-sm font-semibold text-white/50">
+      <p className="mt-5 text-base font-semibold text-white/50">
         Sana uygun profiller hazırlanıyor...
       </p>
     </div>
@@ -938,7 +938,7 @@ function EmptySearchState({ onReset }: EmptySearchStateProps) {
 
       <h3 className="mt-6 text-2xl font-black">Uygun profil bulunamadı</h3>
 
-      <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-white/50">
+      <p className="mx-auto mt-3 max-w-md text-base leading-6 text-white/50">
         Filtrelerini biraz genişleterek daha fazla üyeye ulaşabilirsin.
       </p>
 
@@ -1009,7 +1009,7 @@ function FilterDrawer({
 
         <div className="flex items-center justify-between border-b border-white/10 px-5 py-5 sm:px-7">
           <div>
-            <div className="flex items-center gap-2 text-sm font-bold text-cyan-300">
+            <div className="flex items-center gap-2 text-base font-bold text-cyan-300">
               <SlidersHorizontal className="h-4 w-4" />
               Gelişmiş Arama
             </div>
@@ -1108,7 +1108,7 @@ function StyledSelect({
       value={value}
       disabled={disabled}
       onChange={(event) => onValueChange?.(event.target.value)}
-      className="h-11 w-full rounded-xl border border-white/20 bg-[#171b26] px-4 text-sm font-medium text-white outline-none transition focus:border-cyan-300/60 focus:ring-2 focus:ring-cyan-300/20 disabled:cursor-not-allowed disabled:opacity-50"
+      className="h-11 w-full rounded-xl border border-white/20 bg-[#171b26] px-4 text-base font-medium text-white outline-none transition focus:border-cyan-300/60 focus:ring-2 focus:ring-cyan-300/20 disabled:cursor-not-allowed disabled:opacity-50"
     >
       <option value="" disabled>
         {placeholder}
@@ -1201,7 +1201,7 @@ function FilterCheckbox({
         )}
       </span>
 
-      <span className="text-sm font-semibold">{label}</span>
+      <span className="text-base font-semibold">{label}</span>
     </label>
   );
 }

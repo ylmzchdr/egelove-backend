@@ -113,10 +113,10 @@ export default function AdminPage() {
           )}
 
           <div className="flex gap-4 mb-8 border-b border-white/10">
-            <button onClick={() => setPanel("photos")} className={`pb-3 text-sm font-medium ${panel === "photos" ? "text-pink-300 border-b-2 border-pink-500" : "text-white/50"}`}>
+            <button onClick={() => setPanel("photos")} className={`pb-3 text-base font-medium ${panel === "photos" ? "text-pink-300 border-b-2 border-pink-500" : "text-white/50"}`}>
               Fotoğraf Moderasyonu ({pendingPhotos.length})
             </button>
-            <button onClick={() => setPanel("users")} className={`pb-3 text-sm font-medium ${panel === "users" ? "text-pink-300 border-b-2 border-pink-500" : "text-white/50"}`}>
+            <button onClick={() => setPanel("users")} className={`pb-3 text-base font-medium ${panel === "users" ? "text-pink-300 border-b-2 border-pink-500" : "text-white/50"}`}>
               Kullanıcılar ({users.length})
             </button>
           </div>
@@ -165,7 +165,7 @@ export default function AdminPage() {
             </div>
           ) : (
             <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
-              <table className="w-full text-sm">
+              <table className="w-full text-base">
                 <thead>
                   <tr className="border-b border-white/10 text-white/50">
                     <th className="text-left p-4">Kullanıcı</th>

@@ -74,13 +74,20 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   let res = await rawRequest<T>(path, options, token);
 
   if (res.status === 401) {
-    const newToken = await refreshAccessToken();
+  console.log("🔴 401 ALINDI → REFRESH BAŞLIYOR");
 
-    if (newToken) {
-      res = await rawRequest<T>(path, options, newToken);
-    }
+  const newToken = await refreshAccessToken();
+
+  console.log(
+    "🔵 REFRESH SONUCU:",
+    newToken ? "YENİ ACCESS TOKEN VAR" : "REFRESH BAŞARISIZ"
+  );
+
+  if (newToken) {
+    console.log("🟢 YENİ TOKEN İLE TEKRAR İSTEK ATIYORUM");
+    res = await rawRequest<T>(path, options, newToken);
   }
-
+}
   if (!res.ok) {
     const error = await res
       .json()

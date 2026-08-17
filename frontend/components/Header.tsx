@@ -125,7 +125,7 @@ setUserName(getFirstName(user));
             <Link
               key={item.label}
               href={item.href}
-              className="text-black/80 hover:text-black transition font-bold text-sm no-underline"
+              className="text-black/80 hover:text-black transition font-bold text-base no-underline"
             >
               {item.label}
             </Link>

@@ -32,13 +32,13 @@ export default function Footer() {
             © 2026 EgeLove. Tüm Hakları Saklıdır.
           </p>
 
-          <p className="mx-auto mt-4 max-w-4xl text-sm leading-7 text-white/50">
+          <p className="mx-auto mt-4 max-w-4xl text-base leading-7 text-white/50">
             Bu web sitesindeki tüm içerik, tasarım, yazılım,
             EgeMatch AI teknolojisi, logolar, görseller ve metinler
             fikri mülkiyet hakları kapsamında korunmaktadır.
           </p>
 
-          <p className="mx-auto mt-3 max-w-4xl text-sm leading-7 text-white/50">
+          <p className="mx-auto mt-3 max-w-4xl text-base leading-7 text-white/50">
             İzinsiz kopyalanamaz, çoğaltılamaz, yayımlanamaz,
             ticari amaçla kullanılamaz veya başka platformlarda
             paylaşılamaz. Tüm haklar saklıdır.

@@ -22,7 +22,7 @@ export default function CookieConsent() {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-[100] bg-pink-900/95 backdrop-blur-md border-t border-white/10 p-4">
       <div className="mx-auto max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-4">
-        <p className="text-sm text-white/70">
+        <p className="text-base text-white/70">
           Kişisel verilerinizi KVKK kapsamında işliyoruz. Detaylı bilgi için{" "}
           <button className="text-pink-300 underline">Gizlilik Politikası</button>nı inceleyin.
         </p>

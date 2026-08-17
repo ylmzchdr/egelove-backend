@@ -55,7 +55,7 @@ const handleReset = async (e: React.FormEvent) => {
   return (
     <div className="min-h-screen bg-pink-950 text-white flex items-center justify-center">
       <div className="w-full max-w-md px-4">
-        <a href="/" className="inline-flex items-center gap-2 text-white/50 hover:text-white mb-8 text-sm">
+        <a href="/" className="inline-flex items-center gap-2 text-white/50 hover:text-white mb-8 text-base">
           <ArrowLeft className="w-4 h-4" /> Ana Sayfaya Dön
         </a>
 
@@ -64,7 +64,7 @@ const handleReset = async (e: React.FormEvent) => {
             <form onSubmit={handleSendCode} className="space-y-4">
               <Mail className="w-10 h-10 text-pink-400 mx-auto mb-2" />
               <h1 className="text-2xl font-bold text-center">Şifremi Unuttum</h1>
-              <p className="text-sm text-white/50 text-center">E-posta adresine şifre sıfırlama kodu gönderelim.</p>
+              <p className="text-base text-white/50 text-center">E-posta adresine şifre sıfırlama kodu gönderelim.</p>
               <Input
                 type="email"
                 placeholder="E-posta adresin"
@@ -82,7 +82,7 @@ const handleReset = async (e: React.FormEvent) => {
             <div className="text-center space-y-4">
               <CheckCircle className="w-12 h-12 text-green-400 mx-auto" />
               <h1 className="text-2xl font-bold">Kod Gönderildi</h1>
-              <p className="text-sm text-white/50">{email} adresine bir doğrulama kodu gönderdik.</p>
+              <p className="text-base text-white/50">{email} adresine bir doğrulama kodu gönderdik.</p>
               <Button className="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold" onClick={() => setStep("reset")}>
                 Kodu Gir
               </Button>

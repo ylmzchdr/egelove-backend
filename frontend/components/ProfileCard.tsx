@@ -137,7 +137,7 @@ const avatarUrl =
         </h3>
 
         {(city || district) && (
-          <div className="flex items-center justify-center gap-1 mt-1.5 text-white/60 text-sm">
+          <div className="flex items-center justify-center gap-1 mt-1.5 text-white/60 text-base">
            <MapPin className="h-4 w-4 text-cyan-300" />
             <span>
               {city || ""}
@@ -147,7 +147,7 @@ const avatarUrl =
           </div>
         )}
 
-        <p className="text-white/50 text-sm mt-3 line-clamp-2 min-h-[2.5rem]">
+        <p className="text-white/50 text-base mt-3 line-clamp-2 min-h-[2.5rem]">
           {bio || ""}
         </p>
 

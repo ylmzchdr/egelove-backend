@@ -584,7 +584,7 @@ useEffect(() => {
     <div className="py-8 text-center">
       <div className="mx-auto mb-4 w-16 h-16 rounded-full border-4 border-pink-400/30 border-t-pink-400 animate-spin" />
       <p className="text-pink-100 font-semibold">{tx.aiAnalyzing}</p>
-      <p className="text-white/50 text-sm mt-1">{tx.compatCalculating}</p>
+      <p className="text-white/50 text-base mt-1">{tx.compatCalculating}</p>
     </div>
   )}
 
@@ -613,7 +613,7 @@ useEffect(() => {
         {(compatibility.reasons || []).map((reason: string, i: number) => (
           <div
             key={i}
-            className="flex items-start gap-2 text-sm text-white/85 bg-white/5 rounded-xl p-3 border border-white/10"
+            className="flex items-start gap-2 text-base text-white/85 bg-white/5 rounded-xl p-3 border border-white/10"
           >
             <span className="text-pink-300">✔</span>
             <span>{reason}</span>
@@ -624,12 +624,12 @@ useEffect(() => {
      <div className="mt-5 space-y-3">
   {compatibility.strengths?.length > 0 && (
     <div className="rounded-2xl bg-emerald-500/10 border border-emerald-300/20 p-4">
-      <p className="mb-2 text-sm font-bold text-emerald-200">
+      <p className="mb-2 text-base font-bold text-emerald-200">
         ✅ {tx.strengths}
       </p>
       <div className="space-y-2">
         {compatibility.strengths.map((item: string, i: number) => (
-          <p key={i} className="text-sm text-white/80 leading-relaxed">
+          <p key={i} className="text-base text-white/80 leading-relaxed">
             • {item}
           </p>
         ))}
@@ -639,12 +639,12 @@ useEffect(() => {
 
   {compatibility.risks?.length > 0 && (
     <div className="rounded-2xl bg-yellow-500/10 border border-yellow-300/20 p-4">
-      <p className="mb-2 text-sm font-bold text-yellow-200">
+      <p className="mb-2 text-base font-bold text-yellow-200">
         ⚠️ {tx.risks}
       </p>
       <div className="space-y-2">
         {compatibility.risks.map((item: string, i: number) => (
-          <p key={i} className="text-sm text-white/80 leading-relaxed">
+          <p key={i} className="text-base text-white/80 leading-relaxed">
             • {item}
           </p>
         ))}
@@ -654,12 +654,12 @@ useEffect(() => {
 
   {compatibility.suggestions?.length > 0 && (
     <div className="rounded-2xl bg-sky-500/10 border border-sky-300/20 p-4">
-      <p className="mb-2 text-sm font-bold text-sky-200">
+      <p className="mb-2 text-base font-bold text-sky-200">
         💡 {tx.aiSuggestion}
       </p>
       <div className="space-y-2">
         {compatibility.suggestions.map((item: string, i: number) => (
-          <p key={i} className="text-sm text-white/80 leading-relaxed">
+          <p key={i} className="text-base text-white/80 leading-relaxed">
             • {item}
           </p>
         ))}
@@ -669,7 +669,7 @@ useEffect(() => {
 
   {compatibility.commonHobbies?.length > 0 && (
     <div className="rounded-2xl bg-pink-500/10 border border-pink-300/20 p-4">
-      <p className="mb-2 text-sm font-bold text-pink-200">
+      <p className="mb-2 text-base font-bold text-pink-200">
         🎯 {tx.commonHobbies}
       </p>
       <div className="flex flex-wrap gap-2">

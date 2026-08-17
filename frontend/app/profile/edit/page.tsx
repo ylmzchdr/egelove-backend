@@ -650,7 +650,7 @@ const currentLang: LangKey = (
       >
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="h-10 w-10 animate-spin text-pink-400" />
-          <p className="text-sm text-white/60">{tx.loading}</p>
+          <p className="text-base text-white/60">{tx.loading}</p>
         </div>
       </div>
     );
@@ -661,7 +661,7 @@ const currentLang: LangKey = (
   const fieldClass =
     "h-12 rounded-2xl border-white/10 bg-black/20 text-white placeholder:text-white/30 focus-visible:ring-pink-500";
   const textareaClass =
-    "min-h-[130px] w-full resize-y rounded-2xl border border-white/10 bg-black/20 p-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-pink-400/50 focus:ring-2 focus:ring-pink-500/20";
+    "min-h-[130px] w-full resize-y rounded-2xl border border-white/10 bg-black/20 p-4 text-base text-white outline-none placeholder:text-white/30 focus:border-pink-400/50 focus:ring-2 focus:ring-pink-500/20";
 
   return (
     <div
@@ -698,14 +698,14 @@ const currentLang: LangKey = (
                     {tx.title}
                   </h1>
 
-                  <p className="mt-4 max-w-2xl text-sm leading-7 text-white/60 sm:text-base">
+                  <p className="mt-4 max-w-2xl text-base leading-7 text-white/60 sm:text-base">
                     {tx.subtitle}
                   </p>
 
                   <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                     <Link
                       href="/profile"
-                      className="inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-5 text-sm font-bold text-white/80 transition hover:bg-white/10"
+                      className="inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-5 text-base font-bold text-white/80 transition hover:bg-white/10"
                     >
                       <ArrowLeft
                         className={`h-4 w-4 ${isRtl ? "rotate-180" : ""}`}
@@ -715,7 +715,7 @@ const currentLang: LangKey = (
 
                     <Link
                       href="/profile"
-                      className="inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl bg-white px-5 text-sm font-black text-fuchsia-700 transition hover:bg-pink-50"
+                      className="inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl bg-white px-5 text-base font-black text-fuchsia-700 transition hover:bg-pink-50"
                     >
                       <Eye className="h-4 w-4" />
                       {tx.viewProfile}
@@ -726,7 +726,7 @@ const currentLang: LangKey = (
                 <div className="w-full max-w-sm rounded-[26px] border border-white/10 bg-black/20 p-5 backdrop-blur-xl">
                   <div className="flex items-end justify-between gap-4">
                     <div>
-                      <p className="text-sm font-bold">{tx.completion}</p>
+                      <p className="text-base font-bold">{tx.completion}</p>
                       <p className="mt-1 text-xs leading-5 text-white/45">
                         {tx.completionDesc}
                       </p>
@@ -747,13 +747,13 @@ const currentLang: LangKey = (
             </section>
 
             {error && (
-              <div className="mt-6 rounded-2xl border border-red-400/30 bg-red-500/10 p-4 text-sm text-red-200">
+              <div className="mt-6 rounded-2xl border border-red-400/30 bg-red-500/10 p-4 text-base text-red-200">
                 {error}
               </div>
             )}
 
             {success && (
-              <div className="mt-6 flex items-center gap-3 rounded-2xl border border-emerald-400/30 bg-emerald-500/10 p-4 text-sm text-emerald-200">
+              <div className="mt-6 flex items-center gap-3 rounded-2xl border border-emerald-400/30 bg-emerald-500/10 p-4 text-base text-emerald-200">
                 <CheckCircle2 className="h-5 w-5 shrink-0" />
                 {success}
               </div>
@@ -1113,7 +1113,7 @@ const currentLang: LangKey = (
                     {tx.recommendation}
                   </h2>
 
-                  <p className="mt-3 text-sm leading-7 text-white/55">
+                  <p className="mt-3 text-base leading-7 text-white/55">
                     {tx.recommendationDesc}
                   </p>
 
@@ -1194,7 +1194,7 @@ function SectionCard({
     <section className={`${className} p-5 sm:p-7`}>
       <div className="mb-6">
         <h2 className="text-xl font-black sm:text-2xl">{title}</h2>
-        <p className="mt-2 text-sm leading-6 text-white/50">
+        <p className="mt-2 text-base leading-6 text-white/50">
           {description}
         </p>
       </div>
@@ -1214,7 +1214,7 @@ function Field({
 }) {
   return (
     <div className="space-y-2">
-      <Label className="text-sm font-bold text-white/80">{label}</Label>
+      <Label className="text-base font-bold text-white/80">{label}</Label>
       {children}
       {hint && <p className="text-xs text-white/35">{hint}</p>}
     </div>

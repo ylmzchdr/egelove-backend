@@ -179,7 +179,7 @@ export default function Sidebar() {
           "focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-400/80",
           active
             ? "bg-gradient-to-r from-pink-500/20 via-rose-500/15 to-orange-400/10 text-white shadow-[0_12px_35px_rgba(236,72,153,0.12)]"
-            : "text-slate-400 hover:bg-white/[0.055] hover:text-white",
+            : "text-slate-300 hover:bg-white/[0.055] hover:text-white",
         ].join(" ")}
       >
         {active && (
@@ -201,7 +201,7 @@ export default function Sidebar() {
           <Icon className="h-[19px] w-[19px]" strokeWidth={1.9} />
         </span>
 
-        <span className="min-w-0 flex-1 truncate text-sm font-semibold tracking-[0.01em]">
+        <span className="min-w-0 flex-1 truncate text-base font-semibold tracking-[0.01em]">
           {item.label}
         </span>
 
@@ -315,7 +315,7 @@ export default function Sidebar() {
                 </span>
               </div>
 
-              <h3 className="text-sm font-extrabold tracking-tight text-white">
+              <h3 className="text-base font-extrabold tracking-tight text-white">
                 EGELOVE Premium
               </h3>
 
@@ -359,7 +359,7 @@ export default function Sidebar() {
               <LogOut className="h-[19px] w-[19px]" strokeWidth={1.9} />
             </span>
 
-            <span className="flex-1 text-sm font-semibold">{copy.logout}</span>
+            <span className="flex-1 text-base font-semibold">{copy.logout}</span>
 
             <ChevronRight
               className="h-4 w-4 -translate-x-1 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100"
