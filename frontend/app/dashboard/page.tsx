@@ -24,6 +24,8 @@ import AuthDialog from "@/components/AuthDialog";
 import Sidebar from "@/components/dashboard/Sidebar";
 import Topbar from "@/components/dashboard/Topbar";
 import { useI18n } from "@/lib/i18n-context";
+import CanliUyelerComponent from '@/components/OnlineUsers';
+
 
 type AuthTab = "login" | "register" | null;
 
@@ -456,6 +458,8 @@ export default function DashboardPage() {
                   unreadMessages={0}
                   unreadNotifications={0}
                 />
+                <CanliUyelerComponent />
+
 
                 <section className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                   <div className="rounded-[24px] border border-slate-300/65 bg-white/72 p-5 shadow-[0_16px_45px_rgba(71,85,105,0.10)] backdrop-blur-2xl dark:border-white/[0.07] dark:bg-white/[0.035] dark:shadow-[0_18px_50px_rgba(0,0,0,0.28)]">
