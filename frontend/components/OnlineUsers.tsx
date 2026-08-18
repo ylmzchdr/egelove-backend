@@ -2,7 +2,13 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 
 const MOCK_ONLINE_USERS = [
-  { id: '1', name: 'Aslı', avatar: 'https://unsplash.com', city: 'İzmir' },
+  { 
+    id: 'cmrtuleak0001d31wicosgelg', 
+    name: 'sabrina', 
+    // Sabrina'nın senin gönderdiğin o kahve içen harika gerçek profil fotoğrafı
+    avatar: 'https://unsplash.com', 
+    city: 'Muğla' 
+  },
   { id: '2', name: 'Can', avatar: 'https://unsplash.com', city: 'Muğla' },
   { id: '3', name: 'Merve', avatar: 'https://unsplash.com', city: 'Aydın' },
   { id: '4', name: 'Deniz', avatar: 'https://unsplash.com', city: 'Antalya' },
@@ -39,7 +45,14 @@ export default function OnlineUsers() {
         {MOCK_ONLINE_USERS.map((user) => (
           <div 
             key={user.id} 
-            onClick={() => router.push(`/search?user=${user.id}`)}
+            onClick={() => {
+              // Sabrina'ya tıklanırsa doğrudan onun gerçek profil adresine yönlendirir
+              if (user.id === 'cmrtuleak0001d31wicosgelg') {
+                router.push(`/profile/${user.id}`);
+              } else {
+                router.push(`/search?user=${user.id}`);
+              }
+            }}
             className="flex flex-col items-center gap-1 min-w-[65px] cursor-pointer group"
           >
             <div className="relative">
