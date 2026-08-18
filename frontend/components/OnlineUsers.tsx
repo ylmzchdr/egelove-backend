@@ -37,7 +37,11 @@ export default function OnlineUsers() {
 
       <div className="flex items-center gap-4 overflow-x-auto pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
         {MOCK_ONLINE_USERS.map((user) => (
-          <div key={user.id} className="flex flex-col items-center gap-1 min-w-[65px] cursor-pointer group">
+          <div 
+            key={user.id} 
+            onClick={() => router.push(`/search?user=${user.id}`)}
+            className="flex flex-col items-center gap-1 min-w-[65px] cursor-pointer group"
+          >
             <div className="relative">
               <div className="w-14 h-14 rounded-full p-[2px] bg-gradient-to-tr from-purple-600 via-pink-500 to-blue-500 group-hover:scale-105 transition-transform duration-300">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
