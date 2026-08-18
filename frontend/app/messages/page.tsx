@@ -1,119 +1,86 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 export default function MessagesPage() {
-  const [stream, setStream] = useState<MediaStream | null>(null);
-  const [error, setError] = useState<string>('');
   const [isClient, setIsClient] = useState(false);
-  const localVideoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  const kamerayiAc = async () => {
-    try {
-      setError('');
-      const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true
-      });
-      
-      setStream(mediaStream);
-      if (localVideoRef.current) {
-        localVideoRef.current.srcObject = mediaStream;
-      }
-    } catch (err: any) {
-      setError('Kamera veya mikrofon izni reddedildi ortak! Lütfen tarayıcıdan izin ver.');
-    }
-  };
+  // 🛰️ PLANIMIZDAKİ O SİHİRLİ SAF HTML WINDOW.OPEN FIRLATICISI
+  const bagimsizKameraAc = () => {
+    const width = 450;
+    const height = 650;
+    const left = (window.screen.width - width) / 2;
+    const top = (window.screen.height - height) / 2;
 
-  const kamerayiKapat = () => {
-    if (stream) {
-      stream.getTracks().forEach(track => track.stop());
-      setStream(null);
-    }
+    window.open(
+      '/canavar-video',
+      'EgeloveLivePopup',
+      `width=${width},height=${height},top=${top},left=${left},resizable=no,scrollbars=no,status=no,location=no,toolbar=no,menubar=no`
+    );
   };
 
   if (!isClient) return null;
 
   return (
-    <div className="min-h-screen bg-[#121420] text-white p-6">
-      {/* Üst Kısım: Mevcut Mesajlar Arayüzü Düzeni */}
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-3xl p-6 h-[400px] flex flex-col justify-between">
-          <div>
-            <h3 className="text-lg font-bold mb-4 tracking-wide text-purple-400">Mesajlar</h3>
-            <div className="flex gap-2 mb-4">
-              <button className="bg-blue-600 px-3 py-1.5 rounded-xl text-xs font-medium">Tümü</button>
-              <button className="bg-slate-800 px-3 py-1.5 rounded-xl text-xs font-medium text-slate-400">Gelen</button>
-              <button className="bg-slate-800 px-3 py-1.5 rounded-xl text-xs font-medium text-slate-400">Giden</button>
+    <div className="min-h-screen bg-[#121420] text-white flex flex-col">
+      
+      {/* 🧭 ÜST NAVİGASYON BARI - SAF HTML GERİ DÖNÜŞ KAPISI ÇAKILDI */}
+      <header className="w-full bg-[#1a1d30] border-b border-white/5 px-6 py-5 flex items-center justify-between shadow-md shrink-0">
+        <a 
+          href="/dashboard" 
+          className="flex items-center gap-3 bg-purple-600 hover:bg-purple-500 text-white px-6 py-3 rounded-2xl text-sm font-black tracking-wider transition-all shadow-lg shadow-purple-500/20 border border-purple-400/30"
+        >
+          <svg xmlns="http://w3.org" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-5 h-5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7M3 12h18" />
+          </svg>
+          <span>⬅️ ANA SAYFAYA GERİ DÖN</span>
+        </a>
+        <span className="text-xs font-bold text-slate-500 tracking-widest font-mono">EGELOVE GÜVENLİ ODASI</span>
+      </header>
+
+      {/* 📊 ANA İÇERİK ALANI */}
+      <main className="flex-1 p-6 space-y-8 overflow-y-auto">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-3xl p-6 h-[350px] flex flex-col justify-between">
+            <div>
+              <h3 className="text-lg font-bold mb-4 tracking-wide text-purple-400">Mesajlar</h3>
+              <div className="flex gap-2 mb-4">
+                <button className="bg-blue-600 px-3 py-1.5 rounded-xl text-xs font-medium">Tümü</button>
+                <button className="bg-slate-800 px-3 py-1.5 rounded-xl text-xs font-medium text-slate-400">Gelen</button>
+                <button className="bg-slate-800 px-3 py-1.5 rounded-xl text-xs font-medium text-slate-400">Giden</button>
+              </div>
+              <input type="text" placeholder="Ara..." className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2 text-xs focus:outline-none focus:border-purple-500" />
             </div>
-            <input 
-              type="text" 
-              placeholder="Ara..." 
-              className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2 text-xs focus:outline-none focus:border-purple-500"
-            />
+            <p className="text-xs text-slate-500 text-center py-8">Henüz mesajın yok</p>
           </div>
-          <p className="text-xs text-slate-500 text-center py-8">Henüz mesajın yok</p>
+          <div className="md:col-span-2 bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-3xl p-6 h-[350px] flex items-center justify-center">
+            <p className="text-sm text-slate-400 font-medium tracking-wide">Sohbet başlatmak için bir konuşma seç</p>
+          </div>
         </div>
 
-        <div className="md:col-span-2 bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-3xl p-6 h-[400px] flex items-center justify-center">
-          <p className="text-sm text-slate-400 font-medium tracking-wide">Sohbet başlatmak için bir konuşma seç</p>
-        </div>
-      </div>
-
-      {/* Alt Kısım: Bize Para Basacak O Canavar Canlı Sohbet Görüntü Test Modülü */}
-      <div className="max-w-xl mx-auto bg-gradient-to-b from-purple-900/20 to-pink-900/10 backdrop-blur-xl border border-purple-500/30 rounded-3xl p-6 text-center shadow-2xl shadow-purple-500/5">
-        <h2 className="text-lg font-bold mb-2 tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
-          🛰️ CANLI SOHBET GÖRÜNTÜ LABORATUVARI
-        </h2>
-        <p className="text-xs text-slate-400 mb-6">
-          Mesajlaşma paneli içerisine gömülü, doğrudan cihaz kamerasını tetikleyen WebRTC test ünitesi.
-        </p>
-
-        {/* 📺 Görüntü Ekranı */}
-        <div className="w-full aspect-video bg-black/60 rounded-2xl border border-purple-500/20 overflow-hidden flex items-center justify-center relative mb-6 shadow-inner">
-          <video
-            ref={localVideoRef}
-            autoPlay
-            playsInline
-            muted
-            className="w-full h-full object-cover"
-          />
-          {!stream && (
-            <span className="absolute text-xs text-purple-400/50 tracking-wider animate-pulse font-mono">
-              [ WEB RTC GÖRÜNTÜ AKIŞI BEKLENİYOR ]
-            </span>
-          )}
-        </div>
-
-        {error && (
-          <p className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 py-2 px-3 rounded-xl mb-4 font-medium">
-            {error}
+        {/* 🚀 FIRLATICI PANELİ */}
+        <div className="max-w-xl mx-auto bg-gradient-to-b from-purple-900/20 to-pink-900/10 backdrop-blur-xl border border-purple-500/30 rounded-3xl p-6 text-center shadow-2xl">
+          <h2 className="text-lg font-bold mb-2 tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+            🛰️ CANLI GÖRÜNTÜLÜ SOHBET ODALARI
+          </h2>
+          <p className="text-xs text-slate-400 mb-6">
+            Ana sayfa düzenini ve Next.js şasisini bozmadan, kasanın içindeki o gizli tüneli bağımsız Hereke VIP penceresinde güvenle fırlatır.
           </p>
-        )}
-
-        {/* 🎮 Kontrol Butonları */}
-        <div className="flex gap-4 max-w-xs mx-auto">
-          {!stream ? (
+          <div className="max-w-xs mx-auto">
             <button
-              onClick={kamerayiAc}
-              className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold py-3 px-6 rounded-xl text-xs transition-all tracking-wider shadow-lg shadow-purple-500/30 transform hover:scale-[1.02] active:scale-[0.98]"
+              onClick={bagimsizKameraAc}
+              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold py-3.5 px-6 rounded-2xl text-xs transition-all tracking-wider shadow-lg transform hover:scale-[1.02]"
             >
-              🚀 KAMERAYI TEST ET
+              🚀 GÖRÜNTÜLÜ KONUŞMAYI BAŞLAT
             </button>
-          ) : (
-            <button
-              onClick={kamerayiKapat}
-              className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold py-3 px-6 rounded-xl text-xs transition-all tracking-wider border border-white/10"
-            >
-              🛑 BAĞLANTIYI KES
-            </button>
-          )}
+          </div>
         </div>
-      </div>
+      </main>
+
     </div>
   );
 }
