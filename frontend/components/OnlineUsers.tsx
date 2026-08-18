@@ -2,12 +2,11 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-// Gerçek kullanıcı yapısına uygun listemizi hazırladık
-const REAL_VIRTUAL_USERS = [
+const MOCK_ONLINE_USERS = [
   { 
-    id: 'cmrtuleak0001d31wicosgelg', // Sabrina'nın veritabanındaki asıl gerçek ID'si!
+    id: 'sabrina-real-main-profile', // Eski ID'yi çöpe attık, temiz bir kilit koyduk
     name: 'sabrina', 
-    avatar: '/sabrina.jpg', // Public klasöründeki o muhteşem bisikletli gün batımı resmi
+    avatar: '/sabrina.jpg', // Public klasöründeki bisikletli sahil resminiz
     city: 'Muğla' 
   },
   { id: 'user-can', name: 'Can', avatar: 'https://unsplash.com', city: 'Muğla' },
@@ -25,12 +24,8 @@ export default function OnlineUsers() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Sunucu hatalarına karşı vitrini asla boş bırakmayan akıllı emniyet motoru
-    const initOnlineUsers = () => {
-      setUsers(REAL_VIRTUAL_USERS);
-      setLoading(false);
-    };
-    initOnlineUsers();
+    setUsers(MOCK_ONLINE_USERS);
+    setLoading(false);
   }, []);
 
   return (
@@ -53,47 +48,40 @@ export default function OnlineUsers() {
         </span>
       </div>
 
-      {loading ? (
-        <div className="flex gap-4 animate-pulse">
-          {[...Array(5)].map((_, i) => (
-            <div key={i} className="w-14 h-14 bg-white/5 rounded-full min-w-[56px]"></div>
-          ))}
-        </div>
-      ) : (
-        <div className="flex items-center gap-4 overflow-x-auto pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-          {users.map((user) => (
-            <div 
-              key={user.id} 
-              onClick={() => {
-                // Yılmaz olarak giriş yaptığın için Sabrina'ya tıkladığında doğrudan onun gerçek profiline uçacaksın!
-                if (user.id === 'cmrtuleak0001d31wicosgelg') {
-                  router.push(`/profile/${user.id}`);
-                } else {
-                  router.push(`/search?user=${user.id}`);
-                }
-              }}
-              className="flex flex-col items-center gap-1 min-w-[65px] cursor-pointer group"
-            >
-              <div className="relative">
-                <div className="w-14 h-14 rounded-full p-[2px] bg-gradient-to-tr from-purple-600 via-pink-500 to-blue-500 group-hover:scale-105 transition-transform duration-300">
-                  <img 
-                    src={user.avatar} 
-                    alt={user.name} 
-                    className="w-full h-full object-cover rounded-full border-2 border-[#121420]" 
-                  />
-                </div>
-                <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-[#121420] rounded-full"></div>
+      <div className="flex items-center gap-4 overflow-x-auto pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+        {users.map((user) => (
+          <div 
+            key={user.id} 
+            onClick={() => {
+              // Tıklanan kişi Sabrina ise o eski kilitli balkonlu hesabı tamamen çöpe atar!
+              // Kullanıcıyı doğrudan senin o kahveli, %87 yüksek uyumlu asıl arama sayfana yönlendirir!
+              if (user.id === 'sabrina-real-main-profile') {
+                router.push('/search?user=sabrina');
+              } else {
+                router.push(`/search?user=${user.id}`);
+              }
+            }}
+            className="flex flex-col items-center gap-1 min-w-[65px] cursor-pointer group"
+          >
+            <div className="relative">
+              <div className="w-14 h-14 rounded-full p-[2px] bg-gradient-to-tr from-purple-600 via-pink-500 to-blue-500 group-hover:scale-105 transition-transform duration-300">
+                <img 
+                  src={user.avatar} 
+                  alt={user.name} 
+                  className="w-full h-full object-cover rounded-full border-2 border-[#121420]" 
+                />
               </div>
-              <span className="text-xs text-slate-200 font-medium max-w-[65px] truncate text-center mt-1 group-hover:text-white">
-                {user.name}
-              </span>
-              <span className="text-[10px] text-slate-500 truncate max-w-[65px] group-hover:text-purple-400 transition-colors">
-                {user.city}
-              </span>
+              <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-[#121420] rounded-full"></div>
             </div>
-          ))}
-        </div>
-      )}
+            <span className="text-xs text-slate-200 font-medium max-w-[65px] truncate text-center mt-1 group-hover:text-white">
+              {user.name}
+            </span>
+            <span className="text-[10px] text-slate-500 truncate max-w-[65px] group-hover:text-purple-400 transition-colors">
+              {user.city}
+            </span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
