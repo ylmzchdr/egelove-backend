@@ -53,7 +53,7 @@ export default function DashboardPage() {
               <Home className="w-4 h-4" />
               <span>Ana Sayfa</span>
             </Link>
-            <Link href="/dashboard" className="flex items-center gap-3 text-slate-400 hover:text-white hover:bg-white/5 px-4 py-3 rounded-xl text-xs font-semibold tracking-wide transition-all">
+            <Link href="/profile" className="flex items-center gap-3 text-slate-400 hover:text-white hover:bg-white/5 px-4 py-3 rounded-xl text-xs font-semibold tracking-wide transition-all">
               <User className="w-4 h-4" />
               <span>Benim Sayfam</span>
             </Link>
