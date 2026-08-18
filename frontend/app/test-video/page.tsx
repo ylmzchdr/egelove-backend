@@ -1,13 +1,18 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 export default function TestVideoPage() {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [error, setError] = useState<string>('');
+  const [isClient, setIsClient] = useState(false);
   const localVideoRef = useRef<HTMLVideoElement>(null);
 
-  // 🎥 Cihazın kamerasını ve mikrofonunu tetikleyen WebRTC temel fonksiyonu
+  // Next.js'in tarayıcıyı tam olarak tanımasını sağlayan emniyet kilidi
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   const kamerayiAc = async () => {
     try {
       setError('');
@@ -25,13 +30,14 @@ export default function TestVideoPage() {
     }
   };
 
-  // 🛑 Kamerayı tamamen kapatıp cihazı rahatlatan fonksiyon
   const kamerayiKapat = () => {
     if (stream) {
       stream.getTracks().forEach(track => track.stop());
       setStream(null);
     }
   };
+
+  if (!isClient) return null; // Tarayıcı tamamen hazır olana kadar sayfayı güvenli tut
 
   return (
     <div className="min-h-screen bg-[#121420] text-white flex flex-col items-center justify-center p-6">
