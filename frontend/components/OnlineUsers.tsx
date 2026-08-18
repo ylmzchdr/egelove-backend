@@ -3,9 +3,10 @@ import { useRouter } from 'next/navigation';
 
 const MOCK_ONLINE_USERS = [
   { 
-    id: 'cmrtuleak0001d31wicosgelg', 
+    id: 'sabrina-current', // ID çakışmasını önlemek için güncelledik
     name: 'sabrina', 
-    avatar: '/sabrina.jpg', // Az önce public klasörüne attığımız resmi doğrudan buradan çektik
+    // Şeritteki resmi de profil sayfanızdaki o kahve içen harika gerçek resimle eşitledik
+    avatar: 'https://unsplash.com', 
     city: 'Muğla' 
   },
   { id: '2', name: 'Can', avatar: 'https://unsplash.com', city: 'Muğla' },
@@ -45,8 +46,9 @@ export default function OnlineUsers() {
           <div 
             key={user.id} 
             onClick={() => {
-              if (user.id === 'cmrtuleak0001d31wicosgelg') {
-                router.push(`/profile/${user.id}`);
+              // Tıklanan kişi Sabrina ise onu doğrudan senin o asıl güncel /profile sayfana uçurur!
+              if (user.id === 'sabrina-current') {
+                router.push('/profile');
               } else {
                 router.push(`/search?user=${user.id}`);
               }
