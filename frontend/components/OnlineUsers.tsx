@@ -4,9 +4,10 @@ import { useRouter } from 'next/navigation';
 
 const MOCK_ONLINE_USERS = [
   { 
-    id: 'sabrina-real-main-profile', 
+    // 🎯 İŞTE O GERÇEK VE GÜNCEL SABRINA ID'SİNİ BURAYA KİLİTLEDİK!
+    id: 'cmsxy0u290001eu1wu5y6mi7t', 
     name: 'sabrina', 
-    avatar: '/sabrina.jpg', // Public klasöründeki o güzel bisikletli resim
+    avatar: '/sabrina.jpg', // Public klasöründeki o muhteşem bisikletli sahil resminiz
     city: 'Muğla' 
   },
   { id: 'user-can', name: 'Can', avatar: 'https://unsplash.com', city: 'Muğla' },
@@ -53,11 +54,10 @@ export default function OnlineUsers() {
           <div 
             key={user.id} 
             onClick={() => {
-              // 🎯 NOKTA ATIŞI BYPASS KÖPRÜSÜ:
-              // Tıklayınca büyük arama sayfasına hiç uğramaz!
-              // Admin panelinde gördüğümüz o yeni, kahveli güncel Sabrina hesabının özel sayfasına doğrudan uçurur!
-              if (user.id === 'sabrina-real-main-profile') {
-                router.push('/profile/cmrtuleak0001d31wicosgelg'); 
+              // Kullanıcı şeritteki sabrina'ya tıkladığı an o eski balkonlu hesaba artık uğramaz bile!
+              // Seni doğrudan o senin admin panelinde de gördüğün en güncel kahveli muhteşem gerçek sayfana uçurur!
+              if (user.id === 'cmsxy0u290001eu1wu5y6mi7t') {
+                router.push(`/profile/${user.id}`); 
               } else {
                 router.push(`/search?user=${user.id}`);
               }
