@@ -1,4 +1,5 @@
 import React from 'react';
+import { useRouter } from 'next/navigation';
 
 const MOCK_ONLINE_USERS = [
   { id: '1', name: 'Aslı', avatar: 'https://unsplash.com', city: 'İzmir' },
@@ -12,6 +13,8 @@ const MOCK_ONLINE_USERS = [
 ];
 
 export default function OnlineUsers() {
+  const router = useRouter();
+
   return (
     <div className="w-full bg-[#121420]/40 backdrop-blur-md border border-white/5 rounded-2xl p-4 mb-6">
       <div className="flex items-center justify-between mb-4 px-1">
@@ -24,7 +27,10 @@ export default function OnlineUsers() {
             81 İLDEN CANLI ÇEVRİMİÇİ ÜYELER
           </h3>
         </div>
-        <span className="text-[11px] text-purple-400 hover:text-purple-300 font-medium cursor-pointer transition-colors duration-200">
+        <span 
+          onClick={() => router.push('/search')} 
+          className="text-[11px] text-purple-400 hover:text-purple-300 font-medium cursor-pointer transition-colors duration-200"
+        >
           Tüm İlleri Gör
         </span>
       </div>
