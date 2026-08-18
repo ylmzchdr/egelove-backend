@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 
 const MOCK_ONLINE_USERS = [
   { 
-    id: 'sabrina-real-main-profile', // Eski ID'yi çöpe attık, temiz bir kilit koyduk
+    id: 'sabrina-real-main-profile', 
     name: 'sabrina', 
     avatar: '/sabrina.jpg', // Public klasöründeki bisikletli sahil resminiz
     city: 'Muğla' 
@@ -53,10 +53,10 @@ export default function OnlineUsers() {
           <div 
             key={user.id} 
             onClick={() => {
-              // Tıklanan kişi Sabrina ise o eski kilitli balkonlu hesabı tamamen çöpe atar!
-              // Kullanıcıyı doğrudan senin o kahveli, %87 yüksek uyumlu asıl arama sayfana yönlendirir!
+              // İŞTE SİHİRLİ DOKUNUŞ: Büyük arama sayfasını hiç yormuyoruz!
+              // Tıklayınca doğrudan senin o açık olan kahveli, %87 uyumlu asıl profil linkine uçuruyoruz!
               if (user.id === 'sabrina-real-main-profile') {
-                router.push('/search?user=sabrina');
+                router.push('/profile'); 
               } else {
                 router.push(`/search?user=${user.id}`);
               }
