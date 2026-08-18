@@ -5,8 +5,7 @@ const MOCK_ONLINE_USERS = [
   { 
     id: 'cmrtuleak0001d31wicosgelg', 
     name: 'sabrina', 
-    // Sabrina'nın senin gönderdiğin o kahve içen harika gerçek profil fotoğrafı
-    avatar: 'https://unsplash.com', 
+    avatar: '/sabrina.jpg', // Az önce public klasörüne attığımız resmi doğrudan buradan çektik
     city: 'Muğla' 
   },
   { id: '2', name: 'Can', avatar: 'https://unsplash.com', city: 'Muğla' },
@@ -46,7 +45,6 @@ export default function OnlineUsers() {
           <div 
             key={user.id} 
             onClick={() => {
-              // Sabrina'ya tıklanırsa doğrudan onun gerçek profil adresine yönlendirir
               if (user.id === 'cmrtuleak0001d31wicosgelg') {
                 router.push(`/profile/${user.id}`);
               } else {
