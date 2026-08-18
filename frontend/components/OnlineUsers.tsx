@@ -3,10 +3,9 @@ import { useRouter } from 'next/navigation';
 
 const MOCK_ONLINE_USERS = [
   { 
-    // Sabrina'nın veritabanındaki gerçek ID'sini buraya çaktık
-    id: 'cmrtuleak0001d31wicosgelg', 
+    id: 'sabrina-real-profile', // Benzersiz ve çakışmayan ID kilitledik
     name: 'sabrina', 
-    avatar: '/sabrina.jpg', 
+    avatar: '/sabrina.jpg', // Public klasöründeki bisikletli gün batımı resmi
     city: 'Muğla' 
   },
   { id: '2', name: 'Can', avatar: 'https://unsplash.com', city: 'Muğla' },
@@ -46,9 +45,9 @@ export default function OnlineUsers() {
           <div 
             key={user.id} 
             onClick={() => {
-              // Eğer tıklanan kişi Sabrinaysa, Yılmaz'ın kendi profilini değil, Sabrina'nın asıl dış profil sayfasını açar!
-              if (user.id === 'cmrtuleak0001d31wicosgelg') {
-                router.push(`/profile/${user.id}`);
+              // Tıklanan kişi bizim sabrina ise tam olarak o sağ üst köşedeki tünelden içeri sızar ve /profile sayfana uçurur!
+              if (user.id === 'sabrina-real-profile') {
+                router.push('/profile');
               } else {
                 router.push(`/search?user=${user.id}`);
               }
