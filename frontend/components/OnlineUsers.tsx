@@ -15,15 +15,25 @@ export default function OnlineUsers() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Sizin NestJS backend yapınızdaki mevcut arama/keşfet API'sini akıllıca tetikliyoruz
     const fetchRealOnlineUsers = async () => {
       try {
-        // NestJS backend mimarinizdeki canlı veya arama endpoint'ine göre burayı saniyede besler
-        const response = await fetch('https://egelove.tr'); 
+        // NestJS arama/keşfet API hattına tam uyumlu endpoint bağlantısı
+        const response = await fetch('/api/search'); 
         if (response.ok) {
           const data = await response.json();
-          // Eğer backend array dönüyorsa direkt bağlarız
-          setUsers(Array.isArray(data) ? data : data.users || []);
+          
+          // NestJS mimarisine göre gelen veriyi akıllıca ayıklıyoruz
+          let processedUsers = [];
+          if (Array.isArray(data)) {
+            processedUsers = data;
+          } else if (data && Array.isArray(data.users)) {
+            processedUsers = data.users;
+          } else if (data && Array.isArray(data.data)) {
+            processedUsers = data.data;
+          }
+
+          // Veritabanındaki ilk 12 gerçek üyeyi şeride dizer
+          setUsers(processedUsers.slice(0, 12));
         }
       } catch (error) {
         console.error('Canlı veriler çekilirken hata oluştu ortak:', error);
@@ -34,7 +44,7 @@ export default function OnlineUsers() {
 
     fetchRealOnlineUsers();
     
-    // Her 1 dakikada bir arka planda sessizce yenile, yeni girenler listeye aksın!
+    // Her 1 dakikada bir arka planda sessizce verileri tazele
     const interval = setInterval(fetchRealOnlineUsers, 60000);
     return () => clearInterval(interval);
   }, []);
@@ -60,7 +70,6 @@ export default function OnlineUsers() {
       </div>
 
       {loading ? (
-        /* Yüklenirken şık iskelet (skeleton) animasyonu gösterir */
         <div className="flex gap-4 animate-pulse">
           {[...Array(5)].map((_, i) => (
             <div key={i} className="w-14 h-14 bg-white/5 rounded-full min-w-[56px]"></div>
@@ -74,7 +83,6 @@ export default function OnlineUsers() {
             <div 
               key={user.id} 
               onClick={() => {
-                // Tıklanan kişi Sabrina ise kendi profiline, başkasıysa dış profile saniyede uçurur
                 if (user.name?.toLowerCase() === 'sabrina') {
                   router.push('/profile');
                 } else {
@@ -97,7 +105,7 @@ export default function OnlineUsers() {
                 {user.name}
               </span>
               <span className="text-[10px] text-slate-500 truncate max-w-[65px] group-hover:text-purple-400 transition-colors">
-                {user.city}
+                {user.city || 'Ege'}
               </span>
             </div>
           ))}
