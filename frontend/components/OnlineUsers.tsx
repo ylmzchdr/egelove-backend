@@ -6,7 +6,7 @@ const MOCK_ONLINE_USERS = [
   { 
     id: 'sabrina-real-main-profile', 
     name: 'sabrina', 
-    avatar: '/sabrina.jpg', // Public klasöründeki bisikletli sahil resminiz
+    avatar: '/sabrina.jpg', // Public klasöründeki o güzel bisikletli resim
     city: 'Muğla' 
   },
   { id: 'user-can', name: 'Can', avatar: 'https://unsplash.com', city: 'Muğla' },
@@ -53,10 +53,11 @@ export default function OnlineUsers() {
           <div 
             key={user.id} 
             onClick={() => {
-              // İŞTE SİHİRLİ DOKUNUŞ: Büyük arama sayfasını hiç yormuyoruz!
-              // Tıklayınca doğrudan senin o açık olan kahveli, %87 uyumlu asıl profil linkine uçuruyoruz!
+              // 🎯 NOKTA ATIŞI BYPASS KÖPRÜSÜ:
+              // Tıklayınca büyük arama sayfasına hiç uğramaz!
+              // Admin panelinde gördüğümüz o yeni, kahveli güncel Sabrina hesabının özel sayfasına doğrudan uçurur!
               if (user.id === 'sabrina-real-main-profile') {
-                router.push('/profile'); 
+                router.push('/profile/cmrtuleak0001d31wicosgelg'); 
               } else {
                 router.push(`/search?user=${user.id}`);
               }
