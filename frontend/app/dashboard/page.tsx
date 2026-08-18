@@ -25,6 +25,8 @@ import Sidebar from "@/components/dashboard/Sidebar";
 import Topbar from "@/components/dashboard/Topbar";
 import { useI18n } from "@/lib/i18n-context";
 import CanliUyelerComponent from '@/components/OnlineUsers';
+import LansmanCards from '@/components/LansmanCards';
+
 
 
 type AuthTab = "login" | "register" | null;
@@ -459,6 +461,8 @@ export default function DashboardPage() {
                   unreadNotifications={0}
                 />
                 <CanliUyelerComponent />
+                <LansmanCards />
+
 
 
                 <section className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
