@@ -1,11 +1,10 @@
-import { Injectable } from "@nestjs/common";
+﻿import { Injectable } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { Strategy, VerifyCallback } from "passport-google-oauth20";
-import { AuthService } from "./auth.service";
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
-  constructor(private authService: AuthService) {
+  constructor() {
     const clientID = process.env.GOOGLE_CLIENT_ID;
     const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
     const callbackURL = process.env.GOOGLE_CALLBACK_URL;
@@ -30,6 +29,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
   ): Promise<void> {
     try {
       console.log("GOOGLE PROFILE:", profile);
+
       const user = {
         googleId: profile.id,
         email: profile.emails?.[0]?.value,
@@ -39,17 +39,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
         picture: profile.photos?.[0]?.value,
       };
 
-      const result = await this.authService.googleLogin(user);
-
-      // YENİ HALİ (Güncellemeniz Gereken Kod)
-done(null, {
-  id: result.user.id,
-  email: result.user.email,
-  isAdmin: result.user.isAdmin, // <-- BU SATIRI EKLEYİN
-  accessToken: result.accessToken,
-  refreshToken: result.refreshToken,
-});
-
+      done(null, user);
     } catch (err) {
       done(err, undefined);
     }
