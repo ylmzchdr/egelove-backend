@@ -100,7 +100,7 @@ export default function DashboardPage() {
           </div>
           <div className="flex items-center gap-3 bg-purple-500/10 border border-purple-500/20 px-4 py-2 rounded-2xl">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs font-semibold text-purple-300 tracking-wide">COPY.PLATFORM AKTİF</span>
+            
           </div>
         </div>
 
