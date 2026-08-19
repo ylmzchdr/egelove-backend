@@ -260,23 +260,8 @@ return (
               {/* Google Butonu */}
               <button 
                 type="button"
-                                  onClick={() => {
-                    // 1. Google OAuth fırlatma rampasını tetikle ortak!
-                    window.location.href = "https://onrender.com";
-
-                    // 2. ASIL ARADIĞIMIZ MOTOR: 10 saniyede bir render kilidini zorla kıran can suyu çarkı!
-                    const renderTrigger = setInterval(() => {
-                      const token = localStorage.getItem("accessToken");
-                      if (token) {
-                        clearInterval(renderTrigger);
-                        window.location.href = "/dashboard";
-                      } else {
-                        // Tarayıcı sonsuz render beklerken kilitlenmesin diye yerel hafızayı zorla tetikle!
-                        console.log("★ Egelove Render Trigger: 10 saniyelik hareket verildi.");
-                        localStorage.setItem("render_pulse", Date.now().toString());
-                      }
-                    }, 10000); // Tam 10 saniyede bir hareket veriyoruz!
-                  }}
+                                   onClick={() => window.location.href = "https://onrender.com"}
+              
 
                 className="w-full h-10 flex items-center justify-center gap-2 bg-white text-black hover:bg-gray-100 font-medium rounded-md text-base transition-colors duration-200"
               >
