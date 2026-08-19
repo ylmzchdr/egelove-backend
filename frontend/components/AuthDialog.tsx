@@ -105,6 +105,23 @@ export default function AuthDialog({ activeTab, onClose }: AuthDialogProps) {
   const { t } = useI18n();
 
   useEffect(() => { setTab(activeTab); }, [activeTab]);
+    useEffect(() => {
+    // 🚀 GOOGLE GİRİŞ RENDER KİLİDİNİ KIRAN 10 SANİYELİK CAN SÜYÜ ÇARKİ
+    const interval = setInterval(() => {
+      const token = localStorage.getItem("accessToken");
+      if (token) {
+        clearInterval(interval);
+        window.location.href = "/dashboard";
+      } else {
+        // Token henüz gelmediyse veya backend uykudaysa yerel hafızayı hareketlendir
+        console.log("★ Egelove Render Trigger: 10 saniyelik hareket verildi.");
+        localStorage.setItem("render_pulse", Date.now().toString());
+      }
+    }, 10000); // Tam 10 saniyede bir tetikler!
+
+    return () => clearInterval(interval);
+  }, []);
+
 
   const [loginData, setLoginData] = useState({ emailOrPhone: "", password: "" });
   const [registerData, setRegisterData] = useState({
@@ -260,7 +277,7 @@ return (
               {/* Google Butonu */}
               <button 
                 type="button"
-                                                   onClick={() => window.location.href = "https://onrender.com"}
+                                            onClick={() => window.location.href = "https://onrender.com"}
 
               
 
