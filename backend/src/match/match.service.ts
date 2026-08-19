@@ -25,12 +25,33 @@ export class MatchService {
       },
     });
 
-    if (reverseMatch) {
+       if (reverseMatch) {
       await this.prisma.match.update({
-        where: { senderId_receiverId: { senderId: receiverId, receiverId: senderId } },
+        where: {
+          senderId_receiverId: {
+            senderId: receiverId,
+            receiverId: senderId,
+          },
+        },
         data: { isMutual: true },
       });
     }
+
+    // Bildirim oluştur
+    const sender = await this.prisma.user.findUnique({
+      where: { id: senderId },
+      select: { name: true },
+    });
+
+    await this.prisma.notification.create({
+      data: {
+        userId: receiverId,
+        type: "LIKE",
+        title: "Yeni Beğeni",
+        message: `${sender?.name ?? "Bir kullanıcı"} seni beğendi.`,
+        relatedUserId: senderId,
+      },
+    });
 
     return match;
   }

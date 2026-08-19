@@ -128,11 +128,11 @@ model District {
 model User {
   id                 String    @id @default(cuid())
   email              String    @unique
-username           String    @unique
-passwordHash       String
-name               String
-birthDate          DateTime?
-gender             Gender?
+  username           String    @unique
+  passwordHash       String
+  name               String
+  birthDate          DateTime?
+  gender             Gender?
   cityId             Int
   city               City      @relation(fields: [cityId], references: [id])
   districtId         Int
@@ -167,27 +167,28 @@ gender             Gender?
   presence              UserPresence?
   payments              PaymentWebhookLog[]
 
-  education  EducationLevel?
-  income     IncomeLevel?
-  religion   ReligionLevel?
-  smoking    SmokingStatus?
-  alcohol    AlcoholStatus?
-  children   ChildrenStatus?
-  bodyType   BodyType?
+  education     EducationLevel?
+  income        IncomeLevel?
+  religion      ReligionLevel?
+  smoking       SmokingStatus?
+  alcohol       AlcoholStatus?
+  children      ChildrenStatus?
+  bodyType      BodyType?
   maritalStatus MaritalStatus?
-  height     Int?
-  weight     Int?
-  eyeColor   EyeColor?
-  hairColor  HairColor?
-  bloodType  BloodType?
-  occupation String?
-  hobbies    String?         @db.Text
+  height        Int?
+  weight        Int?
+  eyeColor      EyeColor?
+  hairColor     HairColor?
+  bloodType     BloodType?
+  occupation    String?
+  hobbies       String?         @db.Text
 
   aboutMe    String?
   lookingFor String?
 
-  privacySettings     Json @default("{}")
-  matchingPreferences Json @default("{}")
+  privacySettings     Json           @default("{}")
+  matchingPreferences Json           @default("{}")
+  notifications       Notification[]
 
   @@index([cityId])
   @@index([districtId])
@@ -310,5 +311,21 @@ model ProfileVisit {
 
   @@index([visitedId])
   @@index([visitorId])
+  @@index([createdAt])
+}
+
+model Notification {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type          String
+  title         String
+  message       String
+  relatedUserId String?
+  isRead        Boolean  @default(false)
+  createdAt     DateTime @default(now())
+
+  @@index([userId])
+  @@index([userId, isRead])
   @@index([createdAt])
 }
