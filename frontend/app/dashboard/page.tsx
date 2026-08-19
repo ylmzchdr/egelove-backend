@@ -19,8 +19,9 @@ import {
 export default function DashboardPage() {
   const [isClient, setIsClient] = useState(false);
 
-  useEffect(() => {
+    useEffect(() => {
     setIsClient(true);
+    // İsim bağımlılığı olmayan, sayfayı hata ekranından kurtaran saf kilit
   }, []);
 
   if (!isClient) {
@@ -92,7 +93,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* 👥 81 İLDEN CANLI ÇEVRİMİÇİ ÜYELER ŞERİDİ - TIKLANABİLİR YAPILDI */}
+               {/* 👥 81 İLDEN CANLI ÇEVRİMİÇİ ÜYELER ŞERİDİ - TIKLANABİLİR VE TİP GÜVENLİĞİ TAM */}
         <div className="bg-slate-900/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-xl">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
@@ -106,20 +107,21 @@ export default function DashboardPage() {
           
           <div className="flex items-center gap-6 overflow-x-auto pb-2 scrollbar-none">
             {[
-              { name: "sabrina", city: "Muğla", color: "from-pink-500 to-purple-600", active: true },
-              { name: "Can", city: "Muğla", color: "from-blue-500 to-teal-500", active: true },
-              { name: "Merve", city: "Aydın", color: "from-purple-500 to-pink-500", active: true },
-              { name: "Deniz", city: "Antalya", color: "from-emerald-500 to-blue-500", active: true },
-              { name: "Elif", city: "İstanbul", color: "from-orange-500 to-amber-500", active: true },
-              { name: "Burak", city: "Ankara", color: "from-indigo-500 to-purple-500", active: true },
-              { name: "Zeynep", city: "Diyarbakır", color: "from-rose-500 to-pink-500", active: true },
-              { name: "Hakan", city: "Trabzon", color: "from-cyan-500 to-blue-500", active: true }
+              { id: "sabrina", name: "sabrina", city: "Muğla", color: "from-pink-500 to-purple-600", active: true },
+              { id: "can", name: "Can", city: "Muğla", color: "from-blue-500 to-teal-500", active: true },
+              { id: "merve", name: "Merve", city: "Aydın", color: "from-purple-500 to-pink-500", active: true },
+              { id: "deniz", name: "Deniz", city: "Antalya", color: "from-emerald-500 to-blue-500", active: true },
+              { id: "elif", name: "Elif", city: "İstanbul", color: "from-orange-500 to-amber-500", active: true },
+              { id: "burak", name: "Burak", city: "Ankara", color: "from-indigo-500 to-purple-500", active: true },
+              { id: "zeynep", name: "Zeynep", city: "Diyarbakır", color: "from-rose-500 to-pink-500", active: true },
+              { id: "hakan", name: "Hakan", city: "Trabzon", color: "from-cyan-500 to-blue-500", active: true }
             ].map((user, idx) => (
-              <a 
+                            <a 
                 key={idx} 
-                href="/profile" 
+                href={`/profile/${user.id}`}
                 className="flex flex-col items-center space-y-1.5 min-w-[70px] cursor-pointer group transition-all duration-200"
               >
+
                 <div className={`w-14 h-14 rounded-full bg-gradient-to-tr ${user.color} p-0.5 relative shadow-lg group-hover:scale-105 transition-transform`}>
                   <div className="w-full h-full bg-[#121420] rounded-full flex items-center justify-center overflow-hidden">
                     <span className="text-xs font-bold uppercase tracking-wider text-slate-400">{user.name.slice(0,2)}</span>
@@ -132,6 +134,7 @@ export default function DashboardPage() {
             ))}
           </div>
         </div>
+
 
         {/* ⚡ ANA LANSMAN KARTLARI BÖLÜMÜ */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
