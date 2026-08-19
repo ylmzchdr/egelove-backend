@@ -268,7 +268,8 @@ export default function Sidebar() {
               </div>
 
               <p className="mt-0.5 truncate text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500">
-                {copy.platform}
+                ★ HEREKE PREMIUM
+
               </p>
             </div>
           </Link>
@@ -277,7 +278,7 @@ export default function Sidebar() {
         <div className="flex-1 overflow-y-auto px-4 py-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <nav aria-label={copy.mainMenu}>
             <p className="mb-2.5 px-3 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-600">
-              {copy.menu}
+            KUMANDA MERKEZİ
             </p>
 
             <div className="space-y-1.5">
