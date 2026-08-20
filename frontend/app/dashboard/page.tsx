@@ -13,11 +13,14 @@ import {
   Home,
   User,
   Bell,
-  LogOut
+  LogOut,
+  Menu,
+  X
 } from "lucide-react";
 
 export default function DashboardPage() {
   const [isClient, setIsClient] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
       useEffect(() => {
     setIsClient(true);
@@ -89,6 +92,76 @@ export default function DashboardPage() {
 
       {/* 📊 2. ANA İÇERİK ALANI */}
       <main className="flex-1 min-w-0 w-full p-4 md:p-8 space-y-6 md:space-y-8 overflow-x-hidden overflow-y-auto">
+        {/* 📱 MOBİL ÜST MENÜ */}
+<div className="md:hidden flex items-center justify-between bg-[#1a1d30] border border-white/10 rounded-2xl px-4 py-3 mb-2">
+  <div className="flex items-center gap-3">
+    <div className="w-9 h-9 bg-gradient-to-tr from-pink-500 to-purple-600 rounded-xl flex items-center justify-center font-black text-sm">
+      E
+    </div>
+
+    <span className="font-black tracking-widest text-white">
+      EGELOVE
+    </span>
+  </div>
+
+  <button
+    type="button"
+    onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+    className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 border border-white/10"
+    aria-label="Menüyü aç"
+  >
+    {mobileMenuOpen ? (
+      <X className="w-6 h-6 text-white" />
+    ) : (
+      <Menu className="w-6 h-6 text-white" />
+    )}
+  </button>
+</div>
+
+{/* 📱 MOBİL MENÜ */}
+{mobileMenuOpen && (
+  <div className="md:hidden bg-[#1a1d30] border border-white/10 rounded-2xl p-3 mb-4 space-y-2">
+    <a
+      href="/"
+      className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5"
+    >
+      <Home className="w-5 h-5" />
+      Ana Sayfa
+    </a>
+
+    <a
+      href="/profile"
+      className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5"
+    >
+      <User className="w-5 h-5" />
+      Benim Sayfam
+    </a>
+
+    <a
+      href="/messages"
+      className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5"
+    >
+      <MessageCircle className="w-5 h-5" />
+      Mesajlar
+    </a>
+
+    <a
+      href="/notifications"
+      className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5"
+    >
+      <Bell className="w-5 h-5" />
+      Bildirimler
+    </a>
+
+    <a
+      href="/"
+      className="flex items-center gap-3 px-4 py-3 rounded-xl text-rose-400 border-t border-white/10 mt-2"
+    >
+      <LogOut className="w-5 h-5" />
+      Çıkış Yap
+    </a>
+  </div>
+)}
         
         {/* Üst Başlık */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-white/5 pb-6">
