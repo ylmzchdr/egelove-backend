@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
 export default function MessagesPage() {
   const [isClient, setIsClient] = useState(false);
@@ -9,356 +9,385 @@ export default function MessagesPage() {
     setIsClient(true);
   }, []);
 
-  // 🐺 CANAVAR VİDEO ODASI FIRLATICISI
   const bagimsizKameraAc = () => {
     const width = 450;
     const height = 650;
-    const left = (window.screen.width - width) / 2;
-    const top = (window.screen.height - height) / 2;
+
+    const left = Math.max(
+      0,
+      (window.screen.width - width) / 2
+    );
+
+    const top = Math.max(
+      0,
+      (window.screen.height - height) / 2
+    );
 
     window.open(
-      '/canavar-video',
-      'EgeloveLivePopup',
+      "/canavar-video",
+      "EgeloveLivePopup",
       `width=${width},height=${height},top=${top},left=${left},resizable=no,scrollbars=no,status=no,location=no,toolbar=no,menubar=no`
     );
   };
 
-  if (!isClient) {
-    return null;
-  }
+  if (!isClient) return null;
 
   return (
     <div className="min-h-screen bg-[#121420] text-white flex flex-col">
 
-      {/* =========================================================
+      {/* =========================
           ÜST NAVİGASYON
-      ========================================================= */}
-      <header className="w-full bg-[#1a1d30] border-b border-white/10 px-5 md:px-6 py-4 md:py-5 shadow-md shrink-0">
+      ========================== */}
+      <header className="w-full bg-[#1a1d30] border-b border-white/10 px-4 sm:px-6 py-4 sm:py-5 shrink-0">
 
-        <div className="max-w-6xl mx-auto flex flex-col gap-4">
+        <div className="max-w-6xl mx-auto flex flex-col items-start gap-3">
 
-          {/* Geri dön butonu */}
-          <div className="flex items-center">
-            <a
-              href="/dashboard"
-              className="
-                inline-flex items-center gap-2
-                bg-purple-600 hover:bg-purple-500
-                text-white
-                px-5 md:px-6
-                py-3
-                rounded-2xl
-                text-sm
-                font-black
-                tracking-wide
-                transition-all
-                shadow-lg shadow-purple-500/20
-                border border-purple-400/30
-              "
+          <a
+            href="/dashboard"
+            className="
+              inline-flex items-center
+              gap-2
+              bg-purple-600
+              hover:bg-purple-500
+              text-white
+              px-5 sm:px-6
+              py-3
+              rounded-2xl
+              text-sm sm:text-base
+              font-black
+              tracking-wide
+              transition-all
+              shadow-lg
+              shadow-purple-500/20
+              border border-purple-400/30
+            "
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={3}
+              stroke="currentColor"
+              className="w-5 h-5 shrink-0"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={3}
-                stroke="currentColor"
-                className="w-5 h-5 shrink-0"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M10.5 19.5 3 12m0 0 7.5-7M3 12h18"
-                />
-              </svg>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M10.5 19.5 3 12m0 0 7.5-7M3 12h18"
+              />
+            </svg>
 
-              <span>ANA SAYFAYA GERİ DÖN</span>
-            </a>
-          </div>
+            <span>ANA SAYFAYA GERİ DÖN</span>
+          </a>
 
-          {/* Güvenli oda yazısı */}
-          <div className="text-[11px] md:text-xs font-bold text-slate-500 tracking-[0.25em] font-mono">
+          <span className="
+            text-[10px]
+            sm:text-xs
+            font-bold
+            text-slate-500
+            tracking-[0.25em]
+            font-mono
+            pl-1
+          ">
             EGELOVE GÜVENLİ ODASI
-          </div>
+          </span>
 
         </div>
       </header>
 
 
-      {/* =========================================================
+      {/* =========================
           ANA İÇERİK
-      ========================================================= */}
-      <main className="flex-1 px-4 md:px-6 py-6 md:py-8 overflow-x-hidden">
+      ========================== */}
+      <main className="
+        flex-1
+        px-4
+        sm:px-6
+        py-5
+        sm:py-6
+      ">
 
-        <div className="max-w-6xl mx-auto space-y-6 md:space-y-8">
+        <div className="
+          max-w-6xl
+          mx-auto
+          grid
+          grid-cols-1
+          md:grid-cols-3
+          gap-5
+          sm:gap-6
+        ">
 
-          {/* =====================================================
-              MESAJLAR + SOHBET
-          ===================================================== */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* =========================
+              MESAJ LİSTESİ
+          ========================== */}
+          <section className="
+            md:col-span-1
+            bg-slate-900/60
+            backdrop-blur-xl
+            border
+            border-white/20
+            rounded-[28px]
+            p-5
+            sm:p-6
 
-            {/* ===================================================
-                MESAJLAR PANELİ
-            =================================================== */}
-            <div
-              className="
-                md:col-span-1
-                bg-slate-900/60
-                backdrop-blur-xl
-                border border-white/10
-                rounded-3xl
+            min-h-[430px]
+            sm:min-h-[470px]
+            md:h-[500px]
 
-                p-5 md:p-6
+            flex
+            flex-col
+          ">
 
-                h-[410px]
-                md:h-[350px]
+            <div>
 
-                flex flex-col
-              "
-            >
+              <h1 className="
+                text-2xl
+                sm:text-3xl
+                font-bold
+                tracking-wide
+                text-purple-400
+                mb-5
+              ">
+                Mesajlar
+              </h1>
 
-              <div>
 
-                <h3 className="text-xl md:text-lg font-bold mb-4 tracking-wide text-purple-400">
-                  Mesajlar
-                </h3>
+              {/* FİLTRELER */}
+              <div className="flex gap-2 mb-5">
 
-                {/* Filtreler */}
-                <div className="flex gap-2 mb-4">
-
-                  <button
-                    type="button"
-                    className="
-                      bg-blue-600
-                      hover:bg-blue-500
-                      px-4 py-2
-                      rounded-xl
-                      text-sm
-                      font-medium
-                      transition-colors
-                    "
-                  >
-                    Tümü
-                  </button>
-
-                  <button
-                    type="button"
-                    className="
-                      bg-slate-800
-                      hover:bg-slate-700
-                      px-4 py-2
-                      rounded-xl
-                      text-sm
-                      font-medium
-                      text-slate-400
-                      transition-colors
-                    "
-                  >
-                    Gelen
-                  </button>
-
-                  <button
-                    type="button"
-                    className="
-                      bg-slate-800
-                      hover:bg-slate-700
-                      px-4 py-2
-                      rounded-xl
-                      text-sm
-                      font-medium
-                      text-slate-400
-                      transition-colors
-                    "
-                  >
-                    Giden
-                  </button>
-
-                </div>
-
-                {/* Arama */}
-                <input
-                  type="text"
-                  placeholder="Ara..."
+                <button
                   className="
-                    w-full
-                    bg-black/40
-                    border border-white/10
-                    rounded-xl
-                    px-4 py-3
+                    bg-blue-600
+                    hover:bg-blue-500
+                    px-5
+                    py-3
+                    rounded-2xl
                     text-sm
-                    placeholder:text-slate-500
-                    focus:outline-none
-                    focus:border-purple-500
-                    transition-colors
+                    font-semibold
+                    transition
                   "
-                />
+                >
+                  Tümü
+                </button>
+
+                <button
+                  className="
+                    bg-slate-800
+                    hover:bg-slate-700
+                    px-5
+                    py-3
+                    rounded-2xl
+                    text-sm
+                    font-semibold
+                    text-slate-400
+                    transition
+                  "
+                >
+                  Gelen
+                </button>
+
+                <button
+                  className="
+                    bg-slate-800
+                    hover:bg-slate-700
+                    px-5
+                    py-3
+                    rounded-2xl
+                    text-sm
+                    font-semibold
+                    text-slate-400
+                    transition
+                  "
+                >
+                  Giden
+                </button>
 
               </div>
 
-              {/* Boş mesaj durumu */}
-              <div className="flex-1 flex items-center justify-center">
 
-                <p className="text-sm text-slate-500 text-center">
-                  Henüz mesajın yok
-                </p>
-
-              </div>
+              {/* ARAMA */}
+              <input
+                type="text"
+                placeholder="Ara..."
+                className="
+                  w-full
+                  h-14
+                  bg-black/40
+                  border
+                  border-white/20
+                  rounded-2xl
+                  px-5
+                  text-base
+                  text-white
+                  placeholder:text-slate-500
+                  focus:outline-none
+                  focus:border-purple-500
+                  transition
+                "
+              />
 
             </div>
 
 
-            {/* ===================================================
-                SOHBET PANELİ
-            =================================================== */}
-            <div
-              className="
-                md:col-span-2
-                bg-slate-900/60
-                backdrop-blur-xl
-                border border-white/10
-                rounded-3xl
-
-                p-5 md:p-6
-
-                h-[220px]
-                md:h-[350px]
-
-                flex
-                items-center
-                justify-center
-              "
-            >
-
+            {/* BOŞ MESAJ */}
+            <div className="
+              flex-1
+              flex
+              items-center
+              justify-center
+            ">
               <p className="
                 text-sm
-                md:text-base
-                text-slate-400
-                font-medium
-                tracking-wide
+                sm:text-base
+                text-slate-500
                 text-center
               ">
-                Sohbet başlatmak için bir konuşma seç
+                Henüz mesajın yok
               </p>
-
             </div>
 
-          </div>
+          </section>
 
 
-          {/* =====================================================
-              CANLI GÖRÜNTÜLÜ SOHBET PANELİ
-          ===================================================== */}
-          <div
-            className="
-              max-w-xl
-              mx-auto
+          {/* =========================
+              SOHBET PANELİ
+          ========================== */}
+          <section className="
+            md:col-span-2
+            bg-slate-900/60
+            backdrop-blur-xl
+            border
+            border-white/20
+            rounded-[28px]
+            p-5
+            sm:p-6
 
-              bg-gradient-to-b
-              from-purple-900/20
-              to-pink-900/10
+            min-h-[300px]
+            sm:min-h-[330px]
+            md:h-[500px]
 
-              backdrop-blur-xl
+            flex
+            items-center
+            justify-center
+          ">
 
-              border border-purple-500/30
-
-              rounded-3xl
-
-              px-5 md:px-6
-              py-6 md:py-7
-
+            <p className="
+              text-base
+              sm:text-lg
+              text-slate-400
+              font-semibold
+              tracking-wide
               text-center
+            ">
+              Sohbet başlatmak için bir konuşma seç
+            </p>
 
-              shadow-2xl
-            "
-          >
+          </section>
 
-            {/* Başlık */}
-            <h2
+        </div>
+
+
+        {/* =========================
+            CANLI GÖRÜNTÜLÜ SOHBET
+        ========================== */}
+        <section className="
+          max-w-3xl
+          mx-auto
+          mt-5
+          sm:mt-6
+
+          bg-gradient-to-b
+          from-purple-900/20
+          to-pink-900/10
+
+          backdrop-blur-xl
+
+          border
+          border-purple-500/30
+
+          rounded-[28px]
+
+          px-5
+          py-6
+          sm:p-7
+
+          text-center
+          shadow-2xl
+        ">
+
+          <h2 className="
+            text-lg
+            sm:text-2xl
+            font-bold
+            tracking-wide
+
+            text-transparent
+            bg-clip-text
+            bg-gradient-to-r
+            from-purple-400
+            to-pink-400
+
+            leading-snug
+          ">
+            🛰️ CANLI GÖRÜNTÜLÜ SOHBET ODALARI
+          </h2>
+
+
+          <p className="
+            text-sm
+            sm:text-base
+            leading-6
+            text-slate-400
+            mt-3
+            mb-5
+            max-w-2xl
+            mx-auto
+          ">
+            Güvenli görüntülü sohbet odalarına geçerek
+            yeni insanlarla canlı olarak tanışabilirsin.
+          </p>
+
+
+          <div className="max-w-md mx-auto">
+
+            <button
+              onClick={bagimsizKameraAc}
               className="
-                text-lg
-                md:text-xl
+                w-full
+
+                bg-gradient-to-r
+                from-purple-600
+                to-blue-500
+
+                hover:from-purple-500
+                hover:to-blue-400
+
+                text-white
 
                 font-bold
 
-                mb-3
+                py-4
+                px-6
+
+                rounded-2xl
+
+                text-sm
 
                 tracking-wide
 
-                text-transparent
-                bg-clip-text
-                bg-gradient-to-r
-                from-purple-400
-                to-pink-400
+                transition-all
 
-                leading-relaxed
+                shadow-lg
+
+                active:scale-[0.98]
               "
             >
-              🛰️ CANLI GÖRÜNTÜLÜ SOHBET ODALARI
-            </h2>
-
-
-            {/* Açıklama */}
-            <p
-              className="
-                text-xs
-                md:text-sm
-
-                text-slate-400
-
-                mb-6
-
-                leading-6
-              "
-            >
-              Ana sayfa düzenini ve Next.js şasisini bozmadan,
-              kasanın içindeki o gizli tüneli bağımsız VIP
-              penceresinde güvenle fırlatır.
-            </p>
-
-
-            {/* Buton */}
-            <div className="max-w-xs mx-auto">
-
-              <button
-                type="button"
-                onClick={bagimsizKameraAc}
-                className="
-                  w-full
-
-                  bg-gradient-to-r
-                  from-purple-600
-                  to-pink-600
-
-                  hover:from-purple-500
-                  hover:to-pink-500
-
-                  active:scale-[0.98]
-
-                  text-white
-
-                  font-semibold
-
-                  py-3.5
-                  px-6
-
-                  rounded-2xl
-
-                  text-xs
-
-                  transition-all
-
-                  tracking-wider
-
-                  shadow-lg
-                "
-              >
-                🚀 GÖRÜNTÜLÜ KONUŞMAYI BAŞLAT
-              </button>
-
-            </div>
+              🚀 GÖRÜNTÜLÜ KONUŞMAYI BAŞLAT
+            </button>
 
           </div>
 
-        </div>
+        </section>
 
       </main>
 
