@@ -71,7 +71,7 @@ export default function MessagesPage() {
             <span>ANA SAYFAYA GERİ DÖN</span>
           </a>
 
-          {/* GÜVENLİ ODA YAZISI */}
+          {/* GÜVENLİ ODA */}
           <span
             className="
               text-[10px] sm:text-xs
@@ -103,18 +103,19 @@ export default function MessagesPage() {
               border border-white/10
               rounded-3xl
               p-5 sm:p-6
-              min-h-[260px] sm:h-[350px]
+              h-[270px] md:h-[350px]
               flex flex-col
               justify-between
             "
           >
-
             <div>
+
               <h3 className="text-lg font-bold mb-4 tracking-wide text-purple-400">
                 Mesajlar
               </h3>
 
               <div className="flex gap-2 mb-4">
+
                 <button className="bg-blue-600 px-3 py-1.5 rounded-xl text-xs font-medium">
                   Tümü
                 </button>
@@ -126,6 +127,7 @@ export default function MessagesPage() {
                 <button className="bg-slate-800 px-3 py-1.5 rounded-xl text-xs font-medium text-slate-400">
                   Giden
                 </button>
+
               </div>
 
               <input
@@ -142,6 +144,7 @@ export default function MessagesPage() {
                   focus:border-purple-500
                 "
               />
+
             </div>
 
             <p className="text-xs text-slate-500 text-center py-5 sm:py-8">
@@ -160,7 +163,7 @@ export default function MessagesPage() {
               border border-white/10
               rounded-3xl
               p-5 sm:p-6
-              min-h-[220px] sm:h-[350px]
+              h-[240px] md:h-[350px]
               flex items-center justify-center
             "
           >
@@ -183,7 +186,7 @@ export default function MessagesPage() {
             backdrop-blur-xl
             border border-purple-500/30
             rounded-3xl
-            p-5 sm:p-6
+            p-5 md:p-6
             text-center
             shadow-2xl
           "
@@ -191,7 +194,7 @@ export default function MessagesPage() {
 
           <h2
             className="
-              text-lg sm:text-xl
+              text-base md:text-lg
               font-bold
               mb-2
               tracking-wide
@@ -205,13 +208,14 @@ export default function MessagesPage() {
             🛰️ CANLI GÖRÜNTÜLÜ SOHBET ODALARI
           </h2>
 
-          <p className="text-xs sm:text-sm text-slate-400 mb-5 sm:mb-6 leading-6">
+          <p className="text-xs text-slate-400 mb-4 md:mb-6 leading-6">
             Ana sayfa düzenini ve Next.js şasisini bozmadan,
             kasanın içindeki o gizli tüneli bağımsız Hereke VIP
             penceresinde güvenle fırlatır.
           </p>
 
           <div className="max-w-xs mx-auto">
+
             <button
               onClick={bagimsizKameraAc}
               className="
@@ -223,8 +227,8 @@ export default function MessagesPage() {
                 hover:to-pink-500
                 text-white
                 font-semibold
-                py-3.5
-                px-6
+                py-3 px-6
+                md:py-3.5
                 rounded-2xl
                 text-xs
                 transition-all
@@ -236,6 +240,7 @@ export default function MessagesPage() {
             >
               🚀 GÖRÜNTÜLÜ KONUŞMAYI BAŞLAT
             </button>
+
           </div>
 
         </div>
