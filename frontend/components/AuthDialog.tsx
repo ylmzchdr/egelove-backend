@@ -277,7 +277,7 @@ return (
               {/* Google Butonu */}
               <button 
                 type="button"
-                                            onClick={() => window.location.href = "https://onrender.com"}
+                                            onClick={handleSocialLogin}
 
               
 
@@ -417,3 +417,4 @@ return (
     </Dialog>
   );
 }
+

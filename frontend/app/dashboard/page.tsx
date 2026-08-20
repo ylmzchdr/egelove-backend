@@ -47,7 +47,7 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-[#121420] text-white flex">
       
       {/* 📱 1. SOL MENÜ SÜTUNU (HER EKRANDA KİLİTLİ VE SABİT) */}
-      <aside className="w-64 bg-[#1a1d30] border-r border-white/5 flex flex-col justify-between p-6 shrink-0">
+    <aside className="hidden md:flex w-64 bg-[#1a1d30] border-r border-white/5 flex-col justify-between p-6 shrink-0">
         <div className="space-y-8">
           {/* Logo Bölümü */}
           <div className="flex items-center gap-3 border-b border-white/5 pb-4">
@@ -88,7 +88,7 @@ export default function DashboardPage() {
       </aside>
 
       {/* 📊 2. ANA İÇERİK ALANI */}
-      <main className="flex-1 p-6 md:p-8 space-y-8 overflow-y-auto">
+      <main className="flex-1 min-w-0 w-full p-4 md:p-8 space-y-6 md:space-y-8 overflow-x-hidden overflow-y-auto">
         
         {/* Üst Başlık */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-white/5 pb-6">
