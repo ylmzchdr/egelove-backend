@@ -77,17 +77,21 @@ export class AuthController {
   }
 
   // === GOOGLE DOĞRULAMA DÖNÜŞ NOKTASI ===
- @Get("google/callback")
+@Get("google/callback")
 @UseGuards(AuthGuard("google"))
 async googleAuthRedirect(@Req() req: any, @Res() res: any) {
   const result = await this.authService.googleLogin(req.user);
 
   const frontendUrl = "https://egelove.tr";
 
+  const user = encodeURIComponent(JSON.stringify(result.user));
+
   return res.redirect(
-    `${frontendUrl}/auth/callback?accessToken=${encodeURIComponent(
+    `${frontendUrl}/auth/google/callback?accessToken=${encodeURIComponent(
       result.accessToken,
-    )}&refreshToken=${encodeURIComponent(result.refreshToken)}`
+    )}&refreshToken=${encodeURIComponent(
+      result.refreshToken,
+    )}&user=${user}`,
   );
 }
 }
