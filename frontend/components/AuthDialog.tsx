@@ -127,6 +127,14 @@ const [loginData, setLoginData] = useState({ emailOrPhone: "", password: "" });
       const res: any = await api.auth.login(loginData);
       localStorage.setItem("accessToken", res.accessToken);
       localStorage.setItem("refreshToken", res.refreshToken);
+      localStorage.setItem(
+  "user",
+  JSON.stringify(res.user || res.profile || res)
+);
+      localStorage.setItem(
+  "user",
+  JSON.stringify(res.user || res.profile || res)
+);
       setLoginData({ emailOrPhone: "", password: "" });
       onClose();
       window.location.href = "/dashboard";
