@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import Topbar from "@/components/dashboard/Topbar";
 import { useI18n } from "@/lib/i18n-context";
+import { api } from "@/lib/api";
 
 
 const onlineUsers = [
@@ -42,36 +43,51 @@ const [user, setUser] = useState({
   profilePhoto: null as string | null,
 });
  useEffect(() => {
-  setIsClient(true);
+  const loadUser = async () => {
+    setIsClient(true);
 
-  const rawUser = localStorage.getItem("user");
-
-  if (rawUser) {
     try {
-      const parsed = JSON.parse(rawUser);
+      const rawUser = localStorage.getItem("user");
+
+      if (rawUser) {
+        const parsed = JSON.parse(rawUser);
+
+        setUser({
+          name: parsed.name || parsed.username || "Üye",
+          city: parsed.city?.name || parsed.city || "Türkiye",
+          profilePhoto:
+            parsed.profilePhoto ||
+            parsed.profileImage ||
+            parsed.avatar ||
+            null,
+        });
+
+        return;
+      }
+
+      const me: any = await api.users.me();
+
+      localStorage.setItem(
+        "user",
+        JSON.stringify(me)
+      );
 
       setUser({
-        name:
-          parsed.name ||
-          parsed.username ||
-          "Üye",
-
-        city:
-          parsed.city?.name ||
-          parsed.city ||
-          "Türkiye",
-
+        name: me.name || me.username || "Üye",
+        city: me.city?.name || me.city || "Türkiye",
         profilePhoto:
-          parsed.profilePhoto ||
-          parsed.profileImage ||
-          parsed.avatar ||
+          me.profilePhoto ||
+          me.profileImage ||
+          me.avatar ||
           null,
       });
 
     } catch (error) {
-      console.log("User parse error", error);
+      console.log("Kullanıcı alınamadı:", error);
     }
-  }
+  };
+
+  loadUser();
 
 }, []);
 

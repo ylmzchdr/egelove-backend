@@ -8,35 +8,95 @@ function CallbackContent() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    const accessToken = searchParams.get("accessToken");
-    const refreshToken = searchParams.get("refreshToken");
+    const handleLogin = async () => {
+      const accessToken = searchParams.get("accessToken");
+      const refreshToken = searchParams.get("refreshToken");
 
-    if (!accessToken) {
-      router.replace("/");
-      return;
-    }
+      if (!accessToken) {
+        router.replace("/");
+        return;
+      }
 
-    localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("accessToken", accessToken);
 
-    if (refreshToken) {
-      localStorage.setItem("refreshToken", refreshToken);
-    }
+      if (refreshToken) {
+        localStorage.setItem("refreshToken", refreshToken);
+      }
 
-    window.dispatchEvent(new Event("auth-changed"));
-    router.replace("/dashboard");
+      try {
+        const res = await fetch(
+          "https://egelove-backend.onrender.com/users/me",
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+
+        if (res.ok) {
+          const user = await res.json();
+
+          console.log("GOOGLE USER:", user);
+
+          localStorage.setItem(
+            "user",
+            JSON.stringify(user)
+          );
+        } else {
+          console.error("Kullanıcı bilgisi alınamadı");
+        }
+
+      } catch (error) {
+        console.error("USER FETCH HATA:", error);
+      }
+
+
+      window.dispatchEvent(
+        new Event("auth-changed")
+      );
+
+      router.replace("/dashboard");
+    };
+
+
+    handleLogin();
+
   }, [searchParams, router]);
 
+
   return (
-    <div style={{ padding: "50px", textAlign: "center", color: "#fff", fontFamily: "sans-serif" }}>
+    <div
+      style={{
+        padding: "50px",
+        textAlign: "center",
+        color: "#fff",
+        fontFamily: "sans-serif",
+      }}
+    >
       <h2>Giriş işlemi onaylanıyor...</h2>
-      <p>Lütfen bekleyin, panele yönlendiriliyorsunuz.</p>
+      <p>
+        Lütfen bekleyin, panele yönlendiriliyorsunuz.
+      </p>
     </div>
   );
 }
 
+
 export default function AuthCallbackPage() {
   return (
-    <Suspense fallback={<div style={{ color: "#fff", textAlign: "center", padding: "50px" }}>Yükleniyor...</div>}>
+    <Suspense
+      fallback={
+        <div
+          style={{
+            color:"#fff",
+            textAlign:"center",
+            padding:"50px"
+          }}
+        >
+          Yükleniyor...
+        </div>
+      }
+    >
       <CallbackContent />
     </Suspense>
   );
