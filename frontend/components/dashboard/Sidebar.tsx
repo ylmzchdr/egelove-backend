@@ -52,7 +52,7 @@ export default function Sidebar() {
       profile: "Profilim",
       settings: "Ayarlar",
       help: "Yardım Merkezi",
-      platform: "{copy.platform}",
+      platform: "Türkiye'nin dört bir yanından",
       menu: "Menü",
       account: "Hesabım",
       special: "Özel",

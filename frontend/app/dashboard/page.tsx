@@ -3,40 +3,37 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import {
+  Bell,
   Camera,
+  ChevronRight,
+  Globe2,
   Heart,
   Loader2,
   MapPin,
   MessageCircle,
   Search,
   Sparkles,
-  Home,
   User,
-  Bell,
-  LogOut,
-  Menu,
-  X
 } from "lucide-react";
+
+const onlineUsers = [
+  { id: "sabrina", name: "Sabrina", city: "Muğla", color: "from-pink-500 to-purple-600" },
+  { id: "can", name: "Can", city: "Muğla", color: "from-blue-500 to-teal-500" },
+  { id: "merve", name: "Merve", city: "Aydın", color: "from-purple-500 to-pink-500" },
+  { id: "deniz", name: "Deniz", city: "Antalya", color: "from-emerald-500 to-blue-500" },
+  { id: "elif", name: "Elif", city: "İstanbul", color: "from-orange-500 to-amber-500" },
+  { id: "burak", name: "Burak", city: "Ankara", color: "from-indigo-500 to-purple-500" },
+  { id: "zeynep", name: "Zeynep", city: "Diyarbakır", color: "from-rose-500 to-pink-500" },
+  { id: "hakan", name: "Hakan", city: "Trabzon", color: "from-cyan-500 to-blue-500" },
+];
 
 export default function DashboardPage() {
   const [isClient, setIsClient] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [language, setLanguage] = useState("TR");
 
-      useEffect(() => {
+  useEffect(() => {
     setIsClient(true);
-    
-    // 🛰️ VERİ TABANI HATASINI VE LOADING KİLİDİNİ KÖKTEN ERİTEN SAF KUTUP AYISI FORMÜLÜ
-    try {
-      // Sayfadaki yüklenme çarkını zorla kapat ve hataları temizle ortak!
-      const anyWindow = window as any;
-      if (typeof anyWindow !== 'undefined') {
-        // Eğer arkadaşın değişkenleri window'a bağladıysa veya sayfada state varsa zorla ez!
-      }
-    } catch (e) {
-      console.log(e);
-    }
   }, []);
-
 
   if (!isClient) {
     return (
@@ -47,254 +44,271 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#121420] text-white flex">
-      
-      {/* 📱 1. SOL MENÜ SÜTUNU (HER EKRANDA KİLİTLİ VE SABİT) */}
-    <aside className="hidden md:flex w-64 bg-[#1a1d30] border-r border-white/5 flex-col justify-between p-6 shrink-0">
-        <div className="space-y-8">
-          {/* Logo Bölümü */}
-          <div className="flex items-center gap-3 border-b border-white/5 pb-4">
-            <div className="w-8 h-8 bg-gradient-to-tr from-pink-500 to-purple-600 rounded-xl flex items-center justify-center font-black text-sm shadow-lg shadow-purple-500/20">
-              E
-            </div>
-            <span className="font-black text-lg tracking-widest bg-clip-text text-transparent bg-gradient-to-r from-white to-purple-300">
-              EGELOVE
-            </span>
-          </div>
+    <div className="min-h-screen bg-[#121420] text-white p-4 md:p-8">
+      <div className="max-w-7xl mx-auto space-y-6 md:space-y-8">
 
-          {/* Menü Linkleri - SAF HTML FIRLATICILARI AKTİF EDİLDİ */}
-          <nav className="space-y-2">
-            <a href="/dashboard" className="flex items-center gap-3 bg-purple-600 text-white px-4 py-3 rounded-xl text-xs font-bold tracking-wide transition-all shadow-lg shadow-purple-500/10">
-              <Home className="w-4 h-4" />
-              <span>Ana Sayfa</span>
-            </a>
-            <a href="/profile" className="flex items-center gap-3 text-slate-400 hover:text-white hover:bg-white/5 px-4 py-3 rounded-xl text-xs font-semibold tracking-wide transition-all">
-              <User className="w-4 h-4" />
-              <span>Benim Sayfam</span>
-            </a>
-            <a href="/messages" className="flex items-center gap-3 text-slate-400 hover:text-white hover:bg-white/5 px-4 py-3 rounded-xl text-xs font-semibold tracking-wide transition-all">
-              <MessageCircle className="w-4 h-4" />
-              <span>Mesajlar</span>
-            </a>
-            <a href="/notifications" className="flex items-center gap-3 text-slate-400 hover:text-white hover:bg-white/5 px-4 py-3 rounded-xl text-xs font-semibold tracking-wide transition-all">
-              <Bell className="w-4 h-4" />
-              <span>Bildirimler</span>
-            </a>
-          </nav>
-        </div>
-
-        {/* En Alt: Çıkış Yap Butonu */}
-        <a href="/" className="flex items-center gap-3 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 px-4 py-3 rounded-xl text-xs font-bold tracking-wide transition-all border border-rose-500/10 w-full mt-auto text-center justify-center">
-          <LogOut className="w-4 h-4" />
-          <span>Çıkış Yap</span>
-        </a>
-      </aside>
-
-      {/* 📊 2. ANA İÇERİK ALANI */}
-      <main className="flex-1 min-w-0 w-full p-4 md:p-8 space-y-6 md:space-y-8 overflow-x-hidden overflow-y-auto">
-        {/* 📱 MOBİL ÜST MENÜ */}
-<div className="md:hidden flex items-center justify-between bg-[#1a1d30] border border-white/10 rounded-2xl px-4 py-3 mb-2">
-  <div className="flex items-center gap-3">
-    <div className="w-9 h-9 bg-gradient-to-tr from-pink-500 to-purple-600 rounded-xl flex items-center justify-center font-black text-sm">
-      E
-    </div>
-
-    <span className="font-black tracking-widest text-white">
-      EGELOVE
-    </span>
-  </div>
-
-  <button
-    type="button"
-    onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-    className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 border border-white/10"
-    aria-label="Menüyü aç"
-  >
-    {mobileMenuOpen ? (
-      <X className="w-6 h-6 text-white" />
-    ) : (
-      <Menu className="w-6 h-6 text-white" />
-    )}
-  </button>
-</div>
-
-{/* 📱 MOBİL MENÜ */}
-{mobileMenuOpen && (
-  <div className="md:hidden bg-[#1a1d30] border border-white/10 rounded-2xl p-3 mb-4 space-y-2">
-    <a
-      href="/"
-      className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5"
-    >
-      <Home className="w-5 h-5" />
-      Ana Sayfa
-    </a>
-
-    <a
-      href="/profile"
-      className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5"
-    >
-      <User className="w-5 h-5" />
-      Benim Sayfam
-    </a>
-
-    <a
-      href="/messages"
-      className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5"
-    >
-      <MessageCircle className="w-5 h-5" />
-      Mesajlar
-    </a>
-
-    <a
-      href="/notifications"
-      className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-white/5"
-    >
-      <Bell className="w-5 h-5" />
-      Bildirimler
-    </a>
-
-    <a
-      href="/"
-      className="flex items-center gap-3 px-4 py-3 rounded-xl text-rose-400 border-t border-white/10 mt-2"
-    >
-      <LogOut className="w-5 h-5" />
-      Çıkış Yap
-    </a>
-  </div>
-)}
-        
-        {/* Üst Başlık */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-white/5 pb-6">
+        {/* ÜST BAŞLIK */}
+        <header className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 border-b border-white/10 pb-6">
           <div>
-            <h1 className="text-2xl font-black tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-purple-400">
-              EGE LOVE PANEL
+            <h1 className="text-3xl md:text-4xl font-black tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-purple-400">
+              EGE LOVE
             </h1>
-            <p className="text-xs text-slate-400 mt-1">Ege ve Akdeniz'in en seçkin flört ve arkadaşlık platformu.</p>
+            <p className="text-sm text-slate-400 mt-1">
+              Türkiye&apos;nin dört bir yanından yeni insanlarla tanış.
+            </p>
           </div>
-          <div className="flex items-center gap-3 bg-purple-500/10 border border-purple-500/20 px-4 py-2 rounded-2xl">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            
-          </div>
-        </div>
 
-               {/* 👥 81 İLDEN CANLI ÇEVRİMİÇİ ÜYELER ŞERİDİ - TIKLANABİLİR VE TİP GÜVENLİĞİ TAM */}
-        <div className="bg-slate-900/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-xl">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2 self-start lg:self-auto">
+            <div className="flex items-center gap-1 rounded-2xl bg-slate-900/70 border border-white/15 p-1">
+              <Globe2 className="w-4 h-4 text-slate-500 mx-1.5" />
+              {["TR", "EN", "RU", "AR"].map((lang) => (
+                <button
+                  key={lang}
+                  type="button"
+                  onClick={() => setLanguage(lang)}
+                  className={`px-2.5 md:px-3 py-2 rounded-xl text-[10px] md:text-xs font-bold transition-all ${
+                    language === lang
+                      ? "bg-purple-600 text-white shadow-lg shadow-purple-500/20"
+                      : "text-slate-400 hover:text-white hover:bg-white/5"
+                  }`}
+                  aria-label={`${lang} dilini seç`}
+                >
+                  {lang}
+                </button>
+              ))}
+            </div>
+
+            <Link
+              href="/notifications"
+              className="w-10 h-10 md:w-11 md:h-11 rounded-xl border border-white/15 bg-slate-900/70 flex items-center justify-center hover:border-purple-400/50 transition-all"
+              aria-label="Bildirimler"
+            >
+              <Bell className="w-4 h-4 md:w-5 md:h-5" />
+            </Link>
+
+            <Link
+              href="/messages"
+              className="w-10 h-10 md:w-11 md:h-11 rounded-xl border border-white/15 bg-slate-900/70 flex items-center justify-center hover:border-purple-400/50 transition-all"
+              aria-label="Mesajlar"
+            >
+              <MessageCircle className="w-4 h-4 md:w-5 md:h-5" />
+            </Link>
+
+            <Link
+              href="/profile"
+              className="w-10 h-10 md:w-11 md:h-11 rounded-xl border border-purple-400/40 bg-purple-500/10 flex items-center justify-center hover:bg-purple-500/20 transition-all"
+              aria-label="Profilim"
+            >
+              <User className="w-4 h-4 md:w-5 md:h-5 text-purple-300" />
+            </Link>
+          </div>
+        </header>
+
+        {/* PROFİL + KİŞİ ARA */}
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Link href="/profile/edit" className="group">
+            <div className="h-full bg-gradient-to-r from-purple-900/50 to-slate-900/70 border border-purple-500/40 rounded-2xl p-5 hover:border-purple-400 hover:shadow-lg hover:shadow-purple-500/10 transition-all">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-purple-500/15 border border-purple-400/25 flex items-center justify-center shrink-0">
+                  <User className="w-6 h-6 text-purple-300" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h2 className="text-base md:text-lg font-black">Profilini Doldur</h2>
+                  <p className="text-xs md:text-sm text-slate-400 mt-1">
+                    Profilini tamamla, seni daha kolay keşfetsinler.
+                  </p>
+                </div>
+                <ChevronRight className="w-5 h-5 text-purple-300 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </div>
+          </Link>
+
+          <Link href="/search" className="group">
+            <div className="h-full bg-slate-900/60 border border-white/15 rounded-2xl p-5 hover:border-purple-400/50 hover:bg-purple-500/5 transition-all">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/15 flex items-center justify-center shrink-0">
+                  <Search className="w-6 h-6 text-purple-300" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h2 className="text-base md:text-lg font-black">Aradığın Kişiyi Bul</h2>
+                  <p className="text-xs md:text-sm text-slate-400 mt-1">
+                    Şehir, yaş ve diğer filtrelerle ara.
+                  </p>
+                </div>
+                <ChevronRight className="w-5 h-5 text-purple-300 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </div>
+          </Link>
+        </section>
+
+        {/* 81 İLDEN ÇEVRİMİÇİ ÜYELER */}
+        <section className="bg-slate-900/40 backdrop-blur-xl border border-white/10 rounded-3xl p-5 md:p-6 shadow-xl">
+          <div className="flex items-center justify-between mb-5">
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-              <h2 className="text-xs font-bold tracking-widest text-emerald-400 uppercase">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+              <h2 className="text-xs md:text-sm font-bold tracking-widest text-emerald-400 uppercase">
                 81 İlden Canlı Çevrimiçi Üyeler
               </h2>
             </div>
-            <span className="text-xs text-slate-500 hover:text-purple-400 cursor-pointer transition-colors font-medium">Tüm İlleri Gör</span>
-          </div>
-          
-          <div className="flex items-center gap-6 overflow-x-auto pb-2 scrollbar-none">
-            {[
-              { id: "sabrina", name: "sabrina", city: "Muğla", color: "from-pink-500 to-purple-600", active: true },
-              { id: "can", name: "Can", city: "Muğla", color: "from-blue-500 to-teal-500", active: true },
-              { id: "merve", name: "Merve", city: "Aydın", color: "from-purple-500 to-pink-500", active: true },
-              { id: "deniz", name: "Deniz", city: "Antalya", color: "from-emerald-500 to-blue-500", active: true },
-              { id: "elif", name: "Elif", city: "İstanbul", color: "from-orange-500 to-amber-500", active: true },
-              { id: "burak", name: "Burak", city: "Ankara", color: "from-indigo-500 to-purple-500", active: true },
-              { id: "zeynep", name: "Zeynep", city: "Diyarbakır", color: "from-rose-500 to-pink-500", active: true },
-              { id: "hakan", name: "Hakan", city: "Trabzon", color: "from-cyan-500 to-blue-500", active: true }
-            ].map((user, idx) => (
-                            <a 
-                key={idx} 
-                href={`/profile/${user.id}`}
-                className="flex flex-col items-center space-y-1.5 min-w-[70px] cursor-pointer group transition-all duration-200"
-              >
 
-                <div className={`w-14 h-14 rounded-full bg-gradient-to-tr ${user.color} p-0.5 relative shadow-lg group-hover:scale-105 transition-transform`}>
+            <Link
+              href="/search"
+              className="text-[10px] md:text-xs text-slate-500 hover:text-purple-400 transition-colors font-medium"
+            >
+              Tümünü Gör →
+            </Link>
+          </div>
+
+          <div className="flex items-center gap-5 md:gap-6 overflow-x-auto pb-2 scrollbar-none">
+            {onlineUsers.map((user) => (
+              <Link
+                key={user.id}
+                href={`/profile/${user.id}`}
+                className="flex flex-col items-center gap-1.5 min-w-[70px] cursor-pointer group"
+              >
+                <div
+                  className={`w-14 h-14 rounded-full bg-gradient-to-tr ${user.color} p-0.5 relative shadow-lg group-hover:scale-105 transition-transform`}
+                >
                   <div className="w-full h-full bg-[#121420] rounded-full flex items-center justify-center overflow-hidden">
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-400">{user.name.slice(0,2)}</span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                      {user.name.slice(0, 2)}
+                    </span>
                   </div>
-                  {user.active && <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-[#121420] rounded-full" />}
+                  <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-[#121420] rounded-full" />
                 </div>
-                <span className="text-xs font-bold text-slate-200 tracking-wide truncate max-w-[65px] group-hover:text-purple-400 transition-colors">{user.name}</span>
-                <span className="text-[10px] text-slate-500 font-medium">{user.city}</span>
-              </a>
+
+                <span className="text-xs font-bold text-slate-200 tracking-wide truncate max-w-[65px] group-hover:text-purple-400 transition-colors">
+                  {user.name}
+                </span>
+                <span className="text-[10px] text-slate-500 font-medium">
+                  {user.city}
+                </span>
+              </Link>
             ))}
           </div>
-        </div>
+        </section>
 
+        {/* ANA KARTLAR */}
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-        {/* ⚡ ANA LANSMAN KARTLARI BÖLÜMÜ */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          
-          {/* 🎥 Sesli & Görüntülü Canlı Sohbet */}
-          <a href="/messages" className="block group">
-            <div className="bg-gradient-to-br from-purple-900/40 to-slate-900/60 backdrop-blur-xl border border-purple-500/40 rounded-3xl p-6 shadow-xl shadow-purple-500/5 relative overflow-hidden h-full transform hover:scale-[1.01] transition-all duration-300">
+          {/* CANLI SOHBET */}
+          <Link href="/messages" className="block group">
+            <div className="bg-gradient-to-br from-purple-900/40 to-slate-900/60 backdrop-blur-xl border border-purple-500/40 rounded-3xl p-6 shadow-xl shadow-purple-500/5 relative overflow-hidden h-full hover:border-purple-400/60 transition-all duration-300">
               <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-purple-500/20 transition-all duration-500" />
-              <div className="flex items-center gap-4 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center border border-purple-500/30 text-purple-400">
+
+              <div className="flex items-center gap-4 mb-4 relative">
+                <div className="w-11 h-11 rounded-xl bg-purple-500/20 flex items-center justify-center border border-purple-500/30">
                   <Camera className="w-5 h-5 text-purple-400 animate-pulse" />
                 </div>
+
                 <div>
-                  <h3 className="text-sm font-bold tracking-wide text-white">Sesli & Görüntülü Canlı Sohbet</h3>
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border border-emerald-500/30 text-emerald-400 tracking-wider">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" /> AKTİF & CANLI SİSTEM
+                  <h3 className="text-sm md:text-base font-bold tracking-wide text-white">
+                    Sesli &amp; Görüntülü Canlı Sohbet
+                  </h3>
+
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 mt-1 rounded-full text-[10px] font-semibold bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 tracking-wider">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    AKTİF &amp; CANLI SİSTEM
                   </span>
                 </div>
               </div>
-              <p className="text-xs text-slate-300 leading-relaxed tracking-wide">
-                Ege ve Akdeniz'in sıcaklığını sıfır gecikmeli sesli ogörüntülü odalarda bizzat hisset! WebRTC altyapısıyla kesintisiz, anlık ve 81 il genelinde sınırsız görüntülü flört deneyimi başarıyla devrede. Ortaklıkla başardık!
+
+              <p className="text-xs md:text-sm text-slate-300 leading-relaxed tracking-wide relative">
+                Türkiye&apos;nin 81 ilinden yeni insanlarla sesli ve görüntülü
+                sohbet et. Anlık ve kesintisiz canlı sohbet deneyimi burada.
               </p>
             </div>
-          </a>
+          </Link>
 
-          {/* 📱 Google Play & App Store */}
-          <div className="bg-slate-900/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-xl relative overflow-hidden h-full group">
+          {/* MOBİL UYGULAMALAR */}
+          <div className="bg-slate-900/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-xl relative overflow-hidden h-full">
             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl -mr-10 -mt-10" />
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center border border-blue-500/20 text-blue-400">
-                <Sparkles className="w-5 h-5" />
+
+            <div className="flex items-center gap-4 mb-4 relative">
+              <div className="w-11 h-11 rounded-xl bg-blue-500/10 flex items-center justify-center border border-blue-500/20">
+                <Sparkles className="w-5 h-5 text-blue-400" />
               </div>
+
               <div>
-                <h3 className="text-sm font-bold tracking-wide text-white">Google Play & App Store</h3>
-                <span className="inline-block px-2 py-0.5 bg-blue-500/10 border border-blue-500/20 text-[9px] font-bold text-blue-400 rounded-md tracking-wider">GELİŞTİRİLİYOR</span>
+                <h3 className="text-sm md:text-base font-bold tracking-wide text-white">
+                  Google Play &amp; App Store
+                </h3>
+                <span className="inline-block px-2 py-1 mt-1 bg-blue-500/10 border border-blue-500/20 text-[9px] font-bold text-blue-400 rounded-md tracking-wider">
+                  GELİŞTİRİLİYOR
+                </span>
               </div>
             </div>
-            <p className="text-xs text-slate-400 leading-relaxed tracking-wide">
- Tasarımımız ve altyapımız tamamen yerel (native) olarak kodlanıyor. Yakında mağazalardayız.</p>
+
+            <p className="text-xs md:text-sm text-slate-400 leading-relaxed tracking-wide relative">
+              Egelove mobil uygulamaları için çalışmalar devam ediyor. Yakında
+              mağazalarda.
+            </p>
           </div>
+        </section>
 
-        </div>
+        {/* ALT KARTLAR */}
+        <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
 
-        {/* 📊 ALT İSTATİSTİK VE KONTROL KARTLARI */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-slate-900/40 border border-white/5 rounded-2xl p-4 flex flex-col justify-between h-28">
+          <Link
+            href="/likes"
+            className="bg-slate-900/40 border border-white/10 rounded-2xl p-4 flex flex-col justify-between h-28 hover:border-pink-500/40 transition-all"
+          >
             <Heart className="w-4 h-4 text-pink-500" />
             <div>
-              <span className="text-xs font-bold text-slate-200 block">Yeni Beğeni</span>
-              <span className="text-[10px] text-emerald-400 font-semibold mt-0.5 block">● Aktif</span>
+              <span className="text-xs font-bold text-slate-200 block">
+                Yeni Beğeni
+              </span>
+              <span className="text-[10px] text-emerald-400 font-semibold mt-0.5 block">
+                ● Aktif
+              </span>
             </div>
-          </div>
-          <div className="bg-slate-900/40 border border-white/5 rounded-2xl p-4 flex flex-col justify-between h-28">
+          </Link>
+
+          <Link
+            href="/messages"
+            className="bg-slate-900/40 border border-white/10 rounded-2xl p-4 flex flex-col justify-between h-28 hover:border-blue-500/40 transition-all"
+          >
             <MessageCircle className="w-4 h-4 text-blue-400" />
             <div>
-              <span className="text-xs font-bold text-slate-200 block">Okunmamış Mesaj</span>
-              <span className="text-[10px] text-slate-500 font-medium mt-0.5 block">MESAJLAR</span>
+              <span className="text-xs font-bold text-slate-200 block">
+                Mesajlar
+              </span>
+              <span className="text-[10px] text-slate-500 font-medium mt-0.5 block">
+                SOHBETLERİ AÇ
+              </span>
             </div>
-          </div>
-          <div className="bg-slate-900/40 border border-white/5 rounded-2xl p-4 flex flex-col justify-between h-28">
+          </Link>
+
+          <Link
+            href="/search"
+            className="bg-slate-900/40 border border-white/10 rounded-2xl p-4 flex flex-col justify-between h-28 hover:border-purple-500/40 transition-all"
+          >
             <Search className="w-4 h-4 text-purple-400" />
             <div>
               <span className="text-2xl font-black text-white">81</span>
-              <span className="text-[10px] text-slate-500 font-medium block">İl Genelinde Bul</span>
+              <span className="text-[10px] text-slate-500 font-medium block">
+                İlde Üye Bul
+              </span>
             </div>
-          </div>
-          <div className="bg-slate-900/40 border border-white/5 rounded-2xl p-4 flex flex-col justify-between h-28">
+          </Link>
+
+          <Link
+            href="/search"
+            className="bg-slate-900/40 border border-white/10 rounded-2xl p-4 flex flex-col justify-between h-28 hover:border-amber-500/40 transition-all"
+          >
             <MapPin className="w-4 h-4 text-amber-500" />
             <div>
-              <span className="text-xs font-bold text-white block">Muğla</span>
-              <span className="text-[10px] text-slate-500 font-medium mt-0.5 block">Mevcut Konum</span>
+              <span className="text-xs font-bold text-white block">
+                Kişi Ara
+              </span>
+              <span className="text-[10px] text-slate-500 font-medium mt-0.5 block">
+                FİLTRELERİ AÇ
+              </span>
             </div>
-          </div>
-        </div>
+          </Link>
+        </section>
 
-      </main>
+      </div>
     </div>
   );
 }

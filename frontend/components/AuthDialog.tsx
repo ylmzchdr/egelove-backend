@@ -105,25 +105,7 @@ export default function AuthDialog({ activeTab, onClose }: AuthDialogProps) {
   const { t } = useI18n();
 
   useEffect(() => { setTab(activeTab); }, [activeTab]);
-    useEffect(() => {
-    // ğŸš€ GOOGLE GÄ°RÄ°Å RENDER KÄ°LÄ°DÄ°NÄ° KIRAN 10 SANÄ°YELÄ°K CAN SÃœYÃœ Ã‡ARKÄ°
-    const interval = setInterval(() => {
-      const token = localStorage.getItem("accessToken");
-      if (token) {
-        clearInterval(interval);
-        window.location.href = "/dashboard";
-      } else {
-        // Token henÃ¼z gelmediyse veya backend uykudaysa yerel hafÄ±zayÄ± hareketlendir
-        console.log("â˜… Egelove Render Trigger: 10 saniyelik hareket verildi.");
-        localStorage.setItem("render_pulse", Date.now().toString());
-      }
-    }, 10000); // Tam 10 saniyede bir tetikler!
-
-    return () => clearInterval(interval);
-  }, []);
-
-
-  const [loginData, setLoginData] = useState({ emailOrPhone: "", password: "" });
+const [loginData, setLoginData] = useState({ emailOrPhone: "", password: "" });
   const [registerData, setRegisterData] = useState({
     name: "",
     username: "",
@@ -147,7 +129,7 @@ export default function AuthDialog({ activeTab, onClose }: AuthDialogProps) {
       localStorage.setItem("refreshToken", res.refreshToken);
       setLoginData({ emailOrPhone: "", password: "" });
       onClose();
-      window.location.href = "/profile";
+      window.location.href = "/dashboard";
     } catch (err: any) {
       alert(err.message || "GiriÅŸ baÅŸarÄ±sÄ±z");
     } finally {
