@@ -531,15 +531,15 @@ export default function Topbar({
                 <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-[#10131e] bg-emerald-400" />
               </span>
 
-              <span className="hidden min-w-0 text-left xl:block">
-                <span className="block max-w-28 truncate text-[11px] font-extrabold text-white">
+              {/* 🌟 HER EKRANDA PARILDAYAN VIP KARŞILAMA VE İSİM ALANI */}
+              <div className="flex flex-col text-left min-w-0 pr-1">
+                <span className="block max-w-28 truncate text-xs font-black text-slate-200">
                   {userName}
                 </span>
-
-                <span className="mt-0.5 block max-w-28 truncate text-[9px] font-medium text-slate-600">
+                <span className="block max-w-28 truncate text-[10px] font-medium text-purple-400">
                   {userCity}
                 </span>
-              </span>
+              </div>
 
               <ChevronDown
                 className={[
