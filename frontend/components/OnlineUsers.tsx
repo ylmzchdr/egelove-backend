@@ -1,6 +1,7 @@
 'use client'; 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useI18n } from "@/lib/i18n-context";
 
 const MOCK_ONLINE_USERS = [
   { 
@@ -20,6 +21,7 @@ const MOCK_ONLINE_USERS = [
 ];
 
 export default function OnlineUsers() {
+  const { t } = useI18n();
   const router = useRouter();
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,7 +40,7 @@ export default function OnlineUsers() {
             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
           </span>
           <h3 className="text-white font-medium text-xs md:text-sm tracking-wide">
-            81 İLDEN CANLI ÇEVRİMİÇİ ÜYELER
+          {t.dashboard.onlineUsersTitle}
           </h3>
         </div>
         <span 

@@ -111,24 +111,29 @@ const [user, setUser] = useState({
 
         {/* PROFİL + KİŞİ ARA */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          
           <Link href="/profile/edit" className="group">
-            <div className="h-full bg-gradient-to-r from-purple-900/50 to-slate-900/70 border border-purple-500/40 rounded-2xl p-5 hover:border-purple-400 hover:shadow-lg hover:shadow-purple-500/10 transition-all">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-purple-500/15 border border-purple-400/25 flex items-center justify-center shrink-0">
-                  <User className="w-6 h-6 text-purple-300" />
-                </div>
-                <div className="min-w-0 flex-1">
-              <h2 className="text-base md:text-lg font-black">
-  {t.dashboard.find}
-</h2>
-                  <p className="text-xs md:text-sm text-slate-400 mt-1">
-                   {t.dashboard.findDesc}
-                  </p>
-                </div>
-                <ChevronRight className="w-5 h-5 text-purple-300 group-hover:translate-x-1 transition-transform" />
-              </div>
-            </div>
-          </Link>
+  <div className="h-full bg-gradient-to-r from-purple-900/50 to-slate-900/70 border border-purple-500/40 rounded-2xl p-5 hover:border-purple-400 hover:shadow-lg hover:shadow-purple-500/10 transition-all">
+    <div className="flex items-center gap-4">
+      <div className="w-12 h-12 rounded-2xl bg-purple-500/15 border border-purple-400/25 flex items-center justify-center shrink-0">
+        <User className="w-6 h-6 text-purple-300" />
+      </div>
+
+     <div className="min-w-0 flex-1">
+  <h2 className="text-base md:text-lg font-black">
+    {"Profilim"}
+  </h2>
+  
+  <p className="text-xs md:text-sm text-slate-400 mt-1">
+    {"Profil bilgilerinizi ve ayarlarınızı düzenleyin."}
+  </p>
+</div>
+
+
+      <ChevronRight className="w-5 h-5 text-purple-300 group-hover:translate-x-1 transition-transform" />
+    </div>
+  </div>
+</Link>
 
           <Link href="/search" className="group">
             <div className="h-full bg-slate-900/60 border border-white/15 rounded-2xl p-5 hover:border-purple-400/50 hover:bg-purple-500/5 transition-all">
@@ -137,10 +142,13 @@ const [user, setUser] = useState({
                   <Search className="w-6 h-6 text-purple-300" />
                 </div>
                 <div className="min-w-0 flex-1">
-                 <h2 className="text-base md:text-lg font-black">{t.dashboard.find}</h2>
-                  <p className="text-xs md:text-sm text-slate-400 mt-1">
-                    {t.dashboard.findDesc}
-                  </p>
+                <h2 className="text-base md:text-lg font-black">
+  {t.dashboard.find}
+</h2>
+
+<p className="text-xs md:text-sm text-slate-400 mt-1">
+  {"Profil bilgilerini güncel tutarak daha güvenilir ve doğru eşleşmeler elde et."}
+</p>
                 </div>
                 <ChevronRight className="w-5 h-5 text-purple-300 group-hover:translate-x-1 transition-transform" />
               </div>
@@ -162,7 +170,7 @@ const [user, setUser] = useState({
               href="/search"
               className="text-[10px] md:text-xs text-slate-500 hover:text-purple-400 transition-colors font-medium"
             >
-              Tümünü Gör →
+            {t.dashboard.viewAllCities}
             </Link>
           </div>
 
@@ -294,7 +302,7 @@ const [user, setUser] = useState({
             <div>
               <span className="text-2xl font-black text-white">81</span>
               <span className="text-[10px] text-slate-500 font-medium block">
-                İlde Üye Bul
+               {t.dashboard.find}
               </span>
             </div>
           </Link>
@@ -306,10 +314,10 @@ const [user, setUser] = useState({
             <MapPin className="w-4 h-4 text-amber-500" />
             <div>
               <span className="text-xs font-bold text-white block">
-                Kişi Ara
+              {t.dashboard.findDesc}
               </span>
               <span className="text-[10px] text-slate-500 font-medium mt-0.5 block">
-                FİLTRELERİ AÇ
+             {t.dashboard.find}
               </span>
             </div>
           </Link>
