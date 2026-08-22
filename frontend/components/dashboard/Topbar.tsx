@@ -292,8 +292,7 @@ export default function Topbar({
               <Languages className="h-[17px] w-[17px]" strokeWidth={1.9} />
 
               <span>{currentLanguage.shortLabel}</span>
-
-              <ChevronDown
+<ChevronDown
                 className={[
                   "h-3.5 w-3.5 transition-transform duration-300",
                   activePanel === "language" ? "rotate-180" : "",
@@ -302,47 +301,28 @@ export default function Topbar({
             </button>
 
             {activePanel === "language" && (
-              <div className="absolute right-0 top-[calc(100%+12px)] w-56 overflow-hidden rounded-[22px] border border-white/[0.09] bg-[#0d101b]/95 p-2 shadow-[0_28px_90px_rgba(0,0,0,0.5)] backdrop-blur-2xl">
-                <div className="px-3 pb-2 pt-1">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-600">
-                    Dil seçimi
-                  </p>
-                </div>
-
+              <div className="absolute right-0 top-[calc(100%+12px)] w-44 overflow-hidden rounded-[22px] border border-white/[0.09] bg-[#0d101b] p-2 shadow-[0_28px_90px_rgba(0,0,0,0.5)] backdrop-blur-2xl">
                 <div className="space-y-1">
                   {languages.map((language) => {
-                    const isSelected =
-                      lang === language.code;
-
+                    const isSelected = lang === language.code;
                     return (
                       <button
                         key={language.code}
                         type="button"
-                        onClick={() =>
-                          handleLanguageChange(language.code)
-                        }
+                        onClick={() => {
+                          setLang(language.code);
+                          setActivePanel(null);
+                        }}
                         className={[
-                          "flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-left transition-all duration-200",
+                          "flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left transition-all duration-200",
                           isSelected
-                            ? "bg-pink-400/[0.09] text-white"
+                            ? "bg-purple-600 text-white font-black shadow-lg"
                             : "text-slate-400 hover:bg-white/[0.05] hover:text-white",
                         ].join(" ")}
                       >
-                        <span className="text-lg">{language.flag}</span>
-
-                        <span className="min-w-0 flex-1">
-                          <span className="block text-xs font-bold">
-                            {language.label}
-                          </span>
-
-                          <span className="mt-0.5 block text-[9px] uppercase tracking-wider text-slate-600">
-                            {language.shortLabel}
-                          </span>
-                        </span>
-
-                        {isSelected && (
-                          <Check className="h-4 w-4 text-pink-300" />
-                        )}
+                        <span className="text-base">{language.flag}</span>
+                        <span className="text-xs font-bold">{language.label}</span>
+                        {isSelected && <Check className="h-3.5 w-3.5 ml-auto text-white" />}
                       </button>
                     );
                   })}
@@ -350,6 +330,7 @@ export default function Topbar({
               </div>
             )}
           </div>
+
 
           <div className="relative">
             <button

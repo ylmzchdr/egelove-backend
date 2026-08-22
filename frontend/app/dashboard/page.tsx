@@ -122,7 +122,7 @@ const [user, setUser] = useState({
   {t.dashboard.find}
 </h2>
                   <p className="text-xs md:text-sm text-slate-400 mt-1">
-                    Profilini tamamla, seni daha kolay keşfetsinler.
+                   {t.dashboard.findDesc}
                   </p>
                 </div>
                 <ChevronRight className="w-5 h-5 text-purple-300 group-hover:translate-x-1 transition-transform" />
@@ -137,9 +137,9 @@ const [user, setUser] = useState({
                   <Search className="w-6 h-6 text-purple-300" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h2 className="text-base md:text-lg font-black">Aradığın Kişiyi Bul</h2>
+                 <h2 className="text-base md:text-lg font-black">{t.dashboard.find}</h2>
                   <p className="text-xs md:text-sm text-slate-400 mt-1">
-                    Şehir, yaş ve diğer filtrelerle ara.
+                    {t.dashboard.findDesc}
                   </p>
                 </div>
                 <ChevronRight className="w-5 h-5 text-purple-300 group-hover:translate-x-1 transition-transform" />
