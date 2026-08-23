@@ -174,6 +174,54 @@ async sendMessage(
 
   return message;
 }
+  @Post(":id/video-call")
+  async startVideoCall(
+    @CurrentUser() user: any,
+    @Param("id") conversationId: string
+  ) {
+    const conversation = await this.prisma.conversation.findUnique({
+      where: { id: conversationId },
+    });
+
+    if (!conversation) {
+      throw new NotFoundException("Konuşma bulunamadı");
+    }
+
+    // Odadaki kişilerden biri değilse erişimi engelle
+    if (conversation.user1Id !== user.sub && conversation.user2Id !== user.sub) {
+      throw new ForbiddenException("Erişim reddedildi");
+    }
+
+    // Arayan kişinin profil ve premium detaylarını çek
+    const sender = await this.prisma.user.findUnique({
+      where: { id: user.sub },
+      select: { id: true, gender: true, premiumExpiresAt: true },
+    });
+
+    if (!sender) {
+      throw new ForbiddenException("Kullanıcı bulunamadı");
+    }
+
+    // 💰 TİCARİ KURAL: Erkek kullanıcı Premium değilse görüntülü aramayı başlatamaz!
+    if (sender.gender === "MALE") {
+      const now = new Date();
+      const isPremium = !!sender.premiumExpiresAt && sender.premiumExpiresAt > now;
+      
+      if (!isPremium) {
+        throw new ForbiddenException(
+          "Görüntülü sohbet odalarını kullanabilmek için Premium üye olmalısınız ortak!"
+        );
+      }
+    }
+
+    // Kadınlar için ücretsiz veya erkek premium ise güvenli, benzersiz bir WebrTC oda linki üret
+    // Tarayıcı ön yüzü (frontend) bu linki alıp router.push() ile açacak
+    return {
+      success: true,
+      url: `/canavar-video?room=${conversationId}&caller=${user.sub}`,
+    };
+  }
+
 
   private conversationInclude() {
     return {
