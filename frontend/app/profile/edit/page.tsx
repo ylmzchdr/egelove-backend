@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
@@ -57,10 +57,10 @@ const TEXT = {
     detailsDesc: "Eşleşme kalitesini artıran ek bilgiler.",
     about: "Hakkımda",
     aboutDesc: "Kendini ve aradığın kişiyi doğal bir dille anlat.",
-    name: "Ad",
-    surname: "Soyad",
+name: "İsim / Rumuz",
+    
     gender: "Cinsiyet",
-    phone: "Telefon",
+  
     birthDate: "Doğum Tarihi",
     city: "İl",
     district: "İlçe",
