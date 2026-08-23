@@ -47,7 +47,8 @@ export default function CanavarVideoPage() {
         <h1 className="text-sm font-black tracking-widest bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-400 to-amber-300">
           EGELOVE VIP CANLI BAĞLANTI
         </h1>
-        <p className="text-[10px] text-slate-400 mt-0.5 tracking-wider uppercase">Hereke İlmeği Kalitesinde Güvenli WebRTC Tüneli</p>
+        <p className="text-[10px] text-slate-400 mt-0.5 tracking-wider uppercase">EGELOVE.TR KALİTESİNDE GÜVENLİ WEBRTC TÜNELİ
+ İlmeği Kalitesinde Güvenli WebRTC Tüneli</p>
       </div>
 
       <div className="my-auto">

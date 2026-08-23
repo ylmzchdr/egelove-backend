@@ -268,7 +268,8 @@ export default function Sidebar() {
               </div>
 
               <p className="mt-0.5 truncate text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500">
-                ★ HEREKE PREMIUM
+                ★ EGELOVE.TR KALİTESİNDE GÜVENLİ WEBRTC TÜNELİ
+ PREMIUM
 
               </p>
             </div>
