@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
@@ -41,27 +41,21 @@ export function SelectContent({
         sideOffset={6}
         position="popper"
         className={cn(
-          "z-[9999] overflow-hidden rounded-xl border border-white/10 bg-[#10141f] text-white shadow-2xl min-w-[var(--radix-select-trigger-width)]",
+          "z-[9999] rounded-xl border border-white/10 bg-[#10141f] text-white shadow-2xl min-w-[var(--radix-select-trigger-width)]",
           className
         )}
         {...props}
       >
-        <SelectPrimitive.ScrollUpButton className="flex h-8 items-center justify-center">
-          <ChevronUp className="h-4 w-4" />
-        </SelectPrimitive.ScrollUpButton>
-
-        <SelectPrimitive.Viewport className="p-1">
-          {children}
-        </SelectPrimitive.Viewport>
-
-        <SelectPrimitive.ScrollDownButton className="flex h-8 items-center justify-center">
-          <ChevronDown className="h-4 w-4" />
-        </SelectPrimitive.ScrollDownButton>
-
+        <div className="max-h-[240px] overflow-y-auto style-scrollbar">
+          <SelectPrimitive.Viewport className="p-1">
+            {children}
+          </SelectPrimitive.Viewport>
+        </div>
       </SelectPrimitive.Content>
     </SelectPrimitive.Portal>
   );
 }
+
 
 export function SelectItem({
   className,
