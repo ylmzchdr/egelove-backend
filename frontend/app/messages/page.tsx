@@ -1,8 +1,10 @@
 "use client";
+import { useRouter } from "next/navigation";
 
 import React, { useEffect, useState } from "react";
 
 export default function MessagesPage() {
+  const router = useRouter();
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -29,6 +31,7 @@ export default function MessagesPage() {
       `width=${width},height=${height},top=${top},left=${left},resizable=no,scrollbars=no,status=no,location=no,toolbar=no,menubar=no`
     );
   };
+  
 
   if (!isClient) return null;
 
