@@ -788,15 +788,7 @@ const currentLang: LangKey = (
                       />
                     </Field>
 
-                    <Field label={tx.surname}>
-                      <Input
-                        className={fieldClass}
-                        value={form.surname}
-                        onChange={(event) =>
-                          updateField("surname", event.target.value)
-                        }
-                      />
-                    </Field>
+                    
 
                     <Field label={tx.gender}>
                       <LocalizedSelect
@@ -809,15 +801,7 @@ const currentLang: LangKey = (
                       />
                     </Field>
 
-                    <Field label={tx.phone}>
-                      <Input
-                        className={fieldClass}
-                        value={form.phone || ""}
-                        onChange={(event) =>
-                          updateField("phone", event.target.value)
-                        }
-                      />
-                    </Field>
+                   
 
                     <Field label={tx.birthDate}>
                       <Input
