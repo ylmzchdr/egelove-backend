@@ -29,8 +29,8 @@ export default function NotificationsPage() {
         { 
           id: "1", 
           title: "sabrina (Muğla)", 
-          message: "Az önce profilini inceledi ve sana kalıcı bir EGELOVE.TR KALİTESİNDE GÜVENLİ WEBRTC TÜNELİ
- İlmeği bıraktı! Görüntülü sohbet odalarında seninle eşleşmek için tetikte bekliyor.", 
+                    message: "Az önce profilini inceledi ve sana kalıcı bir beğeni bıraktı! Görüntülü sohbet odalarında seninle eşleşmek için tetikte bekliyor.",
+
           isRead: false, 
           createdAt: new Date().toISOString() 
         },
