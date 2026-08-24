@@ -39,8 +39,9 @@ type Message = {
   isMine?: boolean;
 };
 
+// Canlı backend — local geliştirmede de doğrudan aynı API kullanılır.
 const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
+  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ||
   "https://egelove-backend.onrender.com";
 
 function getAccessToken(): string | null {
@@ -104,6 +105,31 @@ function MessagesContent() {
   const [error, setError] = useState("");
 
   const [search, setSearch] = useState("");
+    const handleSendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!draft.trim() || !selectedConversationId || sending) return;
+
+    setSending(true);
+    setError("");
+
+    try {
+      // API isteği örneği (apiRequest fonksiyonunuza göre uyarlayın):
+      // await apiRequest(`/messages/${selectedConversationId}`, {
+      //   method: "POST",
+      //   body: JSON.stringify({ content: draft })
+      // });
+      
+      console.log("Mesaj gönderiliyor:", draft);
+      
+      // Başarılı olduğunda input alanını temizle
+      setDraft(""); 
+    } catch (err: any) {
+      setError(err?.message || "Mesaj gönderilemedi.");
+    } finally {
+      setSending(false);
+    }
+  };
+
 
   const targetUserId = searchParams.get("userId");
   const targetThreadId = searchParams.get("thread");
@@ -1387,13 +1413,34 @@ function MessagesContent() {
                     </button>
                   </div>
 
-                  <p className="text-[10px] text-slate-600 mt-2 px-1">
-                    Enter ile gönder •
-                    Shift + Enter ile
-                    yeni satır
+                                   <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={draft}
+                      onChange={(e) => setDraft(e.target.value)}
+                      placeholder="Mesajınızı yazın..."
+                      disabled={sending}
+                      className="flex-1 bg-[#0d0c14] border border-[#2b253b] text-white px-4 py-3 rounded-xl outline-none focus:border-[#6c5ce7] focus:ring-1 focus:ring-[#6c5ce7] transition-all text-sm disabled:opacity-50"
+                    />
+                    <button
+                      type="submit"
+                      disabled={!draft.trim() || sending}
+                      className="bg-[#6c5ce7] hover:bg-[#5b4cc4] disabled:opacity-50 text-white p-3 rounded-xl transition-all flex items-center justify-center active:scale-95"
+                    >
+                      {sending ? "..." : (
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <line x1="22" y1="2" x2="11" y2="13"></line>
+                          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                      )}
+                    </button>
+                  </div>
+                 <p className="text-[10px] text-slate-600 mt-2 px-1">
+                    Enter ile gönder • Shift + Enter ile yeni satır
                   </p>
                 </form>
               </>
+
             ) : (
               /* SEÇİLİ KULLANICI YOK */
               <div className="flex-1 flex items-center justify-center p-6">
