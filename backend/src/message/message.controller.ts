@@ -227,14 +227,14 @@ async sendMessage(
     return {
       user1: {
         select: {
-          id: true, name: true, surname: true, birthDate: true, avatar: true,
+          id: true, name: true, birthDate: true, avatar: true,
           city: { select: { name: true } },
           district: { select: { name: true } },
         },
       },
       user2: {
         select: {
-          id: true, name: true, surname: true, birthDate: true, avatar: true,
+         id: true, name: true, birthDate: true, avatar: true,
           city: { select: { name: true } },
           district: { select: { name: true } },
         },
