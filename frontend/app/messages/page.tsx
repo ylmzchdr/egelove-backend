@@ -1,9 +1,12 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
+
 export default function MessagesPage() {
-  
+  const router = useRouter();
+
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -59,7 +62,8 @@ export default function MessagesPage() {
           const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
           window.history.replaceState({ path: newUrl }, '', newUrl);
           // Sayfayı döngüye girmeden sadece bir kez yenileyip odayı sol listeye döküyoruz:
-          window.location.reload();
+                router.replace('/messages');
+
         }
       })
       .catch(err => console.error("Otomatik sohbet bağlantı hatası:", err));
