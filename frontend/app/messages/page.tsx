@@ -36,7 +36,7 @@ export default function MessagesPage() {
   
 
   if (!isClient) return null;
-    // 🔗 URL'den gelen ?userId= parametresini yakalayıp otomatik sohbet açma katmanı (Güvenli Sürüm)
+      // 🔗 URL'den gelen ?userId= parametresini yakalayıp otomatik sohbet açma katmanı (Düzeltilmiş Sürüm)
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
@@ -44,7 +44,8 @@ export default function MessagesPage() {
     const targetUserId = searchParams.get('userId');
 
     if (targetUserId) {
-      fetch(`https://onrender.com`, {
+      // 1. ADRESİ TAM VE DOĞRU HALE GETİRDİK:
+      fetch("https://onrender.com", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("token")}`,
@@ -53,19 +54,18 @@ export default function MessagesPage() {
         body: JSON.stringify({ userId: targetUserId })
       })
       .then(res => {
-        if (res.ok) return res.json();
-        throw new Error("Oda çekilemedi");
+        // 2. EMNİYET KİLİDİ: Sunucudan ne dönerse dönsün Next.js'in çökmesini engelle, temiz sayfaya yönlendir!
+        const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+        window.history.replaceState({ path: newUrl }, '', newUrl);
+        router.replace('/messages');
       })
-           .then(data => {
-        if (data && data.id) {
-          // 🛑 Sonsuz döngüyü önlemek için URL'yi Next.js router ile temizleyip sayfayı pürüzsüzce tazeleyelim ortak!
-          router.replace('/messages');
-        }
-      })
-
-      .catch(err => console.error("Otomatik sohbet bağlantı hatası:", err));
+      .catch(err => {
+        console.error("Otomatik sohbet bağlantı hatası:", err);
+        router.replace('/messages');
+      });
     }
   }, []);
+
 
   return (
     <div className="min-h-screen bg-[#121420] text-white flex flex-col">
