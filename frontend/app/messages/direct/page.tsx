@@ -23,7 +23,8 @@ function DirectMessageContent() {
 
     try {
       const token = localStorage.getItem("accessToken");
-      const response = await fetch(`${API_URL}/api/messages`, {
+      const response = await fetch("https://onrender.com", {
+
         method: "POST",
         headers: {
           "Content-Type": "application/json",
