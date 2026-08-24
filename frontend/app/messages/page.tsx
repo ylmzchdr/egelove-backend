@@ -177,11 +177,10 @@ function MessagesContent() {
               item.participant ||
               undefined,
 
-            lastMessage:
-              item.lastMessage?.content ??
-              item.lastMessage ??
-              item.content ??
-              "",
+                 lastMessage: typeof item.lastMessage === 'object' && item.lastMessage !== null
+        ? (item.lastMessage.content || "")
+        : String(item.lastMessage || item.content || ""),
+
 
             updatedAt:
               item.updatedAt ??
