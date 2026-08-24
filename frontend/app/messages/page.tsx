@@ -1587,20 +1587,20 @@ function MessagesContent() {
   );
 }
 
-/*
- * =========================================================
- * ÖNEMLİ:
- *
- * useSearchParams() doğrudan page component'inde çalışmıyor.
- * Next.js 16 production build için Suspense gerekiyor.
- *
- * Bu nedenle MessagesContent ayrı component,
- * MessagesPage ise Suspense wrapper.
- * =========================================================
- */
+/* 
+==================================================================
+* ÖNEMLİ:
+* useSearchParams() doğrudan page component'inde çalışmıyor.
+* Next.js production build için Suspense gerekiyor.
+*
+* Bu nedenle MessagesContent ayrı component,
+* MessagesPage ise Suspense wrapper.
+==================================================================
+*/
+
 export default function MessagesPage() {
   return (
-    <Suspense
+    <Suspense 
       fallback={
         <div className="min-h-screen bg-[#121420] text-white flex items-center justify-center">
           <div className="text-slate-400 font-semibold">
@@ -1613,3 +1613,4 @@ export default function MessagesPage() {
     </Suspense>
   );
 }
+
