@@ -115,6 +115,7 @@ function MessagesContent() {
       const token = localStorage.getItem("accessToken");
       // 2. Canlı backend adresinizi de egelove-backend olarak eksiksiz bağlıyoruz
       const res = await fetch("https://onrender.com", {
+
         method: "POST",
         headers: {
           "Content-Type": "application/json",
