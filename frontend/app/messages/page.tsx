@@ -97,7 +97,40 @@ function MessagesContent() {
   const searchParams = useSearchParams();
 
   const [conversations, setConversations] = useState<Conversation[]>([]);
+    const [simpleMessage, setSimpleMessage] = useState("");
+  const [simpleStatus, setSimpleStatus] = useState("");
+
   const [messages, setMessages] = useState<Message[]>([]);
+  const sendSimpleMessage = async () => {
+    if (!simpleMessage.trim()) {
+      setSimpleStatus("Lütfen bir mesaj yazın.");
+      return;
+    }
+    setSimpleStatus("Gönderiliyor...");
+    try {
+      const token = localStorage.getItem("accessToken");
+      const res = await fetch("https://onrender.com", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          receiverId: targetUserId,
+          content: simpleMessage,
+        }),
+      });
+
+      if (res.ok) {
+        setSimpleStatus("Mesaj başarıyla gönderildi!");
+        setSimpleMessage("");
+      } else {
+        setSimpleStatus("Mesaj iletilemedi. Sunucu hatası.");
+      }
+    } catch (error) {
+      setSimpleStatus("Bağlantı hatası oluştu.");
+    }
+  };
 
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [selectedConversationId, setSelectedConversationId] =
@@ -1493,6 +1526,33 @@ setConversations([]);
                         yükleniyor...
                       </p>
                     )}
+                              {/* Güvenli ve Bağımsız Mesaj Kutusu */}
+          <div className="flex-1 flex items-center justify-center p-6">
+            <div className="w-full max-w-md bg-[#1a1d30]/50 rounded-xl p-6 border border-slate-800/80 shadow-2xl">
+              <h2 className="text-lg font-bold mb-4 text-purple-400">Mesaj Gönder</h2>
+              
+              <textarea
+                className="w-full h-32 bg-[#121420] border border-slate-700 rounded-lg p-3 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 resize-none text-sm mb-4"
+                placeholder="Mesajınızı buraya yazın..."
+                value={simpleMessage}
+                onChange={(e) => setSimpleMessage(e.target.value)}
+              />
+
+              <button
+                onClick={sendSimpleMessage}
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 text-sm shadow-md"
+              >
+                Mesajı Gönder
+              </button>
+
+              {simpleStatus && (
+                <p className="mt-4 text-xs text-center font-medium text-purple-300 bg-purple-950/20 py-2 rounded-md border border-purple-900/30">
+                  {simpleStatus}
+                </p>
+              )}
+            </div>
+          </div>
+
                 </div>
               </div>
             )}
