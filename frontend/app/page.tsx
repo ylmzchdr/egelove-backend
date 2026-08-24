@@ -16,7 +16,8 @@ type LangKey = "TR" | "EN" | "RU" | "AR";
 const featuresTranslations = {
   TR: {
     sectionTitle: "Neden ",
-    mainSubtitle: "Yeni insanlarla tanışmak, sohbet etmek ve size uygun bağlantılar kurmak için ihtiyacınız olan her şey EgeLove'da.",
+        mainSubtitle: "Türkiye'nin 81 ilinde canlı görüntülü odalara geçerek yeni insanlarla anında ve güvenle tanış. Hemen görüntülü bağlan!",
+
     f1Title: "Geniş Üye Tabanı",
     f1Desc: "EgeLove'da yeni insanlarla tanışın, size uygun profilleri keşfedin ve yeni bağlantılar kurun.",
     f2Title: "Güvenli Platform",

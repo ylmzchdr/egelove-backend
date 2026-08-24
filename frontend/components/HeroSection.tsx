@@ -110,13 +110,18 @@ export default function HeroSection({ onCtaClick }: HeroSectionProps) {
             {t.ctaRegister}
           </button>
           
+                   {/* 🛰️ 81 İL VİZYONU CANLI GÖRÜNTÜLÜ SOHBET ODALARI BUTONU */}
           <button
             onClick={onCtaClick}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/[0.04] px-8 py-4 text-base font-bold text-white backdrop-blur-sm transition-all duration-300 hover:bg-white/[0.1] hover:border-white/30 sm:w-auto"
+            className="flex w-full items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 px-8 py-4 text-base font-black text-white shadow-lg shadow-purple-600/30 transition-all duration-300 hover:scale-[1.03] hover:brightness-110 sm:w-auto select-none"
           >
-            <Compass className="h-5 w-5" />
-            {t.ctaExplore}
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
+            </span>
+            <span>🛰️ CANLI ODALARI İZLE</span>
           </button>
+
         </div>
 
         {/* 3. BÖLÜM: EGELOVE AI (HERO'NUN HEMEN ALTI) */}
