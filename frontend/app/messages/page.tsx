@@ -192,7 +192,9 @@ function MessagesContent() {
           }))
         : [];
 
-      setConversations(normalized);
+      // setConversations(normalized);
+setConversations([]);
+
     } catch (err: any) {
       console.error("Konuşmalar alınamadı:", err);
 
