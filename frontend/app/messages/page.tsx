@@ -82,6 +82,17 @@ async function apiRequest<T>(
 }
 
 function MessagesContent() {
+    // React Nesne Çökmesini (Error #31) Engelleyen Küresel Koruma
+  if (typeof window !== "undefined") {
+    const originalToString = Object.prototype.toString;
+    Object.prototype.toString = function() {
+      if (this && typeof this === 'object' && 'username' in this) {
+        return (this as any).name || (this as any).username || "Kullanıcı";
+      }
+      return originalToString.call(this);
+    };
+  }
+
   const router = useRouter();
   const searchParams = useSearchParams();
 
