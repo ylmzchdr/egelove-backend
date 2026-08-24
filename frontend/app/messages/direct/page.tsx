@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 
 const API_URL = "https://onrender.com";
 
+
 function DirectMessageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
