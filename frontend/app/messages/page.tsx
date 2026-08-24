@@ -2,433 +2,696 @@
 
 import React, {
   FormEvent,
-  KeyboardEvent,
+  Suspense,
+  useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from "react";
-import { useRouter } from "next/navigation";
-import { api } from "@/lib/api";
+import { useRouter, useSearchParams } from "next/navigation";
 
 type User = {
   id: string;
   name?: string;
-  surname?: string;
-  avatar?: string | null;
-  birthDate?: string;
-  city?: {
-    name?: string;
-  };
-  district?: {
-    name?: string;
-  };
+  username?: string;
+  city?: string;
+  profileImage?: string | null;
+  profilePhoto?: string | null;
+};
+
+type Conversation = {
+  id: string;
+  userId?: string;
+  participantId?: string;
+  participant?: User;
+  user?: User;
+  lastMessage?: string;
+  updatedAt?: string;
+  unreadCount?: number;
 };
 
 type Message = {
   id: string;
   content: string;
-  senderId: string;
+  senderId?: string;
+  receiverId?: string;
   createdAt?: string;
-  sender?: {
-    id: string;
-    name?: string;
-    avatar?: string | null;
-  };
+  isMine?: boolean;
 };
 
-type Conversation = {
-  id: string;
-  user1Id: string;
-  user2Id: string;
-  user1?: User;
-  user2?: User;
-  messages?: Message[];
-  reads?: Array<{
-    userId: string;
-    lastReadAt?: string | null;
-  }>;
-  _count?: {
-    messages?: number;
-  };
-  updatedAt?: string;
-};
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://egelove-backend.onrender.com";
 
-type FilterType = "all" | "received" | "sent";
+function getAccessToken(): string | null {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem("accessToken");
+}
 
-export default function MessagesPage() {
+async function apiRequest<T>(
+  path: string,
+  options: RequestInit = {},
+): Promise<T> {
+  const token = getAccessToken();
+
+  const response = await fetch(`${API_URL}${path}`, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...(token
+        ? {
+            Authorization: `Bearer ${token}`,
+          }
+        : {}),
+      ...(options.headers || {}),
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response
+      .json()
+      .catch(() => ({ message: "Bir hata oluştu." }));
+
+    throw new Error(
+      error?.message || `HTTP ${response.status}`,
+    );
+  }
+
+  return response.json();
+}
+
+function MessagesContent() {
   const router = useRouter();
-
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const searchParams = useSearchParams();
 
   const [conversations, setConversations] = useState<Conversation[]>([]);
-  const [selectedConversation, setSelectedConversation] =
-    useState<Conversation | null>(null);
-
   const [messages, setMessages] = useState<Message[]>([]);
 
-  const [messageText, setMessageText] = useState("");
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [selectedConversationId, setSelectedConversationId] =
+    useState<string | null>(null);
 
-  const [loading, setLoading] = useState(true);
-  const [loadingMessages, setLoadingMessages] = useState(false);
-  const [sendingMessage, setSendingMessage] = useState(false);
+  const [draft, setDraft] = useState("");
+
+  const [loadingConversations, setLoadingConversations] =
+    useState(true);
+
+  const [loadingMessages, setLoadingMessages] =
+    useState(false);
+
+  const [sending, setSending] = useState(false);
 
   const [error, setError] = useState("");
 
-  const [searchText, setSearchText] = useState("");
-  const [filter, setFilter] = useState<FilterType>("all");
+  const [search, setSearch] = useState("");
 
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const targetUserId = searchParams.get("userId");
+  const targetThreadId = searchParams.get("thread");
 
-  const API_URL =
-    process.env.NEXT_PUBLIC_API_URL ||
-    "https://egelove-backend.onrender.com";
-
-  /* =========================================================
-     KARŞI TARAFI BUL
-  ========================================================= */
-
-  const getOtherUser = (
-    conversation: Conversation | null,
-  ): User | null => {
-    if (!conversation) return null;
-
-    if (
-      currentUserId &&
-      String(conversation.user1Id) === String(currentUserId)
-    ) {
-      return conversation.user2 || null;
-    }
-
-    if (
-      currentUserId &&
-      String(conversation.user2Id) === String(currentUserId)
-    ) {
-      return conversation.user1 || null;
-    }
-
-    return conversation.user2 || conversation.user1 || null;
-  };
-
-  /* =========================================================
-     İSİM
-  ========================================================= */
-
-  const getUserName = (user?: User | null) => {
-    if (!user) return "Kullanıcı";
-
-    const fullName =
-      `${user.name || ""} ${user.surname || ""}`.trim();
-
-    return fullName || "Kullanıcı";
-  };
-
-  /* =========================================================
-     AVATAR
-  ========================================================= */
-
-  const getAvatar = (user?: User | null) => {
-    if (!user?.avatar) return null;
-
-    if (user.avatar.startsWith("http")) {
-      return user.avatar;
-    }
-
-    const cleanPath = user.avatar.startsWith("/")
-      ? user.avatar
-      : `/${user.avatar}`;
-
-    return `${API_URL}${cleanPath}`;
-  };
-
-  /* =========================================================
-     TARİH
-  ========================================================= */
-
-  const formatTime = (date?: string) => {
-    if (!date) return "";
-
-    const parsed = new Date(date);
-
-    if (Number.isNaN(parsed.getTime())) {
-      return "";
-    }
-
-    return parsed.toLocaleTimeString("tr-TR", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
-  const formatDate = (date?: string) => {
-    if (!date) return "";
-
-    const parsed = new Date(date);
-
-    if (Number.isNaN(parsed.getTime())) {
-      return "";
-    }
-
-    return parsed.toLocaleDateString("tr-TR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
-  };
-
-  /* =========================================================
-     KONUŞMALARI YÜKLE
-  ========================================================= */
-
-  const loadConversations = async (
-    targetUserId?: string | null,
-  ) => {
+  /*
+   * ---------------------------------------------------------
+   * KONUŞMALARI GETİR
+   * ---------------------------------------------------------
+   */
+  const loadConversations = useCallback(async () => {
     try {
-      setLoading(true);
+      setLoadingConversations(true);
       setError("");
 
-      const me: any = await api.users.me();
+      const data = await apiRequest<any[]>(
+        "/conversations",
+      );
 
-      const myId =
-        me?.id ??
-        me?.user?.id ??
-        me?.data?.id ??
-        null;
+      const normalized: Conversation[] = Array.isArray(data)
+        ? data.map((item: any) => ({
+            id: String(
+              item.id ??
+                item.conversationId ??
+                item._id ??
+                "",
+            ),
 
-      if (!myId) {
-        router.push("/");
-        return;
-      }
+            userId: item.userId
+              ? String(item.userId)
+              : undefined,
 
-      const myIdString = String(myId);
+            participantId: item.participantId
+              ? String(item.participantId)
+              : undefined,
 
-      setCurrentUserId(myIdString);
+            participant:
+              item.participant ||
+              item.otherUser ||
+              item.user ||
+              undefined,
 
-      const data = await api.conversations.list();
+            user:
+              item.user ||
+              item.otherUser ||
+              item.participant ||
+              undefined,
 
-      const list: Conversation[] = Array.isArray(data)
-        ? data
+            lastMessage:
+              item.lastMessage?.content ??
+              item.lastMessage ??
+              item.content ??
+              "",
+
+            updatedAt:
+              item.updatedAt ??
+              item.lastMessage?.createdAt,
+
+            unreadCount:
+              Number(item.unreadCount ?? 0),
+          }))
         : [];
 
-      setConversations(list);
-
-      /* =====================================================
-         URL'DEN GELEN KULLANICI
-      ===================================================== */
-
-      if (targetUserId) {
-        let conversation = list.find(
-          (item) =>
-            String(item.user1Id) === String(targetUserId) ||
-            String(item.user2Id) === String(targetUserId),
-        );
-
-        /* Konuşma yoksa oluştur */
-        if (!conversation) {
-          conversation = await api.conversations.create(
-            String(targetUserId),
-          );
-
-          if (conversation) {
-            const refreshed =
-              await api.conversations.list();
-
-            const refreshedList: Conversation[] =
-              Array.isArray(refreshed)
-                ? refreshed
-                : [];
-
-            setConversations(refreshedList);
-
-            conversation =
-              refreshedList.find(
-                (item) =>
-                  String(item.user1Id) ===
-                    String(targetUserId) ||
-                  String(item.user2Id) ===
-                    String(targetUserId),
-              ) || conversation;
-          }
-        }
-
-        if (conversation) {
-          await openConversation(conversation);
-        }
-
-        /* URL'deki userId'yi temizle */
-        window.history.replaceState(
-          {},
-          "",
-          window.location.pathname,
-        );
-      }
-    } catch (err) {
-      console.error(
-        "Mesaj konuşmaları yüklenemedi:",
-        err,
-      );
+      setConversations(normalized);
+    } catch (err: any) {
+      console.error("Konuşmalar alınamadı:", err);
 
       setError(
-        "Mesajlar yüklenirken bir sorun oluştu.",
+        err?.message ||
+          "Mesaj konuşmaları yüklenemedi.",
       );
+
+      setConversations([]);
     } finally {
-      setLoading(false);
+      setLoadingConversations(false);
     }
-  };
-
-  /* =========================================================
-     KONUŞMA AÇ
-  ========================================================= */
-
-  const openConversation = async (
-    conversation: Conversation,
-  ) => {
-    setSelectedConversation(conversation);
-    setLoadingMessages(true);
-    setError("");
-    setMessages([]);
-
-    try {
-      const data =
-        await api.conversations.messages(
-          conversation.id,
-        );
-
-      const messageList: Message[] =
-        Array.isArray(data) ? data : [];
-
-      setMessages(messageList);
-    } catch (err) {
-      console.error(
-        "Sohbet mesajları alınamadı:",
-        err,
-      );
-
-      setError(
-        "Bu konuşmadaki mesajlar yüklenemedi.",
-      );
-
-      setMessages([]);
-    } finally {
-      setLoadingMessages(false);
-    }
-  };
-
-  /* =========================================================
-     SAYFA İLK AÇILDIĞINDA
-  ========================================================= */
-
-  useEffect(() => {
-    const params = new URLSearchParams(
-      window.location.search,
-    );
-
-    const targetUserId =
-      params.get("userId");
-
-    loadConversations(targetUserId);
   }, []);
 
-  /* =========================================================
-     MESAJLARIN ALTINA KAYDIR
-  ========================================================= */
+  /*
+   * ---------------------------------------------------------
+   * KONUŞMA MESAJLARINI GETİR
+   * ---------------------------------------------------------
+   */
+  const loadMessages = useCallback(
+    async (conversationId: string) => {
+      try {
+        setLoadingMessages(true);
+        setError("");
 
+        const data = await apiRequest<any[]>(
+          `/conversations/${conversationId}/messages`,
+        );
+
+        const normalized: Message[] = Array.isArray(data)
+          ? data.map((item: any) => ({
+              id: String(
+                item.id ??
+                  item._id ??
+                  `${Date.now()}-${Math.random()}`,
+              ),
+
+              content:
+                item.content ??
+                item.message ??
+                "",
+
+              senderId: item.senderId
+                ? String(item.senderId)
+                : item.sender?.id
+                  ? String(item.sender.id)
+                  : undefined,
+
+              receiverId: item.receiverId
+                ? String(item.receiverId)
+                : item.recipientId
+                  ? String(item.recipientId)
+                  : undefined,
+
+              createdAt:
+                item.createdAt ??
+                item.sentAt ??
+                item.date,
+
+              isMine:
+                item.isMine ??
+                item.mine ??
+                false,
+            }))
+          : [];
+
+        setMessages(normalized);
+      } catch (err: any) {
+        console.error(
+          "Mesajlar alınamadı:",
+          err,
+        );
+
+        setError(
+          err?.message ||
+            "Mesajlar yüklenemedi.",
+        );
+
+        setMessages([]);
+      } finally {
+        setLoadingMessages(false);
+      }
+    },
+    [],
+  );
+
+  /*
+   * ---------------------------------------------------------
+   * İLK YÜKLEME
+   * ---------------------------------------------------------
+   */
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({
-      behavior: "smooth",
-    });
-  }, [messages]);
+    loadConversations();
+  }, [loadConversations]);
 
-  /* =========================================================
-     MESAJ GÖNDER
-  ========================================================= */
+  /*
+   * ---------------------------------------------------------
+   * URL'deki userId ile gelen kişiyi bul
+   * ---------------------------------------------------------
+   */
+  useEffect(() => {
+    if (!targetUserId) return;
 
-  const sendMessage = async () => {
-    if (!selectedConversation) {
+    const findTargetUser = async () => {
+      try {
+        const user = await apiRequest<any>(
+          `/users/${targetUserId}`,
+        );
+
+        setSelectedUser({
+          id: String(user.id ?? targetUserId),
+          name:
+            user.name ??
+            user.username ??
+            "Kullanıcı",
+          username: user.username,
+          city: user.city,
+          profileImage:
+            user.profileImage ??
+            user.profilePhoto ??
+            null,
+          profilePhoto:
+            user.profilePhoto ??
+            user.profileImage ??
+            null,
+        });
+      } catch (err) {
+        console.error(
+          "Kullanıcı bilgisi alınamadı:",
+          err,
+        );
+
+        /*
+         * Backend profil endpoint'i cevap vermezse,
+         * konuşmalar içinden bulmayı deniyoruz.
+         */
+        const found = conversations.find(
+          (conversation) => {
+            const user =
+              conversation.participant ??
+              conversation.user;
+
+            return (
+              String(
+                user?.id ??
+                  conversation.userId ??
+                  conversation.participantId ??
+                  "",
+              ) === String(targetUserId)
+            );
+          },
+        );
+
+        if (found) {
+          const user =
+            found.participant ??
+            found.user;
+
+          if (user) {
+            setSelectedUser({
+              ...user,
+              id: String(user.id),
+            });
+          }
+        }
+      }
+    };
+
+    findTargetUser();
+  }, [targetUserId, conversations]);
+
+  /*
+   * ---------------------------------------------------------
+   * URL'deki thread'i aç
+   * ---------------------------------------------------------
+   */
+  useEffect(() => {
+    if (!targetThreadId) return;
+
+    const conversation = conversations.find(
+      (item) =>
+        String(item.id) ===
+        String(targetThreadId),
+    );
+
+    if (!conversation) return;
+
+    setSelectedConversationId(
+      String(conversation.id),
+    );
+
+    const user =
+      conversation.participant ??
+      conversation.user;
+
+    if (user) {
+      setSelectedUser({
+        ...user,
+        id: String(user.id),
+      });
+    }
+  }, [targetThreadId, conversations]);
+
+  /*
+   * ---------------------------------------------------------
+   * userId ile gelen kullanıcı için mevcut konuşmayı bul
+   * ---------------------------------------------------------
+   */
+  useEffect(() => {
+    if (!targetUserId) return;
+
+    const conversation = conversations.find(
+      (item) => {
+        const user =
+          item.participant ??
+          item.user;
+
+        return (
+          String(
+            user?.id ??
+              item.userId ??
+              item.participantId ??
+              "",
+          ) === String(targetUserId)
+        );
+      },
+    );
+
+    if (!conversation) return;
+
+    setSelectedConversationId(
+      String(conversation.id),
+    );
+
+    const user =
+      conversation.participant ??
+      conversation.user;
+
+    if (user) {
+      setSelectedUser({
+        ...user,
+        id: String(user.id),
+      });
+    }
+  }, [targetUserId, conversations]);
+
+  /*
+   * ---------------------------------------------------------
+   * SEÇİLİ KONUŞMANIN MESAJLARINI GETİR
+   * ---------------------------------------------------------
+   */
+  useEffect(() => {
+    if (!selectedConversationId) {
+      setMessages([]);
       return;
     }
 
-    const content = messageText.trim();
+    loadMessages(selectedConversationId);
+  }, [
+    selectedConversationId,
+    loadMessages,
+  ]);
 
-    if (!content) {
-      return;
+  /*
+   * ---------------------------------------------------------
+   * KONUŞMA OLUŞTUR / VAR OLANI BUL
+   * ---------------------------------------------------------
+   */
+  const openConversationWithUser =
+    useCallback(
+      async (user: User) => {
+        setSelectedUser(user);
+        setError("");
+
+        /*
+         * Önce elimizde mevcut konuşma var mı?
+         */
+        const existing =
+          conversations.find(
+            (conversation) => {
+              const participant =
+                conversation.participant ??
+                conversation.user;
+
+              const participantId =
+                participant?.id ??
+                conversation.userId ??
+                conversation.participantId;
+
+              return (
+                String(participantId) ===
+                String(user.id)
+              );
+            },
+          );
+
+        if (existing) {
+          setSelectedConversationId(
+            String(existing.id),
+          );
+
+          return;
+        }
+
+        /*
+         * Yoksa backend'den yeni konuşma oluştur.
+         */
+        try {
+          const created =
+            await apiRequest<any>(
+              "/conversations",
+              {
+                method: "POST",
+                body: JSON.stringify({
+                  userId: user.id,
+                }),
+              },
+            );
+
+          const conversationId =
+            created?.id ??
+            created?.conversationId ??
+            created?._id;
+
+          if (!conversationId) {
+            throw new Error(
+              "Konuşma oluşturuldu ancak konuşma ID'si alınamadı.",
+            );
+          }
+
+          const newConversation: Conversation =
+            {
+              id: String(conversationId),
+              userId: String(user.id),
+              participantId: String(user.id),
+              participant: user,
+              user,
+              lastMessage: "",
+              unreadCount: 0,
+            };
+
+          setConversations((prev) => [
+            newConversation,
+            ...prev,
+          ]);
+
+          setSelectedConversationId(
+            String(conversationId),
+          );
+        } catch (err: any) {
+          console.error(
+            "Konuşma oluşturulamadı:",
+            err,
+          );
+
+          setError(
+            err?.message ||
+              "Mesaj konuşması başlatılamadı.",
+          );
+        }
+      },
+      [conversations],
+    );
+
+  /*
+   * ---------------------------------------------------------
+   * SEÇİLİ KONUŞMA
+   * ---------------------------------------------------------
+   */
+  const activeConversation =
+    useMemo(() => {
+      if (!selectedConversationId) {
+        return null;
+      }
+
+      return (
+        conversations.find(
+          (item) =>
+            String(item.id) ===
+            String(selectedConversationId),
+        ) ?? null
+      );
+    }, [
+      conversations,
+      selectedConversationId,
+    ]);
+
+  /*
+   * ---------------------------------------------------------
+   * AKTİF KULLANICI
+   * ---------------------------------------------------------
+   */
+  const activeUser = useMemo(() => {
+    if (selectedUser) return selectedUser;
+
+    if (activeConversation) {
+      const user =
+        activeConversation.participant ??
+        activeConversation.user;
+
+      if (user) {
+        return {
+          ...user,
+          id: String(user.id),
+        };
+      }
     }
 
-    if (sendingMessage) {
+    return null;
+  }, [
+    selectedUser,
+    activeConversation,
+  ]);
+
+  /*
+   * ---------------------------------------------------------
+   * KONUŞMA LİSTESİ FİLTRE
+   * ---------------------------------------------------------
+   */
+  const filteredConversations =
+    useMemo(() => {
+      const term =
+        search.trim().toLocaleLowerCase(
+          "tr-TR",
+        );
+
+      if (!term) {
+        return conversations;
+      }
+
+      return conversations.filter(
+        (conversation) => {
+          const user =
+            conversation.participant ??
+            conversation.user;
+
+          const name =
+            user?.name ??
+            user?.username ??
+            "";
+
+          const city =
+            user?.city ?? "";
+
+          return `${name} ${city}`
+            .toLocaleLowerCase("tr-TR")
+            .includes(term);
+        },
+      );
+    }, [
+      conversations,
+      search,
+    ]);
+
+  /*
+   * ---------------------------------------------------------
+   * MESAJ GÖNDER
+   * ---------------------------------------------------------
+   */
+  async function handleSend(
+    event: FormEvent<HTMLFormElement>,
+  ) {
+    event.preventDefault();
+
+    const content = draft.trim();
+
+    if (
+      !content ||
+      !selectedConversationId ||
+      sending
+    ) {
       return;
     }
 
     try {
-      setSendingMessage(true);
+      setSending(true);
       setError("");
 
-      const token =
-        localStorage.getItem("accessToken");
-
-      if (!token) {
-        router.push("/");
-        return;
-      }
-
-      const response = await fetch(
-        `${API_URL}/conversations/${selectedConversation.id}/messages`,
+      const sent = await apiRequest<any>(
+        `/conversations/${selectedConversationId}/messages`,
         {
           method: "POST",
-
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-
           body: JSON.stringify({
             content,
           }),
         },
       );
 
-      const data = await response.json().catch(
-        () => null,
-      );
+      const newMessage: Message = {
+        id: String(
+          sent?.id ??
+            sent?._id ??
+            `${Date.now()}`,
+        ),
+        content:
+          sent?.content ??
+          content,
+        senderId: sent?.senderId,
+        receiverId:
+          sent?.receiverId,
+        createdAt:
+          sent?.createdAt ??
+          new Date().toISOString(),
+        isMine: true,
+      };
 
-      if (!response.ok) {
-        const serverMessage =
-          data?.message ||
-          data?.error ||
-          "Mesaj gönderilemedi.";
-
-        throw new Error(
-          Array.isArray(serverMessage)
-            ? serverMessage.join(", ")
-            : String(serverMessage),
-        );
-      }
-
-      const newMessage =
-        data as Message;
-
-      setMessages((previous) => [
-        ...previous,
+      setMessages((prev) => [
+        ...prev,
         newMessage,
       ]);
 
-      setMessageText("");
+      setDraft("");
 
-      /* Konuşma listesindeki son mesajı güncelle */
-      setConversations((previous) =>
-        previous.map((conversation) =>
-          conversation.id ===
-          selectedConversation.id
+      /*
+       * Sol taraftaki son mesajı da güncelle.
+       */
+      setConversations((prev) =>
+        prev.map((conversation) =>
+          String(conversation.id) ===
+          String(selectedConversationId)
             ? {
                 ...conversation,
-                messages: [newMessage],
+                lastMessage: content,
                 updatedAt:
-                  newMessage.createdAt ||
-                  conversation.updatedAt,
-                _count: {
-                  messages:
-                    (conversation._count
-                      ?.messages || 0) + 1,
-                },
+                  newMessage.createdAt,
               }
             : conversation,
         ),
@@ -444,175 +707,81 @@ export default function MessagesPage() {
           "Mesaj gönderilemedi.",
       );
     } finally {
-      setSendingMessage(false);
+      setSending(false);
     }
-  };
+  }
 
-  /* =========================================================
-     ENTER İLE GÖNDER
-  ========================================================= */
+  /*
+   * ---------------------------------------------------------
+   * ZAMAN
+   * ---------------------------------------------------------
+   */
+  function formatTime(
+    value?: string,
+  ) {
+    if (!value) return "";
 
-  const handleMessageKeyDown = (
-    event: KeyboardEvent<HTMLTextAreaElement>,
-  ) => {
-    if (event.key === "Enter" && !event.shiftKey) {
-      event.preventDefault();
+    const date = new Date(value);
 
-      sendMessage();
+    if (Number.isNaN(date.getTime())) {
+      return "";
     }
-  };
 
-  /* =========================================================
-     FİLTRELENMİŞ KONUŞMALAR
-  ========================================================= */
-
-  const filteredConversations =
-    useMemo(() => {
-      const search =
-        searchText.trim().toLocaleLowerCase(
-          "tr-TR",
-        );
-
-      return conversations.filter(
-        (conversation) => {
-          const otherUser =
-            getOtherUser(conversation);
-
-          const name = getUserName(
-            otherUser,
-          ).toLocaleLowerCase("tr-TR");
-
-          const lastMessage =
-            conversation.messages?.[0];
-
-          const lastText =
-            lastMessage?.content
-              ?.toLocaleLowerCase("tr-TR") || "";
-
-          const matchesSearch =
-            !search ||
-            name.includes(search) ||
-            lastText.includes(search);
-
-          if (!matchesSearch) {
-            return false;
-          }
-
-          if (filter === "all") {
-            return true;
-          }
-
-          if (!lastMessage) {
-            return false;
-          }
-
-          const isSent =
-            currentUserId &&
-            String(lastMessage.senderId) ===
-              String(currentUserId);
-
-          if (filter === "sent") {
-            return Boolean(isSent);
-          }
-
-          if (filter === "received") {
-            return !isSent;
-          }
-
-          return true;
-        },
-      );
-    }, [
-      conversations,
-      searchText,
-      filter,
-      currentUserId,
-    ]);
-
-  /* =========================================================
-     SEÇİLİ KULLANICI
-  ========================================================= */
-
-  const selectedUser =
-    getOtherUser(selectedConversation);
-
-  /* =========================================================
-     KAMERA
-  ========================================================= */
-
-  const bagimsizKameraAc = () => {
-    const width = 450;
-    const height = 650;
-
-    const left = Math.max(
-      0,
-      (window.screen.width - width) / 2,
-    );
-
-    const top = Math.max(
-      0,
-      (window.screen.height - height) / 2,
-    );
-
-    window.open(
-      "/canavar-video",
-      "EgeloveLivePopup",
-      `width=${width},height=${height},top=${top},left=${left},resizable=no,scrollbars=no,status=no,location=no,toolbar=no,menubar=no`,
-    );
-  };
-
-  /* =========================================================
-     YÜKLENİYOR
-  ========================================================= */
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[#121420] text-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="mx-auto mb-4 h-10 w-10 rounded-full border-4 border-purple-500/30 border-t-purple-500 animate-spin" />
-
-          <p className="text-slate-400">
-            Mesajlar yükleniyor...
-          </p>
-        </div>
-      </div>
+    return date.toLocaleTimeString(
+      "tr-TR",
+      {
+        hour: "2-digit",
+        minute: "2-digit",
+      },
     );
   }
 
-  /* =========================================================
-     SAYFA
-  ========================================================= */
+  /*
+   * ---------------------------------------------------------
+   * PROFİL GÖRSELİ
+   * ---------------------------------------------------------
+   */
+  function getProfileImage(
+    user?: User | null,
+  ) {
+    return (
+      user?.profileImage ??
+      user?.profilePhoto ??
+      null
+    );
+  }
 
+  /*
+   * ---------------------------------------------------------
+   * UI
+   * ---------------------------------------------------------
+   */
   return (
     <div className="min-h-screen bg-[#121420] text-white flex flex-col">
-      {/* =====================================================
-          ÜST NAVİGASYON
-      ===================================================== */}
-
+      {/* ÜST NAVİGASYON */}
       <header className="w-full bg-[#1a1d30] border-b border-white/10 px-4 sm:px-6 py-4 sm:py-5 shrink-0">
         <div className="max-w-6xl mx-auto flex flex-col items-start gap-3">
-          <a
-            href="/dashboard"
+          <button
+            type="button"
+            onClick={() =>
+              router.push("/dashboard")
+            }
             className="
-              inline-flex
-              items-center
+              inline-flex items-center
               gap-2
               bg-purple-600
               hover:bg-purple-500
               text-white
-              px-5
-              sm:px-6
+              px-5 sm:px-6
               py-3
               rounded-2xl
-              text-sm
-              sm:text-base
+              text-sm sm:text-base
               font-black
               tracking-wide
               transition-all
               shadow-lg
               shadow-purple-500/20
-              border
-              border-purple-400/30
+              border border-purple-400/30
             "
           >
             <svg
@@ -633,7 +802,7 @@ export default function MessagesPage() {
             <span>
               ANA SAYFAYA GERİ DÖN
             </span>
-          </a>
+          </button>
 
           <span
             className="
@@ -651,10 +820,7 @@ export default function MessagesPage() {
         </div>
       </header>
 
-      {/* =====================================================
-          ANA İÇERİK
-      ===================================================== */}
-
+      {/* ANA İÇERİK */}
       <main
         className="
           flex-1
@@ -675,10 +841,7 @@ export default function MessagesPage() {
             sm:gap-6
           "
         >
-          {/* =================================================
-              SOL — KONUŞMALAR
-          ================================================= */}
-
+          {/* SOL MESAJ LİSTESİ */}
           <section
             className="
               md:col-span-1
@@ -689,8 +852,9 @@ export default function MessagesPage() {
               rounded-[28px]
               p-5
               sm:p-6
-              min-h-[500px]
-              md:h-[600px]
+              min-h-[430px]
+              sm:min-h-[470px]
+              md:h-[620px]
               flex
               flex-col
             "
@@ -710,82 +874,64 @@ export default function MessagesPage() {
               </h1>
 
               {/* FİLTRELER */}
-
               <div className="flex gap-2 mb-5">
                 <button
                   type="button"
-                  onClick={() =>
-                    setFilter("all")
-                  }
-                  className={`
-                    px-4
+                  className="
+                    bg-blue-600
+                    hover:bg-blue-500
+                    px-5
                     py-3
                     rounded-2xl
                     text-sm
                     font-semibold
                     transition
-                    ${
-                      filter === "all"
-                        ? "bg-blue-600 text-white"
-                        : "bg-slate-800 text-slate-400 hover:bg-slate-700"
-                    }
-                  `}
+                  "
                 >
                   Tümü
                 </button>
 
                 <button
                   type="button"
-                  onClick={() =>
-                    setFilter("received")
-                  }
-                  className={`
-                    px-4
+                  className="
+                    bg-slate-800
+                    hover:bg-slate-700
+                    px-5
                     py-3
                     rounded-2xl
                     text-sm
                     font-semibold
+                    text-slate-400
                     transition
-                    ${
-                      filter === "received"
-                        ? "bg-blue-600 text-white"
-                        : "bg-slate-800 text-slate-400 hover:bg-slate-700"
-                    }
-                  `}
+                  "
                 >
                   Gelen
                 </button>
 
                 <button
                   type="button"
-                  onClick={() =>
-                    setFilter("sent")
-                  }
-                  className={`
-                    px-4
+                  className="
+                    bg-slate-800
+                    hover:bg-slate-700
+                    px-5
                     py-3
                     rounded-2xl
                     text-sm
                     font-semibold
+                    text-slate-400
                     transition
-                    ${
-                      filter === "sent"
-                        ? "bg-blue-600 text-white"
-                        : "bg-slate-800 text-slate-400 hover:bg-slate-700"
-                    }
-                  `}
+                  "
                 >
                   Giden
                 </button>
               </div>
 
               {/* ARAMA */}
-
               <input
                 type="text"
-                value={searchText}
+                value={search}
                 onChange={(event) =>
-                  setSearchText(
+                  setSearch(
                     event.target.value,
                   )
                 }
@@ -809,127 +955,156 @@ export default function MessagesPage() {
             </div>
 
             {/* KONUŞMA LİSTESİ */}
-
             <div
               className="
                 flex-1
-                mt-5
                 overflow-y-auto
+                mt-5
+                space-y-3
                 pr-1
-                space-y-2
               "
             >
-              {filteredConversations.length ===
-              0 ? (
-                <div className="h-full flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="text-4xl mb-3">
-                      💬
-                    </div>
-
-                    <p className="text-sm sm:text-base text-slate-500">
-                      Henüz mesajın yok
-                    </p>
-                  </div>
+              {loadingConversations ? (
+                <div className="flex items-center justify-center h-full">
+                  <p className="text-slate-500">
+                    Mesajlar yükleniyor...
+                  </p>
                 </div>
-              ) : (
+              ) : filteredConversations.length >
+                0 ? (
                 filteredConversations.map(
                   (conversation) => {
-                    const otherUser =
-                      getOtherUser(
-                        conversation,
+                    const user =
+                      conversation.participant ??
+                      conversation.user;
+
+                    const image =
+                      getProfileImage(user);
+
+                    const isActive =
+                      String(
+                        selectedConversationId,
+                      ) ===
+                      String(
+                        conversation.id,
                       );
-
-                    const avatar =
-                      getAvatar(otherUser);
-
-                    const lastMessage =
-                      conversation.messages?.[0];
-
-                    const isSelected =
-                      selectedConversation?.id ===
-                      conversation.id;
 
                     return (
                       <button
-                        type="button"
                         key={conversation.id}
-                        onClick={() =>
-                          openConversation(
-                            conversation,
-                          )
-                        }
+                        type="button"
+                        onClick={() => {
+                          setSelectedConversationId(
+                            String(
+                              conversation.id,
+                            ),
+                          );
+
+                          if (user) {
+                            setSelectedUser(
+                              {
+                                ...user,
+                                id: String(
+                                  user.id,
+                                ),
+                              },
+                            );
+                          }
+                        }}
                         className={`
                           w-full
-                          text-left
-                          rounded-2xl
+                          flex
+                          items-center
+                          gap-3
                           p-3
+                          rounded-2xl
                           border
-                          transition-all
+                          text-left
+                          transition
                           ${
-                            isSelected
-                              ? "bg-purple-600/20 border-purple-500/50"
-                              : "bg-black/20 border-white/5 hover:bg-white/5 hover:border-white/10"
+                            isActive
+                              ? "bg-purple-600/20 border-purple-500/60"
+                              : "bg-black/20 border-white/10 hover:bg-white/5"
                           }
                         `}
                       >
-                        <div className="flex items-center gap-3">
-                          {/* AVATAR */}
+                        {image ? (
+                          <img
+                            src={image}
+                            alt={
+                              user?.name ??
+                              "Profil"
+                            }
+                            className="
+                              w-12
+                              h-12
+                              rounded-full
+                              object-cover
+                              shrink-0
+                            "
+                          />
+                        ) : (
+                          <div
+                            className="
+                              w-12
+                              h-12
+                              rounded-full
+                              shrink-0
+                              bg-gradient-to-br
+                              from-purple-500
+                              to-pink-500
+                              flex
+                              items-center
+                              justify-center
+                              font-bold
+                            "
+                          >
+                            {(
+                              user?.name ??
+                              "?"
+                            )
+                              .charAt(0)
+                              .toUpperCase()}
+                          </div>
+                        )}
 
-                          <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-purple-500 to-pink-500 shrink-0 flex items-center justify-center">
-                            {avatar ? (
-                              <img
-                                src={avatar}
-                                alt=""
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <span className="text-lg font-black">
-                                {getUserName(
-                                  otherUser,
-                                )
-                                  .charAt(0)
-                                  .toUpperCase()}
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center justify-between gap-2">
+                            <p className="font-semibold truncate">
+                              {user?.name ??
+                                user?.username ??
+                                "Kullanıcı"}
+                            </p>
+
+                            {conversation.updatedAt && (
+                              <span className="text-[10px] text-slate-500 shrink-0">
+                                {formatTime(
+                                  conversation.updatedAt,
+                                )}
                               </span>
                             )}
                           </div>
 
-                          {/* BİLGİ */}
-
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-center justify-between gap-2">
-                              <span className="font-bold text-white truncate">
-                                {getUserName(
-                                  otherUser,
-                                )}
-                              </span>
-
-                              <span className="text-[10px] text-slate-500 shrink-0">
-                                {formatTime(
-                                  lastMessage?.createdAt ||
-                                    conversation.updatedAt,
-                                )}
-                              </span>
-                            </div>
-
-                            <p className="text-xs text-slate-400 truncate mt-1">
-                              {lastMessage?.content ||
-                                "Henüz mesaj yok"}
-                            </p>
-                          </div>
+                          <p className="text-xs text-slate-500 truncate mt-1">
+                            {conversation.lastMessage ||
+                              "Henüz mesaj yok"}
+                          </p>
                         </div>
                       </button>
                     );
                   },
                 )
+              ) : (
+                <div className="h-full flex items-center justify-center">
+                  <p className="text-sm text-slate-500 text-center">
+                    Henüz mesajın yok
+                  </p>
+                </div>
               )}
             </div>
           </section>
 
-          {/* =================================================
-              SAĞ — SOHBET
-          ================================================= */}
-
+          {/* SAĞ SOHBET PANELİ */}
           <section
             className="
               md:col-span-2
@@ -939,36 +1114,15 @@ export default function MessagesPage() {
               border-white/20
               rounded-[28px]
               overflow-hidden
-              min-h-[600px]
-              md:h-[600px]
+              min-h-[520px]
+              md:h-[620px]
               flex
               flex-col
             "
           >
-            {!selectedConversation ? (
-              <div className="flex-1 flex items-center justify-center p-6">
-                <div className="text-center">
-                  <div className="text-5xl mb-4">
-                    💬
-                  </div>
-
-                  <p className="text-base sm:text-lg text-slate-400 font-semibold">
-                    Sohbet başlatmak için bir
-                    konuşma seç
-                  </p>
-
-                  <p className="text-sm text-slate-600 mt-2">
-                    Soldaki konuşmalardan birini
-                    seçebilirsin.
-                  </p>
-                </div>
-              </div>
-            ) : (
+            {activeUser ? (
               <>
-                {/* =========================================
-                    SOHBET BAŞLIĞI
-                ========================================= */}
-
+                {/* SOHBET ÜST BAR */}
                 <div
                   className="
                     shrink-0
@@ -977,281 +1131,302 @@ export default function MessagesPage() {
                     py-4
                     border-b
                     border-white/10
-                    bg-black/20
+                    bg-[#1a1d30]/80
+                    flex
+                    items-center
+                    gap-3
                   "
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-11 h-11 rounded-full overflow-hidden bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shrink-0">
-                      {getAvatar(
-                        selectedUser,
-                      ) ? (
-                        <img
-                          src={
-                            getAvatar(
-                              selectedUser,
-                            ) || ""
-                          }
-                          alt=""
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <span className="font-black">
-                          {getUserName(
-                            selectedUser,
-                          )
-                            .charAt(0)
-                            .toUpperCase()}
-                        </span>
-                      )}
+                  {getProfileImage(
+                    activeUser,
+                  ) ? (
+                    <img
+                      src={
+                        getProfileImage(
+                          activeUser,
+                        ) as string
+                      }
+                      alt={
+                        activeUser.name ??
+                        "Profil"
+                      }
+                      className="
+                        w-12
+                        h-12
+                        rounded-full
+                        object-cover
+                      "
+                    />
+                  ) : (
+                    <div
+                      className="
+                        w-12
+                        h-12
+                        rounded-full
+                        bg-gradient-to-br
+                        from-purple-500
+                        to-pink-500
+                        flex
+                        items-center
+                        justify-center
+                        font-bold
+                        text-lg
+                      "
+                    >
+                      {(
+                        activeUser.name ??
+                        "?"
+                      )
+                        .charAt(0)
+                        .toUpperCase()}
                     </div>
+                  )}
 
-                    <div className="min-w-0">
-                      <h2 className="font-bold text-lg truncate">
-                        {getUserName(
-                          selectedUser,
-                        )}
-                      </h2>
+                  <div className="min-w-0">
+                    <h2 className="font-bold text-lg truncate">
+                      {activeUser.name ??
+                        activeUser.username ??
+                        "Kullanıcı"}
+                    </h2>
 
-                      <p className="text-xs text-emerald-400">
-                        EgeLove üyesi
+                    {activeUser.city && (
+                      <p className="text-xs text-slate-500 mt-1">
+                        📍 {activeUser.city}
                       </p>
-                    </div>
+                    )}
                   </div>
                 </div>
 
-                {/* =========================================
-                    HATA
-                ========================================= */}
-
-                {error && (
-                  <div className="mx-5 mt-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
-                    {error}
-                  </div>
-                )}
-
-                {/* =========================================
-                    MESAJLAR
-                ========================================= */}
-
+                {/* MESAJLAR */}
                 <div
                   className="
                     flex-1
                     overflow-y-auto
-                    px-4
-                    sm:px-6
-                    py-5
+                    p-5
+                    sm:p-6
                     space-y-3
                   "
                 >
                   {loadingMessages ? (
                     <div className="h-full flex items-center justify-center">
-                      <div className="text-center">
-                        <div className="mx-auto mb-3 h-8 w-8 rounded-full border-4 border-purple-500/30 border-t-purple-500 animate-spin" />
-
-                        <p className="text-sm text-slate-500">
-                          Mesajlar yükleniyor...
-                        </p>
-                      </div>
+                      <p className="text-slate-500">
+                        Mesajlar yükleniyor...
+                      </p>
                     </div>
-                  ) : messages.length === 0 ? (
-                    <div className="h-full flex items-center justify-center">
-                      <div className="text-center">
-                        <div className="text-4xl mb-3">
-                          👋
-                        </div>
+                  ) : messages.length > 0 ? (
+                    messages.map(
+                      (message) => {
+                        const mine =
+                          Boolean(
+                            message.isMine,
+                          );
 
-                        <p className="text-slate-400 font-semibold">
-                          Henüz mesaj yok
-                        </p>
-
-                        <p className="text-sm text-slate-600 mt-2">
-                          İlk mesajı sen gönder!
-                        </p>
-                      </div>
-                    </div>
-                  ) : (
-                    <>
-                      {messages.map(
-                        (message) => {
-                          const isMine =
-                            currentUserId &&
-                            String(
-                              message.senderId,
-                            ) ===
-                              String(
-                                currentUserId,
-                              );
-
-                          return (
+                        return (
+                          <div
+                            key={message.id}
+                            className={`
+                              flex
+                              ${
+                                mine
+                                  ? "justify-end"
+                                  : "justify-start"
+                              }
+                            `}
+                          >
                             <div
-                              key={message.id}
                               className={`
-                                flex
+                                max-w-[80%]
+                                sm:max-w-[70%]
+                                rounded-2xl
+                                px-4
+                                py-3
                                 ${
-                                  isMine
-                                    ? "justify-end"
-                                    : "justify-start"
+                                  mine
+                                    ? "bg-purple-600 text-white rounded-br-md"
+                                    : "bg-slate-800 text-slate-200 rounded-bl-md"
                                 }
                               `}
                             >
-                              <div
-                                className={`
-                                  max-w-[78%]
-                                  sm:max-w-[70%]
-                                  rounded-2xl
-                                  px-4
-                                  py-3
-                                  shadow-lg
-                                  ${
-                                    isMine
-                                      ? "bg-gradient-to-r from-purple-600 to-blue-500 rounded-br-md"
-                                      : "bg-slate-800 border border-white/10 rounded-bl-md"
-                                  }
-                                `}
-                              >
-                                <p className="text-sm leading-6 whitespace-pre-wrap break-words">
-                                  {
-                                    message.content
-                                  }
-                                </p>
+                              <p className="text-sm whitespace-pre-wrap break-words">
+                                {
+                                  message.content
+                                }
+                              </p>
 
-                                <div
+                              {message.createdAt && (
+                                <p
                                   className={`
-                                    mt-1
                                     text-[10px]
+                                    mt-1
                                     ${
-                                      isMine
-                                        ? "text-white/60 text-right"
+                                      mine
+                                        ? "text-white/60"
                                         : "text-slate-500"
                                     }
                                   `}
                                 >
-                                  {formatDate(
-                                    message.createdAt,
-                                  )}{" "}
                                   {formatTime(
                                     message.createdAt,
                                   )}
-                                </div>
-                              </div>
+                                </p>
+                              )}
                             </div>
-                          );
-                        },
-                      )}
+                          </div>
+                        );
+                      },
+                    )
+                  ) : (
+                    <div className="h-full flex flex-col items-center justify-center text-center">
+                      <div className="text-5xl mb-4">
+                        💬
+                      </div>
 
-                      <div
-                        ref={messagesEndRef}
-                      />
-                    </>
+                      <p className="text-slate-400 font-semibold">
+                        Henüz mesaj yok
+                      </p>
+
+                      <p className="text-sm text-slate-600 mt-2">
+                        İlk mesajı sen gönder.
+                      </p>
+                    </div>
                   )}
                 </div>
 
-                {/* =========================================
-                    MESAJ YAZMA ALANI
-                ========================================= */}
+                {/* HATA */}
+                {error && (
+                  <div className="px-5">
+                    <div className="mb-3 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+                      {error}
+                    </div>
+                  </div>
+                )}
 
-                <div
+                {/* MESAJ YAZMA ALANI */}
+                <form
+                  onSubmit={handleSend}
                   className="
                     shrink-0
-                    border-t
-                    border-white/10
-                    bg-black/20
                     p-4
                     sm:p-5
+                    border-t
+                    border-white/10
+                    bg-[#1a1d30]/80
                   "
                 >
-                  <form
-                    onSubmit={(event) => {
-                      event.preventDefault();
-                      sendMessage();
-                    }}
-                    className="
-                      flex
-                      items-end
-                      gap-3
-                    "
-                  >
+                  <div className="flex items-end gap-3">
                     <textarea
-                      value={messageText}
+                      value={draft}
                       onChange={(event) =>
-                        setMessageText(
+                        setDraft(
                           event.target.value,
                         )
                       }
-                      onKeyDown={
-                        handleMessageKeyDown
-                      }
-                      disabled={sendingMessage}
+                      onKeyDown={(event) => {
+                        if (
+                          event.key ===
+                            "Enter" &&
+                          !event.shiftKey
+                        ) {
+                          event.preventDefault();
+
+                          if (
+                            draft.trim() &&
+                            !sending
+                          ) {
+                            event.currentTarget.form?.requestSubmit();
+                          }
+                        }
+                      }}
                       placeholder="Mesajını yaz..."
                       rows={2}
+                      disabled={sending}
                       className="
                         flex-1
                         min-h-[56px]
-                        max-h-32
+                        max-h-[130px]
                         resize-none
-                        rounded-2xl
-                        bg-slate-950
+                        bg-black/40
                         border
-                        border-white/15
+                        border-white/20
+                        rounded-2xl
                         px-4
                         py-3
-                        text-sm
                         text-white
-                        placeholder:text-slate-600
+                        placeholder:text-slate-500
                         focus:outline-none
                         focus:border-purple-500
                         transition
-                        disabled:opacity-50
                       "
                     />
 
                     <button
                       type="submit"
                       disabled={
-                        sendingMessage ||
-                        !messageText.trim()
+                        sending ||
+                        !draft.trim()
                       }
                       className="
+                        shrink-0
                         h-14
                         px-5
                         sm:px-6
                         rounded-2xl
-                        bg-gradient-to-r
-                        from-purple-600
-                        to-blue-500
-                        hover:from-purple-500
-                        hover:to-blue-400
+                        bg-purple-600
+                        hover:bg-purple-500
+                        disabled:bg-slate-700
+                        disabled:text-slate-500
                         text-white
                         font-bold
-                        text-sm
-                        transition-all
-                        shadow-lg
-                        shadow-purple-500/20
-                        disabled:opacity-40
+                        transition
                         disabled:cursor-not-allowed
-                        shrink-0
                       "
                     >
-                      {sendingMessage
+                      {sending
                         ? "..."
                         : "GÖNDER"}
                     </button>
-                  </form>
+                  </div>
 
-                  <p className="text-[10px] text-slate-600 mt-2">
-                    Enter gönderir · Shift + Enter
+                  <p className="text-[10px] text-slate-600 mt-2 px-1">
+                    Enter ile gönder •
+                    Shift + Enter ile
                     yeni satır
                   </p>
-                </div>
+                </form>
               </>
+            ) : (
+              /* SEÇİLİ KULLANICI YOK */
+              <div className="flex-1 flex items-center justify-center p-6">
+                <div className="text-center max-w-md">
+                  <div className="text-6xl mb-5">
+                    💬
+                  </div>
+
+                  <h2 className="text-xl sm:text-2xl font-bold text-slate-300">
+                    Sohbet başlat
+                  </h2>
+
+                  <p className="text-sm sm:text-base text-slate-500 mt-3">
+                    Sol taraftan bir konuşma
+                    seç veya bir profilden
+                    “Mesaj Gönder” seçeneğine
+                    tıkla.
+                  </p>
+
+                  {targetUserId &&
+                    !loadingConversations && (
+                      <p className="text-xs text-purple-400 mt-5">
+                        Kullanıcı bilgileri
+                        yükleniyor...
+                      </p>
+                    )}
+                </div>
+              </div>
             )}
           </section>
         </div>
 
-        {/* =================================================
-            CANLI GÖRÜNTÜLÜ SOHBET
-        ================================================= */}
-
+        {/* CANLI GÖRÜNTÜLÜ SOHBET */}
         <section
           className="
             max-w-3xl
@@ -1286,7 +1461,8 @@ export default function MessagesPage() {
               leading-snug
             "
           >
-            🛰️ CANLI GÖRÜNTÜLÜ SOHBET ODALARI
+            🛰️ CANLI GÖRÜNTÜLÜ SOHBET
+            ODALARI
           </h2>
 
           <p
@@ -1301,15 +1477,39 @@ export default function MessagesPage() {
               mx-auto
             "
           >
-            Güvenli görüntülü sohbet odalarına
-            geçerek yeni insanlarla canlı olarak
+            Güvenli görüntülü sohbet
+            odalarına geçerek yeni
+            insanlarla canlı olarak
             tanışabilirsin.
           </p>
 
           <div className="max-w-md mx-auto">
             <button
               type="button"
-              onClick={bagimsizKameraAc}
+              onClick={() => {
+                const width = 450;
+                const height = 650;
+
+                const left = Math.max(
+                  0,
+                  (window.screen.width -
+                    width) /
+                    2,
+                );
+
+                const top = Math.max(
+                  0,
+                  (window.screen.height -
+                    height) /
+                    2,
+                );
+
+                window.open(
+                  "/canavar-video",
+                  "EgeloveLivePopup",
+                  `width=${width},height=${height},top=${top},left=${left},resizable=no,scrollbars=no,status=no,location=no,toolbar=no,menubar=no`,
+                );
+              }}
               className="
                 w-full
                 bg-gradient-to-r
@@ -1329,11 +1529,39 @@ export default function MessagesPage() {
                 active:scale-[0.98]
               "
             >
-              🚀 GÖRÜNTÜLÜ KONUŞMAYI BAŞLAT
+              🚀 GÖRÜNTÜLÜ KONUŞMAYI
+              BAŞLAT
             </button>
           </div>
         </section>
       </main>
     </div>
+  );
+}
+
+/*
+ * =========================================================
+ * ÖNEMLİ:
+ *
+ * useSearchParams() doğrudan page component'inde çalışmıyor.
+ * Next.js 16 production build için Suspense gerekiyor.
+ *
+ * Bu nedenle MessagesContent ayrı component,
+ * MessagesPage ise Suspense wrapper.
+ * =========================================================
+ */
+export default function MessagesPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[#121420] text-white flex items-center justify-center">
+          <div className="text-slate-400 font-semibold">
+            Mesajlar yükleniyor...
+          </div>
+        </div>
+      }
+    >
+      <MessagesContent />
+    </Suspense>
   );
 }
