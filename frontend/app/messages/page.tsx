@@ -56,16 +56,13 @@ export default function MessagesPage() {
         if (res.ok) return res.json();
         throw new Error("Oda çekilemedi");
       })
-      .then(data => {
+           .then(data => {
         if (data && data.id) {
-          // 🛑 URL'deki ?userId= parametresini temizleyerek sonsuz döngü kilidini kırıyoruz ortak!
-          const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-          window.history.replaceState({ path: newUrl }, '', newUrl);
-          // Sayfayı döngüye girmeden sadece bir kez yenileyip odayı sol listeye döküyoruz:
-                router.replace('/messages');
-
+          // 🛑 Sonsuz döngüyü önlemek için URL'yi Next.js router ile temizleyip sayfayı pürüzsüzce tazeleyelim ortak!
+          router.replace('/messages');
         }
       })
+
       .catch(err => console.error("Otomatik sohbet bağlantı hatası:", err));
     }
   }, []);
