@@ -31,7 +31,8 @@ export default function HeroSection({ onCtaClick }: HeroSectionProps) {
       titlePrefix: "❤️ Aradığın kişi belki de sadece ",
       titleHighlight: "birkaç kilometre",
       titleSuffix: " uzakta.",
-      subtitle: "Türkiye'nin 81 ilinde ve ilçelerinde yeni insanları keşfet. Sana uygun profilleri bul, beğen, eşleş ve tanış.",
+         subtitle: "Türkiye'nin 81 ilinde ve ilçelerinde yeni insanları keşfet. Sana uygun profilleri bul, beğen, eşleş ve tanış.\n\nBirebir, karşılıklı eşleştiğin ve beğendiğin gerçek kişilerle anında görüntülü konuş.",
+
       ctaRegister: "Ücretsiz Üye Ol",
       ctaExplore: "Üyeleri Keşfet",
       aiTitle: "EgeLove AI ile Sınırları Kaldırın",
