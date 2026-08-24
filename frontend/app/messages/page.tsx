@@ -109,7 +109,8 @@ function MessagesContent() {
     setSimpleStatus("Gönderiliyor...");
     try {
       const token = localStorage.getItem("accessToken");
-      const res = await fetch("https://onrender.com", {
+          const res = await fetch("https://onrender.com", {
+
         method: "POST",
         headers: {
           "Content-Type": "application/json",
