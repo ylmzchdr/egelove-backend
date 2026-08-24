@@ -182,9 +182,10 @@ function MessagesContent() {
         : String(item.lastMessage || item.content || ""),
 
 
-            updatedAt:
-              item.updatedAt ??
-              item.lastMessage?.createdAt,
+                 updatedAt: item.updatedAt 
+        ? String(item.updatedAt) 
+        : (item.lastMessage?.createdAt ? String(item.lastMessage.createdAt) : new Date().toISOString()),
+
 
             unreadCount:
               Number(item.unreadCount ?? 0),
