@@ -1434,7 +1434,7 @@ function MessagesContent() {
                         </svg>
                       )}
                     </button>
-                 </div>
+                   </div>
                   <p className="text-[10px] text-slate-600 mt-2 px-1">
                     Enter ile gönder • Shift + Enter ile yeni satır
                   </p>
