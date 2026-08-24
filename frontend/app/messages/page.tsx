@@ -1,10 +1,9 @@
 "use client";
-import { useRouter } from "next/navigation";
 
 import React, { useEffect, useState } from "react";
 
 export default function MessagesPage() {
-  const router = useRouter();
+  
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -34,6 +33,36 @@ export default function MessagesPage() {
   
 
   if (!isClient) return null;
+  // 🔗 URL'den gelen ?userId= parametresini yakalayıp otomatik sohbet açma katmanı
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const searchParams = new URLSearchParams(window.location.search);
+      const targetUserId = searchParams.get('userId');
+
+      if (targetUserId) {
+        // Backend'e "Biz bu kullanıcıyla eşleştik, sohbet odamızı ver" diyoruz
+        fetch(`https://onrender.com`, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ userId: targetUserId })
+        })
+        .then(res => {
+          if (res.ok) return res.json();
+          throw new Error("Oda çekilemedi");
+        })
+        .then(data => {
+          // Gelen konuşma odasını veritabanında oluşturduktan veya çektikten sonra parametreyi temizleyip sayfayı açıyoruz
+          if (data && data.id) {
+            window.location.href = "/messages";
+          }
+        })
+        .catch(err => console.error("Otomatik sohbet bağlantı hatası:", err));
+      }
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#121420] text-white flex flex-col">
