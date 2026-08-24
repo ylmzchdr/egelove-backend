@@ -874,7 +874,8 @@ export default function LikesPage() {
                             {isMutual && (
                               <button
                                 onClick={() =>
-                                  navigate(`/messages?userId=${other.id}`)
+                                navigate(`/messages/direct?userId=${other.id}`)
+
                                 }
                                 className="flex-1 h-10 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-xs font-bold transition shadow-lg shadow-emerald-500/10 flex items-center justify-center gap-1.5"
                               >
