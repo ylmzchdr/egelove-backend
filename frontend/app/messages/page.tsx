@@ -127,10 +127,14 @@ function MessagesContent() {
         }),
       });
 
-      if (res.ok) {
+          if (res.ok) {
         setSimpleStatus("Mesaj başarıyla gönderildi!");
-        setSimpleMessage("");
+        // State temizlemek yerine sayfayı yenileyerek kısırdöngü çöküşünü tamamen kırıyoruz
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       } else {
+
         setSimpleStatus("Mesaj iletilemedi. Sunucu hatası.");
       }
     } catch (error) {
