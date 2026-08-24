@@ -11,7 +11,33 @@ export default function MessagesPage() {
 
   useEffect(() => {
     setIsClient(true);
+
+    if (typeof window !== "undefined") {
+      const currentParams = new URLSearchParams(window.location.search);
+      const targetUserId = currentParams.get("userId");
+
+      if (targetUserId) {
+        fetch("https://onrender.com", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ userId: targetUserId })
+        })
+        .then(() => {
+          const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+          window.history.replaceState({ path: newUrl }, "", newUrl);
+          router.replace("/messages");
+        })
+        .catch(err => {
+          console.error("Otomatik sohbet bağlantı hatası:", err);
+          router.replace("/messages");
+        });
+      }
+    }
   }, []);
+
 
   const bagimsizKameraAc = () => {
     const width = 450;
