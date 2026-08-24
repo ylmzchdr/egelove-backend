@@ -102,6 +102,30 @@ const [user, setUser] = useState({
   return (
     <div className="min-h-screen bg-[#121420] text-white p-4 md:p-8">
       <div className="max-w-7xl mx-auto space-y-6 md:space-y-8">
+              {/* 🚀 EGELOVE.TR AMBLEM VE VIP SLOGAN ALANI (DASHBOARD) */}
+      <div className="w-full max-w-xl mx-auto mb-8 mt-4 text-center flex flex-col items-center justify-center gap-3">
+        {/* Logo Tasarımı */}
+        <div className="flex items-center gap-2 select-none">
+          <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-purple-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-purple-500/20">
+            <span className="text-white font-black text-xl tracking-tighter">E</span>
+          </div>
+          <h1 className="text-3xl font-black tracking-tight bg-gradient-to-r from-white via-purple-200 to-cyan-300 bg-clip-text text-transparent">
+            EGELOVE<span className="text-cyan-400 text-xl font-bold">.TR</span>
+          </h1>
+        </div>
+
+        {/* Canlı Slogan Şeridi */}
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.03] border border-white/10 backdrop-blur-md">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+          </span>
+          <p className="text-xs font-bold tracking-wide text-cyan-400">
+            81 İLDEN CANLI VE GÜVENLİ BAĞLANTI MERKEZİ
+          </p>
+        </div>
+      </div>
+
 
       <Topbar
   userName={user.name}
