@@ -10,33 +10,23 @@ export default function MessagesPage() {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setIsClient(true);
+  setIsClient(true);
 
-    if (typeof window !== "undefined") {
-      const currentParams = new URLSearchParams(window.location.search);
-      const targetUserId = currentParams.get("userId");
+  if (typeof window === "undefined") return;
 
-      if (targetUserId) {
-        fetch("https://onrender.com", {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ userId: targetUserId })
-        })
-        .then(() => {
-          const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-          window.history.replaceState({ path: newUrl }, "", newUrl);
-          router.replace("/messages");
-        })
-        .catch(err => {
-          console.error("Otomatik sohbet bağlantı hatası:", err);
-          router.replace("/messages");
-        });
-      }
-    }
-  }, []);
+  const currentParams = new URLSearchParams(window.location.search);
+  const targetUserId = currentParams.get("userId");
+
+  if (!targetUserId) return;
+
+  const newUrl =
+    window.location.protocol +
+    "//" +
+    window.location.host +
+    window.location.pathname;
+
+  window.history.replaceState({ path: newUrl }, "", newUrl);
+}, []);
 
 
   const bagimsizKameraAc = () => {
@@ -61,38 +51,7 @@ export default function MessagesPage() {
   };
   
 
-  if (!isClient) return null;
-       // 🔗 URL'den gelen ?userId= parametresini yakalayıp otomatik sohbet açma katmanı (Emniyet Kalkanlı)
-  useEffect(() => {
-    // Emniyet Kalkanı: Tarayıcı tamamen hazır olmadan ve istemci onaylanmadan ASLA tetiklenme!
-    if (typeof window === 'undefined' || !isClient) return;
-
-    const currentParams = new URLSearchParams(window.location.search);
-    const targetUserId = currentParams.get('userId');
-
-    if (targetUserId) {
-      fetch("https://onrender.com", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${localStorage.getItem("token")}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ userId: targetUserId })
-      })
-      .then(() => {
-        // Döngüyü tamamen kırmak için tarayıcı adres satırındaki parametreyi jilet gibi temizle
-        const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-        window.history.replaceState({ path: newUrl }, '', newUrl);
-        // Next.js yönlendiricisi ile pürüzsüzce sayfayı mesajlara tazeleyelim ortak!
-        router.replace('/messages');
-      })
-      .catch(err => {
-        console.error("Otomatik sohbet bağlantı hatası:", err);
-        router.replace('/messages');
-      });
-    }
-  }, [isClient]); // 🚀 Sadece isClient (istemci) true olduğunda güvenle tetiklenir!
-
+  
 
   return (
     <div className="min-h-screen bg-[#121420] text-white flex flex-col">
