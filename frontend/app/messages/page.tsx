@@ -36,15 +36,15 @@ export default function MessagesPage() {
   
 
   if (!isClient) return null;
-      // 🔗 URL'den gelen ?userId= parametresini yakalayıp otomatik sohbet açma katmanı (Düzeltilmiş Sürüm)
+       // 🔗 URL'den gelen ?userId= parametresini yakalayıp otomatik sohbet açma katmanı (Emniyet Kalkanlı)
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    // Emniyet Kalkanı: Tarayıcı tamamen hazır olmadan ve istemci onaylanmadan ASLA tetiklenme!
+    if (typeof window === 'undefined' || !isClient) return;
 
-    const searchParams = new URLSearchParams(window.location.search);
-    const targetUserId = searchParams.get('userId');
+    const currentParams = new URLSearchParams(window.location.search);
+    const targetUserId = currentParams.get('userId');
 
     if (targetUserId) {
-      // 1. ADRESİ TAM VE DOĞRU HALE GETİRDİK:
       fetch("https://onrender.com", {
         method: "POST",
         headers: {
@@ -53,10 +53,11 @@ export default function MessagesPage() {
         },
         body: JSON.stringify({ userId: targetUserId })
       })
-      .then(res => {
-        // 2. EMNİYET KİLİDİ: Sunucudan ne dönerse dönsün Next.js'in çökmesini engelle, temiz sayfaya yönlendir!
+      .then(() => {
+        // Döngüyü tamamen kırmak için tarayıcı adres satırındaki parametreyi jilet gibi temizle
         const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
         window.history.replaceState({ path: newUrl }, '', newUrl);
+        // Next.js yönlendiricisi ile pürüzsüzce sayfayı mesajlara tazeleyelim ortak!
         router.replace('/messages');
       })
       .catch(err => {
@@ -64,7 +65,7 @@ export default function MessagesPage() {
         router.replace('/messages');
       });
     }
-  }, []);
+  }, [isClient]); // 🚀 Sadece isClient (istemci) true olduğunda güvenle tetiklenir!
 
 
   return (
