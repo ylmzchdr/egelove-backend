@@ -30,14 +30,21 @@ export class MessageController {
     return conv;
   }
 
-  @Get()
-  async getMyConversations(@CurrentUser() user: any) {
-    return this.prisma.conversation.findMany({
-      where: { OR: [{ user1Id: user.sub }, { user2Id: user.sub }] },
-      include: this.conversationInclude(),
-      orderBy: { updatedAt: "desc" },
-    });
-  }
+ @Get()
+async getMyConversations(@CurrentUser() user: any) {
+  console.log("CURRENT USER:", user);
+
+  return this.prisma.conversation.findMany({
+    where: {
+      OR: [
+        { user1Id: user.sub },
+        { user2Id: user.sub },
+      ],
+    },
+    include: this.conversationInclude(),
+    orderBy: { updatedAt: "desc" },
+  });
+}
 
   @Get(":id/messages")
   async getMessages(@CurrentUser() user: any, @Param("id") conversationId: string) {
