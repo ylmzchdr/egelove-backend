@@ -523,16 +523,28 @@ function MessagesContent() {
             );
           }
 
-          const newConversation: Conversation =
-            {
-              id: String(conversationId),
-              userId: String(user.id),
-              participantId: String(user.id),
-              participant: user,
-              user,
-              lastMessage: "",
-              unreadCount: 0,
-            };
+             const newConversation: Conversation = {
+      id: String(conversationId),
+      userId: String(user.id),
+      participantId: String(user.id),
+      participant: {
+        id: String(user.id),
+        name: user.name || user.username || "Kullanıcı",
+        username: user.username || "",
+        profileImage: user.profileImage || user.profilePhoto || null,
+        profilePhoto: user.profilePhoto || null
+      },
+      user: {
+        id: String(user.id),
+        name: user.name || user.username || "Kullanıcı",
+        username: user.username || "",
+        profileImage: user.profileImage || user.profilePhoto || null,
+        profilePhoto: user.profilePhoto || null
+      },
+      lastMessage: "",
+      unreadCount: 0,
+    };
+
 
           setConversations((prev) => [
             newConversation,
