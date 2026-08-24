@@ -101,23 +101,27 @@ function MessagesContent() {
   const [simpleStatus, setSimpleStatus] = useState("");
 
   const [messages, setMessages] = useState<Message[]>([]);
-  const sendSimpleMessage = async () => {
-    if (!simpleMessage.trim()) {
+    const sendSimpleMessage = async () => {
+    // 1. URL parametresini fonksiyonun başında güvenli bir değişkene alıyoruz
+    const currentParams = new URLSearchParams(window.location.search);
+    const urlUserId = currentParams.get("userId");
+
+    if (!simpleMessage.trim() || !urlUserId) {
       setSimpleStatus("Lütfen bir mesaj yazın.");
       return;
     }
     setSimpleStatus("Gönderiliyor...");
     try {
       const token = localStorage.getItem("accessToken");
-          const res = await fetch("https://onrender.com", {
-
+      // 2. Canlı backend adresinizi de egelove-backend olarak eksiksiz bağlıyoruz
+      const res = await fetch("https://onrender.com", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: JSON.stringify({
-          receiverId: targetUserId,
+          receiverId: urlUserId,
           content: simpleMessage,
         }),
       });
