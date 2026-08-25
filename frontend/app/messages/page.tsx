@@ -93,43 +93,43 @@ async function apiRequest<T>(
   let response = await makeRequest(token);
 
   // Access token geçersizse refresh token ile yenile
-  if (response.status === 401) {
-    console.log("🔴 MESSAGES: 401 → REFRESH BAŞLIYOR");
+ if (response.status === 401) {
+  console.log("🔴 MESSAGES: 401 → REFRESH BAŞLIYOR");
 
-    const refreshToken = getRefreshToken();
+  const refreshToken = getRefreshToken();
 
-    if (!refreshToken) {
-      throw new Error("Oturum bulunamadı. Lütfen tekrar giriş yapın.");
-    }
-
-    const refreshResponse = await fetch(`${API_URL}/auth/refresh`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        refreshToken,
-      }),
-    });
-
-    if (!refreshResponse.ok) {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-
-      throw new Error("Oturum süresi dolmuş. Lütfen tekrar giriş yapın.");
-    }
-
-    const refreshData = await refreshResponse.json();
-
-    saveTokens(refreshData);
-
-    token = refreshData.accessToken;
-
-    console.log("🟢 MESSAGES: YENİ ACCESS TOKEN ALINDI");
-
-    // Yeni token ile asıl isteği tekrar gönder
-    response = await makeRequest(token);
+  if (!refreshToken) {
+    throw new Error("Oturum bulunamadı. Lütfen tekrar giriş yapın.");
   }
+
+  const refreshResponse = await fetch(`${API_URL}/auth/refresh`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      refreshToken,
+    }),
+  });
+
+  if (!refreshResponse.ok) {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+
+    throw new Error("Oturum süresi dolmuş. Lütfen tekrar giriş yapın.");
+  }
+
+  const refreshData = await refreshResponse.json();
+
+  saveTokens(refreshData);
+
+  token = refreshData.accessToken;
+
+  console.log("🟢 MESSAGES: YENİ ACCESS TOKEN ALINDI");
+
+  // Yeni token ile asıl isteği tekrar gönder
+  response = await makeRequest(token);
+}
 
   if (!response.ok) {
     const error = await response
@@ -187,6 +187,7 @@ function MessagesContent() {
 
       const normalized: Conversation[] = Array.isArray(data)
         ? data.map((item: any) => ({
+          
             id: String(
               item.id ??
                 item.conversationId ??
@@ -726,27 +727,39 @@ function MessagesContent() {
    * AKTİF KULLANICI
    * ---------------------------------------------------------
    */
-  const activeUser = useMemo(() => {
-    if (selectedUser) return selectedUser;
+const activeUser = useMemo(() => {
+    const rawUser =
+      selectedUser ??
+      activeConversation?.participant ??
+      activeConversation?.user;
 
-    if (activeConversation) {
-      const user =
-        activeConversation.participant ??
-        activeConversation.user;
-
-      if (user) {
-        return {
-          ...user,
-          id: String(user.id),
-        };
-      }
+    if (!rawUser || typeof rawUser !== "object") {
+      return null;
     }
 
-    return null;
-  }, [
-    selectedUser,
-    activeConversation,
-  ]);
+    const rawName = (rawUser as any).name;
+
+    // Derinlemesine nesne kontrolü ve string'e zorlama
+    let resolvedName = "Kullanıcı";
+    if (typeof rawName === "string") {
+      resolvedName = rawName;
+    } else if (typeof rawName === "object" && rawName !== null) {
+      resolvedName = rawName.name ?? rawName.username ?? "Kullanıcı";
+    } else if ((rawUser as any).username) {
+      resolvedName = (rawUser as any).username;
+    }
+
+    // Eğer hâlâ nesne gelme ihtimaline karşı kesin string dönüşümü
+    if (typeof resolvedName === "object") {
+      resolvedName = "Kullanıcı";
+    }
+
+    return {
+      ...(rawUser as any),
+      id: String((rawUser as any).id ?? ""),
+      name: String(resolvedName),
+    };
+  }, [selectedUser, activeConversation]);
 
   /*
    * ---------------------------------------------------------
