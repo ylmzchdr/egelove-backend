@@ -160,6 +160,13 @@ function DirectMessageContent() {
             {status}
           </p>
         )}
+        <button
+  type="button"
+  onClick={() => router.push("/messages")}
+  className="w-full mt-3 border border-slate-600 hover:border-purple-500 text-slate-300 hover:text-white font-medium py-2.5 px-4 rounded-lg transition duration-200 text-sm"
+>
+  ← Geri Dön
+</button>
 
       </div>
 
