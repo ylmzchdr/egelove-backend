@@ -144,6 +144,50 @@ async function apiRequest<T>(
   return response.json();
 }
 function MessagesContent() {
+  function getUserName(user?: User | null): string {
+    if (!user || typeof user !== "object") {
+      return "Kullanıcı";
+    }
+
+    const name = (user as any).name;
+
+    if (typeof name === "string" && name.trim()) {
+      return name;
+    }
+
+    if (typeof name === "object" && name !== null) {
+      if (
+        typeof name.Name === "string" &&
+        name.Name.trim()
+      ) {
+        return name.Name;
+      }
+
+      if (
+        typeof name.name === "string" &&
+        name.name.trim()
+      ) {
+        return name.name;
+      }
+
+      if (
+        typeof name.username === "string" &&
+        name.username.trim()
+      ) {
+        return name.username;
+      }
+    }
+
+    if (
+      typeof user.username === "string" &&
+      user.username.trim()
+    ) {
+      return user.username;
+    }
+
+    return "Kullanıcı";
+  }
+
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -255,6 +299,7 @@ function MessagesContent() {
       try {
         setLoadingMessages(true);
         setError("");
+        console.log("🟣 MESAJLAR AÇILIYOR:", conversationId);
 
         const data = await apiRequest<any[]>(
           `/conversations/${conversationId}/messages`,
@@ -1574,8 +1619,8 @@ const activeUser = useMemo(() => {
                   </p>
                 </form>
               </>
-            ) : (
-              /* SEÇİLİ KULLANICI YOK */
+           ) : (
+              /* SEÇ İLİ KULLANICI YOK */
               <div className="flex-1 flex items-center justify-center p-6">
                 <div className="text-center max-w-md">
                   <div className="text-6xl mb-5">
