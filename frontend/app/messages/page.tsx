@@ -25,7 +25,7 @@ type Conversation = {
   participantId?: string;
   participant?: User;
   user?: User;
-  lastMessage?: string;
+  lastMessage?: Message | null;
   updatedAt?: string;
   unreadCount?: number;
 };
@@ -45,6 +45,31 @@ const API_URL =
 function getAccessToken(): string | null {
   if (typeof window === "undefined") return null;
   return localStorage.getItem("accessToken");
+}
+
+function getCurrentUserId(): string | null {
+  const token = getAccessToken();
+  if (!token) return null;
+
+  try {
+    const payload = token.split(".")[1];
+    if (!payload) return null;
+
+    const normalized = payload.replace(/-/g, "+").replace(/_/g, "/");
+    const decoded = decodeURIComponent(
+      atob(normalized)
+        .split("")
+        .map((char) =>
+          "%" + ("00" + char.charCodeAt(0).toString(16)).slice(-2),
+        )
+        .join(""),
+    );
+
+    const data = JSON.parse(decoded);
+    return data?.sub ? String(data.sub) : data?.id ? String(data.id) : null;
+  } catch {
+    return null;
+  }
 }
 
 async function apiRequest<T>(
@@ -211,6 +236,7 @@ function MessagesContent() {
   const [error, setError] = useState("");
 
   const [search, setSearch] = useState("");
+  const [messageFilter, setMessageFilter] = useState<"all" | "incoming" | "outgoing">("all");
 
   const targetUserId = searchParams.get("userId");
   const targetThreadId = searchParams.get("thread");
@@ -259,11 +285,44 @@ function MessagesContent() {
               item.participant ||
               undefined,
 
-            lastMessage:
-              item.lastMessage?.content ??
-              item.lastMessage ??
-              item.content ??
-              "",
+            lastMessage: item.lastMessage
+              ? {
+                  id: String(
+                    item.lastMessage.id ??
+                      item.lastMessage._id ??
+                      `${item.id}-last`,
+                  ),
+                  content:
+                    item.lastMessage.content ??
+                    item.lastMessage.message ??
+                    String(item.lastMessage ?? ""),
+                  senderId: item.lastMessage.senderId
+                    ? String(item.lastMessage.senderId)
+                    : item.lastMessage.sender?.id
+                      ? String(item.lastMessage.sender.id)
+                      : undefined,
+                  receiverId: item.lastMessage.receiverId
+                    ? String(item.lastMessage.receiverId)
+                    : item.lastMessage.recipientId
+                      ? String(item.lastMessage.recipientId)
+                      : undefined,
+                  createdAt:
+                    item.lastMessage.createdAt ??
+                    item.lastMessage.sentAt ??
+                    item.lastMessage.date,
+                  isMine:
+                    item.lastMessage.isMine ??
+                    (getCurrentUserId() && item.lastMessage.senderId
+                      ? String(item.lastMessage.senderId) === getCurrentUserId()
+                      : undefined),
+                }
+              : item.content
+                ? {
+                    id: `${item.id}-last`,
+                    content: String(item.content),
+                    createdAt: item.updatedAt,
+                  }
+                : null,
 
             updatedAt:
               item.updatedAt ??
@@ -510,7 +569,7 @@ function MessagesContent() {
           participantId: String(targetUser.id),
           participant: targetUser,
           user: targetUser,
-          lastMessage: "",
+       lastMessage: null,
           unreadCount: 0,
         };
 
@@ -717,7 +776,7 @@ function MessagesContent() {
               participantId: String(user.id),
               participant: user,
               user,
-              lastMessage: "",
+           lastMessage: null,
               unreadCount: 0,
             };
 
@@ -818,32 +877,45 @@ const activeUser = useMemo(() => {
           "tr-TR",
         );
 
-      if (!term) {
-        return conversations;
-      }
+      return conversations.filter((conversation) => {
+        const user =
+          conversation.participant ??
+          conversation.user;
 
-      return conversations.filter(
-        (conversation) => {
-          const user =
-            conversation.participant ??
-            conversation.user;
+        const name =
+          getUserName(user) ??
+          user?.username ??
+          "";
 
-          const name =
-            user?.name ??
-            user?.username ??
-            "";
+        const city = user?.city ?? "";
 
-          const city =
-            user?.city ?? "";
-
-          return `${name} ${city}`
+        const matchesSearch =
+          !term ||
+          `${name} ${city}`
             .toLocaleLowerCase("tr-TR")
             .includes(term);
-        },
-      );
+
+        if (!matchesSearch) return false;
+
+        if (messageFilter === "all") return true;
+
+        const lastMessage = conversation.lastMessage;
+        if (!lastMessage) return false;
+
+        const currentUserId = getCurrentUserId();
+        const isMine =
+          typeof lastMessage.isMine === "boolean"
+            ? lastMessage.isMine
+            : currentUserId && lastMessage.senderId
+              ? String(lastMessage.senderId) === String(currentUserId)
+              : false;
+
+        return messageFilter === "outgoing" ? isMine : !isMine;
+      });
     }, [
       conversations,
       search,
+      messageFilter,
     ]);
 
   /*
@@ -914,7 +986,7 @@ const activeUser = useMemo(() => {
           String(selectedConversationId)
             ? {
                 ...conversation,
-                lastMessage: content,
+                lastMessage: newMessage,
                 updatedAt:
                   newMessage.createdAt,
               }
@@ -1102,50 +1174,60 @@ const activeUser = useMemo(() => {
               <div className="flex gap-2 mb-5">
                 <button
                   type="button"
-                  className="
-                    bg-blue-600
-                    hover:bg-blue-500
+                  onClick={() => setMessageFilter("all")}
+                  className={`
                     px-5
                     py-3
                     rounded-2xl
                     text-sm
                     font-semibold
                     transition
-                  "
+                    ${
+                      messageFilter === "all"
+                        ? "bg-blue-600 hover:bg-blue-500 text-white"
+                        : "bg-slate-800 hover:bg-slate-700 text-slate-400"
+                    }
+                  `}
                 >
                   Tümü
                 </button>
 
                 <button
                   type="button"
-                  className="
-                    bg-slate-800
-                    hover:bg-slate-700
+                  onClick={() => setMessageFilter("incoming")}
+                  className={`
                     px-5
                     py-3
                     rounded-2xl
                     text-sm
                     font-semibold
-                    text-slate-400
                     transition
-                  "
+                    ${
+                      messageFilter === "incoming"
+                        ? "bg-blue-600 hover:bg-blue-500 text-white"
+                        : "bg-slate-800 hover:bg-slate-700 text-slate-400"
+                    }
+                  `}
                 >
                   Gelen
                 </button>
 
                 <button
                   type="button"
-                  className="
-                    bg-slate-800
-                    hover:bg-slate-700
+                  onClick={() => setMessageFilter("outgoing")}
+                  className={`
                     px-5
                     py-3
                     rounded-2xl
                     text-sm
                     font-semibold
-                    text-slate-400
                     transition
-                  "
+                    ${
+                      messageFilter === "outgoing"
+                        ? "bg-blue-600 hover:bg-blue-500 text-white"
+                        : "bg-slate-800 hover:bg-slate-700 text-slate-400"
+                    }
+                  `}
                 >
                   Giden
                 </button>
@@ -1311,7 +1393,7 @@ const activeUser = useMemo(() => {
                           </div>
 
                           <p className="text-xs text-slate-500 truncate mt-1">
-                            {conversation.lastMessage ||
+                            {conversation.lastMessage?.content ||
                               "Henüz mesaj yok"}
                           </p>
                         </div>
