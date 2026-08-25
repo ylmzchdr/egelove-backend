@@ -3,14 +3,16 @@
 import React, { useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
-const API_URL = "https://onrender.com";
-
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "http://localhost:3001";
 
 function DirectMessageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const targetUserId = searchParams ? searchParams.get("userId") : null;
-  
+
+  const targetUserId = searchParams.get("userId");
+
   const [messageText, setMessageText] = useState("");
   const [status, setStatus] = useState("");
 
@@ -24,36 +26,117 @@ function DirectMessageContent() {
 
     try {
       const token = localStorage.getItem("accessToken");
-      const response = await fetch("https://onrender.com", {
 
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({
-          receiverId: targetUserId,
-          content: messageText,
-        }),
-      });
-
-      if (response.ok) {
-        setStatus("Mesaj başarıyla gönderildi!");
-        setMessageText("");
-        // 2 saniye sonra ana mesaj sayfasına geri yönlendir
-        setTimeout(() => router.push("/messages"), 2000);
-      } else {
-        setStatus("Mesaj gönderilemedi. Sunucu hatası.");
+      if (!token) {
+        setStatus("Oturumunuz bulunamadı. Lütfen tekrar giriş yapın.");
+        return;
       }
+
+      // 1️⃣ Önce kullanıcıyla konuşmayı oluştur / mevcut konuşmayı getir
+      const conversationResponse = await fetch(
+        `${API_URL}/conversations`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            userId: targetUserId,
+          }),
+        }
+      );
+
+      if (!conversationResponse.ok) {
+        const errorText = await conversationResponse.text();
+
+        console.error(
+          "Konuşma oluşturma hatası:",
+          conversationResponse.status,
+          errorText
+        );
+
+        setStatus("Konuşma başlatılamadı.");
+        return;
+      }
+
+      const conversation = await conversationResponse.json();
+
+      console.log("Konuşma:", conversation);
+
+      if (!conversation?.id) {
+        console.error("Conversation ID bulunamadı:", conversation);
+        setStatus("Konuşma bilgisi alınamadı.");
+        return;
+      }
+
+      // 2️⃣ Conversation ID ile mesajı gönder
+      const messageResponse = await fetch(
+        `${API_URL}/conversations/${conversation.id}/messages`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            content: messageText.trim(),
+          }),
+        }
+      );
+
+      if (!messageResponse.ok) {
+        const errorText = await messageResponse.text();
+
+        console.error(
+          "Mesaj gönderme hatası:",
+          messageResponse.status,
+          errorText
+        );
+
+        try {
+          const errorData = JSON.parse(errorText);
+
+          setStatus(
+            errorData?.message ||
+              "Mesaj gönderilemedi."
+          );
+        } catch {
+          setStatus("Mesaj gönderilemedi.");
+        }
+
+        return;
+      }
+
+      const message = await messageResponse.json();
+
+      console.log("Gönderilen mesaj:", message);
+
+      setStatus("Mesaj başarıyla gönderildi!");
+      setMessageText("");
+
+      setTimeout(() => {
+        router.push("/messages");
+      }, 1200);
+
     } catch (error) {
-      setStatus("Bağlantı hatası oluştu.");
+      console.error("MESAJ GÖNDERME HATASI:", error);
+
+      setStatus(
+        "Bağlantı hatası oluştu. Konsolu kontrol edin."
+      );
     }
   };
 
   return (
     <div className="min-h-screen bg-[#121420] text-white flex flex-col items-center justify-center p-4">
+
       <div className="w-full max-w-md bg-[#1a1d30] rounded-xl p-6 shadow-xl border border-slate-800">
-        <h2 className="text-xl font-bold mb-2 text-center text-purple-400">Hızlı Mesaj Gönder</h2>
+
+        <h2 className="text-xl font-bold mb-2 text-center text-purple-400">
+          Hızlı Mesaj Gönder
+        </h2>
+
         <p className="text-xs text-slate-500 mb-6 text-center">
           Kullanıcıya doğrudan mesaj iletiliyorsunuz.
         </p>
@@ -77,14 +160,22 @@ function DirectMessageContent() {
             {status}
           </p>
         )}
+
       </div>
+
     </div>
   );
 }
 
 export default function DirectMessagePage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#121420] text-white flex items-center justify-center">Yükleniyor...</div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[#121420] text-white flex items-center justify-center">
+          Yükleniyor...
+        </div>
+      }
+    >
       <DirectMessageContent />
     </Suspense>
   );

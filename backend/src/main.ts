@@ -37,20 +37,23 @@ console.log(
     }),
   );
 
-  app.use(
-    helmet.contentSecurityPolicy({
-      directives: {
-        defaultSrc: ["'self'"],
-        imgSrc: ["'self'", "https:", "data:"],
-        scriptSrc: ["'self'"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
-        fontSrc: ["'self'", "https:", "data:"],
-        connectSrc: ["'self'"],
-        frameSrc: ["'none'"],
-        objectSrc: ["'none'"],
-      },
-    }),
-  );
+ app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      imgSrc: ["'self'", "https:", "data:"],
+      scriptSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      fontSrc: ["'self'", "https:", "data:"],
+      connectSrc: [
+        "'self'",
+        "https://egelove-backend.onrender.com",
+      ],
+      frameSrc: ["'none'"],
+      objectSrc: ["'none'"],
+    },
+  }),
+);
 
   app.use(
     helmet.hsts({

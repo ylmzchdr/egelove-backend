@@ -39,11 +39,9 @@ type Message = {
   isMine?: boolean;
 };
 
-// Canlı backend — local geliştirmede de doğrudan aynı API kullanılır.
 const API_URL =
-  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ||
+  process.env.NEXT_PUBLIC_API_URL ||
   "https://egelove-backend.onrender.com";
-
 function getAccessToken(): string | null {
   if (typeof window === "undefined") return null;
   return localStorage.getItem("accessToken");
@@ -53,20 +51,85 @@ async function apiRequest<T>(
   path: string,
   options: RequestInit = {},
 ): Promise<T> {
-  const token = getAccessToken();
+  const getToken = () => {
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem("accessToken");
+  };
 
-  const response = await fetch(`${API_URL}${path}`, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(token
-        ? {
-            Authorization: `Bearer ${token}`,
-          }
-        : {}),
-      ...(options.headers || {}),
-    },
-  });
+  const getRefreshToken = () => {
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem("refreshToken");
+  };
+
+  const saveTokens = (data: any) => {
+    if (typeof window === "undefined") return;
+
+    if (data?.accessToken) {
+      localStorage.setItem("accessToken", data.accessToken);
+    }
+
+    if (data?.refreshToken) {
+      localStorage.setItem("refreshToken", data.refreshToken);
+    }
+  };
+
+  const makeRequest = async (token: string | null) => {
+    return fetch(`${API_URL}${path}`, {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        ...(token
+          ? {
+              Authorization: `Bearer ${token}`,
+            }
+          : {}),
+        ...(options.headers || {}),
+      },
+    });
+  };
+
+  let token = getToken();
+
+  let response = await makeRequest(token);
+
+  // Access token geçersizse refresh token ile yenile
+  if (response.status === 401) {
+    console.log("🔴 MESSAGES: 401 → REFRESH BAŞLIYOR");
+
+    const refreshToken = getRefreshToken();
+
+    if (!refreshToken) {
+      throw new Error("Oturum bulunamadı. Lütfen tekrar giriş yapın.");
+    }
+
+    const refreshResponse = await fetch(`${API_URL}/auth/refresh`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        refreshToken,
+      }),
+    });
+
+    if (!refreshResponse.ok) {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+
+      throw new Error("Oturum süresi dolmuş. Lütfen tekrar giriş yapın.");
+    }
+
+    const refreshData = await refreshResponse.json();
+
+    saveTokens(refreshData);
+
+    token = refreshData.accessToken;
+
+    console.log("🟢 MESSAGES: YENİ ACCESS TOKEN ALINDI");
+
+    // Yeni token ile asıl isteği tekrar gönder
+    response = await makeRequest(token);
+  }
 
   if (!response.ok) {
     const error = await response
@@ -80,67 +143,12 @@ async function apiRequest<T>(
 
   return response.json();
 }
-
 function MessagesContent() {
-    // React Nesne Çökmesini (Error #31) Engelleyen Küresel Koruma
-  if (typeof window !== "undefined") {
-    const originalToString = Object.prototype.toString;
-    Object.prototype.toString = function() {
-      if (this && typeof this === 'object' && 'username' in this) {
-        return (this as any).name || (this as any).username || "Kullanıcı";
-      }
-      return originalToString.call(this);
-    };
-  }
-
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const [conversations, setConversations] = useState<Conversation[]>([]);
-    const [simpleMessage, setSimpleMessage] = useState("");
-  const [simpleStatus, setSimpleStatus] = useState("");
-
   const [messages, setMessages] = useState<Message[]>([]);
-    const sendSimpleMessage = async () => {
-    // 1. URL parametresini fonksiyonun başında güvenli bir değişkene alıyoruz
-    const currentParams = new URLSearchParams(window.location.search);
-    const urlUserId = currentParams.get("userId");
-
-    if (!simpleMessage.trim() || !urlUserId) {
-      setSimpleStatus("Lütfen bir mesaj yazın.");
-      return;
-    }
-    setSimpleStatus("Gönderiliyor...");
-    try {
-      const token = localStorage.getItem("accessToken");
-      // 2. Canlı backend adresinizi de egelove-backend olarak eksiksiz bağlıyoruz
-      const res = await fetch("https://onrender.com", {
-
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({
-          receiverId: urlUserId,
-          content: simpleMessage,
-        }),
-      });
-
-          if (res.ok) {
-        setSimpleStatus("Mesaj başarıyla gönderildi!");
-        // State temizlemek yerine sayfayı yenileyerek kısırdöngü çöküşünü tamamen kırıyoruz
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
-      } else {
-
-        setSimpleStatus("Mesaj iletilemedi. Sunucu hatası.");
-      }
-    } catch (error) {
-      setSimpleStatus("Bağlantı hatası oluştu.");
-    }
-  };
 
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [selectedConversationId, setSelectedConversationId] =
@@ -159,31 +167,6 @@ function MessagesContent() {
   const [error, setError] = useState("");
 
   const [search, setSearch] = useState("");
-    const handleSendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!draft.trim() || !selectedConversationId || sending) return;
-
-    setSending(true);
-    setError("");
-
-    try {
-      // API isteği örneği (apiRequest fonksiyonunuza göre uyarlayın):
-      // await apiRequest(`/messages/${selectedConversationId}`, {
-      //   method: "POST",
-      //   body: JSON.stringify({ content: draft })
-      // });
-      
-      console.log("Mesaj gönderiliyor:", draft);
-      
-      // Başarılı olduğunda input alanını temizle
-      setDraft(""); 
-    } catch (err: any) {
-      setError(err?.message || "Mesaj gönderilemedi.");
-    } finally {
-      setSending(false);
-    }
-  };
-
 
   const targetUserId = searchParams.get("userId");
   const targetThreadId = searchParams.get("thread");
@@ -231,24 +214,22 @@ function MessagesContent() {
               item.participant ||
               undefined,
 
-                 lastMessage: typeof item.lastMessage === 'object' && item.lastMessage !== null
-        ? (item.lastMessage.content || "")
-        : String(item.lastMessage || item.content || ""),
+            lastMessage:
+              item.lastMessage?.content ??
+              item.lastMessage ??
+              item.content ??
+              "",
 
-
-                 updatedAt: item.updatedAt 
-        ? String(item.updatedAt) 
-        : (item.lastMessage?.createdAt ? String(item.lastMessage.createdAt) : new Date().toISOString()),
-
+            updatedAt:
+              item.updatedAt ??
+              item.lastMessage?.createdAt,
 
             unreadCount:
               Number(item.unreadCount ?? 0),
           }))
         : [];
 
-      // setConversations(normalized);
-setConversations([]);
-
+      setConversations(normalized);
     } catch (err: any) {
       console.error("Konuşmalar alınamadı:", err);
 
@@ -352,72 +333,176 @@ setConversations([]);
   useEffect(() => {
     if (!targetUserId) return;
 
-    const findTargetUser = async () => {
-      try {
-        const user = await apiRequest<any>(
-          `/users/${targetUserId}`,
-        );
+    let cancelled = false;
 
-        setSelectedUser({
-          id: String(user.id ?? targetUserId),
-          name:
-            user.name ??
-            user.username ??
-            "Kullanıcı",
-          username: user.username,
-          city: user.city,
-          profileImage:
-            user.profileImage ??
-            user.profilePhoto ??
-            null,
-          profilePhoto:
-            user.profilePhoto ??
-            user.profileImage ??
-            null,
-        });
-      } catch (err) {
-        console.error(
-          "Kullanıcı bilgisi alınamadı:",
-          err,
+    const findTargetUser = async () => {
+      /*
+       * /messages?userId=... artık ayrı bir "hızlı mesaj"
+       * sayfası değildir. Ana mesaj panelinde doğrudan
+       * konuşmayı açar/oluşturur.
+       */
+
+      // Önce zaten yüklenmiş konuşmalar içinde ara.
+      const existing = conversations.find(
+        (conversation) => {
+          const user =
+            conversation.participant ??
+            conversation.user;
+
+          return (
+            String(
+              user?.id ??
+                conversation.userId ??
+                conversation.participantId ??
+                "",
+            ) === String(targetUserId)
+          );
+        },
+      );
+
+      if (existing) {
+        const user =
+          existing.participant ??
+          existing.user;
+
+        if (user) {
+          setSelectedUser({
+            ...user,
+            id: String(user.id),
+          });
+        } else {
+          setSelectedUser({
+            id: String(targetUserId),
+            name: "Kullanıcı",
+          });
+        }
+
+        setSelectedConversationId(
+          String(existing.id),
         );
+        return;
+      }
+
+      try {
+        /*
+         * Profil bilgisi varsa sağ üstte gerçek adı/fotoğrafı
+         * göstereceğiz.
+         */
+        let targetUser: User = {
+          id: String(targetUserId),
+          name: "Kullanıcı",
+        };
+
+        try {
+          const user = await apiRequest<any>(
+            `/users/${targetUserId}`,
+          );
+
+          targetUser = {
+            id: String(user.id ?? targetUserId),
+            name:
+              user.name ??
+              user.username ??
+              "Kullanıcı",
+            username: user.username,
+            city: user.city,
+            profileImage:
+              user.profileImage ??
+              user.profilePhoto ??
+              null,
+            profilePhoto:
+              user.profilePhoto ??
+              user.profileImage ??
+              null,
+          };
+        } catch (profileError) {
+          /*
+           * Profil endpoint'i başarısız olsa bile userId elimizde.
+           * Mesaj kutusunu açabilmek için konuşma oluşturmayı
+           * yine deniyoruz.
+           */
+          console.warn(
+            "Profil bilgisi alınamadı; userId ile devam ediliyor.",
+            profileError,
+          );
+        }
+
+        if (cancelled) return;
+
+        setSelectedUser(targetUser);
+        setError("");
 
         /*
-         * Backend profil endpoint'i cevap vermezse,
-         * konuşmalar içinden bulmayı deniyoruz.
+         * Mevcut konuşma yoksa backend'de oluştur.
          */
-        const found = conversations.find(
-          (conversation) => {
-            const user =
-              conversation.participant ??
-              conversation.user;
-
-            return (
-              String(
-                user?.id ??
-                  conversation.userId ??
-                  conversation.participantId ??
-                  "",
-              ) === String(targetUserId)
-            );
+        const created = await apiRequest<any>(
+          "/conversations",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              userId: targetUser.id,
+            }),
           },
         );
 
-        if (found) {
-          const user =
-            found.participant ??
-            found.user;
+        if (cancelled) return;
 
-          if (user) {
-            setSelectedUser({
-              ...user,
-              id: String(user.id),
-            });
-          }
+        const conversationId =
+          created?.id ??
+          created?.conversationId ??
+          created?._id;
+
+        if (!conversationId) {
+          throw new Error(
+            "Konuşma oluşturuldu ancak konuşma ID'si alınamadı.",
+          );
         }
+
+        const newConversation: Conversation = {
+          id: String(conversationId),
+          userId: String(targetUser.id),
+          participantId: String(targetUser.id),
+          participant: targetUser,
+          user: targetUser,
+          lastMessage: "",
+          unreadCount: 0,
+        };
+
+        setConversations((prev) => {
+          const alreadyExists = prev.some(
+            (item) =>
+              String(item.id) ===
+              String(conversationId),
+          );
+
+          return alreadyExists
+            ? prev
+            : [newConversation, ...prev];
+        });
+
+        setSelectedConversationId(
+          String(conversationId),
+        );
+      } catch (err: any) {
+        if (cancelled) return;
+
+        console.error(
+          "Mesaj konuşması başlatılamadı:",
+          err,
+        );
+
+        setError(
+          err?.message ||
+            "Mesaj konuşması başlatılamadı.",
+        );
       }
     };
 
     findTargetUser();
+
+    return () => {
+      cancelled = true;
+    };
   }, [targetUserId, conversations]);
 
   /*
@@ -579,28 +664,16 @@ setConversations([]);
             );
           }
 
-             const newConversation: Conversation = {
-      id: String(conversationId),
-      userId: String(user.id),
-      participantId: String(user.id),
-      participant: {
-        id: String(user.id),
-        name: user.name || user.username || "Kullanıcı",
-        username: user.username || "",
-        profileImage: user.profileImage || user.profilePhoto || null,
-        profilePhoto: user.profilePhoto || null
-      },
-      user: {
-        id: String(user.id),
-        name: user.name || user.username || "Kullanıcı",
-        username: user.username || "",
-        profileImage: user.profileImage || user.profilePhoto || null,
-        profilePhoto: user.profilePhoto || null
-      },
-      lastMessage: "",
-      unreadCount: 0,
-    };
-
+          const newConversation: Conversation =
+            {
+              id: String(conversationId),
+              userId: String(user.id),
+              participantId: String(user.id),
+              participant: user,
+              user,
+              lastMessage: "",
+              unreadCount: 0,
+            };
 
           setConversations((prev) => [
             newConversation,
@@ -1481,35 +1554,13 @@ setConversations([]);
                     </button>
                   </div>
 
-                                   <div className="flex items-center gap-2">
-                    <input
-                      type="text"
-                      value={draft}
-                      onChange={(e) => setDraft(e.target.value)}
-                      placeholder="Mesajınızı yazın..."
-                      disabled={sending}
-                      className="flex-1 bg-[#0d0c14] border border-[#2b253b] text-white px-4 py-3 rounded-xl outline-none focus:border-[#6c5ce7] focus:ring-1 focus:ring-[#6c5ce7] transition-all text-sm disabled:opacity-50"
-                    />
-                    <button
-                      type="submit"
-                      disabled={!draft.trim() || sending}
-                      className="bg-[#6c5ce7] hover:bg-[#5b4cc4] disabled:opacity-50 text-white p-3 rounded-xl transition-all flex items-center justify-center active:scale-95"
-                    >
-                      {sending ? "..." : (
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <line x1="22" y1="2" x2="11" y2="13"></line>
-                          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                        </svg>
-                      )}
-                    </button>
-                   </div>
                   <p className="text-[10px] text-slate-600 mt-2 px-1">
-                    Enter ile gönder • Shift + Enter ile yeni satır
+                    Enter ile gönder •
+                    Shift + Enter ile
+                    yeni satır
                   </p>
                 </form>
               </>
-
-
             ) : (
               /* SEÇİLİ KULLANICI YOK */
               <div className="flex-1 flex items-center justify-center p-6">
@@ -1536,33 +1587,6 @@ setConversations([]);
                         yükleniyor...
                       </p>
                     )}
-                              {/* Güvenli ve Bağımsız Mesaj Kutusu */}
-          <div className="flex-1 flex items-center justify-center p-6">
-            <div className="w-full max-w-md bg-[#1a1d30]/50 rounded-xl p-6 border border-slate-800/80 shadow-2xl">
-              <h2 className="text-lg font-bold mb-4 text-purple-400">Mesaj Gönder</h2>
-              
-              <textarea
-                className="w-full h-32 bg-[#121420] border border-slate-700 rounded-lg p-3 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 resize-none text-sm mb-4"
-                placeholder="Mesajınızı buraya yazın..."
-                value={simpleMessage}
-                onChange={(e) => setSimpleMessage(e.target.value)}
-              />
-
-              <button
-                onClick={sendSimpleMessage}
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 text-sm shadow-md"
-              >
-                Mesajı Gönder
-              </button>
-
-              {simpleStatus && (
-                <p className="mt-4 text-xs text-center font-medium text-purple-300 bg-purple-950/20 py-2 rounded-md border border-purple-900/30">
-                  {simpleStatus}
-                </p>
-              )}
-            </div>
-          </div>
-
                 </div>
               </div>
             )}
@@ -1682,20 +1706,20 @@ setConversations([]);
   );
 }
 
-/* 
-==================================================================
-* ÖNEMLİ:
-* useSearchParams() doğrudan page component'inde çalışmıyor.
-* Next.js production build için Suspense gerekiyor.
-*
-* Bu nedenle MessagesContent ayrı component,
-* MessagesPage ise Suspense wrapper.
-==================================================================
-*/
-
+/*
+ * =========================================================
+ * ÖNEMLİ:
+ *
+ * useSearchParams() doğrudan page component'inde çalışmıyor.
+ * Next.js 16 production build için Suspense gerekiyor.
+ *
+ * Bu nedenle MessagesContent ayrı component,
+ * MessagesPage ise Suspense wrapper.
+ * =========================================================
+ */
 export default function MessagesPage() {
   return (
-    <Suspense 
+    <Suspense
       fallback={
         <div className="min-h-screen bg-[#121420] text-white flex items-center justify-center">
           <div className="text-slate-400 font-semibold">
@@ -1708,4 +1732,3 @@ export default function MessagesPage() {
     </Suspense>
   );
 }
-
