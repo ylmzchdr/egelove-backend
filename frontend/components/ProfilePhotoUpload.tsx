@@ -4,7 +4,7 @@ import PhotoLightbox from "@/components/PhotoLightbox";
 import { useEffect, useRef, useState } from "react";
 import { Upload, X, Check, Loader2 } from "lucide-react";
 
-const API_URL = "/api";
+const API_URL = "https://egelove-backend.onrender.com";
 type PhotoItem = {
   id: string;
   url: string;

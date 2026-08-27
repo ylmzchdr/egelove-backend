@@ -9,8 +9,8 @@ import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n-context";
 import { api } from "@/lib/api";
 import EgeMatchAICard from "@/components/EgeMatchAICard";
-
-const API_URL = "/api";
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "https://egelove-backend.onrender.com";
 
 type LangKey = "TR" | "EN" | "RU" | "AR";
 

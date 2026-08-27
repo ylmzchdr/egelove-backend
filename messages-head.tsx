@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, {
   FormEvent,
@@ -25,7 +25,7 @@ type Conversation = {
   participantId?: string;
   participant?: User;
   user?: User;
-  lastMessage?: string;
+  lastMessage?: Message | null;
   updatedAt?: string;
   unreadCount?: number;
 };
@@ -45,6 +45,31 @@ const API_URL =
 function getAccessToken(): string | null {
   if (typeof window === "undefined") return null;
   return localStorage.getItem("accessToken");
+}
+
+function getCurrentUserId(): string | null {
+  const token = getAccessToken();
+  if (!token) return null;
+
+  try {
+    const payload = token.split(".")[1];
+    if (!payload) return null;
+
+    const normalized = payload.replace(/-/g, "+").replace(/_/g, "/");
+    const decoded = decodeURIComponent(
+      atob(normalized)
+        .split("")
+        .map((char) =>
+          "%" + ("00" + char.charCodeAt(0).toString(16)).slice(-2),
+        )
+        .join(""),
+    );
+
+    const data = JSON.parse(decoded);
+    return data?.sub ? String(data.sub) : data?.id ? String(data.id) : null;
+  } catch {
+    return null;
+  }
 }
 
 async function apiRequest<T>(
@@ -92,14 +117,14 @@ async function apiRequest<T>(
 
   let response = await makeRequest(token);
 
-  // Access token geçersizse refresh token ile yenile
+  // Access token ge├ğersizse refresh token ile yenile
  if (response.status === 401) {
-  console.log("🔴 MESSAGES: 401 → REFRESH BAŞLIYOR");
+  console.log("­şö┤ MESSAGES: 401 ÔåÆ REFRESH BA┼ŞLIYOR");
 
   const refreshToken = getRefreshToken();
 
   if (!refreshToken) {
-    throw new Error("Oturum bulunamadı. Lütfen tekrar giriş yapın.");
+    throw new Error("Oturum bulunamad─▒. L├╝tfen tekrar giri┼ş yap─▒n.");
   }
 
   const refreshResponse = await fetch(`${API_URL}/auth/refresh`, {
@@ -116,7 +141,7 @@ async function apiRequest<T>(
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
 
-    throw new Error("Oturum süresi dolmuş. Lütfen tekrar giriş yapın.");
+    throw new Error("Oturum s├╝resi dolmu┼ş. L├╝tfen tekrar giri┼ş yap─▒n.");
   }
 
   const refreshData = await refreshResponse.json();
@@ -125,16 +150,16 @@ async function apiRequest<T>(
 
   token = refreshData.accessToken;
 
-  console.log("🟢 MESSAGES: YENİ ACCESS TOKEN ALINDI");
+  console.log("­şşó MESSAGES: YEN─░ ACCESS TOKEN ALINDI");
 
-  // Yeni token ile asıl isteği tekrar gönder
+  // Yeni token ile as─▒l iste─şi tekrar g├Ânder
   response = await makeRequest(token);
 }
 
   if (!response.ok) {
     const error = await response
       .json()
-      .catch(() => ({ message: "Bir hata oluştu." }));
+      .catch(() => ({ message: "Bir hata olu┼ştu." }));
 
     throw new Error(
       error?.message || `HTTP ${response.status}`,
@@ -146,7 +171,7 @@ async function apiRequest<T>(
 function MessagesContent() {
   function getUserName(user?: User | null): string {
     if (!user || typeof user !== "object") {
-      return "Kullanıcı";
+      return "Kullan─▒c─▒";
     }
 
     const name = (user as any).name;
@@ -185,7 +210,7 @@ function MessagesContent() {
       return user.username;
     }
 
-    return "Kullanıcı";
+    return "Kullan─▒c─▒";
   }
 
   const router = useRouter();
@@ -211,13 +236,14 @@ function MessagesContent() {
   const [error, setError] = useState("");
 
   const [search, setSearch] = useState("");
+  const [messageFilter, setMessageFilter] = useState<"all" | "incoming" | "outgoing">("all");
 
   const targetUserId = searchParams.get("userId");
   const targetThreadId = searchParams.get("thread");
 
   /*
    * ---------------------------------------------------------
-   * KONUŞMALARI GETİR
+   * KONU┼ŞMALARI GET─░R
    * ---------------------------------------------------------
    */
   const loadConversations = useCallback(async () => {
@@ -259,11 +285,44 @@ function MessagesContent() {
               item.participant ||
               undefined,
 
-            lastMessage:
-              item.lastMessage?.content ??
-              item.lastMessage ??
-              item.content ??
-              "",
+            lastMessage: item.lastMessage
+              ? {
+                  id: String(
+                    item.lastMessage.id ??
+                      item.lastMessage._id ??
+                      `${item.id}-last`,
+                  ),
+                  content:
+                    item.lastMessage.content ??
+                    item.lastMessage.message ??
+                    String(item.lastMessage ?? ""),
+                  senderId: item.lastMessage.senderId
+                    ? String(item.lastMessage.senderId)
+                    : item.lastMessage.sender?.id
+                      ? String(item.lastMessage.sender.id)
+                      : undefined,
+                  receiverId: item.lastMessage.receiverId
+                    ? String(item.lastMessage.receiverId)
+                    : item.lastMessage.recipientId
+                      ? String(item.lastMessage.recipientId)
+                      : undefined,
+                  createdAt:
+                    item.lastMessage.createdAt ??
+                    item.lastMessage.sentAt ??
+                    item.lastMessage.date,
+                  isMine:
+                    item.lastMessage.isMine ??
+                    (getCurrentUserId() && item.lastMessage.senderId
+                      ? String(item.lastMessage.senderId) === getCurrentUserId()
+                      : undefined),
+                }
+              : item.content
+                ? {
+                    id: `${item.id}-last`,
+                    content: String(item.content),
+                    createdAt: item.updatedAt,
+                  }
+                : null,
 
             updatedAt:
               item.updatedAt ??
@@ -276,11 +335,11 @@ function MessagesContent() {
 
       setConversations(normalized);
     } catch (err: any) {
-      console.error("Konuşmalar alınamadı:", err);
+      console.error("Konu┼şmalar al─▒namad─▒:", err);
 
       setError(
         err?.message ||
-          "Mesaj konuşmaları yüklenemedi.",
+          "Mesaj konu┼şmalar─▒ y├╝klenemedi.",
       );
 
       setConversations([]);
@@ -291,7 +350,7 @@ function MessagesContent() {
 
   /*
    * ---------------------------------------------------------
-   * KONUŞMA MESAJLARINI GETİR
+   * KONU┼ŞMA MESAJLARINI GET─░R
    * ---------------------------------------------------------
    */
   const loadMessages = useCallback(
@@ -299,7 +358,7 @@ function MessagesContent() {
       try {
         setLoadingMessages(true);
         setError("");
-        console.log("🟣 MESAJLAR AÇILIYOR:", conversationId);
+        console.log("­şşú MESAJLAR A├çILIYOR:", conversationId);
 
         const data = await apiRequest<any[]>(
           `/conversations/${conversationId}/messages`,
@@ -345,13 +404,13 @@ function MessagesContent() {
         setMessages(normalized);
       } catch (err: any) {
         console.error(
-          "Mesajlar alınamadı:",
+          "Mesajlar al─▒namad─▒:",
           err,
         );
 
         setError(
           err?.message ||
-            "Mesajlar yüklenemedi.",
+            "Mesajlar y├╝klenemedi.",
         );
 
         setMessages([]);
@@ -364,7 +423,7 @@ function MessagesContent() {
 
   /*
    * ---------------------------------------------------------
-   * İLK YÜKLEME
+   * ─░LK Y├£KLEME
    * ---------------------------------------------------------
    */
   useEffect(() => {
@@ -373,7 +432,7 @@ function MessagesContent() {
 
   /*
    * ---------------------------------------------------------
-   * URL'deki userId ile gelen kişiyi bul
+   * URL'deki userId ile gelen ki┼şiyi bul
    * ---------------------------------------------------------
    */
   useEffect(() => {
@@ -383,12 +442,12 @@ function MessagesContent() {
 
     const findTargetUser = async () => {
       /*
-       * /messages?userId=... artık ayrı bir "hızlı mesaj"
-       * sayfası değildir. Ana mesaj panelinde doğrudan
-       * konuşmayı açar/oluşturur.
+       * /messages?userId=... art─▒k ayr─▒ bir "h─▒zl─▒ mesaj"
+       * sayfas─▒ de─şildir. Ana mesaj panelinde do─şrudan
+       * konu┼şmay─▒ a├ğar/olu┼şturur.
        */
 
-      // Önce zaten yüklenmiş konuşmalar içinde ara.
+      // ├ûnce zaten y├╝klenmi┼ş konu┼şmalar i├ğinde ara.
       const existing = conversations.find(
         (conversation) => {
           const user =
@@ -419,7 +478,7 @@ function MessagesContent() {
         } else {
           setSelectedUser({
             id: String(targetUserId),
-            name: "Kullanıcı",
+            name: "Kullan─▒c─▒",
           });
         }
 
@@ -431,12 +490,12 @@ function MessagesContent() {
 
       try {
         /*
-         * Profil bilgisi varsa sağ üstte gerçek adı/fotoğrafı
-         * göstereceğiz.
+         * Profil bilgisi varsa sa─ş ├╝stte ger├ğek ad─▒/foto─şraf─▒
+         * g├Âsterece─şiz.
          */
         let targetUser: User = {
           id: String(targetUserId),
-          name: "Kullanıcı",
+          name: "Kullan─▒c─▒",
         };
 
         try {
@@ -449,7 +508,7 @@ function MessagesContent() {
             name:
               user.name ??
               user.username ??
-              "Kullanıcı",
+              "Kullan─▒c─▒",
             username: user.username,
             city: user.city,
             profileImage:
@@ -463,12 +522,12 @@ function MessagesContent() {
           };
         } catch (profileError) {
           /*
-           * Profil endpoint'i başarısız olsa bile userId elimizde.
-           * Mesaj kutusunu açabilmek için konuşma oluşturmayı
+           * Profil endpoint'i ba┼şar─▒s─▒z olsa bile userId elimizde.
+           * Mesaj kutusunu a├ğabilmek i├ğin konu┼şma olu┼şturmay─▒
            * yine deniyoruz.
            */
           console.warn(
-            "Profil bilgisi alınamadı; userId ile devam ediliyor.",
+            "Profil bilgisi al─▒namad─▒; userId ile devam ediliyor.",
             profileError,
           );
         }
@@ -479,7 +538,7 @@ function MessagesContent() {
         setError("");
 
         /*
-         * Mevcut konuşma yoksa backend'de oluştur.
+         * Mevcut konu┼şma yoksa backend'de olu┼ştur.
          */
         const created = await apiRequest<any>(
           "/conversations",
@@ -500,7 +559,7 @@ function MessagesContent() {
 
         if (!conversationId) {
           throw new Error(
-            "Konuşma oluşturuldu ancak konuşma ID'si alınamadı.",
+            "Konu┼şma olu┼şturuldu ancak konu┼şma ID'si al─▒namad─▒.",
           );
         }
 
@@ -510,7 +569,7 @@ function MessagesContent() {
           participantId: String(targetUser.id),
           participant: targetUser,
           user: targetUser,
-          lastMessage: "",
+       lastMessage: null,
           unreadCount: 0,
         };
 
@@ -533,13 +592,13 @@ function MessagesContent() {
         if (cancelled) return;
 
         console.error(
-          "Mesaj konuşması başlatılamadı:",
+          "Mesaj konu┼şmas─▒ ba┼şlat─▒lamad─▒:",
           err,
         );
 
         setError(
           err?.message ||
-            "Mesaj konuşması başlatılamadı.",
+            "Mesaj konu┼şmas─▒ ba┼şlat─▒lamad─▒.",
         );
       }
     };
@@ -553,7 +612,7 @@ function MessagesContent() {
 
   /*
    * ---------------------------------------------------------
-   * URL'deki thread'i aç
+   * URL'deki thread'i a├ğ
    * ---------------------------------------------------------
    */
   useEffect(() => {
@@ -585,7 +644,7 @@ function MessagesContent() {
 
   /*
    * ---------------------------------------------------------
-   * userId ile gelen kullanıcı için mevcut konuşmayı bul
+   * userId ile gelen kullan─▒c─▒ i├ğin mevcut konu┼şmay─▒ bul
    * ---------------------------------------------------------
    */
   useEffect(() => {
@@ -628,7 +687,7 @@ function MessagesContent() {
 
   /*
    * ---------------------------------------------------------
-   * SEÇİLİ KONUŞMANIN MESAJLARINI GETİR
+   * SE├ç─░L─░ KONU┼ŞMANIN MESAJLARINI GET─░R
    * ---------------------------------------------------------
    */
   useEffect(() => {
@@ -645,7 +704,7 @@ function MessagesContent() {
 
   /*
    * ---------------------------------------------------------
-   * KONUŞMA OLUŞTUR / VAR OLANI BUL
+   * KONU┼ŞMA OLU┼ŞTUR / VAR OLANI BUL
    * ---------------------------------------------------------
    */
   const openConversationWithUser =
@@ -655,7 +714,7 @@ function MessagesContent() {
         setError("");
 
         /*
-         * Önce elimizde mevcut konuşma var mı?
+         * ├ûnce elimizde mevcut konu┼şma var m─▒?
          */
         const existing =
           conversations.find(
@@ -685,7 +744,7 @@ function MessagesContent() {
         }
 
         /*
-         * Yoksa backend'den yeni konuşma oluştur.
+         * Yoksa backend'den yeni konu┼şma olu┼ştur.
          */
         try {
           const created =
@@ -706,7 +765,7 @@ function MessagesContent() {
 
           if (!conversationId) {
             throw new Error(
-              "Konuşma oluşturuldu ancak konuşma ID'si alınamadı.",
+              "Konu┼şma olu┼şturuldu ancak konu┼şma ID'si al─▒namad─▒.",
             );
           }
 
@@ -717,7 +776,7 @@ function MessagesContent() {
               participantId: String(user.id),
               participant: user,
               user,
-              lastMessage: "",
+           lastMessage: null,
               unreadCount: 0,
             };
 
@@ -731,13 +790,13 @@ function MessagesContent() {
           );
         } catch (err: any) {
           console.error(
-            "Konuşma oluşturulamadı:",
+            "Konu┼şma olu┼şturulamad─▒:",
             err,
           );
 
           setError(
             err?.message ||
-              "Mesaj konuşması başlatılamadı.",
+              "Mesaj konu┼şmas─▒ ba┼şlat─▒lamad─▒.",
           );
         }
       },
@@ -746,7 +805,7 @@ function MessagesContent() {
 
   /*
    * ---------------------------------------------------------
-   * SEÇİLİ KONUŞMA
+   * SE├ç─░L─░ KONU┼ŞMA
    * ---------------------------------------------------------
    */
   const activeConversation =
@@ -769,7 +828,7 @@ function MessagesContent() {
 
   /*
    * ---------------------------------------------------------
-   * AKTİF KULLANICI
+   * AKT─░F KULLANICI
    * ---------------------------------------------------------
    */
 const activeUser = useMemo(() => {
@@ -784,19 +843,19 @@ const activeUser = useMemo(() => {
 
     const rawName = (rawUser as any).name;
 
-    // Derinlemesine nesne kontrolü ve string'e zorlama
-    let resolvedName = "Kullanıcı";
+    // Derinlemesine nesne kontrol├╝ ve string'e zorlama
+    let resolvedName = "Kullan─▒c─▒";
     if (typeof rawName === "string") {
       resolvedName = rawName;
     } else if (typeof rawName === "object" && rawName !== null) {
-      resolvedName = rawName.name ?? rawName.username ?? "Kullanıcı";
+      resolvedName = rawName.name ?? rawName.username ?? "Kullan─▒c─▒";
     } else if ((rawUser as any).username) {
       resolvedName = (rawUser as any).username;
     }
 
-    // Eğer hâlâ nesne gelme ihtimaline karşı kesin string dönüşümü
+    // E─şer h├ól├ó nesne gelme ihtimaline kar┼ş─▒ kesin string d├Ân├╝┼ş├╝m├╝
     if (typeof resolvedName === "object") {
-      resolvedName = "Kullanıcı";
+      resolvedName = "Kullan─▒c─▒";
     }
 
     return {
@@ -808,7 +867,7 @@ const activeUser = useMemo(() => {
 
   /*
    * ---------------------------------------------------------
-   * KONUŞMA LİSTESİ FİLTRE
+   * KONU┼ŞMA L─░STES─░ F─░LTRE
    * ---------------------------------------------------------
    */
   const filteredConversations =
@@ -818,37 +877,50 @@ const activeUser = useMemo(() => {
           "tr-TR",
         );
 
-      if (!term) {
-        return conversations;
-      }
+      return conversations.filter((conversation) => {
+        const user =
+          conversation.participant ??
+          conversation.user;
 
-      return conversations.filter(
-        (conversation) => {
-          const user =
-            conversation.participant ??
-            conversation.user;
+        const name =
+          getUserName(user) ??
+          user?.username ??
+          "";
 
-          const name =
-            user?.name ??
-            user?.username ??
-            "";
+        const city = user?.city ?? "";
 
-          const city =
-            user?.city ?? "";
-
-          return `${name} ${city}`
+        const matchesSearch =
+          !term ||
+          `${name} ${city}`
             .toLocaleLowerCase("tr-TR")
             .includes(term);
-        },
-      );
+
+        if (!matchesSearch) return false;
+
+        if (messageFilter === "all") return true;
+
+        const lastMessage = conversation.lastMessage;
+        if (!lastMessage) return false;
+
+        const currentUserId = getCurrentUserId();
+        const isMine =
+          typeof lastMessage.isMine === "boolean"
+            ? lastMessage.isMine
+            : currentUserId && lastMessage.senderId
+              ? String(lastMessage.senderId) === String(currentUserId)
+              : false;
+
+        return messageFilter === "outgoing" ? isMine : !isMine;
+      });
     }, [
       conversations,
       search,
+      messageFilter,
     ]);
 
   /*
    * ---------------------------------------------------------
-   * MESAJ GÖNDER
+   * MESAJ G├ûNDER
    * ---------------------------------------------------------
    */
   async function handleSend(
@@ -906,7 +978,7 @@ const activeUser = useMemo(() => {
       setDraft("");
 
       /*
-       * Sol taraftaki son mesajı da güncelle.
+       * Sol taraftaki son mesaj─▒ da g├╝ncelle.
        */
       setConversations((prev) =>
         prev.map((conversation) =>
@@ -914,7 +986,7 @@ const activeUser = useMemo(() => {
           String(selectedConversationId)
             ? {
                 ...conversation,
-                lastMessage: content,
+                lastMessage: newMessage,
                 updatedAt:
                   newMessage.createdAt,
               }
@@ -923,13 +995,13 @@ const activeUser = useMemo(() => {
       );
     } catch (err: any) {
       console.error(
-        "Mesaj gönderilemedi:",
+        "Mesaj g├Ânderilemedi:",
         err,
       );
 
       setError(
         err?.message ||
-          "Mesaj gönderilemedi.",
+          "Mesaj g├Ânderilemedi.",
       );
     } finally {
       setSending(false);
@@ -963,7 +1035,7 @@ const activeUser = useMemo(() => {
 
   /*
    * ---------------------------------------------------------
-   * PROFİL GÖRSELİ
+   * PROF─░L G├ûRSEL─░
    * ---------------------------------------------------------
    */
   function getProfileImage(
@@ -983,7 +1055,7 @@ const activeUser = useMemo(() => {
    */
   return (
     <div className="min-h-screen bg-[#121420] text-white flex flex-col">
-      {/* ÜST NAVİGASYON */}
+      {/* ├£ST NAV─░GASYON */}
       <header className="w-full bg-[#1a1d30] border-b border-white/10 px-4 sm:px-6 py-4 sm:py-5 shrink-0">
         <div className="max-w-6xl mx-auto flex flex-col items-start gap-3">
           <button
@@ -1025,7 +1097,7 @@ const activeUser = useMemo(() => {
             </svg>
 
             <span>
-              ANA SAYFAYA GERİ DÖN
+              ANA SAYFAYA GER─░ D├ûN
             </span>
           </button>
 
@@ -1040,12 +1112,12 @@ const activeUser = useMemo(() => {
               pl-1
             "
           >
-            EGELOVE GÜVENLİ ODASI
+            EGELOVE G├£VENL─░ ODASI
           </span>
         </div>
       </header>
 
-      {/* ANA İÇERİK */}
+      {/* ANA ─░├çER─░K */}
       <main
         className="
           flex-1
@@ -1066,7 +1138,7 @@ const activeUser = useMemo(() => {
             sm:gap-6
           "
         >
-          {/* SOL MESAJ LİSTESİ */}
+          {/* SOL MESAJ L─░STES─░ */}
           <section
             className="
               md:col-span-1
@@ -1098,54 +1170,64 @@ const activeUser = useMemo(() => {
                 Mesajlar
               </h1>
 
-              {/* FİLTRELER */}
+              {/* F─░LTRELER */}
               <div className="flex gap-2 mb-5">
                 <button
                   type="button"
-                  className="
-                    bg-blue-600
-                    hover:bg-blue-500
+                  onClick={() => setMessageFilter("all")}
+                  className={`
                     px-5
                     py-3
                     rounded-2xl
                     text-sm
                     font-semibold
                     transition
-                  "
+                    ${
+                      messageFilter === "all"
+                        ? "bg-blue-600 hover:bg-blue-500 text-white"
+                        : "bg-slate-800 hover:bg-slate-700 text-slate-400"
+                    }
+                  `}
                 >
-                  Tümü
+                  T├╝m├╝
                 </button>
 
                 <button
                   type="button"
-                  className="
-                    bg-slate-800
-                    hover:bg-slate-700
+                  onClick={() => setMessageFilter("incoming")}
+                  className={`
                     px-5
                     py-3
                     rounded-2xl
                     text-sm
                     font-semibold
-                    text-slate-400
                     transition
-                  "
+                    ${
+                      messageFilter === "incoming"
+                        ? "bg-blue-600 hover:bg-blue-500 text-white"
+                        : "bg-slate-800 hover:bg-slate-700 text-slate-400"
+                    }
+                  `}
                 >
                   Gelen
                 </button>
 
                 <button
                   type="button"
-                  className="
-                    bg-slate-800
-                    hover:bg-slate-700
+                  onClick={() => setMessageFilter("outgoing")}
+                  className={`
                     px-5
                     py-3
                     rounded-2xl
                     text-sm
                     font-semibold
-                    text-slate-400
                     transition
-                  "
+                    ${
+                      messageFilter === "outgoing"
+                        ? "bg-blue-600 hover:bg-blue-500 text-white"
+                        : "bg-slate-800 hover:bg-slate-700 text-slate-400"
+                    }
+                  `}
                 >
                   Giden
                 </button>
@@ -1179,7 +1261,7 @@ const activeUser = useMemo(() => {
               />
             </div>
 
-            {/* KONUŞMA LİSTESİ */}
+            {/* KONU┼ŞMA L─░STES─░ */}
             <div
               className="
                 flex-1
@@ -1192,7 +1274,7 @@ const activeUser = useMemo(() => {
               {loadingConversations ? (
                 <div className="flex items-center justify-center h-full">
                   <p className="text-slate-500">
-                    Mesajlar yükleniyor...
+                    Mesajlar y├╝kleniyor...
                   </p>
                 </div>
               ) : filteredConversations.length >
@@ -1298,7 +1380,7 @@ const activeUser = useMemo(() => {
                             <p className="font-semibold truncate">
                               {user?.name ??
                                 user?.username ??
-                                "Kullanıcı"}
+                                "Kullan─▒c─▒"}
                             </p>
 
                             {conversation.updatedAt && (
@@ -1311,8 +1393,8 @@ const activeUser = useMemo(() => {
                           </div>
 
                           <p className="text-xs text-slate-500 truncate mt-1">
-                            {conversation.lastMessage ||
-                              "Henüz mesaj yok"}
+                            {conversation.lastMessage?.content ||
+                              "Hen├╝z mesaj yok"}
                           </p>
                         </div>
                       </button>
@@ -1322,14 +1404,14 @@ const activeUser = useMemo(() => {
               ) : (
                 <div className="h-full flex items-center justify-center">
                   <p className="text-sm text-slate-500 text-center">
-                    Henüz mesajın yok
+                    Hen├╝z mesaj─▒n yok
                   </p>
                 </div>
               )}
             </div>
           </section>
 
-          {/* SAĞ SOHBET PANELİ */}
+          {/* SA─Ş SOHBET PANEL─░ */}
           <section
             className="
               md:col-span-2
@@ -1347,7 +1429,7 @@ const activeUser = useMemo(() => {
           >
             {activeUser ? (
               <>
-                {/* SOHBET ÜST BAR */}
+                {/* SOHBET ├£ST BAR */}
                 <div
                   className="
                     shrink-0
@@ -1411,12 +1493,12 @@ const activeUser = useMemo(() => {
                     <h2 className="font-bold text-lg truncate">
                       {activeUser.name ??
                         activeUser.username ??
-                        "Kullanıcı"}
+                        "Kullan─▒c─▒"}
                     </h2>
 
                     {activeUser.city && (
                       <p className="text-xs text-slate-500 mt-1">
-                        📍 {activeUser.city}
+                        ­şôı {activeUser.city}
                       </p>
                     )}
                   </div>
@@ -1435,7 +1517,7 @@ const activeUser = useMemo(() => {
                   {loadingMessages ? (
                     <div className="h-full flex items-center justify-center">
                       <p className="text-slate-500">
-                        Mesajlar yükleniyor...
+                        Mesajlar y├╝kleniyor...
                       </p>
                     </div>
                   ) : messages.length > 0 ? (
@@ -1503,15 +1585,15 @@ const activeUser = useMemo(() => {
                   ) : (
                     <div className="h-full flex flex-col items-center justify-center text-center">
                       <div className="text-5xl mb-4">
-                        💬
+                        ­şÆ¼
                       </div>
 
                       <p className="text-slate-400 font-semibold">
-                        Henüz mesaj yok
+                        Hen├╝z mesaj yok
                       </p>
 
                       <p className="text-sm text-slate-600 mt-2">
-                        İlk mesajı sen gönder.
+                        ─░lk mesaj─▒ sen g├Ânder.
                       </p>
                     </div>
                   )}
@@ -1562,7 +1644,7 @@ const activeUser = useMemo(() => {
                           }
                         }
                       }}
-                      placeholder="Mesajını yaz..."
+                      placeholder="Mesaj─▒n─▒ yaz..."
                       rows={2}
                       disabled={sending}
                       className="
@@ -1608,41 +1690,41 @@ const activeUser = useMemo(() => {
                     >
                       {sending
                         ? "..."
-                        : "GÖNDER"}
+                        : "G├ûNDER"}
                     </button>
                   </div>
 
                   <p className="text-[10px] text-slate-600 mt-2 px-1">
-                    Enter ile gönder •
+                    Enter ile g├Ânder ÔÇó
                     Shift + Enter ile
-                    yeni satır
+                    yeni sat─▒r
                   </p>
                 </form>
               </>
            ) : (
-              /* SEÇ İLİ KULLANICI YOK */
+              /* SE├ç ─░L─░ KULLANICI YOK */
               <div className="flex-1 flex items-center justify-center p-6">
                 <div className="text-center max-w-md">
                   <div className="text-6xl mb-5">
-                    💬
+                    ­şÆ¼
                   </div>
 
                   <h2 className="text-xl sm:text-2xl font-bold text-slate-300">
-                    Sohbet başlat
+                    Sohbet ba┼şlat
                   </h2>
 
                   <p className="text-sm sm:text-base text-slate-500 mt-3">
-                    Sol taraftan bir konuşma
-                    seç veya bir profilden
-                    “Mesaj Gönder” seçeneğine
-                    tıkla.
+                    Sol taraftan bir konu┼şma
+                    se├ğ veya bir profilden
+                    ÔÇ£Mesaj G├ÂnderÔÇØ se├ğene─şine
+                    t─▒kla.
                   </p>
 
                   {targetUserId &&
                     !loadingConversations && (
                       <p className="text-xs text-purple-400 mt-5">
-                        Kullanıcı bilgileri
-                        yükleniyor...
+                        Kullan─▒c─▒ bilgileri
+                        y├╝kleniyor...
                       </p>
                     )}
                 </div>
@@ -1651,7 +1733,7 @@ const activeUser = useMemo(() => {
           </section>
         </div>
 
-        {/* CANLI GÖRÜNTÜLÜ SOHBET */}
+        {/* CANLI G├ûR├£NT├£L├£ SOHBET */}
         <section
           className="
             max-w-3xl
@@ -1686,7 +1768,7 @@ const activeUser = useMemo(() => {
               leading-snug
             "
           >
-            🛰️ CANLI GÖRÜNTÜLÜ SOHBET
+            ­şø░´©Å CANLI G├ûR├£NT├£L├£ SOHBET
             ODALARI
           </h2>
 
@@ -1702,10 +1784,10 @@ const activeUser = useMemo(() => {
               mx-auto
             "
           >
-            Güvenli görüntülü sohbet
-            odalarına geçerek yeni
-            insanlarla canlı olarak
-            tanışabilirsin.
+            G├╝venli g├Âr├╝nt├╝l├╝ sohbet
+            odalar─▒na ge├ğerek yeni
+            insanlarla canl─▒ olarak
+            tan─▒┼şabilirsin.
           </p>
 
           <div className="max-w-md mx-auto">
@@ -1754,8 +1836,8 @@ const activeUser = useMemo(() => {
                 active:scale-[0.98]
               "
             >
-              🚀 GÖRÜNTÜLÜ KONUŞMAYI
-              BAŞLAT
+              ­şÜÇ G├ûR├£NT├£L├£ KONU┼ŞMAYI
+              BA┼ŞLAT
             </button>
           </div>
         </section>
@@ -1766,12 +1848,12 @@ const activeUser = useMemo(() => {
 
 /*
  * =========================================================
- * ÖNEMLİ:
+ * ├ûNEML─░:
  *
- * useSearchParams() doğrudan page component'inde çalışmıyor.
- * Next.js 16 production build için Suspense gerekiyor.
+ * useSearchParams() do─şrudan page component'inde ├ğal─▒┼şm─▒yor.
+ * Next.js 16 production build i├ğin Suspense gerekiyor.
  *
- * Bu nedenle MessagesContent ayrı component,
+ * Bu nedenle MessagesContent ayr─▒ component,
  * MessagesPage ise Suspense wrapper.
  * =========================================================
  */
@@ -1781,7 +1863,7 @@ export default function MessagesPage() {
       fallback={
         <div className="min-h-screen bg-[#121420] text-white flex items-center justify-center">
           <div className="text-slate-400 font-semibold">
-            Mesajlar yükleniyor...
+            Mesajlar y├╝kleniyor...
           </div>
         </div>
       }
