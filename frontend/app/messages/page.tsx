@@ -1,5 +1,4 @@
 "use client";
-
 import React, {
   FormEvent,
   Suspense,
@@ -8,8 +7,10 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-
+import { useSearchParams } from "next/navigation";
+/* =========================================================
+   TİPLER
+   ========================================================= */
 type User = {
   id: string;
   name?: string;
@@ -18,18 +19,6 @@ type User = {
   profileImage?: string | null;
   profilePhoto?: string | null;
 };
-
-type Conversation = {
-  id: string;
-  userId?: string;
-  participantId?: string;
-  participant?: User;
-  user?: User;
-  lastMessage?: string;
-  updatedAt?: string;
-  unreadCount?: number;
-};
-
 type Message = {
   id: string;
   content: string;
@@ -38,624 +27,1074 @@ type Message = {
   createdAt?: string;
   isMine?: boolean;
 };
-
+type Conversation = {
+  id: string;
+  userId?: string;
+  participantId?: string;
+  participant?: User | null;
+  user?: User | null;
+  lastMessage?: Message | null;
+  updatedAt?: string;
+  unreadCount?: number;
+};
+/* =========================================================
+   API
+   ========================================================= */
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL ||
   "https://egelove-backend.onrender.com";
+/* =========================================================
+   TOKEN
+   ========================================================= */
 function getAccessToken(): string | null {
-  if (typeof window === "undefined") return null;
+  if (typeof window === "undefined") {
+    return null;
+  }
+
   return localStorage.getItem("accessToken");
 }
+
+function getRefreshToken(): string | null {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  return localStorage.getItem("refreshToken");
+}
+
+function saveTokens(data: any) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  if (data?.accessToken) {
+    localStorage.setItem(
+      "accessToken",
+      String(data.accessToken),
+    );
+  }
+
+  if (data?.refreshToken) {
+    localStorage.setItem(
+      "refreshToken",
+      String(data.refreshToken),
+    );
+  }
+}
+
+/* =========================================================
+   JWT'DEN KULLANICI ID
+   ========================================================= */
+
+function getCurrentUserId(): string | null {
+  const token = getAccessToken();
+
+  if (!token) {
+    return null;
+  }
+
+  try {
+    const parts = token.split(".");
+
+    if (parts.length < 2) {
+      return null;
+    }
+
+    const payload = parts[1];
+
+    const normalized = payload
+      .replace(/-/g, "+")
+      .replace(/_/g, "/");
+
+    const padded =
+      normalized +
+      "=".repeat(
+        (4 - (normalized.length % 4)) % 4,
+      );
+
+    const decoded = decodeURIComponent(
+      atob(padded)
+        .split("")
+        .map(
+          (char) =>
+            "%" +
+            ("00" +
+              char.charCodeAt(0).toString(16)
+            ).slice(-2),
+        )
+        .join(""),
+    );
+
+    const data = JSON.parse(decoded);
+
+    if (data?.sub !== undefined) {
+      return String(data.sub);
+    }
+
+    if (data?.id !== undefined) {
+      return String(data.id);
+    }
+
+    if (data?.userId !== undefined) {
+      return String(data.userId);
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/* =========================================================
+   GÜVENLİ STRING
+   ========================================================= */
+
+function safeString(
+  value: unknown,
+): string {
+  if (typeof value === "string") {
+    return value.trim();
+  }
+
+  if (
+    typeof value === "number" ||
+    typeof value === "boolean"
+  ) {
+    return String(value);
+  }
+
+  return "";
+}
+
+/* =========================================================
+   KULLANICI NORMALİZASYONU
+   ========================================================= */
+
+function normalizeUser(
+  raw: any,
+): User | null {
+  if (!raw || typeof raw !== "object") {
+    return null;
+  }
+
+  const rawId =
+    raw.id ??
+    raw._id ??
+    raw.userId;
+
+  if (
+    rawId === undefined ||
+    rawId === null ||
+    String(rawId).trim() === ""
+  ) {
+    return null;
+  }
+
+  let name = "";
+
+  if (typeof raw.name === "string") {
+    name = raw.name.trim();
+  } else if (
+    raw.name &&
+    typeof raw.name === "object"
+  ) {
+    name =
+      safeString(raw.name.name) ||
+      safeString(raw.name.Name) ||
+      safeString(raw.name.username);
+  }
+
+  if (!name) {
+    name = safeString(raw.username);
+  }
+
+  return {
+    id: String(rawId),
+    name: name || "Kullanıcı",
+    username:
+      safeString(raw.username) || undefined,
+    city:
+      safeString(raw.city) || undefined,
+    profileImage:
+      safeString(raw.profileImage) ||
+      safeString(raw.avatar) ||
+      null,
+    profilePhoto:
+      safeString(raw.profilePhoto) ||
+      safeString(raw.avatar) ||
+      null,
+  };
+}
+
+/* =========================================================
+   MESAJ NORMALİZASYONU
+   ========================================================= */
+
+function normalizeMessage(
+  raw: any,
+  fallbackId: string,
+): Message | null {
+  if (
+    raw === null ||
+    raw === undefined ||
+    raw === ""
+  ) {
+    return null;
+  }
+
+  /*
+   * Backend bazı durumlarda son mesajı
+   * doğrudan string gönderebilir.
+   */
+  if (typeof raw === "string") {
+    return {
+      id: fallbackId,
+      content: raw,
+    };
+  }
+
+  if (
+    typeof raw !== "object"
+  ) {
+    return null;
+  }
+
+  const id = String(
+    raw.id ??
+      raw._id ??
+      fallbackId,
+  );
+
+  const content = safeString(
+    raw.content ??
+      raw.message ??
+      raw.text,
+  );
+
+  const senderId =
+    raw.senderId ??
+    raw.sender?.id ??
+    raw.sender?._id ??
+    raw.fromUserId ??
+    raw.from?.id ??
+    raw.from?._id;
+
+  const receiverId =
+    raw.receiverId ??
+    raw.recipientId ??
+    raw.receiver?.id ??
+    raw.receiver?._id ??
+    raw.toUserId ??
+    raw.to?.id ??
+    raw.to?._id;
+
+  const createdAt =
+    raw.createdAt ??
+    raw.sentAt ??
+    raw.created_at ??
+    raw.date ??
+    raw.timestamp;
+
+  let isMine: boolean | undefined;
+
+  if (typeof raw.isMine === "boolean") {
+    isMine = raw.isMine;
+  } else if (
+    typeof raw.mine === "boolean"
+  ) {
+    isMine = raw.mine;
+  }
+
+  return {
+    id,
+    content,
+    senderId:
+      senderId !== undefined &&
+      senderId !== null
+        ? String(senderId)
+        : undefined,
+    receiverId:
+      receiverId !== undefined &&
+      receiverId !== null
+        ? String(receiverId)
+        : undefined,
+    createdAt:
+      createdAt !== undefined &&
+      createdAt !== null
+        ? String(createdAt)
+        : undefined,
+    isMine,
+  };
+}
+
+/* =========================================================
+   API REQUEST
+   ========================================================= */
 
 async function apiRequest<T>(
   path: string,
   options: RequestInit = {},
 ): Promise<T> {
-  const getToken = () => {
-    if (typeof window === "undefined") return null;
-    return localStorage.getItem("accessToken");
-  };
+  const makeRequest = async (
+    token: string | null,
+  ) => {
+    return fetch(
+      `${API_URL}${path}`,
+      {
+        ...options,
+        headers: {
+          "Content-Type":
+            "application/json",
 
-  const getRefreshToken = () => {
-    if (typeof window === "undefined") return null;
-    return localStorage.getItem("refreshToken");
-  };
+          ...(token
+            ? {
+                Authorization:
+                  `Bearer ${token}`,
+              }
+            : {}),
 
-  const saveTokens = (data: any) => {
-    if (typeof window === "undefined") return;
-
-    if (data?.accessToken) {
-      localStorage.setItem("accessToken", data.accessToken);
-    }
-
-    if (data?.refreshToken) {
-      localStorage.setItem("refreshToken", data.refreshToken);
-    }
-  };
-
-  const makeRequest = async (token: string | null) => {
-    return fetch(`${API_URL}${path}`, {
-      ...options,
-      headers: {
-        "Content-Type": "application/json",
-        ...(token
-          ? {
-              Authorization: `Bearer ${token}`,
-            }
-          : {}),
-        ...(options.headers || {}),
+          ...(options.headers || {}),
+        },
       },
-    });
+    );
   };
 
-  let token = getToken();
+  let token = getAccessToken();
 
-  let response = await makeRequest(token);
+  let response =
+    await makeRequest(token);
 
-  // Access token geçersizse refresh token ile yenile
- if (response.status === 401) {
-  console.log("🔴 MESSAGES: 401 → REFRESH BAŞLIYOR");
+  /*
+   * Access token süresi bittiyse
+   * refresh token ile yenile.
+   */
+  if (response.status === 401) {
+    const refreshToken =
+      getRefreshToken();
 
-  const refreshToken = getRefreshToken();
+    if (!refreshToken) {
+      throw new Error(
+        "Oturum bulunamadı. Lütfen tekrar giriş yapın.",
+      );
+    }
 
-  if (!refreshToken) {
-    throw new Error("Oturum bulunamadı. Lütfen tekrar giriş yapın.");
+    const refreshResponse =
+      await fetch(
+        `${API_URL}/auth/refresh`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+          body: JSON.stringify({
+            refreshToken,
+          }),
+        },
+      );
+
+    if (!refreshResponse.ok) {
+      localStorage.removeItem(
+        "accessToken",
+      );
+
+      localStorage.removeItem(
+        "refreshToken",
+      );
+
+      throw new Error(
+        "Oturum süresi dolmuş. Lütfen tekrar giriş yapın.",
+      );
+    }
+
+    const refreshData =
+      await refreshResponse.json();
+
+    saveTokens(refreshData);
+
+    token =
+      refreshData?.accessToken ??
+      null;
+
+    response =
+      await makeRequest(token);
   }
-
-  const refreshResponse = await fetch(`${API_URL}/auth/refresh`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      refreshToken,
-    }),
-  });
-
-  if (!refreshResponse.ok) {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-
-    throw new Error("Oturum süresi dolmuş. Lütfen tekrar giriş yapın.");
-  }
-
-  const refreshData = await refreshResponse.json();
-
-  saveTokens(refreshData);
-
-  token = refreshData.accessToken;
-
-  console.log("🟢 MESSAGES: YENİ ACCESS TOKEN ALINDI");
-
-  // Yeni token ile asıl isteği tekrar gönder
-  response = await makeRequest(token);
-}
 
   if (!response.ok) {
-    const error = await response
-      .json()
-      .catch(() => ({ message: "Bir hata oluştu." }));
+    const error =
+      await response
+        .json()
+        .catch(() => null);
 
     throw new Error(
-      error?.message || `HTTP ${response.status}`,
+      safeString(error?.message) ||
+        safeString(error?.error) ||
+        `HTTP ${response.status}`,
     );
   }
 
   return response.json();
 }
+
+/* =========================================================
+   ANA MESAJ İÇERİĞİ
+   ========================================================= */
+
 function MessagesContent() {
-  function getUserName(user?: User | null): string {
-    if (!user || typeof user !== "object") {
-      return "Kullanıcı";
-    }
+  const searchParams =
+    useSearchParams();
 
-    const name = (user as any).name;
+  const [conversations, setConversations] =
+    useState<Conversation[]>([]);
 
-    if (typeof name === "string" && name.trim()) {
-      return name;
-    }
+  const [messages, setMessages] =
+    useState<Message[]>([]);
 
-    if (typeof name === "object" && name !== null) {
-      if (
-        typeof name.Name === "string" &&
-        name.Name.trim()
-      ) {
-        return name.Name;
-      }
+  const [selectedUser, setSelectedUser] =
+    useState<User | null>(null);
 
-      if (
-        typeof name.name === "string" &&
-        name.name.trim()
-      ) {
-        return name.name;
-      }
+  const [
+    selectedConversationId,
+    setSelectedConversationId,
+  ] = useState<string | null>(null);
 
-      if (
-        typeof name.username === "string" &&
-        name.username.trim()
-      ) {
-        return name.username;
-      }
-    }
+  const [draft, setDraft] =
+    useState("");
 
-    if (
-      typeof user.username === "string" &&
-      user.username.trim()
-    ) {
-      return user.username;
-    }
+  const [
+    loadingConversations,
+    setLoadingConversations,
+  ] = useState(true);
 
-    return "Kullanıcı";
-  }
+  const [
+    loadingMessages,
+    setLoadingMessages,
+  ] = useState(false);
 
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
-  const [conversations, setConversations] = useState<Conversation[]>([]);
-  const [messages, setMessages] = useState<Message[]>([]);
-
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [selectedConversationId, setSelectedConversationId] =
-    useState<string | null>(null);
-
-  const [draft, setDraft] = useState("");
-
-  const [loadingConversations, setLoadingConversations] =
-    useState(true);
-
-  const [loadingMessages, setLoadingMessages] =
+  const [sending, setSending] =
     useState(false);
 
-  const [sending, setSending] = useState(false);
+  const [error, setError] =
+    useState("");
 
-  const [error, setError] = useState("");
+  const [search, setSearch] =
+    useState("");
 
-  const [search, setSearch] = useState("");
+  const [
+    messageFilter,
+    setMessageFilter,
+  ] = useState<
+    "all" | "incoming" | "outgoing"
+  >("all");
 
-  const targetUserId = searchParams.get("userId");
-  const targetThreadId = searchParams.get("thread");
+  const targetUserId =
+    searchParams.get("userId");
 
-  /*
-   * ---------------------------------------------------------
-   * KONUŞMALARI GETİR
-   * ---------------------------------------------------------
-   */
-  const loadConversations = useCallback(async () => {
-    try {
-      setLoadingConversations(true);
-      setError("");
+  const targetThreadId =
+    searchParams.get("thread");
 
-      const data = await apiRequest<any[]>(
-        "/conversations",
-      );
+  /* =======================================================
+     KULLANICI ADI
+     ======================================================= */
 
-      const normalized: Conversation[] = Array.isArray(data)
-        ? data.map((item: any) => ({
-          
-            id: String(
-              item.id ??
-                item.conversationId ??
-                item._id ??
-                "",
-            ),
-
-            userId: item.userId
-              ? String(item.userId)
-              : undefined,
-
-            participantId: item.participantId
-              ? String(item.participantId)
-              : undefined,
-
-            participant:
-              item.participant ||
-              item.otherUser ||
-              item.user ||
-              undefined,
-
-            user:
-              item.user ||
-              item.otherUser ||
-              item.participant ||
-              undefined,
-
-            lastMessage:
-              item.lastMessage?.content ??
-              item.lastMessage ??
-              item.content ??
-              "",
-
-            updatedAt:
-              item.updatedAt ??
-              item.lastMessage?.createdAt,
-
-            unreadCount:
-              Number(item.unreadCount ?? 0),
-          }))
-        : [];
-
-      setConversations(normalized);
-    } catch (err: any) {
-      console.error("Konuşmalar alınamadı:", err);
-
-      setError(
-        err?.message ||
-          "Mesaj konuşmaları yüklenemedi.",
-      );
-
-      setConversations([]);
-    } finally {
-      setLoadingConversations(false);
-    }
-  }, []);
-
-  /*
-   * ---------------------------------------------------------
-   * KONUŞMA MESAJLARINI GETİR
-   * ---------------------------------------------------------
-   */
-  const loadMessages = useCallback(
-    async (conversationId: string) => {
-      try {
-        setLoadingMessages(true);
-        setError("");
-        console.log("🟣 MESAJLAR AÇILIYOR:", conversationId);
-
-        const data = await apiRequest<any[]>(
-          `/conversations/${conversationId}/messages`,
-        );
-
-        const normalized: Message[] = Array.isArray(data)
-          ? data.map((item: any) => ({
-              id: String(
-                item.id ??
-                  item._id ??
-                  `${Date.now()}-${Math.random()}`,
-              ),
-
-              content:
-                item.content ??
-                item.message ??
-                "",
-
-              senderId: item.senderId
-                ? String(item.senderId)
-                : item.sender?.id
-                  ? String(item.sender.id)
-                  : undefined,
-
-              receiverId: item.receiverId
-                ? String(item.receiverId)
-                : item.recipientId
-                  ? String(item.recipientId)
-                  : undefined,
-
-              createdAt:
-                item.createdAt ??
-                item.sentAt ??
-                item.date,
-
-              isMine:
-                item.isMine ??
-                item.mine ??
-                false,
-            }))
-          : [];
-
-        setMessages(normalized);
-      } catch (err: any) {
-        console.error(
-          "Mesajlar alınamadı:",
-          err,
-        );
-
-        setError(
-          err?.message ||
-            "Mesajlar yüklenemedi.",
-        );
-
-        setMessages([]);
-      } finally {
-        setLoadingMessages(false);
+  const getUserName = useCallback(
+    (
+      user?: User | null,
+    ): string => {
+      if (!user) {
+        return "Kullanıcı";
       }
+
+      const name =
+        safeString(user.name);
+
+      if (name) {
+        return name;
+      }
+
+      const username =
+        safeString(user.username);
+
+      if (username) {
+        return username;
+      }
+
+      return "Kullanıcı";
     },
     [],
   );
 
-  /*
-   * ---------------------------------------------------------
-   * İLK YÜKLEME
-   * ---------------------------------------------------------
-   */
+  /* =======================================================
+     PROFİL FOTOĞRAFI
+     ======================================================= */
+
+  const getProfileImage =
+    useCallback(
+      (
+        user?: User | null,
+      ): string | null => {
+        if (!user) {
+          return null;
+        }
+
+        return (
+          safeString(
+            user.profileImage,
+          ) ||
+          safeString(
+            user.profilePhoto,
+          ) ||
+          null
+        );
+      },
+      [],
+    );
+
+  /* =======================================================
+     KONUŞMA NORMALİZASYONU
+     ======================================================= */
+
+  const normalizeConversation =
+    useCallback(
+      (
+        raw: any,
+        index: number,
+      ): Conversation | null => {
+        if (!raw || typeof raw !== "object") {
+          return null;
+        }
+
+        const idValue =
+          raw.id ??
+          raw.conversationId ??
+          raw._id ??
+          raw.threadId;
+
+        if (
+          idValue === undefined ||
+          idValue === null ||
+          String(idValue).trim() === ""
+        ) {
+          return null;
+        }
+
+        /* Backend user1/user2 biçimi + eski API biçimleri */
+        const currentUserId = getCurrentUserId();
+        const rawUser1 = raw.user1 ?? raw.userA ?? null;
+        const rawUser2 = raw.user2 ?? raw.userB ?? null;
+
+        let participantRaw =
+          raw.participant ??
+          raw.otherUser ??
+          raw.user ??
+          raw.receiver ??
+          raw.recipient ??
+          null;
+
+        if (!participantRaw && (rawUser1 || rawUser2)) {
+          const user1Id = rawUser1?.id ?? rawUser1?._id ?? rawUser1?.userId;
+          const user2Id = rawUser2?.id ?? rawUser2?._id ?? rawUser2?.userId;
+
+          if (currentUserId) {
+            if (String(user1Id) === String(currentUserId)) {
+              participantRaw = rawUser2;
+            } else if (String(user2Id) === String(currentUserId)) {
+              participantRaw = rawUser1;
+            }
+          }
+
+          participantRaw = participantRaw ?? rawUser2 ?? rawUser1 ?? null;
+        }
+
+        const participant = normalizeUser(participantRaw);
+
+        const userId =
+          raw.userId ??
+          raw.participantId ??
+          participant?.id ??
+          participantRaw?.id ??
+          participantRaw?._id ??
+          participantRaw?.userId;
+
+        const lastRaw =
+          raw.lastMessage ??
+          raw.latestMessage ??
+          raw.last_message ??
+          (Array.isArray(raw.messages) ? raw.messages[0] : null) ??
+          null;
+
+        const lastMessage = normalizeMessage(
+          lastRaw,
+          `${String(idValue)}-last-${index}`,
+        );
+
+        return {
+          id: String(idValue),
+          userId:
+            userId !== undefined &&
+            userId !== null &&
+            String(userId).trim() !== ""
+              ? String(userId)
+              : undefined,
+          participantId:
+            participant?.id ??
+            (userId !== undefined && userId !== null
+              ? String(userId)
+              : undefined),
+          participant,
+          user: participant,
+          lastMessage,
+          updatedAt:
+            safeString(raw.updatedAt) ||
+            lastMessage?.createdAt ||
+            undefined,
+          unreadCount: Number(
+            raw.unreadCount ??
+              raw.unread ??
+              0,
+          ),
+        };
+      },
+      [],
+    );
+
+  /* =======================================================
+     KONUŞMALARI GETİR
+     ======================================================= */
+
+  const loadConversations =
+    useCallback(async () => {
+      try {
+        setLoadingConversations(true);
+        setError("");
+
+        const data =
+          await apiRequest<any>(
+            "/conversations",
+          );
+
+        let list: any[] = [];
+
+        if (Array.isArray(data)) {
+          list = data;
+        } else if (
+          Array.isArray(
+            data?.conversations,
+          )
+        ) {
+          list =
+            data.conversations;
+        } else if (
+          Array.isArray(data?.items)
+        ) {
+          list = data.items;
+        } else if (
+          Array.isArray(data?.data)
+        ) {
+          list = data.data;
+        }
+
+        const normalized =
+          list
+            .map(
+              (
+                item,
+                index,
+              ) =>
+                normalizeConversation(
+                  item,
+                  index,
+                ),
+            )
+            .filter(
+              (
+                item,
+              ): item is Conversation =>
+                item !== null,
+            );
+
+        setConversations(
+          normalized,
+        );
+      } catch (err: any) {
+        console.error(
+          "Konuşmalar alınamadı:",
+          err,
+        );
+
+        setError(
+          safeString(err?.message) ||
+            safeString(err?.error) ||
+            "Mesaj konuşmaları yüklenemedi.",
+        );
+
+        setConversations([]);
+      } finally {
+        setLoadingConversations(
+          false,
+        );
+      }
+    }, [
+      normalizeConversation,
+    ]);
+
+  /* =======================================================
+     MESAJLARI GETİR
+     ======================================================= */
+
+  const loadMessages =
+    useCallback(
+      async (
+        conversationId: string,
+      ) => {
+        try {
+          setLoadingMessages(true);
+          setError("");
+
+          const data =
+            await apiRequest<any>(
+              `/conversations/${conversationId}/messages`,
+            );
+
+          let list: any[] = [];
+
+          if (Array.isArray(data)) {
+            list = data;
+          } else if (
+            Array.isArray(
+              data?.messages,
+            )
+          ) {
+            list = data.messages;
+          } else if (
+            Array.isArray(data?.items)
+          ) {
+            list = data.items;
+          } else if (
+            Array.isArray(data?.data)
+          ) {
+            list = data.data;
+          }
+
+          const currentUserId =
+            getCurrentUserId();
+
+          const normalized =
+            list
+              .map(
+                (
+                  item,
+                  index,
+                ) =>
+                  normalizeMessage(
+                    item,
+                    `${conversationId}-${index}`,
+                  ),
+              )
+              .filter(
+                (
+                  item,
+                ): item is Message =>
+                  item !== null,
+              )
+              .map(
+                (message) => {
+                  if (
+                    typeof message.isMine ===
+                    "boolean"
+                  ) {
+                    return message;
+                  }
+
+                  if (
+                    currentUserId &&
+                    message.senderId
+                  ) {
+                    return {
+                      ...message,
+                      isMine:
+                        String(
+                          message.senderId,
+                        ) ===
+                        String(
+                          currentUserId,
+                        ),
+                    };
+                  }
+
+                  return {
+                    ...message,
+                    isMine: false,
+                  };
+                },
+              );
+
+          setMessages(
+            normalized,
+          );
+        } catch (err: any) {
+          console.error(
+            "Mesajlar alınamadı:",
+            err,
+          );
+
+          setError(
+            safeString(err?.message) ||
+              safeString(err?.error) ||
+              "Mesajlar yüklenemedi.",
+          );
+
+          setMessages([]);
+        } finally {
+          setLoadingMessages(
+            false,
+          );
+        }
+      },
+      [],
+    );
+
+  /* =======================================================
+     İLK YÜKLEME
+     ======================================================= */
+
   useEffect(() => {
     loadConversations();
-  }, [loadConversations]);
+  }, [
+    loadConversations,
+  ]);
 
-  /*
-   * ---------------------------------------------------------
-   * URL'deki userId ile gelen kişiyi bul
-   * ---------------------------------------------------------
-   */
-  useEffect(() => {
-    if (!targetUserId) return;
+  /* =======================================================
+     AKTİF KONUŞMA
+     ======================================================= */
 
-    let cancelled = false;
+  const activeConversation =
+    useMemo(() => {
+      if (
+        !selectedConversationId
+      ) {
+        return null;
+      }
 
-    const findTargetUser = async () => {
-      /*
-       * /messages?userId=... artık ayrı bir "hızlı mesaj"
-       * sayfası değildir. Ana mesaj panelinde doğrudan
-       * konuşmayı açar/oluşturur.
-       */
+      return (
+        conversations.find(
+          (conversation) =>
+            String(
+              conversation.id,
+            ) ===
+            String(
+              selectedConversationId,
+            ),
+        ) ?? null
+      );
+    }, [
+      conversations,
+      selectedConversationId,
+    ]);
 
-      // Önce zaten yüklenmiş konuşmalar içinde ara.
-      const existing = conversations.find(
+  /* =======================================================
+     AKTİF KULLANICI
+     ======================================================= */
+
+  const activeUser =
+    useMemo(() => {
+      const user =
+        selectedUser ??
+        activeConversation?.participant ??
+        activeConversation?.user ??
+        null;
+
+      return user
+        ? normalizeUser(user)
+        : null;
+    }, [
+      selectedUser,
+      activeConversation,
+    ]);
+
+  /* =======================================================
+     KONUŞMA LİSTESİ FİLTRE
+     ======================================================= */
+
+  const filteredConversations =
+    useMemo(() => {
+      const term =
+        search
+          .trim()
+          .toLocaleLowerCase(
+            "tr-TR",
+          );
+
+      const currentUserId =
+        getCurrentUserId();
+
+      return conversations.filter(
         (conversation) => {
           const user =
             conversation.participant ??
             conversation.user;
 
-          return (
-            String(
-              user?.id ??
-                conversation.userId ??
-                conversation.participantId ??
-                "",
-            ) === String(targetUserId)
-          );
+          const name =
+            getUserName(user);
+
+          const city =
+            safeString(
+              user?.city,
+            );
+
+          const matchesSearch =
+            !term ||
+            `${name} ${city}`
+              .toLocaleLowerCase(
+                "tr-TR",
+              )
+              .includes(term);
+
+          if (!matchesSearch) {
+            return false;
+          }
+
+          /*
+           * TÜMÜ
+           */
+          if (
+            messageFilter === "all"
+          ) {
+            return true;
+          }
+
+          /*
+           * Son mesaj yoksa gelen/giden
+           * filtresinde gösterme.
+           */
+          const lastMessage =
+            conversation.lastMessage;
+
+          if (!lastMessage) {
+            return false;
+          }
+
+          /*
+           * Önce backend'in isMine bilgisini kullan.
+           */
+          let isMine =
+            lastMessage.isMine;
+
+          /*
+           * isMine yoksa senderId üzerinden
+           * kendimiz hesapla.
+           */
+          if (
+            typeof isMine !==
+            "boolean"
+          ) {
+            if (
+              currentUserId &&
+              lastMessage.senderId
+            ) {
+              isMine =
+                String(
+                  lastMessage.senderId,
+                ) ===
+                String(
+                  currentUserId,
+                );
+            } else if (
+              currentUserId &&
+              lastMessage.receiverId
+            ) {
+              isMine =
+                String(
+                  lastMessage.receiverId,
+                ) !==
+                String(
+                  currentUserId,
+                );
+            } else {
+              isMine = false;
+            }
+          }
+
+          if (
+            messageFilter ===
+            "outgoing"
+          ) {
+            return isMine;
+          }
+
+          return !isMine;
         },
       );
+    }, [
+      conversations,
+      search,
+      messageFilter,
+      getUserName,
+    ]);
 
-      if (existing) {
+  /* =======================================================
+     KONUŞMA AÇ
+     ======================================================= */
+
+  const openConversation =
+    useCallback(
+      async (
+        conversation: Conversation,
+      ) => {
         const user =
-          existing.participant ??
-          existing.user;
+          conversation.participant ??
+          conversation.user ??
+          null;
 
         if (user) {
-          setSelectedUser({
-            ...user,
-            id: String(user.id),
-          });
-        } else {
-          setSelectedUser({
-            id: String(targetUserId),
-            name: "Kullanıcı",
-          });
+          const normalizedUser =
+            normalizeUser(user);
+
+          if (normalizedUser) {
+            setSelectedUser(
+              normalizedUser,
+            );
+          }
         }
 
-        setSelectedConversationId(
-          String(existing.id),
-        );
-        return;
-      }
-
-      try {
-        /*
-         * Profil bilgisi varsa sağ üstte gerçek adı/fotoğrafı
-         * göstereceğiz.
-         */
-        let targetUser: User = {
-          id: String(targetUserId),
-          name: "Kullanıcı",
-        };
-
-        try {
-          const user = await apiRequest<any>(
-            `/users/${targetUserId}`,
-          );
-
-          targetUser = {
-            id: String(user.id ?? targetUserId),
-            name:
-              user.name ??
-              user.username ??
-              "Kullanıcı",
-            username: user.username,
-            city: user.city,
-            profileImage:
-              user.profileImage ??
-              user.profilePhoto ??
-              null,
-            profilePhoto:
-              user.profilePhoto ??
-              user.profileImage ??
-              null,
-          };
-        } catch (profileError) {
-          /*
-           * Profil endpoint'i başarısız olsa bile userId elimizde.
-           * Mesaj kutusunu açabilmek için konuşma oluşturmayı
-           * yine deniyoruz.
-           */
-          console.warn(
-            "Profil bilgisi alınamadı; userId ile devam ediliyor.",
-            profileError,
-          );
-        }
-
-        if (cancelled) return;
-
-        setSelectedUser(targetUser);
         setError("");
 
-        /*
-         * Mevcut konuşma yoksa backend'de oluştur.
-         */
-        const created = await apiRequest<any>(
-          "/conversations",
-          {
-            method: "POST",
-            body: JSON.stringify({
-              userId: targetUser.id,
-            }),
-          },
-        );
-
-        if (cancelled) return;
-
-        const conversationId =
-          created?.id ??
-          created?.conversationId ??
-          created?._id;
-
-        if (!conversationId) {
-          throw new Error(
-            "Konuşma oluşturuldu ancak konuşma ID'si alınamadı.",
-          );
-        }
-
-        const newConversation: Conversation = {
-          id: String(conversationId),
-          userId: String(targetUser.id),
-          participantId: String(targetUser.id),
-          participant: targetUser,
-          user: targetUser,
-          lastMessage: "",
-          unreadCount: 0,
-        };
-
-        setConversations((prev) => {
-          const alreadyExists = prev.some(
-            (item) =>
-              String(item.id) ===
-              String(conversationId),
-          );
-
-          return alreadyExists
-            ? prev
-            : [newConversation, ...prev];
-        });
-
         setSelectedConversationId(
-          String(conversationId),
-        );
-      } catch (err: any) {
-        if (cancelled) return;
-
-        console.error(
-          "Mesaj konuşması başlatılamadı:",
-          err,
-        );
-
-        setError(
-          err?.message ||
-            "Mesaj konuşması başlatılamadı.",
-        );
-      }
-    };
-
-    findTargetUser();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [targetUserId, conversations]);
-
-  /*
-   * ---------------------------------------------------------
-   * URL'deki thread'i aç
-   * ---------------------------------------------------------
-   */
-  useEffect(() => {
-    if (!targetThreadId) return;
-
-    const conversation = conversations.find(
-      (item) =>
-        String(item.id) ===
-        String(targetThreadId),
-    );
-
-    if (!conversation) return;
-
-    setSelectedConversationId(
-      String(conversation.id),
-    );
-
-    const user =
-      conversation.participant ??
-      conversation.user;
-
-    if (user) {
-      setSelectedUser({
-        ...user,
-        id: String(user.id),
-      });
-    }
-  }, [targetThreadId, conversations]);
-
-  /*
-   * ---------------------------------------------------------
-   * userId ile gelen kullanıcı için mevcut konuşmayı bul
-   * ---------------------------------------------------------
-   */
-  useEffect(() => {
-    if (!targetUserId) return;
-
-    const conversation = conversations.find(
-      (item) => {
-        const user =
-          item.participant ??
-          item.user;
-
-        return (
           String(
-            user?.id ??
-              item.userId ??
-              item.participantId ??
-              "",
-          ) === String(targetUserId)
+            conversation.id,
+          ),
         );
       },
+      [],
     );
 
-    if (!conversation) return;
+  /* =======================================================
+     PROFİLDEN KONUŞMA AÇ / OLUŞTUR
+     ======================================================= */
 
-    setSelectedConversationId(
-      String(conversation.id),
-    );
-
-    const user =
-      conversation.participant ??
-      conversation.user;
-
-    if (user) {
-      setSelectedUser({
-        ...user,
-        id: String(user.id),
-      });
-    }
-  }, [targetUserId, conversations]);
-
-  /*
-   * ---------------------------------------------------------
-   * SEÇİLİ KONUŞMANIN MESAJLARINI GETİR
-   * ---------------------------------------------------------
-   */
-  useEffect(() => {
-    if (!selectedConversationId) {
-      setMessages([]);
-      return;
-    }
-
-    loadMessages(selectedConversationId);
-  }, [
-    selectedConversationId,
-    loadMessages,
-  ]);
-
-  /*
-   * ---------------------------------------------------------
-   * KONUŞMA OLUŞTUR / VAR OLANI BUL
-   * ---------------------------------------------------------
-   */
   const openConversationWithUser =
     useCallback(
-      async (user: User) => {
-        setSelectedUser(user);
+      async (
+        user: User,
+      ) => {
+        const normalizedUser =
+          normalizeUser(user);
+
+        if (!normalizedUser) {
+          setError(
+            "Kullanıcı bilgisi bulunamadı.",
+          );
+          return;
+        }
+
+        setSelectedUser(
+          normalizedUser,
+        );
+
         setError("");
 
         /*
-         * Önce elimizde mevcut konuşma var mı?
+         * Önce mevcut konuşmayı bul.
          */
         const existing =
           conversations.find(
@@ -670,8 +1109,14 @@ function MessagesContent() {
                 conversation.participantId;
 
               return (
-                String(participantId) ===
-                String(user.id)
+                participantId !==
+                  undefined &&
+                String(
+                  participantId,
+                ) ===
+                  String(
+                    normalizedUser.id,
+                  )
               );
             },
           );
@@ -680,12 +1125,11 @@ function MessagesContent() {
           setSelectedConversationId(
             String(existing.id),
           );
-
           return;
         }
 
         /*
-         * Yoksa backend'den yeni konuşma oluştur.
+         * Mevcut konuşma yoksa oluştur.
          */
         try {
           const created =
@@ -694,7 +1138,8 @@ function MessagesContent() {
               {
                 method: "POST",
                 body: JSON.stringify({
-                  userId: user.id,
+                  userId:
+                    normalizedUser.id,
                 }),
               },
             );
@@ -702,9 +1147,56 @@ function MessagesContent() {
           const conversationId =
             created?.id ??
             created?.conversationId ??
-            created?._id;
+            created?._id ??
+            created?.threadId;
 
-          if (!conversationId) {
+          if (
+            conversationId ===
+              undefined ||
+            conversationId === null
+          ) {
+            /*
+             * Bazı backend'ler POST sonrası
+             * doğrudan konuşmayı döndürüyor olabilir.
+             */
+            const fallback =
+              normalizeConversation(
+                created,
+                0,
+              );
+
+            if (fallback) {
+              setConversations(
+                (previous) => {
+                  const exists =
+                    previous.some(
+                      (item) =>
+                        String(
+                          item.id,
+                        ) ===
+                        String(
+                          fallback.id,
+                        ),
+                    );
+
+                  return exists
+                    ? previous
+                    : [
+                        fallback,
+                        ...previous,
+                      ];
+                },
+              );
+
+              setSelectedConversationId(
+                String(
+                  fallback.id,
+                ),
+              );
+
+              return;
+            }
+
             throw new Error(
               "Konuşma oluşturuldu ancak konuşma ID'si alınamadı.",
             );
@@ -712,22 +1204,50 @@ function MessagesContent() {
 
           const newConversation: Conversation =
             {
-              id: String(conversationId),
-              userId: String(user.id),
-              participantId: String(user.id),
-              participant: user,
-              user,
-              lastMessage: "",
+              id: String(
+                conversationId,
+              ),
+              userId:
+                normalizedUser.id,
+              participantId:
+                normalizedUser.id,
+              participant:
+                normalizedUser,
+              user:
+                normalizedUser,
+              lastMessage:
+                null,
               unreadCount: 0,
             };
 
-          setConversations((prev) => [
-            newConversation,
-            ...prev,
-          ]);
+          setConversations(
+            (previous) => {
+              const exists =
+                previous.some(
+                  (item) =>
+                    String(
+                      item.id,
+                    ) ===
+                    String(
+                      conversationId,
+                    ),
+                );
+
+              if (exists) {
+                return previous;
+              }
+
+              return [
+                newConversation,
+                ...previous,
+              ];
+            },
+          );
 
           setSelectedConversationId(
-            String(conversationId),
+            String(
+              conversationId,
+            ),
           );
         } catch (err: any) {
           console.error(
@@ -736,7 +1256,8 @@ function MessagesContent() {
           );
 
           setError(
-            err?.message ||
+            safeString(err?.message) ||
+              safeString(err?.error) ||
               "Mesaj konuşması başlatılamadı.",
           );
         }
@@ -744,119 +1265,332 @@ function MessagesContent() {
       [conversations],
     );
 
-  /*
-   * ---------------------------------------------------------
-   * SEÇİLİ KONUŞMA
-   * ---------------------------------------------------------
-   */
-  const activeConversation =
-    useMemo(() => {
-      if (!selectedConversationId) {
-        return null;
-      }
+  /* =======================================================
+     URL'DEKİ THREAD
+     ======================================================= */
 
-      return (
-        conversations.find(
-          (item) =>
-            String(item.id) ===
-            String(selectedConversationId),
-        ) ?? null
+  useEffect(() => {
+    if (!targetThreadId) {
+      return;
+    }
+
+    const conversation =
+      conversations.find(
+        (item) =>
+          String(item.id) ===
+          String(
+            targetThreadId,
+          ),
       );
-    }, [
-      conversations,
-      selectedConversationId,
-    ]);
 
-  /*
-   * ---------------------------------------------------------
-   * AKTİF KULLANICI
-   * ---------------------------------------------------------
-   */
-const activeUser = useMemo(() => {
-    const rawUser =
-      selectedUser ??
-      activeConversation?.participant ??
-      activeConversation?.user;
-
-    if (!rawUser || typeof rawUser !== "object") {
-      return null;
+    if (!conversation) {
+      return;
     }
 
-    const rawName = (rawUser as any).name;
+    setSelectedConversationId(
+      String(conversation.id),
+    );
 
-    // Derinlemesine nesne kontrolü ve string'e zorlama
-    let resolvedName = "Kullanıcı";
-    if (typeof rawName === "string") {
-      resolvedName = rawName;
-    } else if (typeof rawName === "object" && rawName !== null) {
-      resolvedName = rawName.name ?? rawName.username ?? "Kullanıcı";
-    } else if ((rawUser as any).username) {
-      resolvedName = (rawUser as any).username;
+    const user =
+      conversation.participant ??
+      conversation.user;
+
+    const normalizedUser =
+      normalizeUser(user);
+
+    if (normalizedUser) {
+      setSelectedUser(
+        normalizedUser,
+      );
+    }
+  }, [
+    targetThreadId,
+    conversations,
+  ]);
+
+  /* =======================================================
+     URL'DEKİ USER ID
+     ======================================================= */
+
+  useEffect(() => {
+    if (!targetUserId) {
+      return;
     }
 
-    // Eğer hâlâ nesne gelme ihtimaline karşı kesin string dönüşümü
-    if (typeof resolvedName === "object") {
-      resolvedName = "Kullanıcı";
-    }
+    let cancelled = false;
 
-    return {
-      ...(rawUser as any),
-      id: String((rawUser as any).id ?? ""),
-      name: String(resolvedName),
-    };
-  }, [selectedUser, activeConversation]);
+    const openTargetUser =
+      async () => {
+        /*
+         * Önce mevcut konuşmalarda ara.
+         */
+        const existing =
+          conversations.find(
+            (conversation) => {
+              const user =
+                conversation.participant ??
+                conversation.user;
 
-  /*
-   * ---------------------------------------------------------
-   * KONUŞMA LİSTESİ FİLTRE
-   * ---------------------------------------------------------
-   */
-  const filteredConversations =
-    useMemo(() => {
-      const term =
-        search.trim().toLocaleLowerCase(
-          "tr-TR",
-        );
+              const id =
+                user?.id ??
+                conversation.userId ??
+                conversation.participantId;
 
-      if (!term) {
-        return conversations;
-      }
+              return (
+                id !== undefined &&
+                String(id) ===
+                  String(
+                    targetUserId,
+                  )
+              );
+            },
+          );
 
-      return conversations.filter(
-        (conversation) => {
+        if (existing) {
+          if (cancelled) {
+            return;
+          }
+
           const user =
-            conversation.participant ??
-            conversation.user;
+            existing.participant ??
+            existing.user;
 
-          const name =
-            user?.name ??
-            user?.username ??
-            "";
+          const normalizedUser =
+            normalizeUser(user);
 
-          const city =
-            user?.city ?? "";
+          if (normalizedUser) {
+            setSelectedUser(
+              normalizedUser,
+            );
+          } else {
+            setSelectedUser({
+              id: String(
+                targetUserId,
+              ),
+              name: "Kullanıcı",
+            });
+          }
 
-          return `${name} ${city}`
-            .toLocaleLowerCase("tr-TR")
-            .includes(term);
-        },
-      );
-    }, [
-      conversations,
-      search,
-    ]);
+          setSelectedConversationId(
+            String(existing.id),
+          );
 
-  /*
-   * ---------------------------------------------------------
-   * MESAJ GÖNDER
-   * ---------------------------------------------------------
-   */
+          return;
+        }
+
+        /*
+         * Mevcut konuşma yoksa önce kullanıcıyı getir.
+         */
+        try {
+          let targetUser: User = {
+            id: String(
+              targetUserId,
+            ),
+            name: "Kullanıcı",
+          };
+
+          try {
+            const user =
+              await apiRequest<any>(
+                `/users/${targetUserId}`,
+              );
+
+            const normalized =
+              normalizeUser({
+                ...user,
+                id:
+                  user?.id ??
+                  user?._id ??
+                  targetUserId,
+              });
+
+            if (normalized) {
+              targetUser =
+                normalized;
+            }
+          } catch {
+            /*
+             * Kullanıcı endpoint'i başarısız
+             * olsa bile userId elimizde.
+             */
+          }
+
+          if (cancelled) {
+            return;
+          }
+
+          setSelectedUser(
+            targetUser,
+          );
+
+          /*
+           * Konuşmayı oluştur.
+           */
+          const created =
+            await apiRequest<any>(
+              "/conversations",
+              {
+                method: "POST",
+                body: JSON.stringify({
+                  userId:
+                    targetUser.id,
+                }),
+              },
+            );
+
+          if (cancelled) {
+            return;
+          }
+
+          const conversationId =
+            created?.id ??
+            created?.conversationId ??
+            created?._id ??
+            created?.threadId;
+
+          if (
+            conversationId ===
+              undefined ||
+            conversationId === null
+          ) {
+            const fallback =
+              normalizeConversation(
+                created,
+                0,
+              );
+
+            if (!fallback) {
+              throw new Error(
+                "Konuşma oluşturuldu ancak konuşma ID'si alınamadı.",
+              );
+            }
+
+            setConversations(
+              (previous) => [
+                fallback,
+                ...previous.filter(
+                  (item) =>
+                    String(
+                      item.id,
+                    ) !==
+                    String(
+                      fallback.id,
+                    ),
+                ),
+              ],
+            );
+
+            setSelectedConversationId(
+              String(
+                fallback.id,
+              ),
+            );
+
+            return;
+          }
+
+          const newConversation: Conversation =
+            {
+              id: String(
+                conversationId,
+              ),
+              userId:
+                targetUser.id,
+              participantId:
+                targetUser.id,
+              participant:
+                targetUser,
+              user:
+                targetUser,
+              lastMessage:
+                null,
+              unreadCount: 0,
+            };
+
+          setConversations(
+            (previous) => {
+              const exists =
+                previous.some(
+                  (item) =>
+                    String(
+                      item.id,
+                    ) ===
+                    String(
+                      conversationId,
+                    ),
+                );
+
+              return exists
+                ? previous
+                : [
+                    newConversation,
+                    ...previous,
+                  ];
+            },
+          );
+
+          setSelectedConversationId(
+            String(
+              conversationId,
+            ),
+          );
+        } catch (err: any) {
+          if (cancelled) {
+            return;
+          }
+
+          console.error(
+            "Mesaj konuşması başlatılamadı:",
+            err,
+          );
+
+          setError(
+            safeString(err?.message) ||
+              safeString(err?.error) ||
+              "Mesaj konuşması başlatılamadı.",
+          );
+        }
+      };
+
+    openTargetUser();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    targetUserId,
+    conversations,
+  ]);
+
+  /* =======================================================
+     SEÇİLİ KONUŞMANIN MESAJLARI
+     ======================================================= */
+
+  useEffect(() => {
+    if (!selectedConversationId) {
+      setMessages([]);
+      return;
+    }
+
+    loadMessages(
+      selectedConversationId,
+    );
+  }, [
+    selectedConversationId,
+    loadMessages,
+  ]);
+
+  /* =======================================================
+     MESAJ GÖNDER
+     ======================================================= */
+
   async function handleSend(
     event: FormEvent<HTMLFormElement>,
   ) {
     event.preventDefault();
 
-    const content = draft.trim();
+    const content =
+      draft.trim();
 
     if (
       !content ||
@@ -870,56 +1604,80 @@ const activeUser = useMemo(() => {
       setSending(true);
       setError("");
 
-      const sent = await apiRequest<any>(
-        `/conversations/${selectedConversationId}/messages`,
-        {
-          method: "POST",
-          body: JSON.stringify({
-            content,
-          }),
-        },
-      );
+      const sent =
+        await apiRequest<any>(
+          `/conversations/${selectedConversationId}/messages`,
+          {
+            method: "POST",
+            body: JSON.stringify({
+              content,
+            }),
+          },
+        );
 
-      const newMessage: Message = {
-        id: String(
-          sent?.id ??
-            sent?._id ??
-            `${Date.now()}`,
-        ),
-        content:
-          sent?.content ??
+      const currentUserId =
+        getCurrentUserId();
+
+      const newMessage: Message =
+        normalizeMessage(
+          sent,
+          `${Date.now()}`,
+        ) ?? {
+          id: `${Date.now()}`,
           content,
-        senderId: sent?.senderId,
-        receiverId:
-          sent?.receiverId,
-        createdAt:
-          sent?.createdAt ??
-          new Date().toISOString(),
-        isMine: true,
-      };
+        };
 
-      setMessages((prev) => [
-        ...prev,
-        newMessage,
-      ]);
+      const finalMessage: Message =
+        {
+          ...newMessage,
+          content:
+            newMessage.content ||
+            content,
+          isMine:
+            typeof newMessage.isMine ===
+            "boolean"
+              ? newMessage.isMine
+              : true,
+          senderId:
+            newMessage.senderId ??
+            currentUserId ??
+            undefined,
+          createdAt:
+            newMessage.createdAt ??
+            new Date().toISOString(),
+        };
+
+      setMessages(
+        (previous) => [
+          ...previous,
+          finalMessage,
+        ],
+      );
 
       setDraft("");
 
       /*
-       * Sol taraftaki son mesajı da güncelle.
+       * Sol taraftaki son mesajı güncelle.
        */
-      setConversations((prev) =>
-        prev.map((conversation) =>
-          String(conversation.id) ===
-          String(selectedConversationId)
-            ? {
-                ...conversation,
-                lastMessage: content,
-                updatedAt:
-                  newMessage.createdAt,
-              }
-            : conversation,
-        ),
+      setConversations(
+        (previous) =>
+          previous.map(
+            (conversation) =>
+              String(
+                conversation.id,
+              ) ===
+              String(
+                selectedConversationId,
+              )
+                ? {
+                    ...conversation,
+                    lastMessage:
+                      finalMessage,
+                    updatedAt:
+                      finalMessage.createdAt,
+                  }
+                : conversation,
+          ),
       );
     } catch (err: any) {
       console.error(
@@ -928,7 +1686,8 @@ const activeUser = useMemo(() => {
       );
 
       setError(
-        err?.message ||
+        safeString(err?.message) ||
+          safeString(err?.error) ||
           "Mesaj gönderilemedi.",
       );
     } finally {
@@ -936,19 +1695,25 @@ const activeUser = useMemo(() => {
     }
   }
 
-  /*
-   * ---------------------------------------------------------
-   * ZAMAN
-   * ---------------------------------------------------------
-   */
+  /* =======================================================
+     ZAMAN
+     ======================================================= */
+
   function formatTime(
     value?: string,
-  ) {
-    if (!value) return "";
+  ): string {
+    if (!value) {
+      return "";
+    }
 
-    const date = new Date(value);
+    const date =
+      new Date(value);
 
-    if (Number.isNaN(date.getTime())) {
+    if (
+      Number.isNaN(
+        date.getTime(),
+      )
+    ) {
       return "";
     }
 
@@ -961,36 +1726,26 @@ const activeUser = useMemo(() => {
     );
   }
 
-  /*
-   * ---------------------------------------------------------
-   * PROFİL GÖRSELİ
-   * ---------------------------------------------------------
-   */
-  function getProfileImage(
-    user?: User | null,
-  ) {
-    return (
-      user?.profileImage ??
-      user?.profilePhoto ??
-      null
-    );
-  }
+  /* =======================================================
+     UI
+     ======================================================= */
 
-  /*
-   * ---------------------------------------------------------
-   * UI
-   * ---------------------------------------------------------
-   */
   return (
     <div className="min-h-screen bg-[#121420] text-white flex flex-col">
-      {/* ÜST NAVİGASYON */}
+
+      {/* =================================================
+          ÜST NAVİGASYON
+          ================================================= */}
+
       <header className="w-full bg-[#1a1d30] border-b border-white/10 px-4 sm:px-6 py-4 sm:py-5 shrink-0">
         <div className="max-w-6xl mx-auto flex flex-col items-start gap-3">
+
           <button
             type="button"
-            onClick={() =>
-              router.push("/dashboard")
-            }
+            onClick={() => {
+              window.location.href =
+                "/dashboard";
+            }}
             className="
               inline-flex items-center
               gap-2
@@ -1042,10 +1797,14 @@ const activeUser = useMemo(() => {
           >
             EGELOVE GÜVENLİ ODASI
           </span>
+
         </div>
       </header>
 
-      {/* ANA İÇERİK */}
+      {/* =================================================
+          ANA
+          ================================================= */}
+
       <main
         className="
           flex-1
@@ -1055,6 +1814,7 @@ const activeUser = useMemo(() => {
           sm:py-6
         "
       >
+
         <div
           className="
             max-w-6xl
@@ -1066,7 +1826,11 @@ const activeUser = useMemo(() => {
             sm:gap-6
           "
         >
-          {/* SOL MESAJ LİSTESİ */}
+
+          {/* =================================================
+              SOL MESAJ LİSTESİ
+              ================================================= */}
+
           <section
             className="
               md:col-span-1
@@ -1084,7 +1848,9 @@ const activeUser = useMemo(() => {
               flex-col
             "
           >
+
             <div>
+
               <h1
                 className="
                   text-2xl
@@ -1099,59 +1865,88 @@ const activeUser = useMemo(() => {
               </h1>
 
               {/* FİLTRELER */}
+
               <div className="flex gap-2 mb-5">
+
                 <button
                   type="button"
-                  className="
-                    bg-blue-600
-                    hover:bg-blue-500
+                  onClick={() =>
+                    setMessageFilter(
+                      "all",
+                    )
+                  }
+                  className={`
                     px-5
                     py-3
                     rounded-2xl
                     text-sm
                     font-semibold
                     transition
-                  "
+                    ${
+                      messageFilter ===
+                      "all"
+                        ? "bg-blue-600 hover:bg-blue-500 text-white"
+                        : "bg-slate-800 hover:bg-slate-700 text-slate-400"
+                    }
+                  `}
                 >
                   Tümü
                 </button>
 
                 <button
                   type="button"
-                  className="
-                    bg-slate-800
-                    hover:bg-slate-700
+                  onClick={() =>
+                    setMessageFilter(
+                      "incoming",
+                    )
+                  }
+                  className={`
                     px-5
                     py-3
                     rounded-2xl
                     text-sm
                     font-semibold
-                    text-slate-400
                     transition
-                  "
+                    ${
+                      messageFilter ===
+                      "incoming"
+                        ? "bg-blue-600 hover:bg-blue-500 text-white"
+                        : "bg-slate-800 hover:bg-slate-700 text-slate-400"
+                    }
+                  `}
                 >
                   Gelen
                 </button>
 
                 <button
                   type="button"
-                  className="
-                    bg-slate-800
-                    hover:bg-slate-700
+                  onClick={() =>
+                    setMessageFilter(
+                      "outgoing",
+                    )
+                  }
+                  className={`
                     px-5
                     py-3
                     rounded-2xl
                     text-sm
                     font-semibold
-                    text-slate-400
                     transition
-                  "
+                    ${
+                      messageFilter ===
+                      "outgoing"
+                        ? "bg-blue-600 hover:bg-blue-500 text-white"
+                        : "bg-slate-800 hover:bg-slate-700 text-slate-400"
+                    }
+                  `}
                 >
                   Giden
                 </button>
+
               </div>
 
               {/* ARAMA */}
+
               <input
                 type="text"
                 value={search}
@@ -1177,9 +1972,11 @@ const activeUser = useMemo(() => {
                   transition
                 "
               />
+
             </div>
 
-            {/* KONUŞMA LİSTESİ */}
+            {/* KONUŞMALAR */}
+
             <div
               className="
                 flex-1
@@ -1189,22 +1986,26 @@ const activeUser = useMemo(() => {
                 pr-1
               "
             >
+
               {loadingConversations ? (
                 <div className="flex items-center justify-center h-full">
                   <p className="text-slate-500">
                     Mesajlar yükleniyor...
                   </p>
                 </div>
-              ) : filteredConversations.length >
-                0 ? (
+              ) : filteredConversations.length > 0 ? (
+
                 filteredConversations.map(
                   (conversation) => {
                     const user =
                       conversation.participant ??
-                      conversation.user;
+                      conversation.user ??
+                      null;
 
                     const image =
-                      getProfileImage(user);
+                      getProfileImage(
+                        user,
+                      );
 
                     const isActive =
                       String(
@@ -1216,26 +2017,15 @@ const activeUser = useMemo(() => {
 
                     return (
                       <button
-                        key={conversation.id}
+                        key={
+                          conversation.id
+                        }
                         type="button"
-                        onClick={() => {
-                          setSelectedConversationId(
-                            String(
-                              conversation.id,
-                            ),
-                          );
-
-                          if (user) {
-                            setSelectedUser(
-                              {
-                                ...user,
-                                id: String(
-                                  user.id,
-                                ),
-                              },
-                            );
-                          }
-                        }}
+                        onClick={() =>
+                          openConversation(
+                            conversation,
+                          )
+                        }
                         className={`
                           w-full
                           flex
@@ -1253,13 +2043,15 @@ const activeUser = useMemo(() => {
                           }
                         `}
                       >
+
+                        {/* FOTOĞRAF */}
+
                         {image ? (
                           <img
                             src={image}
-                            alt={
-                              user?.name ??
-                              "Profil"
-                            }
+                            alt={getUserName(
+                              user,
+                            )}
                             className="
                               w-12
                               h-12
@@ -1284,21 +2076,24 @@ const activeUser = useMemo(() => {
                               font-bold
                             "
                           >
-                            {(
-                              user?.name ??
-                              "?"
+                            {getUserName(
+                              user,
                             )
                               .charAt(0)
                               .toUpperCase()}
                           </div>
                         )}
 
+                        {/* BİLGİ */}
+
                         <div className="min-w-0 flex-1">
+
                           <div className="flex items-center justify-between gap-2">
+
                             <p className="font-semibold truncate">
-                              {user?.name ??
-                                user?.username ??
-                                "Kullanıcı"}
+                              {getUserName(
+                                user,
+                              )}
                             </p>
 
                             {conversation.updatedAt && (
@@ -1308,28 +2103,39 @@ const activeUser = useMemo(() => {
                                 )}
                               </span>
                             )}
+
                           </div>
 
                           <p className="text-xs text-slate-500 truncate mt-1">
-                            {conversation.lastMessage ||
+                            {conversation.lastMessage?.content ||
                               "Henüz mesaj yok"}
                           </p>
+
                         </div>
+
                       </button>
                     );
                   },
                 )
+
               ) : (
+
                 <div className="h-full flex items-center justify-center">
                   <p className="text-sm text-slate-500 text-center">
                     Henüz mesajın yok
                   </p>
                 </div>
+
               )}
+
             </div>
+
           </section>
 
-          {/* SAĞ SOHBET PANELİ */}
+          {/* =================================================
+              SAĞ SOHBET PANELİ
+              ================================================= */}
+
           <section
             className="
               md:col-span-2
@@ -1345,9 +2151,12 @@ const activeUser = useMemo(() => {
               flex-col
             "
           >
+
             {activeUser ? (
               <>
+
                 {/* SOHBET ÜST BAR */}
+
                 <div
                   className="
                     shrink-0
@@ -1362,6 +2171,7 @@ const activeUser = useMemo(() => {
                     gap-3
                   "
                 >
+
                   {getProfileImage(
                     activeUser,
                   ) ? (
@@ -1371,10 +2181,9 @@ const activeUser = useMemo(() => {
                           activeUser,
                         ) as string
                       }
-                      alt={
-                        activeUser.name ??
-                        "Profil"
-                      }
+                      alt={getUserName(
+                        activeUser,
+                      )}
                       className="
                         w-12
                         h-12
@@ -1398,9 +2207,8 @@ const activeUser = useMemo(() => {
                         text-lg
                       "
                     >
-                      {(
-                        activeUser.name ??
-                        "?"
+                      {getUserName(
+                        activeUser,
                       )
                         .charAt(0)
                         .toUpperCase()}
@@ -1408,21 +2216,28 @@ const activeUser = useMemo(() => {
                   )}
 
                   <div className="min-w-0">
+
                     <h2 className="font-bold text-lg truncate">
-                      {activeUser.name ??
-                        activeUser.username ??
-                        "Kullanıcı"}
+                      {getUserName(
+                        activeUser,
+                      )}
                     </h2>
 
                     {activeUser.city && (
                       <p className="text-xs text-slate-500 mt-1">
-                        📍 {activeUser.city}
+                        📍{" "}
+                        {safeString(
+                          activeUser.city,
+                        )}
                       </p>
                     )}
+
                   </div>
+
                 </div>
 
                 {/* MESAJLAR */}
+
                 <div
                   className="
                     flex-1
@@ -1432,13 +2247,17 @@ const activeUser = useMemo(() => {
                     space-y-3
                   "
                 >
+
                   {loadingMessages ? (
+
                     <div className="h-full flex items-center justify-center">
                       <p className="text-slate-500">
                         Mesajlar yükleniyor...
                       </p>
                     </div>
+
                   ) : messages.length > 0 ? (
+
                     messages.map(
                       (message) => {
                         const mine =
@@ -1448,7 +2267,9 @@ const activeUser = useMemo(() => {
 
                         return (
                           <div
-                            key={message.id}
+                            key={
+                              message.id
+                            }
                             className={`
                               flex
                               ${
@@ -1458,6 +2279,7 @@ const activeUser = useMemo(() => {
                               }
                             `}
                           >
+
                             <div
                               className={`
                                 max-w-[80%]
@@ -1472,10 +2294,11 @@ const activeUser = useMemo(() => {
                                 }
                               `}
                             >
+
                               <p className="text-sm whitespace-pre-wrap break-words">
-                                {
-                                  message.content
-                                }
+                                {safeString(
+                                  message.content,
+                                )}
                               </p>
 
                               {message.createdAt && (
@@ -1495,13 +2318,18 @@ const activeUser = useMemo(() => {
                                   )}
                                 </p>
                               )}
+
                             </div>
+
                           </div>
                         );
                       },
                     )
+
                   ) : (
+
                     <div className="h-full flex flex-col items-center justify-center text-center">
+
                       <div className="text-5xl mb-4">
                         💬
                       </div>
@@ -1513,11 +2341,15 @@ const activeUser = useMemo(() => {
                       <p className="text-sm text-slate-600 mt-2">
                         İlk mesajı sen gönder.
                       </p>
+
                     </div>
+
                   )}
+
                 </div>
 
                 {/* HATA */}
+
                 {error && (
                   <div className="px-5">
                     <div className="mb-3 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
@@ -1526,9 +2358,12 @@ const activeUser = useMemo(() => {
                   </div>
                 )}
 
-                {/* MESAJ YAZMA ALANI */}
+                {/* MESAJ YAZMA */}
+
                 <form
-                  onSubmit={handleSend}
+                  onSubmit={
+                    handleSend
+                  }
                   className="
                     shrink-0
                     p-4
@@ -1538,15 +2373,22 @@ const activeUser = useMemo(() => {
                     bg-[#1a1d30]/80
                   "
                 >
+
                   <div className="flex items-end gap-3">
+
                     <textarea
                       value={draft}
-                      onChange={(event) =>
+                      onChange={(
+                        event,
+                      ) =>
                         setDraft(
-                          event.target.value,
+                          event.target
+                            .value,
                         )
                       }
-                      onKeyDown={(event) => {
+                      onKeyDown={(
+                        event,
+                      ) => {
                         if (
                           event.key ===
                             "Enter" &&
@@ -1610,19 +2452,26 @@ const activeUser = useMemo(() => {
                         ? "..."
                         : "GÖNDER"}
                     </button>
+
                   </div>
 
                   <p className="text-[10px] text-slate-600 mt-2 px-1">
                     Enter ile gönder •
-                    Shift + Enter ile
-                    yeni satır
+                    Shift + Enter ile yeni satır
                   </p>
+
                 </form>
+
               </>
-           ) : (
-              /* SEÇ İLİ KULLANICI YOK */
+
+            ) : (
+
+              /* SEÇİLİ KULLANICI YOK */
+
               <div className="flex-1 flex items-center justify-center p-6">
+
                 <div className="text-center max-w-md">
+
                   <div className="text-6xl mb-5">
                     💬
                   </div>
@@ -1632,26 +2481,31 @@ const activeUser = useMemo(() => {
                   </h2>
 
                   <p className="text-sm sm:text-base text-slate-500 mt-3">
-                    Sol taraftan bir konuşma
-                    seç veya bir profilden
-                    “Mesaj Gönder” seçeneğine
-                    tıkla.
+                    Sol taraftan bir konuşma seç veya bir profilden “Mesaj Gönder” seçeneğine tıkla.
                   </p>
 
                   {targetUserId &&
                     !loadingConversations && (
                       <p className="text-xs text-purple-400 mt-5">
-                        Kullanıcı bilgileri
-                        yükleniyor...
+                        Kullanıcı bilgileri yükleniyor...
                       </p>
                     )}
+
                 </div>
+
               </div>
+
             )}
+
           </section>
+
         </div>
 
-        {/* CANLI GÖRÜNTÜLÜ SOHBET */}
+        {/* =================================================
+            CANLI GÖRÜNTÜLÜ SOHBET
+            BURAYA DOKUNMADIM
+            ================================================= */}
+
         <section
           className="
             max-w-3xl
@@ -1672,6 +2526,7 @@ const activeUser = useMemo(() => {
             shadow-2xl
           "
         >
+
           <h2
             className="
               text-lg
@@ -1709,25 +2564,32 @@ const activeUser = useMemo(() => {
           </p>
 
           <div className="max-w-md mx-auto">
+
             <button
               type="button"
               onClick={() => {
                 const width = 450;
                 const height = 650;
 
-                const left = Math.max(
-                  0,
-                  (window.screen.width -
-                    width) /
-                    2,
-                );
+                const left =
+                  Math.max(
+                    0,
+                    (
+                      window.screen
+                        .width -
+                      width
+                    ) / 2,
+                  );
 
-                const top = Math.max(
-                  0,
-                  (window.screen.height -
-                    height) /
-                    2,
-                );
+                const top =
+                  Math.max(
+                    0,
+                    (
+                      window.screen
+                        .height -
+                      height
+                    ) / 2,
+                  );
 
                 window.open(
                   "/canavar-video",
@@ -1757,24 +2619,21 @@ const activeUser = useMemo(() => {
               🚀 GÖRÜNTÜLÜ KONUŞMAYI
               BAŞLAT
             </button>
+
           </div>
+
         </section>
+
       </main>
+
     </div>
   );
 }
 
-/*
- * =========================================================
- * ÖNEMLİ:
- *
- * useSearchParams() doğrudan page component'inde çalışmıyor.
- * Next.js 16 production build için Suspense gerekiyor.
- *
- * Bu nedenle MessagesContent ayrı component,
- * MessagesPage ise Suspense wrapper.
- * =========================================================
- */
+/* =========================================================
+   NEXT.JS SUSPENSE
+   ========================================================= */
+
 export default function MessagesPage() {
   return (
     <Suspense
