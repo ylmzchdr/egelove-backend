@@ -1,7 +1,9 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import { api } from "@/lib/api";
+
 import {
   Search,
   SlidersHorizontal,
@@ -12,6 +14,10 @@ import {
   Loader2,
   UserRound,
 } from "lucide-react";
+
+// --------------------------------------------------
+// KULLANICI TİPİ
+// --------------------------------------------------
 
 interface SearchUser {
   id: string;
@@ -151,10 +157,14 @@ function FilterCheckbox({
 // --------------------------------------------------
 
 function UserCard({ user }: { user: SearchUser }) {
+ 
   const image = user.photo || user.avatar;
 
   return (
-    <div className="group rounded-2xl border border-white/10 bg-white/[0.04] p-4 transition hover:border-cyan-400/40 hover:bg-white/[0.07]">
+    <Link
+      href={`/profile/${user.id}`}
+      className="group block cursor-pointer rounded-2xl border border-white/10 bg-white/[0.04] p-4 transition hover:border-cyan-400/40 hover:bg-white/[0.07]"
+    >
       <div className="flex items-center gap-4">
 
         {/* FOTOĞRAF */}
@@ -224,7 +234,7 @@ function UserCard({ user }: { user: SearchUser }) {
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
 
@@ -318,9 +328,16 @@ export default function SearchPage() {
 
       console.log("🟢 ARAMA CEVABI:", response);
 
-      setResults(response?.users ?? []);
-      setTotal(response?.total ?? 0);
-      setHasSearched(true);
+      const normalizedUsers = (response?.users ?? [])
+  .map((user: any) => ({
+    ...user,
+    id: String(user.id ?? user.userId ?? user._id ?? ""),
+  }))
+  .filter((user) => user.id);
+
+setResults(normalizedUsers);
+setTotal(response?.total ?? 0);
+setHasSearched(true);
 
     } catch (err) {
       console.error("🔴 ARAMA HATASI:", err);
