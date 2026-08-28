@@ -8,6 +8,7 @@ import React, {
   useState,
 } from "react";
 import { useSearchParams } from "next/navigation";
+import { useI18n } from "@/lib/i18n-context";
 /* =========================================================
    TİPLER
    ========================================================= */
@@ -476,7 +477,58 @@ function MessagesContent() {
 
   const [error, setError] =
     useState("");
-    const [isPremium, setIsPremium] = useState(false);
+
+  const { lang, setLang } = useI18n();
+
+  const t = useMemo(() => {
+    const translations: Record<string, Record<string, string>> = {
+      TR: {
+        user: "Kullanıcı", home: "Ana Sayfa", myPage: "Benim Sayfam", likes: "Beğeniler", messages: "Mesajlar", premium: "Premium",
+        welcome: "Hoş geldin", logout: "Çıkış", backHome: "ANA SAYFAYA GERİ DÖN", heroTitle: "BİREBİR CANLI", heroTitleAccent: "GÖRÜNTÜLÜ GÖRÜŞME",
+        heroDesc1: "Beğenip eşleştiğin kişilerle birebir canlı görüntülü konuş.", heroDesc2: "Yeni insanları sadece mesajlaşarak değil, yüz yüze tanımanın keyfini yaşa.",
+        safe: "Güvenli", safeSub: "Görüşmeler", real: "Gerçek", realSub: "Kişiler", instant: "Anında", instantSub: "Bağlantı", closer: "Daha Yakın", closerSub: "Bağlar",
+        premiumFeature: "PREMIUM ÖZELLİĞİ", unlimitedVideo: "Sınırsız görüntülü görüşme", readReceipt: "Okundu bilgisi", boostProfile: "Profilini öne çıkar", adFree: "Reklamsız kullanım",
+        goPremium: "PREMİUM'A GEÇ", premiumOnly: "Bu özellik Premium üyelikle kullanılabilir.", chatTitle: "Mesajlar", all: "Tümü", new: "Yeni", online: "Çevrimiçi", favorites: "Favoriler",
+        search: "Ara...", loading: "Mesajlar yükleniyor...", noMessage: "Henüz mesaj yok", noMessageDesc: "Beğendiğin kişilerle eşleştiğinde burada konuşmalarını göreceksin.",
+        total: "Toplam", conversations: "konuşma", onlineStatus: "Çevrimiçi", premiumVideo: "Premium ile Görüntülü Görüş", today: "Bugün",
+        noConversationMessages: "Bu konuşmada henüz mesaj yok.", startChat: "Sohbet başlat", startChatDesc: "Sol taraftan bir konuşma seç. Eşleştiğin kişiyle mesajlaşmaya hemen başlayabilirsin.",
+        messagePlaceholder: "Mesajını yaz...", send: "GÖNDER", sending: "...", enterHint: "Enter ile gönder • Shift + Enter ile yeni satır",
+        moreFor: "Bu ve daha fazlası için", premiumGo: "Premium’a geç!", premiumDesc: "Canlı görüntülü görüşme, okundu bilgisi, profilini öne çıkarma, reklamsız kullanım ve daha birçok avantaj seni bekliyor.",
+        specialFilters: "Özel filtreler ve daha fazlası", securePayment: "Güvenli ve hızlı ödeme",
+      },
+      EN: {
+        user: "User", home: "Home", myPage: "My Page", likes: "Likes", messages: "Messages", premium: "Premium", welcome: "Welcome", logout: "Log Out", backHome: "BACK TO HOME",
+        heroTitle: "ONE-TO-ONE LIVE", heroTitleAccent: "VIDEO CHAT", heroDesc1: "Have a one-to-one live video chat with people you like and match with.", heroDesc2: "Don't just message new people — enjoy getting to know them face to face.",
+        safe: "Safe", safeSub: "Conversations", real: "Real", realSub: "People", instant: "Instant", instantSub: "Connection", closer: "Closer", closerSub: "Bonds",
+        premiumFeature: "PREMIUM FEATURE", unlimitedVideo: "Unlimited video calls", readReceipt: "Read receipts", boostProfile: "Boost your profile", adFree: "Ad-free experience", goPremium: "GO PREMIUM", premiumOnly: "This feature is available with Premium membership.",
+        chatTitle: "Messages", all: "All", new: "New", online: "Online", favorites: "Favorites", search: "Search...", loading: "Loading messages...", noMessage: "No messages yet", noMessageDesc: "When you match with people you like, your conversations will appear here.",
+        total: "Total", conversations: "conversations", onlineStatus: "Online", premiumVideo: "Video chat with Premium", today: "Today", noConversationMessages: "No messages in this conversation yet.",
+        startChat: "Start a chat", startChatDesc: "Select a conversation on the left to start messaging your match.", messagePlaceholder: "Write a message...", send: "SEND", sending: "...", enterHint: "Press Enter to send • Shift + Enter for a new line",
+        moreFor: "For this and much more", premiumGo: "Go Premium!", premiumDesc: "Live video calls, read receipts, profile boosts, ad-free use and many more benefits are waiting for you.", specialFilters: "Special filters and more", securePayment: "Secure and fast payment",
+      },
+      RU: {
+        user: "Пользователь", home: "Главная", myPage: "Моя страница", likes: "Нравится", messages: "Сообщения", premium: "Premium", welcome: "Добро пожаловать", logout: "Выйти", backHome: "НА ГЛАВНУЮ",
+        heroTitle: "ЛИЧНЫЙ ЖИВОЙ", heroTitleAccent: "ВИДЕОЧАТ", heroDesc1: "Общайтесь по видеосвязи один на один с людьми, которые вам понравились и с которыми вы совпали.", heroDesc2: "Не только переписывайтесь — познакомьтесь с новыми людьми лицом к лицу.",
+        safe: "Безопасные", safeSub: "Разговоры", real: "Реальные", realSub: "Люди", instant: "Мгновенная", instantSub: "Связь", closer: "Ближе", closerSub: "Друг к другу", premiumFeature: "ФУНКЦИЯ PREMIUM",
+        unlimitedVideo: "Безлимитные видеозвонки", readReceipt: "Статус прочтения", boostProfile: "Продвижение профиля", adFree: "Без рекламы", goPremium: "ПЕРЕЙТИ НА PREMIUM", premiumOnly: "Эта функция доступна с подпиской Premium.",
+        chatTitle: "Сообщения", all: "Все", new: "Новые", online: "В сети", favorites: "Избранное", search: "Поиск...", loading: "Загрузка сообщений...", noMessage: "Сообщений пока нет", noMessageDesc: "Когда вы совпадёте с понравившимися людьми, ваши разговоры появятся здесь.",
+        total: "Всего", conversations: "разговоров", onlineStatus: "В сети", premiumVideo: "Видеочат с Premium", today: "Сегодня", noConversationMessages: "В этом разговоре пока нет сообщений.", startChat: "Начать разговор", startChatDesc: "Выберите разговор слева, чтобы начать общение с вашим совпадением.",
+        messagePlaceholder: "Напишите сообщение...", send: "ОТПРАВИТЬ", sending: "...", enterHint: "Enter — отправить • Shift + Enter — новая строка", moreFor: "И это, и многое другое", premiumGo: "Перейдите на Premium!", premiumDesc: "Видеозвонки, уведомления о прочтении, продвижение профиля, использование без рекламы и многие другие преимущества ждут вас.", specialFilters: "Специальные фильтры и многое другое", securePayment: "Безопасная и быстрая оплата",
+      },
+      AR: {
+        user: "مستخدم", home: "الرئيسية", myPage: "صفحتي", likes: "الإعجابات", messages: "الرسائل", premium: "Premium", welcome: "مرحبًا", logout: "خروج", backHome: "العودة إلى الصفحة الرئيسية",
+        heroTitle: "مكالمة مباشرة", heroTitleAccent: "فيديو فردية", heroDesc1: "تحدث عبر الفيديو بشكل فردي مع الأشخاص الذين أعجبت بهم وتطابقت معهم.", heroDesc2: "لا تكتفِ بالرسائل، استمتع بالتعرف على أشخاص جدد وجهًا لوجه.",
+        safe: "محادثات", safeSub: "آمنة", real: "أشخاص", realSub: "حقيقيون", instant: "اتصال", instantSub: "فوري", closer: "روابط", closerSub: "أقرب", premiumFeature: "ميزة PREMIUM",
+        unlimitedVideo: "مكالمات فيديو غير محدودة", readReceipt: "إشعارات القراءة", boostProfile: "إبراز الملف الشخصي", adFree: "استخدام بلا إعلانات", goPremium: "الانتقال إلى PREMIUM", premiumOnly: "هذه الميزة متاحة مع عضوية Premium.",
+        chatTitle: "الرسائل", all: "الكل", new: "جديد", online: "متصل", favorites: "المفضلة", search: "بحث...", loading: "جارٍ تحميل الرسائل...", noMessage: "لا توجد رسائل بعد", noMessageDesc: "عندما تتطابق مع الأشخاص الذين أعجبت بهم، ستظهر محادثاتك هنا.",
+        total: "إجمالي", conversations: "محادثات", onlineStatus: "متصل", premiumVideo: "محادثة فيديو مع Premium", today: "اليوم", noConversationMessages: "لا توجد رسائل في هذه المحادثة بعد.", startChat: "ابدأ محادثة", startChatDesc: "اختر محادثة من اليسار لبدء مراسلة الشخص الذي تطابقت معه.",
+        messagePlaceholder: "اكتب رسالتك...", send: "إرسال", sending: "...", enterHint: "اضغط Enter للإرسال • Shift + Enter لسطر جديد", moreFor: "للمزيد من المزايا", premiumGo: "انتقل إلى Premium!", premiumDesc: "مكالمات فيديو مباشرة، إشعارات القراءة، إبراز الملف الشخصي، استخدام بلا إعلانات والعديد من المزايا بانتظارك.", specialFilters: "فلاتر خاصة والمزيد", securePayment: "دفع آمن وسريع",
+      },
+    };
+    return translations[lang] || translations.TR;
+  }, [lang]);
+
+  const [isPremium, setIsPremium] = useState(false);
 
   const [search, setSearch] =
     useState("");
@@ -503,7 +555,7 @@ function MessagesContent() {
       user?: User | null,
     ): string => {
       if (!user) {
-        return "Kullanıcı";
+        return t.user;
       }
 
       const name =
@@ -520,9 +572,9 @@ function MessagesContent() {
         return username;
       }
 
-      return "Kullanıcı";
+      return t.user;
     },
-    [],
+    [t],
   );
 
   /* =======================================================
@@ -726,7 +778,7 @@ function MessagesContent() {
         setError(
           safeString(err?.message) ||
             safeString(err?.error) ||
-            "Mesaj konuşmaları yüklenemedi.",
+            t.loading,
         );
 
         setConversations([]);
@@ -737,6 +789,7 @@ function MessagesContent() {
       }
     }, [
       normalizeConversation,
+      t,
     ]);
 
   /* =======================================================
@@ -842,7 +895,7 @@ function MessagesContent() {
           setError(
             safeString(err?.message) ||
               safeString(err?.error) ||
-              "Mesajlar yüklenemedi.",
+              t.loading,
           );
 
           setMessages([]);
@@ -852,7 +905,7 @@ function MessagesContent() {
           );
         }
       },
-      [],
+      [t],
     );
 
   /* =======================================================
@@ -1127,7 +1180,7 @@ function MessagesContent() {
 
         if (!normalizedUser) {
           setError(
-            "Kullanıcı bilgisi bulunamadı.",
+            t.user,
           );
           return;
         }
@@ -1243,7 +1296,7 @@ function MessagesContent() {
             }
 
             throw new Error(
-              "Konuşma oluşturuldu ancak konuşma ID'si alınamadı.",
+              t.noConversationMessages,
             );
           }
 
@@ -1303,11 +1356,11 @@ function MessagesContent() {
           setError(
             safeString(err?.message) ||
               safeString(err?.error) ||
-              "Mesaj konuşması başlatılamadı.",
+              t.startChat,
           );
         }
       },
-      [conversations],
+      [conversations, t, normalizeConversation],
     );
 
   /* =======================================================
@@ -1412,7 +1465,7 @@ function MessagesContent() {
               id: String(
                 targetUserId,
               ),
-              name: "Kullanıcı",
+              name: t.user,
             });
           }
 
@@ -1431,7 +1484,7 @@ function MessagesContent() {
             id: String(
               targetUserId,
             ),
-            name: "Kullanıcı",
+            name: t.user,
           };
 
           try {
@@ -1506,7 +1559,7 @@ function MessagesContent() {
 
             if (!fallback) {
               throw new Error(
-                "Konuşma oluşturuldu ancak konuşma ID'si alınamadı.",
+                t.noConversationMessages,
               );
             }
 
@@ -1592,7 +1645,7 @@ function MessagesContent() {
           setError(
             safeString(err?.message) ||
               safeString(err?.error) ||
-              "Mesaj konuşması başlatılamadı.",
+              t.startChat,
           );
         }
       };
@@ -1605,6 +1658,8 @@ function MessagesContent() {
   }, [
     targetUserId,
     conversations,
+    t,
+    normalizeConversation,
   ]);
 
   /* =======================================================
@@ -1733,7 +1788,7 @@ function MessagesContent() {
       setError(
         safeString(err?.message) ||
           safeString(err?.error) ||
-          "Mesaj gönderilemedi.",
+          t.send,
       );
     } finally {
       setSending(false);
@@ -1763,7 +1818,7 @@ function MessagesContent() {
     }
 
     return date.toLocaleTimeString(
-      "tr-TR",
+      lang === "EN" ? "en-US" : lang === "RU" ? "ru-RU" : lang === "AR" ? "ar-SA" : "tr-TR",
       {
         hour: "2-digit",
         minute: "2-digit",
@@ -1829,7 +1884,7 @@ function MessagesContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#020817] text-white overflow-x-hidden">
+    <div dir={lang === "AR" ? "rtl" : "ltr"} className="min-h-screen bg-[#020817] text-white overflow-x-hidden">
       {/* ÜST NAV */}
       <header className="sticky top-0 z-50 border-b border-white/10 bg-[#020817]/95 backdrop-blur-xl">
         <div className="mx-auto flex min-h-[72px] max-w-[1450px] items-center gap-6 px-4 sm:px-6 lg:px-8">
@@ -1843,21 +1898,23 @@ function MessagesContent() {
           </button>
 
           <nav className="hidden items-center gap-8 lg:flex">
-            <button type="button" onClick={goDashboard} className="font-semibold text-white/90 hover:text-white">Ana Sayfa</button>
-            <button type="button" onClick={() => (window.location.href = "/profile")} className="font-semibold text-white/90 hover:text-white">Benim Sayfam</button>
-            <button type="button" onClick={() => (window.location.href = "/likes")} className="font-semibold text-white/90 hover:text-white">Beğeniler</button>
-            <button type="button" className="relative font-semibold text-pink-400 after:absolute after:-bottom-6 after:left-0 after:right-0 after:h-0.5 after:bg-pink-500">Mesajlar</button>
-            <button type="button" onClick={goPremium} className="font-semibold text-white/90 hover:text-white">Premium 👑</button>
+            <button type="button" onClick={goDashboard} className="font-semibold text-white/90 hover:text-white">{t.home}</button>
+            <button type="button" onClick={() => (window.location.href = "/profile")} className="font-semibold text-white/90 hover:text-white">{t.myPage}</button>
+            <button type="button" onClick={() => (window.location.href = "/likes")} className="font-semibold text-white/90 hover:text-white">{t.likes}</button>
+            <button type="button" className="relative font-semibold text-pink-400 after:absolute after:-bottom-6 after:left-0 after:right-0 after:h-0.5 after:bg-pink-500">{t.messages}</button>
+            <button type="button" onClick={goPremium} className="font-semibold text-white/90 hover:text-white">{t.premium} 👑</button>
           </nav>
 
           <div className="hidden items-center gap-1 sm:flex">
-            {(["TR", "EN", "RU", "AR"] as const).map((lang, index) => (
+            {(["TR", "EN", "RU", "AR"] as const).map((language) => (
               <button
-                key={lang}
+                key={language}
                 type="button"
-                className={`rounded-full border px-3 py-1.5 text-sm font-semibold ${index === 0 ? "border-purple-500 bg-purple-600 text-white shadow-lg shadow-purple-500/30" : "border-white/10 bg-black/20 text-white/80 hover:bg-white/10"}`}
+                onClick={() => setLang(language)}
+                aria-pressed={lang === language}
+                className={`rounded-full border px-3 py-1.5 text-sm font-semibold transition ${lang === language ? "border-purple-500 bg-purple-600 text-white shadow-lg shadow-purple-500/30" : "border-white/10 bg-black/20 text-white/80 hover:bg-white/10"}`}
               >
-                {lang}
+                {language}
               </button>
             ))}
           </div>
@@ -1866,7 +1923,7 @@ function MessagesContent() {
             type="button"
             className="hidden rounded-xl border border-[#ffc000]/50 bg-[#ffc000] px-5 py-3 font-black text-black shadow-lg shadow-yellow-500/10 sm:block"
           >
-            Hoş geldin
+            {t.welcome}
           </button>
           <button
             type="button"
@@ -1877,7 +1934,7 @@ function MessagesContent() {
             }}
             className="rounded-xl bg-white px-4 py-3 font-bold text-black hover:bg-white/90"
           >
-            Çıkış
+            {t.logout}
           </button>
         </div>
       </header>
@@ -1889,7 +1946,7 @@ function MessagesContent() {
           className="mb-5 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-500 px-5 py-3 font-black shadow-lg shadow-purple-600/30 transition hover:scale-[1.01]"
         >
           <span className="text-xl">←</span>
-          ANA SAYFAYA GERİ DÖN
+          {t.backHome}
         </button>
 
         {/* PREMIUM VIDEO HERO */}
@@ -1910,20 +1967,20 @@ function MessagesContent() {
 
             <div className="text-center">
               <h1 className="text-2xl font-black leading-tight sm:text-3xl lg:text-[34px]">
-                BİREBİR CANLI <span className="bg-gradient-to-r from-fuchsia-400 to-pink-500 bg-clip-text text-transparent">GÖRÜNTÜLÜ GÖRÜŞME</span>
+                {t.heroTitle} <span className="bg-gradient-to-r from-fuchsia-400 to-pink-500 bg-clip-text text-transparent">{t.heroTitleAccent}</span>
               </h1>
               <p className="mx-auto mt-3 max-w-2xl text-base leading-7 text-white/85 sm:text-lg">
-                Beğenip eşleştiğin kişilerle birebir canlı görüntülü konuş.
+                {t.heroDesc1}
                 <br className="hidden sm:block" />
-                Yeni insanları sadece mesajlaşarak değil, yüz yüze tanımanın keyfini yaşa.
+                {t.heroDesc2}
               </p>
 
               <div className="mx-auto mt-7 grid max-w-2xl grid-cols-2 divide-x divide-white/10 sm:grid-cols-4">
                 {[
-                  ["♙", "Güvenli", "Görüşmeler", "text-emerald-400"],
-                  ["♣", "Gerçek", "Kişiler", "text-purple-400"],
-                  ["ϟ", "Anında", "Bağlantı", "text-yellow-400"],
-                  ["♥", "Daha Yakın", "Bağlar", "text-pink-400"],
+                  ["♙", t.safe, t.safeSub, "text-emerald-400"],
+                  ["♣", t.real, t.realSub, "text-purple-400"],
+                  ["ϟ", t.instant, t.instantSub, "text-yellow-400"],
+                  ["♥", t.closer, t.closerSub, "text-pink-400"],
                 ].map(([icon, title, sub, color]) => (
                   <div key={title} className="px-2 py-2 sm:px-4">
                     <div className={`mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full border border-current text-xl ${color}`}>{icon}</div>
@@ -1935,19 +1992,19 @@ function MessagesContent() {
             </div>
 
             <div className="rounded-2xl border border-purple-500/40 bg-[#0a1233]/70 p-4 shadow-xl backdrop-blur-xl sm:p-5">
-              <div className="mx-auto -mt-8 mb-4 w-fit rounded-full border border-[#ffc000]/50 bg-[#130d28] px-4 py-2 text-sm font-black text-[#ffc000]">👑 PREMIUM ÖZELLİĞİ</div>
+              <div className="mx-auto -mt-8 mb-4 w-fit rounded-full border border-[#ffc000]/50 bg-[#130d28] px-4 py-2 text-sm font-black text-[#ffc000]">👑 {t.premiumFeature}</div>
               <ul className="space-y-3 text-sm sm:text-base">
                 {[
-                  "Sınırsız görüntülü görüşme",
-                  "Okundu bilgisi",
-                  "Profilini öne çıkar",
-                  "Reklamsız kullanım",
+                  t.unlimitedVideo,
+                  t.readReceipt,
+                  t.boostProfile,
+                  t.adFree,
                 ].map((item) => (
                   <li key={item} className="flex items-center gap-3"><span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-xs font-black">✓</span>{item}</li>
                 ))}
               </ul>
-              <button type="button" onClick={goPremium} className="mt-5 w-full rounded-full bg-gradient-to-r from-[#ffc000] to-[#ffb000] px-5 py-3 font-black text-black shadow-lg shadow-yellow-500/20 transition hover:scale-[1.01]">👑 PREMIUM'A GEÇ</button>
-              <p className="mt-2 text-center text-xs text-white/50">Bu özellik Premium üyelikle kullanılabilir.</p>
+              <button type="button" onClick={goPremium} className="mt-5 w-full rounded-full bg-gradient-to-r from-[#ffc000] to-[#ffb000] px-5 py-3 font-black text-black shadow-lg shadow-yellow-500/20 transition hover:scale-[1.01]">👑 {t.goPremium}</button>
+              <p className="mt-2 text-center text-xs text-white/50">{t.premiumOnly}</p>
             </div>
           </div>
         </section>
@@ -1958,16 +2015,16 @@ function MessagesContent() {
           <aside className="flex min-h-[650px] flex-col overflow-hidden rounded-[26px] border border-purple-500/30 bg-[#050c20]/85 shadow-2xl shadow-black/20">
             <div className="border-b border-white/10 p-5 sm:p-6">
               <div className="flex items-center justify-between">
-                <h2 className="text-3xl font-black">Mesajlar</h2>
+                <h2 className="text-3xl font-black">{t.chatTitle}</h2>
                 <button type="button" className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-fuchsia-500 text-2xl font-light shadow-lg shadow-purple-500/30">+</button>
               </div>
 
               <div className="mt-5 grid grid-cols-4 gap-2">
                 {[
-                  ["all", "Tümü"],
-                  ["incoming", "Yeni"],
-                  ["outgoing", "Çevrimiçi"],
-                  ["all", "Favoriler"],
+                  ["all", t.all],
+                  ["incoming", t.new],
+                  ["outgoing", t.online],
+                  ["all", t.favorites],
                 ].map(([value, label], index) => (
                   <button
                     key={`${value}-${label}`}
@@ -1975,7 +2032,7 @@ function MessagesContent() {
                     onClick={() => setMessageFilter(value as any)}
                     className={`rounded-full border px-2 py-2.5 text-xs font-bold sm:text-sm ${index === 0 && messageFilter === "all" ? "border-purple-500 bg-gradient-to-r from-purple-600 to-fuchsia-500" : "border-white/10 bg-white/[0.02] text-white/75 hover:bg-white/10"}`}
                   >
-                    {label}{label === "Yeni" ? <span className="ml-1 text-pink-500">●</span> : label === "Çevrimiçi" ? <span className="ml-1 text-emerald-400">●</span> : ""}
+                    {label}{label === t.new ? <span className="ml-1 text-pink-500">●</span> : label === t.online ? <span className="ml-1 text-emerald-400">●</span> : ""}
                   </button>
                 ))}
               </div>
@@ -1986,7 +2043,7 @@ function MessagesContent() {
                   type="text"
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
-                  placeholder="Ara..."
+                  placeholder={t.search}
                   className="h-12 w-full rounded-2xl border border-white/15 bg-black/35 pl-11 pr-4 text-white outline-none transition focus:border-purple-500"
                 />
               </div>
@@ -1994,12 +2051,12 @@ function MessagesContent() {
 
             <div className="min-h-0 flex-1 overflow-y-auto">
               {loadingConversations ? (
-                <div className="flex h-64 items-center justify-center text-white/50">Mesajlar yükleniyor...</div>
+                <div className="flex h-64 items-center justify-center text-white/50">{t.loading}</div>
               ) : filteredConversations.length ? (
                 filteredConversations.map((conversation) => {
                   const user = conversation.participant ?? conversation.user ?? null;
                   const isActive = String(selectedConversationId) === String(conversation.id);
-                  const last = conversation.lastMessage?.content || "Henüz mesaj yok";
+                  const last = conversation.lastMessage?.content || t.noMessage;
                   return (
                     <button
                       key={conversation.id}
@@ -2024,14 +2081,14 @@ function MessagesContent() {
               ) : (
                 <div className="flex h-64 flex-col items-center justify-center px-6 text-center text-white/50">
                   <div className="mb-3 text-5xl">💬</div>
-                  <p className="font-bold">Henüz mesaj yok</p>
-                  <p className="mt-2 text-sm">Beğendiğin kişilerle eşleştiğinde burada konuşmalarını göreceksin.</p>
+                  <p className="font-bold">{t.noMessage}</p>
+                  <p className="mt-2 text-sm">{t.noMessageDesc}</p>
                 </div>
               )}
             </div>
 
             <div className="border-t border-white/10 px-5 py-3 text-center text-sm text-white/60">
-              <span className="text-pink-500">♥</span> Toplam {filteredConversations.length || conversations.length} konuşma
+              <span className="text-pink-500">♥</span> {t.total} {filteredConversations.length || conversations.length} {t.conversations}
             </div>
           </aside>
 
@@ -2045,17 +2102,17 @@ function MessagesContent() {
                     <h2 className="text-xl font-black sm:text-2xl">{activeName}</h2>
                     <p className="text-sm text-white/65">{activeUser?.city ? `24 • ${activeCity}` : activeCity}</p>
                   </div>
-                  <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-sm font-bold text-emerald-400">● Çevrimiçi</span>
+                  <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-sm font-bold text-emerald-400">● {t.onlineStatus}</span>
                   <button type="button" className="hidden h-11 w-11 items-center justify-center rounded-full border border-white/10 text-2xl text-pink-400 hover:bg-white/10 sm:flex">♡</button>
                   <button type="button" className="px-1 text-xl text-white/60">⋮</button>
-                  <button type="button" onClick={openVideo} className="rounded-full bg-gradient-to-r from-fuchsia-500 to-purple-600 px-5 py-3 text-sm font-black shadow-lg shadow-purple-600/30 transition hover:scale-[1.01] sm:text-base">👑 Premium ile Görüntülü Görüş</button>
+                  <button type="button" onClick={openVideo} className="rounded-full bg-gradient-to-r from-fuchsia-500 to-purple-600 px-5 py-3 text-sm font-black shadow-lg shadow-purple-600/30 transition hover:scale-[1.01] sm:text-base">👑 {t.premiumVideo}</button>
                 </div>
 
                 <div className="relative flex-1 overflow-y-auto bg-[radial-gradient(circle_at_60%_50%,rgba(79,70,229,.10),transparent_35%)] p-5 sm:p-8">
-                  <div className="mb-7 flex items-center gap-4 text-xs text-white/35"><span className="h-px flex-1 bg-white/10" />Bugün<span className="h-px flex-1 bg-white/10" /></div>
+                  <div className="mb-7 flex items-center gap-4 text-xs text-white/35"><span className="h-px flex-1 bg-white/10" />{t.today}<span className="h-px flex-1 bg-white/10" /></div>
 
                   {loadingMessages ? (
-                    <div className="flex h-56 items-center justify-center text-white/45">Mesajlar yükleniyor...</div>
+                    <div className="flex h-56 items-center justify-center text-white/45">{t.loading}</div>
                   ) : messages.length ? (
                     <div className="space-y-4">
                       {messages.map((message) => {
@@ -2071,7 +2128,7 @@ function MessagesContent() {
                       })}
                     </div>
                   ) : (
-                    <div className="flex h-56 items-center justify-center text-white/40">Bu konuşmada henüz mesaj yok.</div>
+                    <div className="flex h-56 items-center justify-center text-white/40">{t.noConversationMessages}</div>
                   )}
                 </div>
 
@@ -2089,22 +2146,22 @@ function MessagesContent() {
                           if (draft.trim() && !sending) event.currentTarget.form?.requestSubmit();
                         }
                       }}
-                      placeholder="Mesajını yaz..."
+                      placeholder={t.messagePlaceholder}
                       rows={2}
                       disabled={sending}
                       className="min-h-[58px] flex-1 resize-none rounded-2xl border border-white/15 bg-black/35 px-4 py-3 text-white outline-none transition focus:border-purple-500"
                     />
-                    <button type="submit" disabled={sending || !draft.trim()} className="h-14 shrink-0 rounded-2xl bg-gradient-to-r from-purple-600 to-fuchsia-500 px-6 font-black shadow-lg shadow-purple-700/20 disabled:cursor-not-allowed disabled:opacity-40">{sending ? "..." : "➤ GÖNDER"}</button>
+                    <button type="submit" disabled={sending || !draft.trim()} className="h-14 shrink-0 rounded-2xl bg-gradient-to-r from-purple-600 to-fuchsia-500 px-6 font-black shadow-lg shadow-purple-700/20 disabled:cursor-not-allowed disabled:opacity-40">{sending ? t.sending : `➤ ${t.send}`}</button>
                   </div>
-                  <p className="mt-2 pl-1 text-[10px] text-white/35">Enter ile gönder • Shift + Enter ile yeni satır</p>
+                  <p className="mt-2 pl-1 text-[10px] text-white/35">{t.enterHint}</p>
                 </form>
               </>
             ) : (
               <div className="flex flex-1 items-center justify-center p-8 text-center">
                 <div className="max-w-md">
                   <div className="mb-5 text-6xl">💬</div>
-                  <h2 className="text-2xl font-black">Sohbet başlat</h2>
-                  <p className="mt-3 text-white/50">Sol taraftan bir konuşma seç. Eşleştiğin kişiyle mesajlaşmaya hemen başlayabilirsin.</p>
+                  <h2 className="text-2xl font-black">{t.startChat}</h2>
+                  <p className="mt-3 text-white/50">{t.startChatDesc}</p>
                 </div>
               </div>
             )}
@@ -2121,18 +2178,18 @@ function MessagesContent() {
               </div>
             </div>
             <div>
-              <h2 className="text-3xl font-black leading-tight">Bu ve daha fazlası için</h2>
-              <h3 className="mt-1 text-4xl font-black text-transparent bg-gradient-to-r from-fuchsia-400 to-pink-500 bg-clip-text">Premium’a geç!</h3>
-              <p className="mt-4 max-w-xl text-base leading-7 text-white/65">Canlı görüntülü görüşme, okundu bilgisi, profilini öne çıkarma, reklamsız kullanım ve daha birçok avantaj seni bekliyor.</p>
+              <h2 className="text-3xl font-black leading-tight">{t.moreFor}</h2>
+              <h3 className="mt-1 text-4xl font-black text-transparent bg-gradient-to-r from-fuchsia-400 to-pink-500 bg-clip-text">{t.premiumGo}</h3>
+              <p className="mt-4 max-w-xl text-base leading-7 text-white/65">{t.premiumDesc}</p>
             </div>
             <ul className="space-y-3 text-base text-white/85">
-              {["Sınırsız görüntülü görüşme", "Okundu bilgisi", "Profilini öne çıkar", "Reklamsız kullanım", "Özel filtreler ve daha fazlası"].map((item) => (
+              {[t.unlimitedVideo, t.readReceipt, t.boostProfile, t.adFree, t.specialFilters].map((item) => (
                 <li key={item} className="flex items-center gap-3"><span className="flex h-5 w-5 items-center justify-center rounded-full bg-purple-600 text-xs font-black">✓</span>{item}</li>
               ))}
             </ul>
             <div>
-              <button type="button" onClick={goPremium} className="w-full rounded-full bg-gradient-to-r from-[#ffc000] to-[#ffb000] px-5 py-4 text-lg font-black text-black shadow-xl shadow-yellow-500/20 transition hover:scale-[1.01]">👑 PREMIUM’A GEÇ</button>
-              <p className="mt-4 text-center text-sm text-white/55">♡ Güvenli ve hızlı ödeme</p>
+              <button type="button" onClick={goPremium} className="w-full rounded-full bg-gradient-to-r from-[#ffc000] to-[#ffb000] px-5 py-4 text-lg font-black text-black shadow-xl shadow-yellow-500/20 transition hover:scale-[1.01]">👑 {t.goPremium}</button>
+              <p className="mt-4 text-center text-sm text-white/55">♡ {t.securePayment}</p>
             </div>
           </div>
         </section>
