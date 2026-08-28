@@ -120,6 +120,7 @@ export default function LikesPage() {
   const [matches, setMatches] = useState<any[]>([]);
   const [myId, setMyId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isPremium, setIsPremium] = useState(false);
   const [likingId, setLikingId] = useState<string | null>(null);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -291,6 +292,15 @@ export default function LikesPage() {
       const me: any = await api.users.me();
 
       const uid = me?.id ?? me?.user?.id ?? me?.data?.id ?? null;
+      const premiumStatus =
+  me?.isPremium === true ||
+  me?.premium === true ||
+  me?.isGold === true ||
+  me?.subscription?.isPremium === true ||
+  me?.subscription?.active === true ||
+  me?.subscriptionStatus === "ACTIVE";
+
+setIsPremium(premiumStatus);
 
       setMyId(uid ? String(uid) : null);
 
@@ -627,7 +637,7 @@ export default function LikesPage() {
               </div>
 
               {/* PREMIUM REMINDER */}
-              {tab === "received" && (
+              {tab === "received" && !isPremium && (
                 <button
                   type="button"
                   onClick={() => navigate("/premium")}
@@ -683,7 +693,7 @@ export default function LikesPage() {
                       {received.length}
                     </span>
 
-                    {tab === "received" && (
+                  {tab === "received" && !isPremium && (
                       <span className="absolute bottom-0 left-0 right-0 h-[2px] rounded-full bg-gradient-to-r from-pink-500 to-fuchsia-500" />
                     )}
                   </button>
@@ -823,17 +833,24 @@ export default function LikesPage() {
                         className="group relative overflow-hidden rounded-3xl border border-white/10 bg-[#0d1422] hover:border-pink-400/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-pink-500/10"
                       >
                         {/* IMAGE */}
-                        <button
-                          onClick={() => navigate(`/profile/${other.id}`)}
-                          className="relative block w-full aspect-[4/4.2] overflow-hidden bg-gradient-to-br from-[#172035] to-[#101522]"
-                        >
+                       <button
+  onClick={() => {
+    if (tab === "received" && !isPremium) {
+      navigate("/premium");
+      return;
+    }
+
+    navigate(`/profile/${other.id}`);
+  }}
+  className="relative block w-full aspect-[4/4.2] overflow-hidden bg-gradient-to-br from-[#172035] to-[#101522]"
+>
                           {avatar ? (
                             <img
                               src={avatar}
                               alt={name}
-                              className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${
-                                tab === "received" ? "blur-xl scale-105" : ""
-                              }`}
+                             className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${
+  tab === "received" && !isPremium ? "blur-xl scale-105" : ""
+}`}
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-pink-500/20 via-purple-500/10 to-cyan-500/10">
@@ -905,12 +922,19 @@ export default function LikesPage() {
 
                           {/* ACTIONS */}
                           <div className="mt-5 flex gap-2">
-                            <button
-                              onClick={() => navigate(`/profile/${other.id}`)}
-                              className="flex-1 h-10 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.07] text-xs font-semibold text-white/70 hover:text-white transition"
-                            >
-                              {t.profile}
-                            </button>
+                           <button
+  onClick={() => {
+    if (tab === "received" && !isPremium) {
+      navigate("/premium");
+      return;
+    }
+
+    navigate(`/profile/${other.id}`);
+  }}
+  className="flex-1 h-10 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.07] text-xs font-semibold text-white/70 hover:text-white transition"
+>
+  {t.profile}
+</button>
 
                             {tab === "received" && !isMutual && (
                               <button
