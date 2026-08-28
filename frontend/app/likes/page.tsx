@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Bell,
+  Crown,
   Check,
   ChevronDown,
   ChevronRight,
@@ -159,6 +160,10 @@ export default function LikesPage() {
         welcome: "Hoş geldin",
         members: "üye",
         location: "Konum",
+        premiumTitle: "Bu kişi seni beğendi!",
+        premiumDesc: "Fotoğrafını görmek ve kim olduğunu keşfetmek için Premium'a geç.",
+        premiumButton: "Premium'a Geç",
+        premiumPhoto: "Bu kim acaba?",
       },
 
       EN: {
@@ -194,6 +199,10 @@ export default function LikesPage() {
         welcome: "Welcome",
         members: "members",
         location: "Location",
+        premiumTitle: "This person liked you!",
+        premiumDesc: "Go Premium to see their photo and discover who they are.",
+        premiumButton: "Go Premium",
+        premiumPhoto: "Who could this be?",
       },
 
       RU: {
@@ -228,6 +237,10 @@ export default function LikesPage() {
         welcome: "Добро пожаловать",
         members: "участников",
         location: "Местоположение",
+        premiumTitle: "Этот человек лайкнул вас!",
+        premiumDesc: "Перейдите на Premium, чтобы увидеть фото и узнать, кто это.",
+        premiumButton: "Перейти на Premium",
+        premiumPhoto: "Кто же это?",
       },
 
       AR: {
@@ -261,6 +274,10 @@ export default function LikesPage() {
         welcome: "مرحبًا",
         members: "عضو",
         location: "الموقع",
+        premiumTitle: "هذا الشخص أعجب بك!",
+        premiumDesc: "انتقل إلى Premium لرؤية صورته ومعرفة من هو.",
+        premiumButton: "الانتقال إلى Premium",
+        premiumPhoto: "من يا ترى؟",
       },
     };
 
@@ -609,6 +626,34 @@ export default function LikesPage() {
                 </div>
               </div>
 
+              {/* PREMIUM REMINDER */}
+              {tab === "received" && (
+                <button
+                  type="button"
+                  onClick={() => navigate("/premium")}
+                  className="group relative w-full overflow-hidden rounded-3xl border border-yellow-400/20 bg-gradient-to-r from-[#24180b] via-[#19121c] to-[#1b0f20] p-5 md:p-6 mb-8 text-left transition-all duration-300 hover:border-yellow-400/40 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-yellow-500/10"
+                >
+                  <div className="absolute -right-16 -top-20 h-52 w-52 rounded-full bg-yellow-400/10 blur-3xl" />
+                  <div className="relative flex flex-col md:flex-row md:items-center gap-4 md:gap-5">
+                    <div className="shrink-0 w-14 h-14 rounded-2xl bg-yellow-400/10 border border-yellow-400/20 flex items-center justify-center">
+                      <Crown className="w-7 h-7 text-yellow-300" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-base md:text-lg font-black text-white">
+                        {t.premiumTitle}
+                      </div>
+                      <div className="mt-1 text-sm leading-6 text-white/55">
+                        {t.premiumDesc}
+                      </div>
+                    </div>
+                    <span className="shrink-0 inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-yellow-400 to-amber-500 px-5 py-3 text-sm font-black text-[#17100a] shadow-lg shadow-yellow-500/15 group-hover:scale-[1.02] transition">
+                      <Crown className="w-4 h-4" />
+                      {t.premiumButton}
+                    </span>
+                  </div>
+                </button>
+              )}
+
               {/* TABS */}
               <div className="border-b border-white/10 mb-8">
                 <div className="flex gap-7">
@@ -786,12 +831,24 @@ export default function LikesPage() {
                             <img
                               src={avatar}
                               alt={name}
-                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                              className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${
+                                tab === "received" ? "blur-xl scale-105" : ""
+                              }`}
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-pink-500/20 via-purple-500/10 to-cyan-500/10">
                               <div className="w-24 h-24 rounded-full bg-gradient-to-br from-pink-500 to-orange-400 flex items-center justify-center text-3xl font-black shadow-xl">
                                 {getInitials(other)}
+                              </div>
+                            </div>
+                          )}
+
+                          {tab === "received" && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/15">
+                              <div className="rounded-2xl border border-yellow-300/25 bg-black/55 backdrop-blur-md px-5 py-4 text-center shadow-2xl">
+                                <Crown className="w-7 h-7 text-yellow-300 mx-auto mb-2" />
+                                <div className="text-sm font-black text-white">{t.premiumPhoto}</div>
+                                <div className="text-[10px] text-yellow-200/70 mt-1">{t.premiumButton}</div>
                               </div>
                             </div>
                           )}
