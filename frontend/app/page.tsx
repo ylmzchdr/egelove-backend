@@ -1,177 +1,330 @@
 "use client";
 
 import { useState } from "react";
-import { Users, Shield, Smartphone, Star, Mail, Globe, Sparkles } from "lucide-react";
+import {
+  Users,
+  Shield,
+  Smartphone,
+  Video,
+  Languages,
+  Star,
+  Mail,
+  Globe,
+  Sparkles,
+} from "lucide-react";
 import { useI18n } from "@/lib/i18n-context";
 
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
-import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import AuthDialog from "@/components/AuthDialog";
 
 type LangKey = "TR" | "EN" | "RU" | "AR";
 
-// 1. ÖZELLİKLER BÖLÜMÜ DİL PAKETLERİ
+// ============================================================
+// ÖZELLİKLER BÖLÜMÜ DİL PAKETLERİ
+// ============================================================
+
 const featuresTranslations = {
   TR: {
     sectionTitle: "Neden ",
-        mainSubtitle: "Türkiye'nin 81 ilinde canlı görüntülü odalara geçerek yeni insanlarla anında ve güvenle tanış. Hemen görüntülü bağlan!",
+    mainSubtitle:
+      "Türkiye'nin 81 ilinden yeni insanlarla tanışın. Canlı görüntülü odalara katılın, 4 dilde iletişim kurun ve size uygun insanlarla güvenle bağlantı kurun.",
 
-    f1Title: "Geniş Üye Tabanı",
-    f1Desc: "EgeLove'da yeni insanlarla tanışın, size uygun profilleri keşfedin ve yeni bağlantılar kurun.",
-    f2Title: "Güvenli Platform",
-    f2Desc: "Kişisel bilgileriniz ve iletişimleriniz güvenli bir ortamda korunur.",
-    f3Title: "Her Yerden Erişim",
-    f3Desc: "Telefon, tablet veya bilgisayarınızdan EgeLove'a kolayca erişin.",
+    f1Title: "81 İlden Yeni İnsanlar",
+    f1Desc:
+      "Türkiye'nin 81 ilinden insanları keşfedin, size uygun profilleri bulun ve yeni arkadaşlıklar kurun.",
+
+    f2Title: "Canlı Görüntülü Görüşme",
+    f2Desc:
+      "Yeni tanıştığınız insanlarla canlı görüntülü odalara geçin ve gerçek zamanlı iletişim kurun.",
+
+    f3Title: "4 Dilde İletişim",
+    f3Desc:
+      "Türkçe, İngilizce, Rusça ve Arapça dil desteğiyle farklı ülkelerden insanlarla daha kolay iletişim kurun.",
+
     f4Title: "Akıllı Eşleşme",
-    f4Desc: "EgeMatch AI ile ilgi alanlarınıza ve tercihlerinize uygun insanları keşfedin."
+    f4Desc:
+      "EgeMatch AI ile ilgi alanlarınıza ve tercihlerinize uygun insanları keşfedin.",
   },
+
   EN: {
     sectionTitle: "Why ",
-    mainSubtitle: "Everything you need to meet new people, chat, and build right connections is on EgeLove.",
-    f1Title: "Large Member Base",
-    f1Desc: "Meet new people on EgeLove, discover profiles that suit you, and build new connections.",
-    f2Title: "Secure Platform",
-    f2Desc: "Your personal information and communications are protected in a secure environment.",
-    f3Title: "Access Anywhere",
-    f3Desc: "Easily access EgeLove from your phone, tablet, or computer.",
-    f4Title: "Smart Match",
-    f4Desc: "Discover people suitable for your interests and preferences with EgeMatch AI."
+    mainSubtitle:
+      "Meet new people from all 81 provinces of Türkiye. Join live video rooms, communicate in 4 languages, and build genuine connections safely.",
+
+    f1Title: "People from 81 Provinces",
+    f1Desc:
+      "Discover people from all 81 provinces of Türkiye, find profiles that match you, and build new friendships.",
+
+    f2Title: "Live Video Chat",
+    f2Desc:
+      "Join live video rooms with people you meet and communicate in real time.",
+
+    f3Title: "4-Language Communication",
+    f3Desc:
+      "Communicate more easily with people from different countries with Turkish, English, Russian, and Arabic language support.",
+
+    f4Title: "Smart Matching",
+    f4Desc:
+      "Discover people who match your interests and preferences with EgeMatch AI.",
   },
+
   RU: {
     sectionTitle: "Почему ",
-    mainSubtitle: "Все, что вам нужно для знакомства с новыми людьми, общения и создания правильных связей, есть на EgeLove.",
-    f1Title: "Широкая база участников",
-    f1Desc: "Знакомьтесь с новыми людьми на EgeLove, находите подходящие профили и создавайте новые связи.",
-    f2Title: "Безопасная платформа",
-    f2Desc: "Ваша личная информация и общение защищены в безопасной среде.",
-    f3Title: "Доступ отовсюду",
-    f3Desc: "Легко заходите на EgeLove с телефона, планшета или компьютера.",
-    f4Title: "Умное совпадение",
-    f4Desc: "Находите людей, соответствующих вашим интересам и предпочтениям, с помощью EgeMatch AI."
+    mainSubtitle:
+      "Знакомьтесь с людьми из всех 81 провинции Турции. Присоединяйтесь к видеокомнатам, общайтесь на 4 языках и безопасно находите новые связи.",
+
+    f1Title: "Люди из 81 провинции",
+    f1Desc:
+      "Открывайте для себя людей из всех 81 провинции Турции, находите подходящие профили и заводите новые знакомства.",
+
+    f2Title: "Видеочат в реальном времени",
+    f2Desc:
+      "Переходите в видеокомнаты с новыми знакомыми и общайтесь в реальном времени.",
+
+    f3Title: "Общение на 4 языках",
+    f3Desc:
+      "Общайтесь с людьми из разных стран благодаря поддержке турецкого, английского, русского и арабского языков.",
+
+    f4Title: "Умный подбор",
+    f4Desc:
+      "Находите людей, соответствующих вашим интересам и предпочтениям, с помощью EgeMatch AI.",
   },
+
   AR: {
     sectionTitle: "لماذا ",
-    mainSubtitle: "كل ما تحتاجه للتعرف على أشخاص جدد، الدردشة، وبناء العلاقات المناسبة موجود في EgeLove.",
-    f1Title: "قاعدة أعضاء واسعة",
-    f1Desc: "تعرف على أشخاص جدد في EgeLove، واكتشف الملفات الشخصية التي تناسبك، وابنِ علاقات جديدة.",
-    f2Title: "منصة آمنة",
-    f2Desc: "معلوماتك الشخصية واتصالاتك محمية في بيئة آمنة.",
-    f3Title: "الوصول من أي مكان",
-    f3Desc: "قم بالوصول إلى EgeLove بسهولة من هاتفك، جهازك اللوحي، أو حاسوبك.",
-    f4Title: "تطابق ذكي",
-    f4Desc: "اكتشف أشخاصاً مناسبين لاهتماماتك وتفضيلاتك مع EgeMatch AI."
-  }
+    mainSubtitle:
+      "تعرّف على أشخاص جدد من جميع الولايات الـ81 في تركيا. انضم إلى غرف الفيديو المباشرة وتواصل بـ4 لغات وابنِ علاقات جديدة بأمان.",
+
+    f1Title: "أشخاص من 81 ولاية",
+    f1Desc:
+      "اكتشف أشخاصاً من جميع الولايات الـ81 في تركيا، واعثر على الملفات الشخصية المناسبة لك وابنِ صداقات جديدة.",
+
+    f2Title: "محادثة فيديو مباشرة",
+    f2Desc:
+      "انضم إلى غرف الفيديو المباشرة مع الأشخاص الذين تتعرف عليهم وتواصل معهم في الوقت الفعلي.",
+
+    f3Title: "التواصل بـ4 لغات",
+    f3Desc:
+      "تواصل بسهولة أكبر مع أشخاص من دول مختلفة بفضل دعم التركية والإنجليزية والروسية والعربية.",
+
+    f4Title: "مطابقة ذكية",
+    f4Desc:
+      "اكتشف الأشخاص الذين يناسبون اهتماماتك وتفضيلاتك باستخدام EgeMatch AI.",
+  },
 };
 
-// 2. İLETİŞİM BÖLÜMÜ DİL PAKETLERİ
+// ============================================================
+// İLETİŞİM BÖLÜMÜ DİL PAKETLERİ
+// ============================================================
+
 const contactTranslations = {
   TR: {
     title: "İletişim",
-    subtitle: "Sorularınız, önerileriniz veya iş birlikleri için bizimle iletişime geçebilirsiniz.",
+    subtitle:
+      "Sorularınız, önerileriniz veya iş birlikleri için bizimle iletişime geçebilirsiniz.",
     emailTitle: "E-Posta",
     webTitle: "Web Sitesi",
     techTitle: "Teknoloji",
-    techDesc: "EgeMatch AI Destekli"
+    techDesc: "EgeMatch AI Destekli",
   },
+
   EN: {
     title: "Contact",
-    subtitle: "You can contact us for your questions, suggestions, or collaborations.",
+    subtitle:
+      "You can contact us for your questions, suggestions, or collaborations.",
     emailTitle: "Email",
     webTitle: "Website",
     techTitle: "Technology",
-    techDesc: "EgeMatch AI Powered"
+    techDesc: "EgeMatch AI Powered",
   },
+
   RU: {
     title: "Контакты",
-    subtitle: "Вы можете связаться с нами по вопросам, предложениям или сотрудничеству.",
+    subtitle:
+      "Вы можете связаться с нами по вопросам, предложениям или сотрудничеству.",
     emailTitle: "Эл. почта",
     webTitle: "Веб-сайт",
     techTitle: "Технологии",
-    techDesc: "На базе EgeMatch AI"
+    techDesc: "На базе EgeMatch AI",
   },
+
   AR: {
     title: "اتصل بنا",
-    subtitle: "يمكنك الاتصال بنا لطرح أسئلتك، مقترحاتك، أو لفرص التعاون.",
+    subtitle:
+      "يمكنك الاتصال بنا لطرح أسئلتك أو مقترحاتك أو لفرص التعاون.",
     emailTitle: "البريد الإلكتروني",
     webTitle: "الموقع الإلكتروني",
     techTitle: "التكنولوجيا",
-    techDesc: "مدعوم بـ EgeMatch AI"
-  }
+    techDesc: "مدعوم بـ EgeMatch AI",
+  },
 };
+
+// ============================================================
+// ÖZELLİKLER BÖLÜMÜ
+// ============================================================
 
 function FeaturesSection({ langKey }: { langKey: LangKey }) {
   const t = featuresTranslations[langKey];
-  
+
   const features = [
-    { icon: Users, title: t.f1Title, description: t.f1Desc },
-    { icon: Shield, title: t.f2Title, description: t.f2Desc },
-    { icon: Smartphone, title: t.f3Title, description: t.f3Desc },
-    { icon: Star, title: t.f4Title, description: t.f4Desc },
+    {
+      icon: Users,
+      title: t.f1Title,
+      description: t.f1Desc,
+    },
+    {
+      icon: Video,
+      title: t.f2Title,
+      description: t.f2Desc,
+    },
+    {
+      icon: Languages,
+      title: t.f3Title,
+      description: t.f3Desc,
+    },
+    {
+      icon: Star,
+      title: t.f4Title,
+      description: t.f4Desc,
+    },
   ];
 
   return (
-    <section id="features" className="relative overflow-hidden bg-[#160019] py-20 md:py-24">
+    <section
+      id="features"
+      className="relative overflow-hidden bg-[#160019] py-20 md:py-24"
+    >
+      {/* Arka plan ışıkları */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute left-1/4 top-0 h-72 w-72 rounded-full bg-pink-600/10 blur-3xl" />
         <div className="absolute right-1/4 bottom-0 h-72 w-72 rounded-full bg-purple-600/10 blur-3xl" />
       </div>
 
       <div className="relative mx-auto max-w-7xl px-6 md:px-12">
-        <div className="mx-auto mb-14 max-w-3xl text-center">
+        {/* BAŞLIK */}
+        <div className="mx-auto mb-14 max-w-4xl text-center">
           <div className="mb-4 text-3xl">❤️</div>
+
           <h2 className="text-3xl font-extrabold tracking-tight text-white md:text-5xl">
-            {t.sectionTitle}<span className="text-[#FFC000]">EgeLove?</span>
+            {t.sectionTitle}
+            <span className="text-[#FFC000]">EgeLove?</span>
           </h2>
-          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-white/70 md:text-lg">
+
+          <p className="mx-auto mt-5 max-w-3xl text-base leading-7 text-white/70 md:text-lg">
             {t.mainSubtitle}
           </p>
         </div>
 
+        {/* ÖZELLİK KARTLARI */}
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
           {features.map((feature) => {
             const Icon = feature.icon;
+
             return (
-              <div key={feature.title} className="group rounded-2xl border border-white/10 bg-white/[0.035] p-7 text-center backdrop-blur-sm transition-all duration-300 hover:-translate-y-2 hover:border-[#FFC000]/40 hover:bg-white/[0.07]">
+              <div
+                key={feature.title}
+                className="group rounded-2xl border border-white/10 bg-white/[0.035] p-7 text-center backdrop-blur-sm transition-all duration-300 hover:-translate-y-2 hover:border-[#FFC000]/40 hover:bg-white/[0.07]"
+              >
+                {/* İKON */}
                 <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-[#FFC000]/20 bg-[#FFC000]/10 transition-all duration-300 group-hover:scale-110 group-hover:bg-[#FFC000]/15">
                   <Icon className="h-8 w-8 text-[#FFC000]" />
                 </div>
-                <h3 className="mb-3 text-xl font-extrabold text-white">{feature.title}</h3>
-                <p className="text-sm leading-6 text-white/65">{feature.description}</p>
+
+                {/* BAŞLIK */}
+                <h3 className="mb-3 text-xl font-extrabold text-white">
+                  {feature.title}
+                </h3>
+
+                {/* AÇIKLAMA */}
+                <p className="text-sm leading-6 text-white/65">
+                  {feature.description}
+                </p>
               </div>
             );
           })}
+        </div>
+
+        {/* ALT VURGU */}
+        <div className="mx-auto mt-10 max-w-3xl text-center">
+          <div className="inline-flex items-center gap-2 rounded-full border border-[#FFC000]/20 bg-[#FFC000]/5 px-5 py-3 text-sm text-white/70">
+            <Video className="h-4 w-4 text-[#FFC000]" />
+            <span>
+              {langKey === "TR"
+                ? "Görüntülü iletişim ve çok dilli bağlantı EgeLove'da."
+                : langKey === "EN"
+                ? "Live video communication and multilingual connections on EgeLove."
+                : langKey === "RU"
+                ? "Видеосвязь и многоязычное общение на EgeLove."
+                : "التواصل عبر الفيديو والاتصال متعدد اللغات على EgeLove."}
+            </span>
+          </div>
         </div>
       </div>
     </section>
   );
 }
+
+// ============================================================
+// İLETİŞİM BÖLÜMÜ
+// ============================================================
 
 function LocalContactSection({ langKey }: { langKey: LangKey }) {
   const t = contactTranslations[langKey];
 
   return (
-    <section id="contact" className="relative overflow-hidden bg-[#0d1527] py-20 md:py-24">
-      <div className="relative mx-auto max-w-7xl px-6 md:px-12 text-center">
-        <h2 className="text-3xl font-extrabold tracking-tight text-white md:text-5xl">{t.title}</h2>
-        <p className="mx-auto mt-4 max-w-2xl text-base text-white/70 md:text-lg">{t.subtitle}</p>
+    <section
+      id="contact"
+      className="relative overflow-hidden bg-[#0d1527] py-20 md:py-24"
+    >
+      <div className="relative mx-auto max-w-7xl px-6 text-center md:px-12">
+        <h2 className="text-3xl font-extrabold tracking-tight text-white md:text-5xl">
+          {t.title}
+        </h2>
 
-        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-3 max-w-4xl mx-auto">
+        <p className="mx-auto mt-4 max-w-2xl text-base text-white/70 md:text-lg">
+          {t.subtitle}
+        </p>
+
+        <div className="mx-auto mt-12 grid max-w-4xl grid-cols-1 gap-6 sm:grid-cols-3">
+          {/* E-POSTA */}
           <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 backdrop-blur-sm">
-            <Mail className="h-8 w-8 text-[#FFC000] mx-auto mb-4" />
-            <h3 className="text-lg font-bold text-white mb-2">{t.emailTitle}</h3>
-            <p className="text-sm text-white/60">hello@egelove.tr</p>
+            <Mail className="mx-auto mb-4 h-8 w-8 text-[#FFC000]" />
+
+            <h3 className="mb-2 text-lg font-bold text-white">
+              {t.emailTitle}
+            </h3>
+
+            <p className="text-sm text-white/60">
+              hello@egelove.tr
+            </p>
           </div>
+
+          {/* WEB */}
           <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 backdrop-blur-sm">
-            <Globe className="h-8 w-8 text-[#FFC000] mx-auto mb-4" />
-            <h3 className="text-lg font-bold text-white mb-2">{t.webTitle}</h3>
-            <p className="text-sm text-white/60">https://egelove.tr</p>
+            <Globe className="mx-auto mb-4 h-8 w-8 text-[#FFC000]" />
+
+            <h3 className="mb-2 text-lg font-bold text-white">
+              {t.webTitle}
+            </h3>
+
+            <p className="text-sm text-white/60">
+              https://egelove.tr
+            </p>
           </div>
+
+          {/* TEKNOLOJİ */}
           <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 backdrop-blur-sm">
-            <Sparkles className="h-8 w-8 text-[#FFC000] mx-auto mb-4" />
-            <h3 className="text-lg font-bold text-white mb-2">{t.techTitle}</h3>
-            <p className="text-sm text-white/60">{t.techDesc}</p>
+            <Sparkles className="mx-auto mb-4 h-8 w-8 text-[#FFC000]" />
+
+            <h3 className="mb-2 text-lg font-bold text-white">
+              {t.techTitle}
+            </h3>
+
+            <p className="text-sm text-white/60">
+              {t.techDesc}
+            </p>
           </div>
         </div>
       </div>
@@ -179,8 +332,15 @@ function LocalContactSection({ langKey }: { langKey: LangKey }) {
   );
 }
 
+// ============================================================
+// ANA SAYFA
+// ============================================================
+
 export default function Home() {
-  const [authTab, setAuthTab] = useState<"login" | "register" | null>(null);
+  const [authTab, setAuthTab] = useState<
+    "login" | "register" | null
+  >(null);
+
   const { lang } = useI18n();
 
   const currentLang: LangKey = ["TR", "EN", "RU", "AR"].includes(lang)
@@ -190,14 +350,20 @@ export default function Home() {
   const isRtl = currentLang === "AR";
 
   return (
-    <div className="min-h-screen bg-[#0d1527] font-sans text-white" dir={isRtl ? "rtl" : "ltr"}>
+    <div
+      className="min-h-screen bg-[#0d1527] font-sans text-white"
+      dir={isRtl ? "rtl" : "ltr"}
+    >
+      {/* HEADER */}
       <Header
         onOpenLogin={() => setAuthTab("login")}
         onOpenRegister={() => setAuthTab("register")}
       />
 
       {/* HERO */}
-      <HeroSection onCtaClick={() => setAuthTab("register")} />
+      <HeroSection
+        onCtaClick={() => setAuthTab("register")}
+      />
 
       <main>
         {/* NEDEN EGELOVE */}
@@ -207,10 +373,14 @@ export default function Home() {
         <LocalContactSection langKey={currentLang} />
       </main>
 
+      {/* FOOTER */}
       <Footer />
 
       {/* GİRİŞ / KAYIT */}
-      <AuthDialog activeTab={authTab} onClose={() => setAuthTab(null)} />
+      <AuthDialog
+        activeTab={authTab}
+        onClose={() => setAuthTab(null)}
+      />
     </div>
   );
 }
