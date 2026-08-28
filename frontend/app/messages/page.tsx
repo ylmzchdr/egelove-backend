@@ -1772,933 +1772,371 @@ function MessagesContent() {
   }
 
   /* =======================================================
-     UI
+     YENİ MESAJLAR UI — NEON / PREMIUM
      ======================================================= */
 
+  const activeName = getUserName(activeUser);
+  const activeImage = getProfileImage(activeUser);
+  const activeCity = safeString(activeUser?.city) || "Türkiye";
+
+  const goDashboard = () => {
+    window.location.href = "/dashboard";
+  };
+
+  const goPremium = () => {
+    window.location.href = "/premium";
+  };
+
+  const openVideo = () => {
+    if (!isPremium) {
+      goPremium();
+      return;
+    }
+
+    const width = 450;
+    const height = 650;
+    const left = Math.max(0, (window.screen.width - width) / 2);
+    const top = Math.max(0, (window.screen.height - height) / 2);
+
+    window.open(
+      "/canavar-video",
+      "EgeloveLivePopup",
+      `width=${width},height=${height},top=${top},left=${left},resizable=no,scrollbars=no,status=no,location=no,toolbar=no,menubar=no`,
+    );
+  };
+
+  const avatar = (user: User | null | undefined, size = "h-12 w-12") => {
+    const image = getProfileImage(user);
+    const name = getUserName(user);
+
+    if (image) {
+      return (
+        <img
+          src={image}
+          alt={name}
+          className={`${size} shrink-0 rounded-full object-cover ring-1 ring-white/20`}
+        />
+      );
+    }
+
+    return (
+      <div
+        className={`${size} shrink-0 rounded-full bg-gradient-to-br from-fuchsia-500 via-violet-500 to-blue-500 flex items-center justify-center font-black text-white ring-1 ring-white/20`}
+      >
+        {name.slice(0, 1).toUpperCase()}
+      </div>
+    );
+  };
+
   return (
-    <div className="min-h-screen bg-[#121420] text-white flex flex-col">
+    <div className="min-h-screen bg-[#020817] text-white overflow-x-hidden">
+      {/* ÜST NAV */}
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-[#020817]/95 backdrop-blur-xl">
+        <div className="mx-auto flex min-h-[72px] max-w-[1450px] items-center gap-6 px-4 sm:px-6 lg:px-8">
+          <button
+            type="button"
+            onClick={goDashboard}
+            className="mr-auto flex items-center gap-2 text-xl font-black tracking-tight sm:text-2xl"
+          >
+            <span className="text-3xl text-pink-500">♥</span>
+            <span>egelove</span>
+          </button>
 
-      {/* =================================================
-          ÜST NAVİGASYON
-          ================================================= */}
+          <nav className="hidden items-center gap-8 lg:flex">
+            <button type="button" onClick={goDashboard} className="font-semibold text-white/90 hover:text-white">Ana Sayfa</button>
+            <button type="button" onClick={() => (window.location.href = "/profile")} className="font-semibold text-white/90 hover:text-white">Benim Sayfam</button>
+            <button type="button" onClick={() => (window.location.href = "/likes")} className="font-semibold text-white/90 hover:text-white">Beğeniler</button>
+            <button type="button" className="relative font-semibold text-pink-400 after:absolute after:-bottom-6 after:left-0 after:right-0 after:h-0.5 after:bg-pink-500">Mesajlar</button>
+            <button type="button" onClick={goPremium} className="font-semibold text-white/90 hover:text-white">Premium 👑</button>
+          </nav>
 
-      <header className="w-full bg-[#1a1d30] border-b border-white/10 px-4 sm:px-6 py-4 sm:py-5 shrink-0">
-        <div className="max-w-6xl mx-auto flex flex-col items-start gap-3">
+          <div className="hidden items-center gap-1 sm:flex">
+            {(["TR", "EN", "RU", "AR"] as const).map((lang, index) => (
+              <button
+                key={lang}
+                type="button"
+                className={`rounded-full border px-3 py-1.5 text-sm font-semibold ${index === 0 ? "border-purple-500 bg-purple-600 text-white shadow-lg shadow-purple-500/30" : "border-white/10 bg-black/20 text-white/80 hover:bg-white/10"}`}
+              >
+                {lang}
+              </button>
+            ))}
+          </div>
 
           <button
             type="button"
-            onClick={() => {
-              window.location.href =
-                "/dashboard";
-            }}
-            className="
-              inline-flex items-center
-              gap-2
-              bg-purple-600
-              hover:bg-purple-500
-              text-white
-              px-5 sm:px-6
-              py-3
-              rounded-2xl
-              text-sm sm:text-base
-              font-black
-              tracking-wide
-              transition-all
-              shadow-lg
-              shadow-purple-500/20
-              border border-purple-400/30
-            "
+            className="hidden rounded-xl border border-[#ffc000]/50 bg-[#ffc000] px-5 py-3 font-black text-black shadow-lg shadow-yellow-500/10 sm:block"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={3}
-              stroke="currentColor"
-              className="w-5 h-5 shrink-0"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M10.5 19.5 3 12m0 0 7.5-7M3 12h18"
-              />
-            </svg>
-
-            <span>
-              ANA SAYFAYA GERİ DÖN
-            </span>
+            Hoş geldin
           </button>
-
-          <span
-            className="
-              text-[10px]
-              sm:text-xs
-              font-bold
-              text-slate-500
-              tracking-[0.25em]
-              font-mono
-              pl-1
-            "
+          <button
+            type="button"
+            onClick={() => {
+              localStorage.removeItem("accessToken");
+              localStorage.removeItem("refreshToken");
+              window.location.href = "/";
+            }}
+            className="rounded-xl bg-white px-4 py-3 font-bold text-black hover:bg-white/90"
           >
-            EGELOVE GÜVENLİ ODASI
-          </span>
-
+            Çıkış
+          </button>
         </div>
       </header>
 
-      {/* =================================================
-          ANA
-          ================================================= */}
-
-      <main
-        className="
-          flex-1
-          px-4
-          sm:px-6
-          py-5
-          sm:py-6
-        "
-      >
-
-        <div
-          className="
-            max-w-6xl
-            mx-auto
-            grid
-            grid-cols-1
-            md:grid-cols-3
-            gap-5
-            sm:gap-6
-          "
+      <main className="mx-auto max-w-[1450px] px-4 py-5 sm:px-6 lg:px-8 lg:py-7">
+        <button
+          type="button"
+          onClick={goDashboard}
+          className="mb-5 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-500 px-5 py-3 font-black shadow-lg shadow-purple-600/30 transition hover:scale-[1.01]"
         >
+          <span className="text-xl">←</span>
+          ANA SAYFAYA GERİ DÖN
+        </button>
 
-          {/* =================================================
-              SOL MESAJ LİSTESİ
-              ================================================= */}
+        {/* PREMIUM VIDEO HERO */}
+        <section className="relative overflow-hidden rounded-[28px] border border-fuchsia-500/60 bg-[radial-gradient(circle_at_15%_55%,rgba(168,85,247,.30),transparent_30%),radial-gradient(circle_at_92%_55%,rgba(37,99,235,.28),transparent_34%),linear-gradient(110deg,#18052b,#080d2b_55%,#06164a)] p-4 shadow-2xl shadow-purple-950/40 sm:p-6 lg:p-7">
+          <div className="pointer-events-none absolute -left-20 top-10 h-48 w-48 rounded-full bg-fuchsia-500/20 blur-3xl" />
+          <div className="pointer-events-none absolute -right-20 bottom-0 h-56 w-56 rounded-full bg-blue-500/20 blur-3xl" />
 
-          <section
-            className="
-              md:col-span-1
-              bg-slate-900/60
-              backdrop-blur-xl
-              border
-              border-white/20
-              rounded-[28px]
-              p-5
-              sm:p-6
-              min-h-[430px]
-              sm:min-h-[470px]
-              md:h-[620px]
-              flex
-              flex-col
-            "
-          >
+          <div className="relative grid items-center gap-7 lg:grid-cols-[330px_1fr_330px]">
+            <div className="hidden min-h-[210px] items-center justify-center lg:flex">
+              <div className="relative flex h-44 w-44 items-center justify-center rounded-full bg-gradient-to-br from-fuchsia-500 via-purple-500 to-blue-600 shadow-[0_0_70px_rgba(168,85,247,.65)]">
+                <div className="absolute inset-4 rounded-full border border-white/30" />
+                <span className="relative text-7xl text-white drop-shadow-lg">▣</span>
+                <span className="absolute -left-10 top-6 text-2xl text-pink-400">♥</span>
+                <span className="absolute -right-9 top-16 text-2xl text-purple-400">♥</span>
+                <span className="absolute -left-4 bottom-2 text-lg text-fuchsia-300">✦</span>
+              </div>
+            </div>
 
-            <div>
-
-              <h1
-                className="
-                  text-2xl
-                  sm:text-3xl
-                  font-bold
-                  tracking-wide
-                  text-purple-400
-                  mb-5
-                "
-              >
-                Mesajlar
+            <div className="text-center">
+              <h1 className="text-2xl font-black leading-tight sm:text-3xl lg:text-[34px]">
+                BİREBİR CANLI <span className="bg-gradient-to-r from-fuchsia-400 to-pink-500 bg-clip-text text-transparent">GÖRÜNTÜLÜ GÖRÜŞME</span>
               </h1>
+              <p className="mx-auto mt-3 max-w-2xl text-base leading-7 text-white/85 sm:text-lg">
+                Beğenip eşleştiğin kişilerle birebir canlı görüntülü konuş.
+                <br className="hidden sm:block" />
+                Yeni insanları sadece mesajlaşarak değil, yüz yüze tanımanın keyfini yaşa.
+              </p>
 
-              {/* FİLTRELER */}
+              <div className="mx-auto mt-7 grid max-w-2xl grid-cols-2 divide-x divide-white/10 sm:grid-cols-4">
+                {[
+                  ["♙", "Güvenli", "Görüşmeler", "text-emerald-400"],
+                  ["♣", "Gerçek", "Kişiler", "text-purple-400"],
+                  ["ϟ", "Anında", "Bağlantı", "text-yellow-400"],
+                  ["♥", "Daha Yakın", "Bağlar", "text-pink-400"],
+                ].map(([icon, title, sub, color]) => (
+                  <div key={title} className="px-2 py-2 sm:px-4">
+                    <div className={`mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full border border-current text-xl ${color}`}>{icon}</div>
+                    <div className="font-semibold text-white">{title}</div>
+                    <div className="text-sm text-white/80">{sub}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
 
-              <div className="flex gap-2 mb-5">
+            <div className="rounded-2xl border border-purple-500/40 bg-[#0a1233]/70 p-4 shadow-xl backdrop-blur-xl sm:p-5">
+              <div className="mx-auto -mt-8 mb-4 w-fit rounded-full border border-[#ffc000]/50 bg-[#130d28] px-4 py-2 text-sm font-black text-[#ffc000]">👑 PREMIUM ÖZELLİĞİ</div>
+              <ul className="space-y-3 text-sm sm:text-base">
+                {[
+                  "Sınırsız görüntülü görüşme",
+                  "Okundu bilgisi",
+                  "Profilini öne çıkar",
+                  "Reklamsız kullanım",
+                ].map((item) => (
+                  <li key={item} className="flex items-center gap-3"><span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-xs font-black">✓</span>{item}</li>
+                ))}
+              </ul>
+              <button type="button" onClick={goPremium} className="mt-5 w-full rounded-full bg-gradient-to-r from-[#ffc000] to-[#ffb000] px-5 py-3 font-black text-black shadow-lg shadow-yellow-500/20 transition hover:scale-[1.01]">👑 PREMIUM'A GEÇ</button>
+              <p className="mt-2 text-center text-xs text-white/50">Bu özellik Premium üyelikle kullanılabilir.</p>
+            </div>
+          </div>
+        </section>
 
-                <button
-                  type="button"
-                  onClick={() =>
-                    setMessageFilter(
-                      "all",
-                    )
-                  }
-                  className={`
-                    px-5
-                    py-3
-                    rounded-2xl
-                    text-sm
-                    font-semibold
-                    transition
-                    ${
-                      messageFilter ===
-                      "all"
-                        ? "bg-blue-600 hover:bg-blue-500 text-white"
-                        : "bg-slate-800 hover:bg-slate-700 text-slate-400"
-                    }
-                  `}
-                >
-                  Tümü
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    setMessageFilter(
-                      "incoming",
-                    )
-                  }
-                  className={`
-                    px-5
-                    py-3
-                    rounded-2xl
-                    text-sm
-                    font-semibold
-                    transition
-                    ${
-                      messageFilter ===
-                      "incoming"
-                        ? "bg-blue-600 hover:bg-blue-500 text-white"
-                        : "bg-slate-800 hover:bg-slate-700 text-slate-400"
-                    }
-                  `}
-                >
-                  Gelen
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    setMessageFilter(
-                      "outgoing",
-                    )
-                  }
-                  className={`
-                    px-5
-                    py-3
-                    rounded-2xl
-                    text-sm
-                    font-semibold
-                    transition
-                    ${
-                      messageFilter ===
-                      "outgoing"
-                        ? "bg-blue-600 hover:bg-blue-500 text-white"
-                        : "bg-slate-800 hover:bg-slate-700 text-slate-400"
-                    }
-                  `}
-                >
-                  Giden
-                </button>
-
+        {/* MESAJLAR + AKTİF SOHBET */}
+        <section className="mt-5 grid gap-5 lg:grid-cols-[420px_1fr]">
+          {/* SOL PANEL */}
+          <aside className="flex min-h-[650px] flex-col overflow-hidden rounded-[26px] border border-purple-500/30 bg-[#050c20]/85 shadow-2xl shadow-black/20">
+            <div className="border-b border-white/10 p-5 sm:p-6">
+              <div className="flex items-center justify-between">
+                <h2 className="text-3xl font-black">Mesajlar</h2>
+                <button type="button" className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-fuchsia-500 text-2xl font-light shadow-lg shadow-purple-500/30">+</button>
               </div>
 
-              {/* ARAMA */}
+              <div className="mt-5 grid grid-cols-4 gap-2">
+                {[
+                  ["all", "Tümü"],
+                  ["incoming", "Yeni"],
+                  ["outgoing", "Çevrimiçi"],
+                  ["all", "Favoriler"],
+                ].map(([value, label], index) => (
+                  <button
+                    key={`${value}-${label}`}
+                    type="button"
+                    onClick={() => setMessageFilter(value as any)}
+                    className={`rounded-full border px-2 py-2.5 text-xs font-bold sm:text-sm ${index === 0 && messageFilter === "all" ? "border-purple-500 bg-gradient-to-r from-purple-600 to-fuchsia-500" : "border-white/10 bg-white/[0.02] text-white/75 hover:bg-white/10"}`}
+                  >
+                    {label}{label === "Yeni" ? <span className="ml-1 text-pink-500">●</span> : label === "Çevrimiçi" ? <span className="ml-1 text-emerald-400">●</span> : ""}
+                  </button>
+                ))}
+              </div>
 
-              <input
-                type="text"
-                value={search}
-                onChange={(event) =>
-                  setSearch(
-                    event.target.value,
-                  )
-                }
-                placeholder="Ara..."
-                className="
-                  w-full
-                  h-14
-                  bg-black/40
-                  border
-                  border-white/20
-                  rounded-2xl
-                  px-5
-                  text-base
-                  text-white
-                  placeholder:text-slate-500
-                  focus:outline-none
-                  focus:border-purple-500
-                  transition
-                "
-              />
-
+              <div className="relative mt-4">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/60">⌕</span>
+                <input
+                  type="text"
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                  placeholder="Ara..."
+                  className="h-12 w-full rounded-2xl border border-white/15 bg-black/35 pl-11 pr-4 text-white outline-none transition focus:border-purple-500"
+                />
+              </div>
             </div>
 
-            {/* KONUŞMALAR */}
-
-            <div
-              className="
-                flex-1
-                overflow-y-auto
-                mt-5
-                space-y-3
-                pr-1
-              "
-            >
-
+            <div className="min-h-0 flex-1 overflow-y-auto">
               {loadingConversations ? (
-                <div className="flex items-center justify-center h-full">
-                  <p className="text-slate-500">
-                    Mesajlar yükleniyor...
-                  </p>
-                </div>
-              ) : filteredConversations.length > 0 ? (
-
-                filteredConversations.map(
-                  (conversation) => {
-                    const user =
-                      conversation.participant ??
-                      conversation.user ??
-                      null;
-
-                    const image =
-                      getProfileImage(
-                        user,
-                      );
-
-                    const isActive =
-                      String(
-                        selectedConversationId,
-                      ) ===
-                      String(
-                        conversation.id,
-                      );
-
-                    return (
-                      <button
-                        key={
-                          conversation.id
-                        }
-                        type="button"
-                        onClick={() =>
-                          openConversation(
-                            conversation,
-                          )
-                        }
-                        className={`
-                          w-full
-                          flex
-                          items-center
-                          gap-3
-                          p-3
-                          rounded-2xl
-                          border
-                          text-left
-                          transition
-                          ${
-                            isActive
-                              ? "bg-purple-600/20 border-purple-500/60"
-                              : "bg-black/20 border-white/10 hover:bg-white/5"
-                          }
-                        `}
-                      >
-
-                        {/* FOTOĞRAF */}
-
-                        {image ? (
-                          <img
-                            src={image}
-                            alt={getUserName(
-                              user,
-                            )}
-                            className="
-                              w-12
-                              h-12
-                              rounded-full
-                              object-cover
-                              shrink-0
-                            "
-                          />
-                        ) : (
-                          <div
-                            className="
-                              w-12
-                              h-12
-                              rounded-full
-                              shrink-0
-                              bg-gradient-to-br
-                              from-purple-500
-                              to-pink-500
-                              flex
-                              items-center
-                              justify-center
-                              font-bold
-                            "
-                          >
-                            {getUserName(
-                              user,
-                            )
-                              .charAt(0)
-                              .toUpperCase()}
-                          </div>
-                        )}
-
-                        {/* BİLGİ */}
-
-                        <div className="min-w-0 flex-1">
-
-                          <div className="flex items-center justify-between gap-2">
-
-                            <p className="font-semibold truncate">
-                              {getUserName(
-                                user,
-                              )}
-                            </p>
-
-                            {conversation.updatedAt && (
-                              <span className="text-[10px] text-slate-500 shrink-0">
-                                {formatTime(
-                                  conversation.updatedAt,
-                                )}
-                              </span>
-                            )}
-
-                          </div>
-
-                          <p className="text-xs text-slate-500 truncate mt-1">
-                            {conversation.lastMessage?.content ||
-                              "Henüz mesaj yok"}
-                          </p>
-
-                        </div>
-
-                      </button>
-                    );
-                  },
-                )
-
+                <div className="flex h-64 items-center justify-center text-white/50">Mesajlar yükleniyor...</div>
+              ) : filteredConversations.length ? (
+                filteredConversations.map((conversation) => {
+                  const user = conversation.participant ?? conversation.user ?? null;
+                  const isActive = String(selectedConversationId) === String(conversation.id);
+                  const last = conversation.lastMessage?.content || "Henüz mesaj yok";
+                  return (
+                    <button
+                      key={conversation.id}
+                      type="button"
+                      onClick={() => openConversation(conversation)}
+                      className={`flex w-full items-center gap-3 border-b border-white/[0.06] px-4 py-3 text-left transition ${isActive ? "bg-gradient-to-r from-purple-700/70 via-fuchsia-700/40 to-transparent ring-1 ring-inset ring-fuchsia-500" : "hover:bg-white/[0.05]"}`}
+                    >
+                      {avatar(user, "h-12 w-12")}
+                      <span className="min-w-0 flex-1">
+                        <span className="flex items-center justify-between gap-2">
+                          <span className="truncate font-black">{getUserName(user)}</span>
+                          <span className="text-xs text-white/45">{conversation.updatedAt ? formatTime(conversation.updatedAt) : ""}</span>
+                        </span>
+                        <span className="mt-1 flex items-center gap-1 truncate text-sm text-white/55">
+                          <span className="text-yellow-400">▮</span>{last}
+                        </span>
+                      </span>
+                      {conversation.unreadCount ? <span className="rounded-full bg-pink-500 px-2 py-0.5 text-xs font-black">{conversation.unreadCount}</span> : null}
+                    </button>
+                  );
+                })
               ) : (
-
-                <div className="h-full flex items-center justify-center">
-                  <p className="text-sm text-slate-500 text-center">
-                    Henüz mesajın yok
-                  </p>
+                <div className="flex h-64 flex-col items-center justify-center px-6 text-center text-white/50">
+                  <div className="mb-3 text-5xl">💬</div>
+                  <p className="font-bold">Henüz mesaj yok</p>
+                  <p className="mt-2 text-sm">Beğendiğin kişilerle eşleştiğinde burada konuşmalarını göreceksin.</p>
                 </div>
-
               )}
-
             </div>
 
-          </section>
+            <div className="border-t border-white/10 px-5 py-3 text-center text-sm text-white/60">
+              <span className="text-pink-500">♥</span> Toplam {filteredConversations.length || conversations.length} konuşma
+            </div>
+          </aside>
 
-          {/* =================================================
-              SAĞ SOHBET PANELİ
-              ================================================= */}
-
-          <section
-            className="
-              md:col-span-2
-              bg-slate-900/60
-              backdrop-blur-xl
-              border
-              border-white/20
-              rounded-[28px]
-              overflow-hidden
-              min-h-[520px]
-              md:h-[620px]
-              flex
-              flex-col
-            "
-          >
-
-            {activeUser ? (
+          {/* SAĞ SOHBET */}
+          <section className="flex min-h-[650px] flex-col overflow-hidden rounded-[26px] border border-purple-500/30 bg-[#050b20]/85 shadow-2xl shadow-black/20">
+            {activeConversation ? (
               <>
-
-                {/* SOHBET ÜST BAR */}
-
-                <div
-                  className="
-                    shrink-0
-                    px-5
-                    sm:px-6
-                    py-4
-                    border-b
-                    border-white/10
-                    bg-[#1a1d30]/80
-                    flex
-                    items-center
-                    gap-3
-                  "
-                >
-
-                  {getProfileImage(
-                    activeUser,
-                  ) ? (
-                    <img
-                      src={
-                        getProfileImage(
-                          activeUser,
-                        ) as string
-                      }
-                      alt={getUserName(
-                        activeUser,
-                      )}
-                      className="
-                        w-12
-                        h-12
-                        rounded-full
-                        object-cover
-                      "
-                    />
-                  ) : (
-                    <div
-                      className="
-                        w-12
-                        h-12
-                        rounded-full
-                        bg-gradient-to-br
-                        from-purple-500
-                        to-pink-500
-                        flex
-                        items-center
-                        justify-center
-                        font-bold
-                        text-lg
-                      "
-                    >
-                      {getUserName(
-                        activeUser,
-                      )
-                        .charAt(0)
-                        .toUpperCase()}
-                    </div>
-                  )}
-
-                  <div className="min-w-0">
-
-                    <h2 className="font-bold text-lg truncate">
-                      {getUserName(
-                        activeUser,
-                      )}
-                    </h2>
-
-                    {activeUser.city && (
-                      <p className="text-xs text-slate-500 mt-1">
-                        📍{" "}
-                        {safeString(
-                          activeUser.city,
-                        )}
-                      </p>
-                    )}
-
+                <div className="flex flex-wrap items-center gap-3 border-b border-white/10 p-4 sm:p-5">
+                  {avatar(activeUser, "h-14 w-14")}
+                  <div className="mr-auto min-w-[170px]">
+                    <h2 className="text-xl font-black sm:text-2xl">{activeName}</h2>
+                    <p className="text-sm text-white/65">{activeUser?.city ? `24 • ${activeCity}` : activeCity}</p>
                   </div>
-
+                  <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-sm font-bold text-emerald-400">● Çevrimiçi</span>
+                  <button type="button" className="hidden h-11 w-11 items-center justify-center rounded-full border border-white/10 text-2xl text-pink-400 hover:bg-white/10 sm:flex">♡</button>
+                  <button type="button" className="px-1 text-xl text-white/60">⋮</button>
+                  <button type="button" onClick={openVideo} className="rounded-full bg-gradient-to-r from-fuchsia-500 to-purple-600 px-5 py-3 text-sm font-black shadow-lg shadow-purple-600/30 transition hover:scale-[1.01] sm:text-base">👑 Premium ile Görüntülü Görüş</button>
                 </div>
 
-                {/* MESAJLAR */}
-
-                <div
-                  className="
-                    flex-1
-                    overflow-y-auto
-                    p-5
-                    sm:p-6
-                    space-y-3
-                  "
-                >
+                <div className="relative flex-1 overflow-y-auto bg-[radial-gradient(circle_at_60%_50%,rgba(79,70,229,.10),transparent_35%)] p-5 sm:p-8">
+                  <div className="mb-7 flex items-center gap-4 text-xs text-white/35"><span className="h-px flex-1 bg-white/10" />Bugün<span className="h-px flex-1 bg-white/10" /></div>
 
                   {loadingMessages ? (
-
-                    <div className="h-full flex items-center justify-center">
-                      <p className="text-slate-500">
-                        Mesajlar yükleniyor...
-                      </p>
-                    </div>
-
-                  ) : messages.length > 0 ? (
-
-                    messages.map(
-                      (message) => {
-                        const mine =
-                          Boolean(
-                            message.isMine,
-                          );
-
+                    <div className="flex h-56 items-center justify-center text-white/45">Mesajlar yükleniyor...</div>
+                  ) : messages.length ? (
+                    <div className="space-y-4">
+                      {messages.map((message) => {
+                        const mine = !!message.isMine;
                         return (
-                          <div
-                            key={
-                              message.id
-                            }
-                            className={`
-                              flex
-                              ${
-                                mine
-                                  ? "justify-end"
-                                  : "justify-start"
-                              }
-                            `}
-                          >
-
-                            <div
-                              className={`
-                                max-w-[80%]
-                                sm:max-w-[70%]
-                                rounded-2xl
-                                px-4
-                                py-3
-                                ${
-                                  mine
-                                    ? "bg-purple-600 text-white rounded-br-md"
-                                    : "bg-slate-800 text-slate-200 rounded-bl-md"
-                                }
-                              `}
-                            >
-
-                              <p className="text-sm whitespace-pre-wrap break-words">
-                                {safeString(
-                                  message.content,
-                                )}
-                              </p>
-
-                              {message.createdAt && (
-                                <p
-                                  className={`
-                                    text-[10px]
-                                    mt-1
-                                    ${
-                                      mine
-                                        ? "text-white/60"
-                                        : "text-slate-500"
-                                    }
-                                  `}
-                                >
-                                  {formatTime(
-                                    message.createdAt,
-                                  )}
-                                </p>
-                              )}
-
+                          <div key={message.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
+                            <div className={`max-w-[78%] rounded-[20px] px-5 py-3 ${mine ? "bg-gradient-to-br from-purple-600 to-fuchsia-600 shadow-lg shadow-purple-900/20" : "bg-[#17254b]"}`}>
+                              <div className="text-base leading-6">{message.content}</div>
+                              <div className="mt-1 text-right text-[11px] text-white/45">{message.createdAt ? formatTime(message.createdAt) : ""}{mine ? "  ✓✓" : ""}</div>
                             </div>
-
                           </div>
                         );
-                      },
-                    )
-
-                  ) : (
-
-                    <div className="h-full flex flex-col items-center justify-center text-center">
-
-                      <div className="text-5xl mb-4">
-                        💬
-                      </div>
-
-                      <p className="text-slate-400 font-semibold">
-                        Henüz mesaj yok
-                      </p>
-
-                      <p className="text-sm text-slate-600 mt-2">
-                        İlk mesajı sen gönder.
-                      </p>
-
+                      })}
                     </div>
-
+                  ) : (
+                    <div className="flex h-56 items-center justify-center text-white/40">Bu konuşmada henüz mesaj yok.</div>
                   )}
-
                 </div>
 
-                {/* HATA */}
+                {error && <div className="border-t border-red-500/20 bg-red-500/10 px-5 py-3 text-sm text-red-300">{error}</div>}
 
-                {error && (
-                  <div className="px-5">
-                    <div className="mb-3 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
-                      {error}
-                    </div>
-                  </div>
-                )}
-
-                {/* MESAJ YAZMA */}
-
-                <form
-                  onSubmit={
-                    handleSend
-                  }
-                  className="
-                    shrink-0
-                    p-4
-                    sm:p-5
-                    border-t
-                    border-white/10
-                    bg-[#1a1d30]/80
-                  "
-                >
-
+                <form onSubmit={handleSend} className="border-t border-white/10 bg-[#080e25] p-4 sm:p-5">
                   <div className="flex items-end gap-3">
-
+                    <button type="button" className="hidden h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-black/20 text-2xl sm:flex">☺</button>
                     <textarea
                       value={draft}
-                      onChange={(
-                        event,
-                      ) =>
-                        setDraft(
-                          event.target
-                            .value,
-                        )
-                      }
-                      onKeyDown={(
-                        event,
-                      ) => {
-                        if (
-                          event.key ===
-                            "Enter" &&
-                          !event.shiftKey
-                        ) {
+                      onChange={(event) => setDraft(event.target.value)}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter" && !event.shiftKey) {
                           event.preventDefault();
-
-                          if (
-                            draft.trim() &&
-                            !sending
-                          ) {
-                            event.currentTarget.form?.requestSubmit();
-                          }
+                          if (draft.trim() && !sending) event.currentTarget.form?.requestSubmit();
                         }
                       }}
                       placeholder="Mesajını yaz..."
                       rows={2}
                       disabled={sending}
-                      className="
-                        flex-1
-                        min-h-[56px]
-                        max-h-[130px]
-                        resize-none
-                        bg-black/40
-                        border
-                        border-white/20
-                        rounded-2xl
-                        px-4
-                        py-3
-                        text-white
-                        placeholder:text-slate-500
-                        focus:outline-none
-                        focus:border-purple-500
-                        transition
-                      "
+                      className="min-h-[58px] flex-1 resize-none rounded-2xl border border-white/15 bg-black/35 px-4 py-3 text-white outline-none transition focus:border-purple-500"
                     />
-
-                    <button
-                      type="submit"
-                      disabled={
-                        sending ||
-                        !draft.trim()
-                      }
-                      className="
-                        shrink-0
-                        h-14
-                        px-5
-                        sm:px-6
-                        rounded-2xl
-                        bg-purple-600
-                        hover:bg-purple-500
-                        disabled:bg-slate-700
-                        disabled:text-slate-500
-                        text-white
-                        font-bold
-                        transition
-                        disabled:cursor-not-allowed
-                      "
-                    >
-                      {sending
-                        ? "..."
-                        : "GÖNDER"}
-                    </button>
-
+                    <button type="submit" disabled={sending || !draft.trim()} className="h-14 shrink-0 rounded-2xl bg-gradient-to-r from-purple-600 to-fuchsia-500 px-6 font-black shadow-lg shadow-purple-700/20 disabled:cursor-not-allowed disabled:opacity-40">{sending ? "..." : "➤ GÖNDER"}</button>
                   </div>
-
-                  <p className="text-[10px] text-slate-600 mt-2 px-1">
-                    Enter ile gönder •
-                    Shift + Enter ile yeni satır
-                  </p>
-
+                  <p className="mt-2 pl-1 text-[10px] text-white/35">Enter ile gönder • Shift + Enter ile yeni satır</p>
                 </form>
-
               </>
-
             ) : (
-
-              /* SEÇİLİ KULLANICI YOK */
-
-              <div className="flex-1 flex items-center justify-center p-6">
-
-                <div className="text-center max-w-md">
-
-                  <div className="text-6xl mb-5">
-                    💬
-                  </div>
-
-                  <h2 className="text-xl sm:text-2xl font-bold text-slate-300">
-                    Sohbet başlat
-                  </h2>
-
-                  <p className="text-sm sm:text-base text-slate-500 mt-3">
-                    Sol taraftan bir konuşma seç veya bir profilden “Mesaj Gönder” seçeneğine tıkla.
-                  </p>
-
-                  {targetUserId &&
-                    !loadingConversations && (
-                      <p className="text-xs text-purple-400 mt-5">
-                        Kullanıcı bilgileri yükleniyor...
-                      </p>
-                    )}
-
+              <div className="flex flex-1 items-center justify-center p-8 text-center">
+                <div className="max-w-md">
+                  <div className="mb-5 text-6xl">💬</div>
+                  <h2 className="text-2xl font-black">Sohbet başlat</h2>
+                  <p className="mt-3 text-white/50">Sol taraftan bir konuşma seç. Eşleştiğin kişiyle mesajlaşmaya hemen başlayabilirsin.</p>
                 </div>
-
               </div>
-
             )}
-
           </section>
-
-        </div>
-
-        {/* =================================================
-            PREMIUM + BİREBİR CANLI GÖRÜŞME
-            ================================================= */}
-
-        <section
-          className="
-            max-w-3xl
-            mx-auto
-            mt-5
-            sm:mt-6
-            bg-gradient-to-b
-            from-purple-900/20
-            to-pink-900/10
-            backdrop-blur-xl
-            border
-            border-purple-500/30
-            rounded-[28px]
-            px-5
-            py-6
-            sm:p-7
-            text-center
-            shadow-2xl
-          "
-        >
-
-          <div className="inline-flex items-center gap-2 rounded-full border border-[#FFC000]/30 bg-[#FFC000]/10 px-4 py-1.5 text-xs font-bold text-[#FFC000]">
-            👑 PREMIUM ÖZELLİĞİ
-          </div>
-
-          <h2
-            className="
-              mt-4
-              text-lg
-              sm:text-2xl
-              font-bold
-              tracking-wide
-              text-transparent
-              bg-clip-text
-              bg-gradient-to-r
-              from-purple-400
-              to-pink-400
-              leading-snug
-            "
-          >
-            🎥 BEĞENİP EŞLEŞTİĞİN KİŞİYLE
-            <span className="block">
-              BİREBİR CANLI GÖRÜŞ
-            </span>
-          </h2>
-
-          <p
-            className="
-              text-sm
-              sm:text-base
-              leading-6
-              text-slate-400
-              mt-3
-              mb-5
-              max-w-2xl
-              mx-auto
-            "
-          >
-            Eşleştiğin kişiyle birebir canlı
-            görüntülü konuş. Bu özellik Premium
-            üyelerimize özeldir.
-          </p>
-
-          {!isPremium && (
-            <div className="mb-5 rounded-2xl border border-[#FFC000]/20 bg-[#FFC000]/5 px-4 py-3 text-sm text-white/80">
-              <span className="font-bold text-[#FFC000]">
-                👑 Premium'a geç
-              </span>{" "}
-              ve eşleştiğin kişilerle birebir canlı
-              görüntülü görüşmenin keyfini çıkar.
-            </div>
-          )}
-
-          <div className="max-w-md mx-auto">
-
-            <button
-              type="button"
-              onClick={() => {
-                if (!isPremium) {
-                  window.location.href = "/premium";
-                  return;
-                }
-
-                const width = 450;
-                const height = 650;
-
-                const left =
-                  Math.max(
-                    0,
-                    (
-                      window.screen
-                        .width -
-                      width
-                    ) / 2,
-                  );
-
-                const top =
-                  Math.max(
-                    0,
-                    (
-                      window.screen
-                        .height -
-                      height
-                    ) / 2,
-                  );
-
-                window.open(
-                  "/canavar-video",
-                  "EgeloveLivePopup",
-                  `width=${width},height=${height},top=${top},left=${left},resizable=no,scrollbars=no,status=no,location=no,toolbar=no,menubar=no`,
-                );
-              }}
-              className="
-                w-full
-                bg-gradient-to-r
-                from-purple-600
-                to-blue-500
-                hover:from-purple-500
-                hover:to-blue-400
-                text-white
-                font-bold
-                py-4
-                px-6
-                rounded-2xl
-                text-sm
-                tracking-wide
-                transition-all
-                shadow-lg
-                active:scale-[0.98]
-              "
-            >
-              {isPremium ? (
-                <>
-                  🚀 GÖRÜNTÜLÜ KONUŞMAYI
-                  BAŞLAT
-                </>
-              ) : (
-                <>
-                  👑 PREMIUM'A GEÇ
-                </>
-              )}
-            </button>
-
-          </div>
-
         </section>
 
+        {/* ALT PREMIUM CTA */}
+        <section className="mt-5 overflow-hidden rounded-[26px] border border-purple-500/50 bg-[radial-gradient(circle_at_12%_50%,rgba(168,85,247,.32),transparent_30%),linear-gradient(100deg,#17062d,#081129_55%,#071b49)] p-5 shadow-2xl sm:p-7">
+          <div className="grid items-center gap-6 lg:grid-cols-[260px_1fr_1fr_270px]">
+            <div className="hidden items-center justify-center lg:flex">
+              <div className="relative flex h-40 w-48 items-end justify-center rounded-[30px] bg-gradient-to-t from-purple-950/80 to-transparent">
+                <div className="absolute bottom-2 h-16 w-40 rounded-full bg-gradient-to-r from-purple-700 to-blue-600 shadow-[0_0_45px_rgba(139,92,246,.65)]" />
+                <div className="relative mb-10 text-7xl drop-shadow-[0_0_20px_rgba(255,192,0,.55)]">👑</div>
+              </div>
+            </div>
+            <div>
+              <h2 className="text-3xl font-black leading-tight">Bu ve daha fazlası için</h2>
+              <h3 className="mt-1 text-4xl font-black text-transparent bg-gradient-to-r from-fuchsia-400 to-pink-500 bg-clip-text">Premium’a geç!</h3>
+              <p className="mt-4 max-w-xl text-base leading-7 text-white/65">Canlı görüntülü görüşme, okundu bilgisi, profilini öne çıkarma, reklamsız kullanım ve daha birçok avantaj seni bekliyor.</p>
+            </div>
+            <ul className="space-y-3 text-base text-white/85">
+              {["Sınırsız görüntülü görüşme", "Okundu bilgisi", "Profilini öne çıkar", "Reklamsız kullanım", "Özel filtreler ve daha fazlası"].map((item) => (
+                <li key={item} className="flex items-center gap-3"><span className="flex h-5 w-5 items-center justify-center rounded-full bg-purple-600 text-xs font-black">✓</span>{item}</li>
+              ))}
+            </ul>
+            <div>
+              <button type="button" onClick={goPremium} className="w-full rounded-full bg-gradient-to-r from-[#ffc000] to-[#ffb000] px-5 py-4 text-lg font-black text-black shadow-xl shadow-yellow-500/20 transition hover:scale-[1.01]">👑 PREMIUM’A GEÇ</button>
+              <p className="mt-4 text-center text-sm text-white/55">♡ Güvenli ve hızlı ödeme</p>
+            </div>
+          </div>
+        </section>
       </main>
-
     </div>
   );
 }
@@ -2711,10 +2149,8 @@ export default function MessagesPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-[#121420] text-white flex items-center justify-center">
-          <div className="text-slate-400 font-semibold">
-            Mesajlar yükleniyor...
-          </div>
+        <div className="flex min-h-screen items-center justify-center bg-[#020817] text-white">
+          <div className="font-semibold text-white/50">Mesajlar yükleniyor...</div>
         </div>
       }
     >
