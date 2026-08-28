@@ -476,6 +476,7 @@ function MessagesContent() {
 
   const [error, setError] =
     useState("");
+    const [isPremium, setIsPremium] = useState(false);
 
   const [search, setSearch] =
     useState("");
@@ -863,6 +864,50 @@ function MessagesContent() {
   }, [
     loadConversations,
   ]);
+
+  /* =======================================================
+     PREMIUM DURUMU
+     ======================================================= */
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadPremiumStatus = async () => {
+      try {
+        const me = await apiRequest<any>(
+          "/users/me",
+        );
+
+        if (cancelled) return;
+
+        const premiumExpiresAt =
+          me?.premiumExpiresAt;
+
+        const premium =
+          !!premiumExpiresAt &&
+          new Date(
+            premiumExpiresAt,
+          ).getTime() > Date.now();
+
+        setIsPremium(premium);
+      } catch (err) {
+        console.error(
+          "Premium durumu alınamadı:",
+          err,
+        );
+
+        if (!cancelled) {
+          setIsPremium(false);
+        }
+      }
+    };
+
+    loadPremiumStatus();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   /* =======================================================
      AKTİF KONUŞMA
@@ -2502,8 +2547,7 @@ function MessagesContent() {
         </div>
 
         {/* =================================================
-            CANLI GÖRÜNTÜLÜ SOHBET
-            BURAYA DOKUNMADIM
+            PREMIUM + BİREBİR CANLI GÖRÜŞME
             ================================================= */}
 
         <section
@@ -2527,8 +2571,13 @@ function MessagesContent() {
           "
         >
 
+          <div className="inline-flex items-center gap-2 rounded-full border border-[#FFC000]/30 bg-[#FFC000]/10 px-4 py-1.5 text-xs font-bold text-[#FFC000]">
+            👑 PREMIUM ÖZELLİĞİ
+          </div>
+
           <h2
             className="
+              mt-4
               text-lg
               sm:text-2xl
               font-bold
@@ -2541,8 +2590,10 @@ function MessagesContent() {
               leading-snug
             "
           >
-            🛰️ CANLI GÖRÜNTÜLÜ SOHBET
-            ODALARI
+            🎥 BEĞENİP EŞLEŞTİĞİN KİŞİYLE
+            <span className="block">
+              BİREBİR CANLI GÖRÜŞ
+            </span>
           </h2>
 
           <p
@@ -2557,17 +2608,31 @@ function MessagesContent() {
               mx-auto
             "
           >
-            Güvenli görüntülü sohbet
-            odalarına geçerek yeni
-            insanlarla canlı olarak
-            tanışabilirsin.
+            Eşleştiğin kişiyle birebir canlı
+            görüntülü konuş. Bu özellik Premium
+            üyelerimize özeldir.
           </p>
+
+          {!isPremium && (
+            <div className="mb-5 rounded-2xl border border-[#FFC000]/20 bg-[#FFC000]/5 px-4 py-3 text-sm text-white/80">
+              <span className="font-bold text-[#FFC000]">
+                👑 Premium'a geç
+              </span>{" "}
+              ve eşleştiğin kişilerle birebir canlı
+              görüntülü görüşmenin keyfini çıkar.
+            </div>
+          )}
 
           <div className="max-w-md mx-auto">
 
             <button
               type="button"
               onClick={() => {
+                if (!isPremium) {
+                  window.location.href = "/premium";
+                  return;
+                }
+
                 const width = 450;
                 const height = 650;
 
@@ -2616,8 +2681,16 @@ function MessagesContent() {
                 active:scale-[0.98]
               "
             >
-              🚀 GÖRÜNTÜLÜ KONUŞMAYI
-              BAŞLAT
+              {isPremium ? (
+                <>
+                  🚀 GÖRÜNTÜLÜ KONUŞMAYI
+                  BAŞLAT
+                </>
+              ) : (
+                <>
+                  👑 PREMIUM'A GEÇ
+                </>
+              )}
             </button>
 
           </div>
