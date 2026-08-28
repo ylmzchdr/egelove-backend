@@ -9,26 +9,25 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://egelove.tr"),
 
   title: {
-    default: "Egelove | Ege ve Akdeniz’in Arkadaşlık Platformu",
-    template: "%s | Egelove",
-  },
-
-  description:
-    "Egelove, Ege ve Akdeniz bölgesinde yeni insanlarla tanışmak, arkadaşlık kurmak ve güvenli bağlantılar oluşturmak isteyenler için modern bir arkadaşlık platformudur.",
-
+  default: "EgeLove | Türkiye'nin Arkadaşlık ve Tanışma Platformu",
+  template: "%s | EgeLove",
+},
+ description:
+  "EgeLove, Türkiye'nin 81 ilinden yeni insanlarla tanışmak, arkadaşlık kurmak ve güvenli bağlantılar oluşturmak için modern bir arkadaşlık platformudur.",
   keywords: [
-    "Egelove",
-    "arkadaşlık sitesi",
-    "tanışma sitesi",
-    "Ege arkadaşlık",
-    "Akdeniz arkadaşlık",
-    "Muğla arkadaşlık",
-    "Fethiye arkadaşlık",
-    "İzmir arkadaşlık",
-    "Antalya arkadaşlık",
-    "Aydın arkadaşlık",
-    "Mersin arkadaşlık",
-  ],
+  "EgeLove",
+  "arkadaşlık sitesi",
+  "tanışma sitesi",
+  "Türkiye arkadaşlık sitesi",
+  "Türkiye tanışma sitesi",
+  "online arkadaşlık",
+  "yeni insanlarla tanışma",
+  "arkadaş bulma",
+  "81 il arkadaşlık",
+  "81 il tanışma",
+  "şehir bazlı arkadaşlık",
+  "güvenli arkadaşlık sitesi",
+],
 
   applicationName: "Egelove",
   authors: [{ name: "Egelove" }],
@@ -56,9 +55,9 @@ export const metadata: Metadata = {
     locale: "tr_TR",
     url: "https://egelove.tr",
     siteName: "Egelove",
-    title: "Egelove | Ege ve Akdeniz’in Arkadaşlık Platformu",
-    description:
-      "Ege ve Akdeniz bölgesinde yeni insanlarla tanışmak, arkadaşlık kurmak ve güvenli bağlantılar oluşturmak için Egelove.",
+   title: "EgeLove | Türkiye'nin Arkadaşlık ve Tanışma Platformu",
+description:
+  "Türkiye'nin 81 ilinden yeni insanlarla tanış, arkadaşlık kur ve güvenli bağlantılar oluştur. EgeLove'da seni bekleyen insanları keşfet.",
     images: [
       {
         url: "/og-image.jpg",
@@ -71,9 +70,9 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary_large_image",
-    title: "Egelove | Ege ve Akdeniz’in Arkadaşlık Platformu",
-    description:
-      "Ege ve Akdeniz bölgesinde yeni insanlarla tanışmak için modern arkadaşlık platformu.",
+    title: "EgeLove | Türkiye'nin Arkadaşlık ve Tanışma Platformu",
+description:
+  "Türkiye'nin 81 ilinden yeni insanlarla tanışmak ve arkadaşlık kurmak için modern arkadaşlık platformu.",
     images: ["/og-image.jpg"],
   },
 
@@ -101,7 +100,7 @@ export default function RootLayout({
         name: "Egelove",
         url: "https://egelove.tr",
         description:
-          "Ege ve Akdeniz bölgesinde yeni insanlarla tanışmak ve arkadaşlık kurmak için modern platform.",
+  "Türkiye'nin 81 ilinden yeni insanlarla tanışmak ve arkadaşlık kurmak için modern arkadaşlık platformu.",
         inLanguage: "tr-TR",
         publisher: {
           "@type": "Organization",
