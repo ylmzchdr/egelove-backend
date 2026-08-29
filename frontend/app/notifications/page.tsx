@@ -2,7 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import { Bell, ArrowLeft, Loader2, CheckCircle2 } from "lucide-react";
-
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://egelove-backend.onrender.com";
 // 🛰️ APAR TOPAR TASARIMLARI ENGELLEYEN VE MOR EKRAN BARAJINI YIKAN VIP VERİ SETİ
 interface NotificationItem {
   id: string;
@@ -20,35 +22,41 @@ export default function NotificationsPage() {
 
   // 🧪 BARAJ KIRICI EMNEYET FONKSİYONU
   async function loadNotifications() {
-    try {
-      setLoading(true);
-      setError(null);
+  try {
+    setLoading(true);
+    setError(null);
 
-      // Veri tabanı kapalı veya şifreler kopuk olsa bile mor hata ekranına düşürmeyen VIP yedek veri akışı
-      setNotifications([
-        { 
-          id: "1", 
-          title: "sabrina (Muğla)", 
-                    message: "Az önce profilini inceledi ve sana kalıcı bir beğeni bıraktı! Görüntülü sohbet odalarında seninle eşleşmek için tetikte bekliyor.",
+    const accessToken = localStorage.getItem("accessToken");
 
-          isRead: false, 
-          createdAt: new Date().toISOString() 
-        },
-        { 
-          id: "2", 
-          title: "Sistem Güncellemesi", 
-          message: "WebRTC bağımsız fırlatma rampası, o kısırdöngü kilitleri tamamen kırılarak canlıda %100 başarıyla aktif edildi. Rota boru hatları kaya gibi sağlam.", 
-          isRead: true, 
-          createdAt: new Date().toISOString() 
-        }
-      ]);
-    } catch (err) {
-      console.error("Notifications fetch error bypassed:", err);
-    } finally {
-      setLoading(false);
+    if (!accessToken) {
+      setError("Oturum bulunamadı.");
+      return;
     }
-  }
 
+    const res = await fetch(`${API_URL}/notifications`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      cache: "no-store",
+    });
+
+    if (!res.ok) {
+      throw new Error(`Bildirimler alınamadı: ${res.status}`);
+    }
+
+    const data = await res.json();
+
+    setNotifications(Array.isArray(data) ? data : []);
+  } catch (err) {
+    console.error("Notifications fetch error:", err);
+    setError("Bildirimler yüklenemedi.");
+    setNotifications([]);
+  } finally {
+    setLoading(false);
+  }
+}
   // 📝 OKUNDU İŞARETLEME MOTORLARI (ORİJİNAL ŞASİ KORUNDU)
   async function markAsRead(id: string) {
     setNotifications((prev) =>
