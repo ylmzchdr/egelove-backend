@@ -11,7 +11,7 @@ import { Server, Socket } from "socket.io";
 import { JwtService } from "@nestjs/jwt";
 import { PrismaService } from "../prisma/prisma.service";
 import { jwtConstants } from "../common/constants";
-
+import { NotificationsService } from "../notifications/notifications.service";
 @WebSocketGateway({
   cors: { origin: process.env.CORS_ORIGIN || "http://localhost:3001", credentials: true },
   namespace: "/chat",
@@ -21,9 +21,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 server!: Server;
 
   constructor(
-    private jwtService: JwtService,
-    private prisma: PrismaService,
-  ) {}
+  private jwtService: JwtService,
+  private prisma: PrismaService,
+  private notificationsService: NotificationsService,
+) {}
 
   async handleConnection(client: Socket) {
     try {
@@ -75,7 +76,13 @@ server!: Server;
       data: { content: data.content, senderId: userId, conversationId: data.conversationId },
       include: { sender: { select: { id: true, name: true, avatar: true } } },
     });
-
+await this.notificationsService.createNotification({
+  userId: receiverId,
+  type: "message",
+  title: `${message.sender.name} sana yeni bir mesaj gönderdi`,
+  message: data.content,
+  relatedUserId: userId,
+});
     this.server.to(`user:${receiverId}`).emit("message:new", message);
     client.emit("message:sent", message);
   }

@@ -11,7 +11,23 @@ export class NotificationsService {
       orderBy: { createdAt: "desc" },
     });
   }
-
+async createNotification(data: {
+  userId: string;
+  type: string;
+  title: string;
+  message: string;
+  relatedUserId?: string;
+}) {
+  return this.prisma.notification.create({
+    data: {
+      userId: data.userId,
+      type: data.type,
+      title: data.title,
+      message: data.message,
+      relatedUserId: data.relatedUserId,
+    },
+  });
+}
   async markAsRead(userId: string, notificationId: string) {
     return this.prisma.notification.updateMany({
       where: {
