@@ -322,7 +322,7 @@ export default function SettingsPage() {
 
   return (
     <div
-      className="min-h-screen bg-[#e8eef6] text-slate-900 dark:bg-[#080b14] dark:text-white"
+      className="min-h-screen bg-[#080b14] text-white"
       dir={lang === "AR" ? "rtl" : "ltr"}
     >
       <div className="lg:hidden">
@@ -336,7 +336,7 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        <main className="relative min-w-0 flex-1 overflow-hidden bg-[radial-gradient(circle_at_10%_5%,rgba(56,189,248,0.12),transparent_28%),radial-gradient(circle_at_92%_14%,rgba(217,70,239,0.12),transparent_30%),linear-gradient(135deg,#e9f1f8_0%,#f7f4fb_48%,#e9eef7_100%)] dark:bg-[radial-gradient(circle_at_10%_5%,rgba(56,189,248,0.09),transparent_28%),radial-gradient(circle_at_92%_14%,rgba(217,70,239,0.09),transparent_30%),linear-gradient(135deg,#070a12_0%,#0d101a_52%,#090c15_100%)]">
+        <main className="relative min-w-0 flex-1 overflow-hidden bg-[radial-gradient(circle_at_10%_5%,rgba(56,189,248,0.09),transparent_28%),radial-gradient(circle_at_92%_14%,rgba(217,70,239,0.09),transparent_30%),linear-gradient(135deg,#070a12_0%,#0d101a_52%,#090c15_100%)]">
           <div
             aria-hidden="true"
             className="pointer-events-none absolute -left-40 -top-48 h-[500px] w-[500px] rounded-full bg-pink-500/[0.13] blur-[130px]"
