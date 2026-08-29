@@ -168,17 +168,55 @@ console.log("🔑 ACCESS TOKEN:", res?.accessToken);
     setLoading(true);
 
     try {
-      const res: any = await api.auth.register({
-        name: registerData.name,
-        username: registerData.username,
-        email: registerData.email,
-        password: registerData.password,
-        birthDate: registerData.birthDate || "2000-01-01",
-        gender: registerData.gender || "OTHER",
-        city: registerData.city || "",
-        district: registerData.district || "",
-        turnstileToken: "demo-token",
-      });
+     if (!registerData.city || !registerData.district) {
+  alert("Lütfen şehir ve ilçe seçin");
+  return;
+}
+
+const cities: any[] = await api.cities.list();
+
+const selectedCity = cities.find(
+  (city) =>
+    String(city.name).trim().toLocaleLowerCase("tr-TR") ===
+    registerData.city.trim().toLocaleLowerCase("tr-TR")
+);
+
+if (!selectedCity) {
+  throw new Error("Seçilen şehir bulunamadı.");
+}
+
+const districts: any[] = await api.cities.districts(
+  Number(selectedCity.id)
+);
+
+const selectedDistrict = districts.find(
+  (district) =>
+    String(district.name).trim().toLocaleLowerCase("tr-TR") ===
+    registerData.district.trim().toLocaleLowerCase("tr-TR")
+);
+
+if (!selectedDistrict) {
+  throw new Error("Seçilen ilçe, seçilen şehre ait değil.");
+}
+
+console.log("KAYIT KONUMU:", {
+  city: selectedCity.name,
+  cityId: selectedCity.id,
+  district: selectedDistrict.name,
+  districtId: selectedDistrict.id,
+});
+
+const res: any = await api.auth.register({
+  name: registerData.name,
+  username: registerData.username,
+  email: registerData.email,
+  password: registerData.password,
+  birthDate: registerData.birthDate || "2000-01-01",
+  gender: registerData.gender || "OTHER",
+  cityId: Number(selectedCity.id),
+  districtId: Number(selectedDistrict.id),
+  turnstileToken: "demo-token",
+});
 
       localStorage.setItem("accessToken", res.accessToken);
       localStorage.setItem("refreshToken", res.refreshToken);

@@ -3,6 +3,8 @@ import {
   IsString,
   MinLength,
   IsOptional,
+  IsInt,
+  IsPositive,
 } from "class-validator";
 
 export class RegisterDto {
@@ -20,6 +22,14 @@ export class RegisterDto {
   @IsString()
   @MinLength(8)
   password!: string;
+
+  @IsInt()
+  @IsPositive()
+  cityId!: number;
+
+  @IsInt()
+  @IsPositive()
+  districtId!: number;
 
   @IsOptional()
   @IsString()
