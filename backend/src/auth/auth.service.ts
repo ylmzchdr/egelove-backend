@@ -67,41 +67,39 @@ export class AuthService {
        * üzerinden doğruluyoruz.
        */
 
-      const cityName = dto.city?.trim();
-      const districtName = dto.district?.trim();
+ const cityId = Number(dto.cityId);
+const districtId = Number(dto.districtId);
 
-      if (!cityName || !districtName) {
-        throw new BadRequestException(
-          "Lütfen şehir ve ilçe seçin.",
-        );
-      }
+if (!Number.isInteger(cityId) || cityId <= 0) {
+  throw new BadRequestException("Geçerli bir şehir seçin.");
+}
 
-      const city = await this.prisma.city.findFirst({
-        where: {
-          name: cityName,
-        },
-      });
+if (!Number.isInteger(districtId) || districtId <= 0) {
+  throw new BadRequestException("Geçerli bir ilçe seçin.");
+}
 
-      if (!city) {
-        throw new BadRequestException(
-          "Seçilen şehir bulunamadı.",
-        );
-      }
+const city = await this.prisma.city.findUnique({
+  where: {
+    id: cityId,
+  },
+});
 
-      const district =
-        await this.prisma.district.findFirst({
-          where: {
-            name: districtName,
-            cityId: city.id,
-          },
-        });
+if (!city) {
+  throw new BadRequestException("Seçilen şehir bulunamadı.");
+}
 
-      if (!district) {
-        throw new BadRequestException(
-          "Seçilen ilçe, seçilen şehre ait değil.",
-        );
-      }
+const district = await this.prisma.district.findFirst({
+  where: {
+    id: districtId,
+    cityId,
+  },
+});
 
+if (!district) {
+  throw new BadRequestException(
+    "Seçilen ilçe, seçilen şehre ait değil.",
+  );
+}
       const passwordHash = await argon2.hash(
         dto.password,
       );
@@ -130,8 +128,9 @@ export class AuthService {
             ? new Date(dto.birthDate)
             : new Date("2000-01-01"),
 
-          gender: dto.gender || "OTHER",
-
+        gender: dto.gender
+  ? dto.gender as "MALE" | "FEMALE" | "OTHER"
+  : "OTHER",
           cityId: city.id,
           districtId: district.id,
 

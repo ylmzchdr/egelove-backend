@@ -23,6 +23,14 @@ export class RegisterDto {
   @MinLength(8)
   password!: string;
 
+  @IsOptional()
+  @IsString()
+  birthDate?: string;
+
+  @IsOptional()
+  @IsString()
+  gender?: string;
+
   @IsInt()
   @IsPositive()
   cityId!: number;
