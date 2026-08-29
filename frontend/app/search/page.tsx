@@ -426,12 +426,6 @@ setHasSearched(true);
 
         </div>
       </div>
-      <Link
-  href="/dashboard"
-  className="mt-3 inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2 text-xs font-bold text-slate-400 transition-all duration-200 hover:border-cyan-400/30 hover:bg-cyan-400/[0.06] hover:text-white"
->
-  ← Anasayfaya Dön
-</Link>
 
       {/* ------------------------------------------------ */}
       {/* ARAMA */}
@@ -455,6 +449,12 @@ setHasSearched(true);
             />
 
           </div>
+                <Link
+        href="/dashboard"
+        className="mx-auto mt-3 inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2 text-sm font-semibold text-white/70 transition-all duration-200 hover:border-cyan-400/30 hover:bg-cyan-400/[0.06] hover:text-cyan-300"
+      >
+        ← Anasayfaya Dön
+      </Link>
 
           {/* ARAMA BUTONU */}
 
