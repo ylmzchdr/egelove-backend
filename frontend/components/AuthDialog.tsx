@@ -125,6 +125,8 @@ const [loginData, setLoginData] = useState({ emailOrPhone: "", password: "" });
     setLoading(true);
     try {
       const res: any = await api.auth.login(loginData);
+      console.log("🔐 LOGIN RESPONSE:", res);
+console.log("🔑 ACCESS TOKEN:", res?.accessToken);
       localStorage.setItem("accessToken", res.accessToken);
       localStorage.setItem("refreshToken", res.refreshToken);
       localStorage.setItem(

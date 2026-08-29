@@ -9,6 +9,7 @@ import React, {
 } from "react";
 import { useSearchParams } from "next/navigation";
 import { useI18n } from "@/lib/i18n-context";
+import { api } from "@/lib/api";
 /* =========================================================
    TİPLER
    ========================================================= */
@@ -39,12 +40,6 @@ type Conversation = {
   unreadCount?: number;
 };
 /* =========================================================
-   API
-   ========================================================= */
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  "https://egelove-backend.onrender.com";
-/* =========================================================
    TOKEN
    ========================================================= */
 function getAccessToken(): string | null {
@@ -53,34 +48,6 @@ function getAccessToken(): string | null {
   }
 
   return localStorage.getItem("accessToken");
-}
-
-function getRefreshToken(): string | null {
-  if (typeof window === "undefined") {
-    return null;
-  }
-
-  return localStorage.getItem("refreshToken");
-}
-
-function saveTokens(data: any) {
-  if (typeof window === "undefined") {
-    return;
-  }
-
-  if (data?.accessToken) {
-    localStorage.setItem(
-      "accessToken",
-      String(data.accessToken),
-    );
-  }
-
-  if (data?.refreshToken) {
-    localStorage.setItem(
-      "refreshToken",
-      String(data.refreshToken),
-    );
-  }
 }
 
 /* =========================================================
@@ -326,115 +293,6 @@ function normalizeMessage(
         : undefined,
     isMine,
   };
-}
-
-/* =========================================================
-   API REQUEST
-   ========================================================= */
-
-async function apiRequest<T>(
-  path: string,
-  options: RequestInit = {},
-): Promise<T> {
-  const makeRequest = async (
-    token: string | null,
-  ) => {
-    return fetch(
-      `${API_URL}${path}`,
-      {
-        ...options,
-        headers: {
-          "Content-Type":
-            "application/json",
-
-          ...(token
-            ? {
-                Authorization:
-                  `Bearer ${token}`,
-              }
-            : {}),
-
-          ...(options.headers || {}),
-        },
-      },
-    );
-  };
-
-  let token = getAccessToken();
-
-  let response =
-    await makeRequest(token);
-
-  /*
-   * Access token süresi bittiyse
-   * refresh token ile yenile.
-   */
-  if (response.status === 401) {
-    const refreshToken =
-      getRefreshToken();
-
-    if (!refreshToken) {
-      throw new Error(
-        "Oturum bulunamadı. Lütfen tekrar giriş yapın.",
-      );
-    }
-
-    const refreshResponse =
-      await fetch(
-        `${API_URL}/auth/refresh`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
-          body: JSON.stringify({
-            refreshToken,
-          }),
-        },
-      );
-
-    if (!refreshResponse.ok) {
-      localStorage.removeItem(
-        "accessToken",
-      );
-
-      localStorage.removeItem(
-        "refreshToken",
-      );
-
-      throw new Error(
-        "Oturum süresi dolmuş. Lütfen tekrar giriş yapın.",
-      );
-    }
-
-    const refreshData =
-      await refreshResponse.json();
-
-    saveTokens(refreshData);
-
-    token =
-      refreshData?.accessToken ??
-      null;
-
-    response =
-      await makeRequest(token);
-  }
-
-  if (!response.ok) {
-    const error =
-      await response
-        .json()
-        .catch(() => null);
-
-    throw new Error(
-      safeString(error?.message) ||
-        safeString(error?.error) ||
-        `HTTP ${response.status}`,
-    );
-  }
-
-  return response.json();
 }
 
 /* =========================================================
@@ -721,10 +579,8 @@ function MessagesContent() {
         setLoadingConversations(true);
         setError("");
 
-        const data =
-          await apiRequest<any>(
-            "/conversations",
-          );
+        const data: any =
+          await api.conversations.list();
 
         let list: any[] = [];
 
@@ -805,10 +661,8 @@ function MessagesContent() {
           setLoadingMessages(true);
           setError("");
 
-          const data =
-            await apiRequest<any>(
-              `/conversations/${conversationId}/messages`,
-            );
+          const data: any =
+            await api.conversations.messages(conversationId);
 
           let list: any[] = [];
 
@@ -927,9 +781,7 @@ function MessagesContent() {
 
     const loadPremiumStatus = async () => {
       try {
-        const me = await apiRequest<any>(
-          "/users/me",
-        );
+        const me = await api.users.me();
 
         if (cancelled) return;
 
@@ -1231,16 +1083,7 @@ function MessagesContent() {
          */
         try {
           const created =
-            await apiRequest<any>(
-              "/conversations",
-              {
-                method: "POST",
-                body: JSON.stringify({
-                  userId:
-                    normalizedUser.id,
-                }),
-              },
-            );
+            await api.conversations.create(normalizedUser.id);
 
           const conversationId =
             created?.id ??
@@ -1489,9 +1332,7 @@ function MessagesContent() {
 
           try {
             const user =
-              await apiRequest<any>(
-                `/users/${targetUserId}`,
-              );
+              await api.users.get(String(targetUserId));
 
             const normalized =
               normalizeUser({
@@ -1525,16 +1366,7 @@ function MessagesContent() {
            * Konuşmayı oluştur.
            */
           const created =
-            await apiRequest<any>(
-              "/conversations",
-              {
-                method: "POST",
-                body: JSON.stringify({
-                  userId:
-                    targetUser.id,
-                }),
-              },
-            );
+            await api.conversations.create(targetUser.id);
 
           if (cancelled) {
             return;
@@ -1705,15 +1537,7 @@ function MessagesContent() {
       setError("");
 
       const sent =
-        await apiRequest<any>(
-          `/conversations/${selectedConversationId}/messages`,
-          {
-            method: "POST",
-            body: JSON.stringify({
-              content,
-            }),
-          },
-        );
+        await api.conversations.send(selectedConversationId, content);
 
       const currentUserId =
         getCurrentUserId();

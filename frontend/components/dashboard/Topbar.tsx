@@ -9,12 +9,12 @@ import {
   LogOut,
   Menu,
   MessageCircle,
-  Moon,
+
   Search,
   Settings,
   ShieldCheck,
   Sparkles,
-  Sun,
+
   UserRound,
   X,
 } from "lucide-react";
@@ -34,7 +34,12 @@ type TopbarProps = {
   onOpenMobileMenu?: () => void;
 };
 
-type ActivePanel = "notifications" | "messages" | "language" | "profile" | null;
+type ActivePanel =
+  | "notifications"
+  | "messages"
+  | "language"
+  | "profile"
+  | null;
 
 type ThemeMode = "dark" | "light";
 
@@ -82,17 +87,25 @@ export default function Topbar({
   const router = useRouter();
   const { lang, setLang } = useI18n();
 
-  const [activePanel, setActivePanel] = useState<ActivePanel>(null);
-  const [searchValue, setSearchValue] = useState("");
-  const [theme, setTheme] = useState<ThemeMode>("dark");
+  const [activePanel, setActivePanel] =
+    useState<ActivePanel>(null);
 
-  const topbarRef = useRef<HTMLDivElement>(null);
+  const [searchValue, setSearchValue] =
+    useState("");
+
+  const [theme, setTheme] =
+    useState<ThemeMode>("dark");
+
+  const topbarRef =
+    useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const storedTheme = localStorage.getItem("egelove-theme");
+    const storedTheme =
+      localStorage.getItem("egelove-theme");
 
     const initialTheme: ThemeMode =
-      storedTheme === "light" || storedTheme === "dark"
+      storedTheme === "light" ||
+      storedTheme === "dark"
         ? storedTheme
         : "dark";
 
@@ -107,41 +120,66 @@ export default function Topbar({
       "light",
       initialTheme === "light",
     );
-
   }, []);
 
   useEffect(() => {
-    const handleOutsideClick = (event: MouseEvent) => {
+    const handleOutsideClick = (
+      event: MouseEvent,
+    ) => {
       if (
         topbarRef.current &&
-        !topbarRef.current.contains(event.target as Node)
+        !topbarRef.current.contains(
+          event.target as Node,
+        )
       ) {
         setActivePanel(null);
       }
     };
 
-    const handleEscape = (event: KeyboardEvent) => {
+    const handleEscape = (
+      event: KeyboardEvent,
+    ) => {
       if (event.key === "Escape") {
         setActivePanel(null);
       }
     };
 
-    document.addEventListener("mousedown", handleOutsideClick);
-    document.addEventListener("keydown", handleEscape);
+    document.addEventListener(
+      "mousedown",
+      handleOutsideClick,
+    );
+
+    document.addEventListener(
+      "keydown",
+      handleEscape,
+    );
 
     return () => {
-      document.removeEventListener("mousedown", handleOutsideClick);
-      document.removeEventListener("keydown", handleEscape);
+      document.removeEventListener(
+        "mousedown",
+        handleOutsideClick,
+      );
+
+      document.removeEventListener(
+        "keydown",
+        handleEscape,
+      );
     };
   }, []);
 
-  const togglePanel = (panel: Exclude<ActivePanel, null>) => {
+  const togglePanel = (
+    panel: Exclude<ActivePanel, null>,
+  ) => {
     setActivePanel((currentPanel) =>
-      currentPanel === panel ? null : panel,
+      currentPanel === panel
+        ? null
+        : panel,
     );
   };
 
-  const handleSearch = (event: FormEvent<HTMLFormElement>) => {
+  const handleSearch = (
+    event: FormEvent<HTMLFormElement>,
+  ) => {
     event.preventDefault();
 
     const query = searchValue.trim();
@@ -151,15 +189,25 @@ export default function Topbar({
       return;
     }
 
-    router.push(`/search?q=${encodeURIComponent(query)}`);
+    router.push(
+      `/search?q=${encodeURIComponent(query)}`,
+    );
+
     setActivePanel(null);
   };
 
   const handleThemeChange = () => {
-    const nextTheme: ThemeMode = theme === "dark" ? "light" : "dark";
+    const nextTheme: ThemeMode =
+      theme === "dark"
+        ? "light"
+        : "dark";
 
     setTheme(nextTheme);
-    localStorage.setItem("egelove-theme", nextTheme);
+
+    localStorage.setItem(
+      "egelove-theme",
+      nextTheme,
+    );
 
     document.documentElement.classList.toggle(
       "dark",
@@ -172,7 +220,9 @@ export default function Topbar({
     );
   };
 
-  const handleLanguageChange = (languageCode: Lang) => {
+  const handleLanguageChange = (
+    languageCode: Lang,
+  ) => {
     setLang(languageCode);
     setActivePanel(null);
   };
@@ -187,8 +237,10 @@ export default function Topbar({
 
     document.cookie =
       "accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+
     document.cookie =
       "refreshToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+
     document.cookie =
       "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
 
@@ -198,7 +250,8 @@ export default function Topbar({
 
   const currentLanguage =
     languages.find(
-      (language) => language.code === lang,
+      (language) =>
+        language.code === lang,
     ) || languages[0];
 
   return (
@@ -212,18 +265,23 @@ export default function Topbar({
       />
 
       <div className="flex items-center gap-2.5">
+        {/* MOBİL MENÜ */}
         <button
           type="button"
           onClick={onOpenMobileMenu}
           aria-label="Menüyü aç"
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/[0.07] bg-white/[0.035] text-slate-300 transition-all duration-300 hover:border-pink-400/20 hover:bg-pink-400/[0.07] hover:text-pink-300 lg:hidden"
         >
-          <Menu className="h-5 w-5" strokeWidth={1.9} />
+          <Menu
+            className="h-5 w-5"
+            strokeWidth={1.9}
+          />
         </button>
 
+        {/* ARAMA */}
         <form
           onSubmit={handleSearch}
-          className="group relative hidden min-w-0 flex-1 md:block"
+         className="group relative hidden min-w-0 flex-1 md:block md:max-w-[420px] lg:max-w-[450px] xl:max-w-[480px]"
         >
           <Search
             className="pointer-events-none absolute left-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-slate-600 transition-colors duration-300 group-focus-within:text-pink-300"
@@ -233,7 +291,11 @@ export default function Topbar({
           <input
             type="search"
             value={searchValue}
-            onChange={(event) => setSearchValue(event.target.value)}
+            onChange={(event) =>
+              setSearchValue(
+                event.target.value,
+              )
+            }
             placeholder="İsim, şehir veya kullanıcı adı ara..."
             aria-label="Üye ara"
             className="h-11 w-full rounded-2xl border border-white/[0.07] bg-white/[0.035] pl-11 pr-20 text-base font-medium text-white outline-none transition-all duration-300 placeholder:text-slate-600 hover:border-white/10 focus:border-pink-400/25 focus:bg-white/[0.055] focus:shadow-[0_0_0_4px_rgba(244,114,182,0.05)]"
@@ -244,102 +306,60 @@ export default function Topbar({
           </span>
         </form>
 
+        {/* MOBİL ARAMA */}
         <Link
           href="/search"
           aria-label="Üye ara"
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/[0.07] bg-white/[0.035] text-slate-400 transition-all duration-300 hover:border-pink-400/20 hover:bg-pink-400/[0.07] hover:text-pink-300 md:hidden"
         >
-          <Search className="h-[19px] w-[19px]" strokeWidth={1.9} />
+          <Search
+            className="h-[19px] w-[19px]"
+            strokeWidth={1.9}
+          />
         </Link>
 
-        <div className="ml-auto flex shrink-0 items-center gap-2">
-          <button
-            type="button"
-            onClick={handleThemeChange}
-            aria-label={
-              theme === "dark"
-                ? "Açık temaya geç"
-                : "Koyu temaya geç"
-            }
-            className="group flex h-11 w-11 items-center justify-center rounded-2xl border border-white/[0.07] bg-white/[0.035] text-slate-400 transition-all duration-300 hover:border-amber-300/20 hover:bg-amber-300/[0.07] hover:text-amber-300"
-          >
-            {theme === "dark" ? (
-              <Sun
-                className="h-[18px] w-[18px] transition-transform duration-500 group-hover:rotate-45"
-                strokeWidth={1.9}
-              />
-            ) : (
-              <Moon
-                className="h-[18px] w-[18px] transition-transform duration-500 group-hover:-rotate-12"
-                strokeWidth={1.9}
-              />
-            )}
-          </button>
+        {/* SAĞ KONTROLLER */}
+        <div className="ml-auto flex min-w-0 shrink-0 items-center gap-2">
 
-          <div className="relative hidden sm:block">
-            <button
-              type="button"
-              onClick={() => togglePanel("language")}
-              aria-expanded={activePanel === "language"}
-              className={[
-                "flex h-11 items-center gap-2 rounded-2xl border px-3",
-                "text-xs font-extrabold transition-all duration-300",
-                activePanel === "language"
-                  ? "border-pink-400/25 bg-pink-400/[0.08] text-pink-300"
-                  : "border-white/[0.07] bg-white/[0.035] text-slate-400 hover:border-white/15 hover:bg-white/[0.06] hover:text-white",
-              ].join(" ")}
-            >
-              <Languages className="h-[17px] w-[17px]" strokeWidth={1.9} />
+          {/* TEMA */}
 
-              <span>{currentLanguage.shortLabel}</span>
-<ChevronDown
-                className={[
-                  "h-3.5 w-3.5 transition-transform duration-300",
-                  activePanel === "language" ? "rotate-180" : "",
-                ].join(" ")}
-              />
-            </button>
+          {/* DİLLER */}
+<div className="hidden items-center gap-1 sm:flex">
+  {languages.map((language) => {
+    const isSelected = lang === language.code;
 
-            {activePanel === "language" && (
-              <div className="absolute right-0 top-[calc(100%+12px)] w-44 overflow-hidden rounded-[22px] border border-white/[0.09] bg-[#0d101b] p-2 shadow-[0_28px_90px_rgba(0,0,0,0.5)] backdrop-blur-2xl">
-                <div className="space-y-1">
-                  {languages.map((language) => {
-                    const isSelected = lang === language.code;
-                    return (
-                      <button
-                        key={language.code}
-                        type="button"
-                        onClick={() => {
-                          setLang(language.code);
-                          setActivePanel(null);
-                        }}
-                        className={[
-                          "flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left transition-all duration-200",
-                          isSelected
-                            ? "bg-purple-600 text-white font-black shadow-lg"
-                            : "text-slate-400 hover:bg-white/[0.05] hover:text-white",
-                        ].join(" ")}
-                      >
-                        <span className="text-base">{language.flag}</span>
-                        <span className="text-xs font-bold">{language.label}</span>
-                        {isSelected && <Check className="h-3.5 w-3.5 ml-auto text-white" />}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
-
-
+    return (
+      <button
+        key={language.code}
+        type="button"
+        onClick={() => handleLanguageChange(language.code)}
+        aria-label={`${language.label} diline geç`}
+        className={[
+          "flex h-9 min-w-[38px] items-center justify-center rounded-xl px-2",
+          "text-[11px] font-extrabold transition-all duration-200",
+          isSelected
+            ? "border border-pink-400/30 bg-pink-400/[0.12] text-pink-300"
+            : "border border-transparent text-slate-500 hover:border-white/[0.08] hover:bg-white/[0.05] hover:text-white",
+        ].join(" ")}
+      >
+        {language.shortLabel}
+      </button>
+    );
+  })}
+</div>
+          {/* MESAJLAR */}
           <div className="relative">
             <button
               type="button"
-              onClick={() => togglePanel("messages")}
+              onClick={() =>
+                togglePanel("messages")
+              }
               aria-label="Mesajlar"
-              aria-expanded={activePanel === "messages"}
+              aria-expanded={
+                activePanel === "messages"
+              }
               className={[
-                "relative flex h-11 w-11 items-center justify-center rounded-2xl border transition-all duration-300",
+                "relative flex h-11 shrink-0 items-center justify-center gap-2 rounded-2xl border px-3 transition-all duration-300",
                 activePanel === "messages"
                   ? "border-blue-400/25 bg-blue-400/[0.08] text-blue-300"
                   : "border-white/[0.07] bg-white/[0.035] text-slate-400 hover:border-blue-400/20 hover:bg-blue-400/[0.07] hover:text-blue-300",
@@ -350,9 +370,15 @@ export default function Topbar({
                 strokeWidth={1.9}
               />
 
+              <span className="hidden text-xs font-bold md:inline">
+                Mesajlar
+              </span>
+
               {unreadMessages > 0 && (
                 <span className="absolute -right-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full border-2 border-[#0b0e18] bg-blue-500 px-1 text-[9px] font-black text-white">
-                  {unreadMessages > 99 ? "99+" : unreadMessages}
+                  {unreadMessages > 99
+                    ? "99+"
+                    : unreadMessages}
                 </span>
               )}
             </button>
@@ -372,7 +398,9 @@ export default function Topbar({
 
                   <button
                     type="button"
-                    onClick={() => setActivePanel(null)}
+                    onClick={() =>
+                      setActivePanel(null)
+                    }
                     className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-600 transition hover:bg-white/[0.05] hover:text-white"
                   >
                     <X className="h-4 w-4" />
@@ -392,14 +420,18 @@ export default function Topbar({
                   </p>
 
                   <p className="mt-1.5 text-[10px] leading-5 text-slate-600">
-                    Gerçek mesaj verileri bağlandığında son konuşmalar
-                    burada görünecek.
+                    Gerçek mesaj verileri
+                    bağlandığında son
+                    konuşmalar burada
+                    görünecek.
                   </p>
                 </div>
 
                 <Link
                   href="/messages"
-                  onClick={() => setActivePanel(null)}
+                  onClick={() =>
+                    setActivePanel(null)
+                  }
                   className="flex min-h-11 items-center justify-center border-t border-white/[0.065] text-xs font-bold text-blue-300 transition hover:bg-blue-400/[0.05]"
                 >
                   Tüm mesajları aç
@@ -408,15 +440,22 @@ export default function Topbar({
             )}
           </div>
 
+          {/* BİLDİRİMLER */}
           <div className="relative">
             <button
               type="button"
-              onClick={() => togglePanel("notifications")}
+              onClick={() =>
+                togglePanel("notifications")
+              }
               aria-label="Bildirimler"
-              aria-expanded={activePanel === "notifications"}
+              aria-expanded={
+                activePanel ===
+                "notifications"
+              }
               className={[
-                "relative flex h-11 w-11 items-center justify-center rounded-2xl border transition-all duration-300",
-                activePanel === "notifications"
+                "relative flex h-11 shrink-0 items-center justify-center gap-2 rounded-2xl border px-3 transition-all duration-300",
+                activePanel ===
+                "notifications"
                   ? "border-pink-400/25 bg-pink-400/[0.08] text-pink-300"
                   : "border-white/[0.07] bg-white/[0.035] text-slate-400 hover:border-pink-400/20 hover:bg-pink-400/[0.07] hover:text-pink-300",
               ].join(" ")}
@@ -426,16 +465,22 @@ export default function Topbar({
                 strokeWidth={1.9}
               />
 
+              <span className="hidden text-xs font-bold md:inline">
+                Bildirimler
+              </span>
+
               {unreadNotifications > 0 && (
                 <span className="absolute -right-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full border-2 border-[#0b0e18] bg-pink-500 px-1 text-[9px] font-black text-white">
-                  {unreadNotifications > 99
+                  {unreadNotifications >
+                  99
                     ? "99+"
                     : unreadNotifications}
                 </span>
               )}
             </button>
 
-            {activePanel === "notifications" && (
+            {activePanel ===
+              "notifications" && (
               <div className="absolute right-0 top-[calc(100%+12px)] w-[340px] max-w-[calc(100vw-24px)] overflow-hidden rounded-[24px] border border-white/[0.09] bg-[#0d101b]/95 shadow-[0_28px_90px_rgba(0,0,0,0.5)] backdrop-blur-2xl">
                 <div className="flex items-center justify-between border-b border-white/[0.065] px-4 py-4">
                   <div>
@@ -444,13 +489,16 @@ export default function Topbar({
                     </p>
 
                     <p className="mt-0.5 text-[10px] text-slate-600">
-                      Hesabındaki son gelişmeler
+                      Hesabındaki son
+                      gelişmeler
                     </p>
                   </div>
 
                   <button
                     type="button"
-                    onClick={() => setActivePanel(null)}
+                    onClick={() =>
+                      setActivePanel(null)
+                    }
                     className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-600 transition hover:bg-white/[0.05] hover:text-white"
                   >
                     <X className="h-4 w-4" />
@@ -459,22 +507,29 @@ export default function Topbar({
 
                 <div className="px-5 py-8 text-center">
                   <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-pink-400/[0.08] text-pink-300">
-                    <Bell className="h-5 w-5" strokeWidth={1.8} />
+                    <Bell
+                      className="h-5 w-5"
+                      strokeWidth={1.8}
+                    />
                   </span>
 
                   <p className="mt-4 text-xs font-bold text-slate-300">
-                    Yeni bildirimin bulunmuyor
+                    Yeni bildirimin
+                    bulunmuyor
                   </p>
 
                   <p className="mt-1.5 text-[10px] leading-5 text-slate-600">
-                    Beğeni, mesaj ve profil hareketleri burada
-                    gösterilecek.
+                    Beğeni, mesaj ve
+                    profil hareketleri
+                    burada gösterilecek.
                   </p>
                 </div>
 
                 <Link
                   href="/notifications"
-                  onClick={() => setActivePanel(null)}
+                  onClick={() =>
+                    setActivePanel(null)
+                  }
                   className="flex min-h-11 items-center justify-center border-t border-white/[0.065] text-xs font-bold text-pink-300 transition hover:bg-pink-400/[0.05]"
                 >
                   Bildirim merkezini aç
@@ -483,13 +538,18 @@ export default function Topbar({
             )}
           </div>
 
+          {/* PROFİL */}
           <div className="relative">
             <button
               type="button"
-              onClick={() => togglePanel("profile")}
-              aria-expanded={activePanel === "profile"}
+              onClick={() =>
+                togglePanel("profile")
+              }
+              aria-expanded={
+                activePanel === "profile"
+              }
               className={[
-                "flex h-11 items-center gap-2 rounded-2xl border p-1.5 pr-2.5 transition-all duration-300",
+                "flex h-11 shrink-0 items-center gap-2 rounded-2xl border p-1.5 pr-2.5 transition-all duration-300",
                 activePanel === "profile"
                   ? "border-pink-400/25 bg-pink-400/[0.08]"
                   : "border-white/[0.07] bg-white/[0.035] hover:border-white/15 hover:bg-white/[0.06]",
@@ -512,11 +572,11 @@ export default function Topbar({
                 <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-[#10131e] bg-emerald-400" />
               </span>
 
-              {/* 🌟 HER EKRANDA PARILDAYAN VIP KARŞILAMA VE İSİM ALANI */}
-              <div className="flex flex-col text-left min-w-0 pr-1">
+              <div className="hidden min-w-0 pr-1 text-left sm:flex sm:flex-col">
                 <span className="block max-w-28 truncate text-xs font-black text-slate-200">
                   {userName}
                 </span>
+
                 <span className="block max-w-28 truncate text-[10px] font-medium text-purple-400">
                   {userCity}
                 </span>
@@ -525,7 +585,9 @@ export default function Topbar({
               <ChevronDown
                 className={[
                   "hidden h-3.5 w-3.5 text-slate-600 transition-transform duration-300 xl:block",
-                  activePanel === "profile" ? "rotate-180" : "",
+                  activePanel === "profile"
+                    ? "rotate-180"
+                    : "",
                 ].join(" ")}
               />
             </button>
@@ -575,7 +637,9 @@ export default function Topbar({
                 <div className="mt-2 space-y-1">
                   <Link
                     href="/profile"
-                    onClick={() => setActivePanel(null)}
+                    onClick={() =>
+                      setActivePanel(null)
+                    }
                     className="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-xs font-bold text-slate-400 transition hover:bg-white/[0.05] hover:text-white"
                   >
                     <UserRound className="h-4 w-4 text-pink-300" />
@@ -584,7 +648,9 @@ export default function Topbar({
 
                   <Link
                     href="/profile/edit"
-                    onClick={() => setActivePanel(null)}
+                    onClick={() =>
+                      setActivePanel(null)
+                    }
                     className="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-xs font-bold text-slate-400 transition hover:bg-white/[0.05] hover:text-white"
                   >
                     <Settings className="h-4 w-4 text-blue-300" />
@@ -593,7 +659,9 @@ export default function Topbar({
 
                   <Link
                     href="/premium"
-                    onClick={() => setActivePanel(null)}
+                    onClick={() =>
+                      setActivePanel(null)
+                    }
                     className="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-xs font-bold text-slate-400 transition hover:bg-amber-300/[0.06] hover:text-amber-200"
                   >
                     <Crown className="h-4 w-4 text-amber-300" />
@@ -602,7 +670,9 @@ export default function Topbar({
 
                   <Link
                     href="/help"
-                    onClick={() => setActivePanel(null)}
+                    onClick={() =>
+                      setActivePanel(null)
+                    }
                     className="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-xs font-bold text-slate-400 transition hover:bg-emerald-300/[0.05] hover:text-emerald-200"
                   >
                     <ShieldCheck className="h-4 w-4 text-emerald-300" />
@@ -613,7 +683,9 @@ export default function Topbar({
                 {!isPremium && (
                   <Link
                     href="/premium"
-                    onClick={() => setActivePanel(null)}
+                    onClick={() =>
+                      setActivePanel(null)
+                    }
                     className="mt-2 flex items-center gap-3 rounded-2xl border border-amber-300/[0.11] bg-gradient-to-r from-amber-300/[0.08] via-orange-400/[0.06] to-pink-500/[0.07] px-3 py-3 transition hover:border-amber-300/20"
                   >
                     <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-300/[0.1] text-amber-300">
@@ -626,7 +698,8 @@ export default function Topbar({
                       </span>
 
                       <span className="mt-0.5 block text-[9px] text-slate-500">
-                        Daha fazla görünürlük kazan
+                        Daha fazla görünürlük
+                        kazan
                       </span>
                     </span>
                   </Link>
