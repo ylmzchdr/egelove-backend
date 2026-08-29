@@ -83,6 +83,14 @@ await this.notificationsService.createNotification({
   message: data.content,
   relatedUserId: userId,
 });
+this.server.to(`user:${receiverId}`).emit("notification:new", {
+  id: message.id,
+  type: "message",
+  title: `${message.sender.name} sana yeni bir mesaj gönderdi`,
+  message: data.content,
+  relatedUserId: userId,
+  createdAt: new Date().toISOString(),
+});
     this.server.to(`user:${receiverId}`).emit("message:new", message);
     client.emit("message:sent", message);
   }
