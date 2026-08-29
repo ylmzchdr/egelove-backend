@@ -278,7 +278,10 @@ export const api = {
   },
 
   users: {
-    me: () => request("/users/me"),
+   me: () =>
+  request<{
+    premiumExpiresAt?: string | null;
+  }>("/users/me"),
 
     update: (data: any) =>
       request("/users/me", {
