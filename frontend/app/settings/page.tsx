@@ -13,7 +13,6 @@ import {
   Palette,
   ShieldCheck,
   Sparkles,
-  Sun,
   UserRound,
   Volume2,
   Eye,
@@ -25,8 +24,6 @@ import Topbar from "@/components/dashboard/Topbar";
 import Header from "@/components/Header";
 import { useI18n } from "@/lib/i18n-context";
 import type { Lang } from "@/lib/i18n";
-
-type ThemeMode = "dark" | "light";
 
 type ToggleProps = {
   checked: boolean;
@@ -77,10 +74,6 @@ const copy = {
     subtitle: "EgeLove deneyimini kendine göre özelleştir.",
     appearance: "Görünüm",
     appearanceDesc: "EgeLove'ın görünümünü ve ekran tercihlerini yönet.",
-    theme: "Tema",
-    themeDesc: "Koyu veya açık görünüm arasında seçim yap.",
-    dark: "Koyu",
-    light: "Açık",
     language: "Dil",
     languageDesc: "EgeLove'da kullanmak istediğin dili seç.",
     notifications: "Bildirimler",
@@ -121,10 +114,6 @@ const copy = {
     subtitle: "Customize your EgeLove experience.",
     appearance: "Appearance",
     appearanceDesc: "Manage how EgeLove looks and feels.",
-    theme: "Theme",
-    themeDesc: "Choose between dark and light appearance.",
-    dark: "Dark",
-    light: "Light",
     language: "Language",
     languageDesc: "Choose the language you want to use on EgeLove.",
     notifications: "Notifications",
@@ -165,10 +154,6 @@ const copy = {
     subtitle: "Настройте EgeLove под себя.",
     appearance: "Внешний вид",
     appearanceDesc: "Управляйте внешним видом EgeLove.",
-    theme: "Тема",
-    themeDesc: "Выберите тёмный или светлый режим.",
-    dark: "Тёмная",
-    light: "Светлая",
     language: "Язык",
     languageDesc: "Выберите язык EgeLove.",
     notifications: "Уведомления",
@@ -209,10 +194,6 @@ const copy = {
     subtitle: "خصّص تجربة EgeLove كما تريد.",
     appearance: "المظهر",
     appearanceDesc: "تحكم في مظهر EgeLove.",
-    theme: "السمة",
-    themeDesc: "اختر بين الوضع الداكن والفاتح.",
-    dark: "داكن",
-    light: "فاتح",
     language: "اللغة",
     languageDesc: "اختر اللغة التي تريد استخدامها.",
     notifications: "الإشعارات",
@@ -254,7 +235,6 @@ export default function SettingsPage() {
   const { lang, setLang } = useI18n();
   const t = copy[lang] ?? copy.TR;
 
-  const [theme, setTheme] = useState<ThemeMode>("dark");
   const [newMessages, setNewMessages] = useState(true);
   const [likes, setLikes] = useState(true);
   const [matches, setMatches] = useState(true);
@@ -264,14 +244,6 @@ export default function SettingsPage() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    const storedTheme = localStorage.getItem("egelove-theme");
-    const nextTheme: ThemeMode =
-      storedTheme === "light" || storedTheme === "dark"
-        ? storedTheme
-        : "dark";
-
-    setTheme(nextTheme);
-
     const readBool = (key: string, fallback: boolean) => {
       const value = localStorage.getItem(key);
       return value === null ? fallback : value === "true";
@@ -284,21 +256,10 @@ export default function SettingsPage() {
     setOnline(readBool("egelove-show-online", true));
     setReadReceipts(readBool("egelove-read-receipts", true));
 
-    document.documentElement.classList.toggle("dark", nextTheme === "dark");
-    document.documentElement.classList.toggle("light", nextTheme === "light");
   }, []);
 
   const saveValue = (key: string, value: boolean) => {
     localStorage.setItem(key, String(value));
-    setSaved(true);
-    window.setTimeout(() => setSaved(false), 1600);
-  };
-
-  const changeTheme = (nextTheme: ThemeMode) => {
-    setTheme(nextTheme);
-    localStorage.setItem("egelove-theme", nextTheme);
-    document.documentElement.classList.toggle("dark", nextTheme === "dark");
-    document.documentElement.classList.toggle("light", nextTheme === "light");
     setSaved(true);
     window.setTimeout(() => setSaved(false), 1600);
   };
@@ -423,41 +384,6 @@ export default function SettingsPage() {
                   title={t.appearance}
                   description={t.appearanceDesc}
                 >
-                  <Row
-                    icon={theme === "dark" ? Moon : Sun}
-                    title={t.theme}
-                    description={t.themeDesc}
-                  >
-                    <div className="flex rounded-2xl border border-white/[0.08] bg-black/10 p-1">
-                      <button
-                        type="button"
-                        onClick={() => changeTheme("dark")}
-                        className={[
-                          "flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-bold transition-all",
-                          theme === "dark"
-                            ? "bg-gradient-to-r from-fuchsia-500 to-blue-500 text-white shadow-lg"
-                            : "text-slate-500 hover:text-white",
-                        ].join(" ")}
-                      >
-                        <Moon className="h-4 w-4" />
-                        {t.dark}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => changeTheme("light")}
-                        className={[
-                          "flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-bold transition-all",
-                          theme === "light"
-                            ? "bg-white text-slate-900 shadow-lg"
-                            : "text-slate-500 hover:text-white",
-                        ].join(" ")}
-                      >
-                        <Sun className="h-4 w-4" />
-                        {t.light}
-                      </button>
-                    </div>
-                  </Row>
-
                   <Row
                     icon={Globe2}
                     title={t.language}

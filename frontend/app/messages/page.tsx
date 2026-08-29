@@ -1331,17 +1331,13 @@ function MessagesContent() {
           };
 
           try {
-            const user =
-              await api.users.get(String(targetUserId));
-
+           const user =
+  (await api.users.get(String(targetUserId))) as User;
             const normalized =
-              normalizeUser({
-                ...user,
-                id:
-                  user?.id ??
-                  user?._id ??
-                  targetUserId,
-              });
+  normalizeUser({
+    ...user,
+    id: user?.id ?? targetUserId,
+  });
 
             if (normalized) {
               targetUser =
