@@ -80,50 +80,55 @@ export default function DashboardPage() {
     profilePhoto: null as string | null,
   });
 
-  useEffect(() => {
-    const loadUser = async () => {
-      setIsClient(true);
+ useEffect(() => {
+  const loadUser = async () => {
+    setIsClient(true);
 
+    try {
+      // Kullanıcı bilgisini her açılışta API'den taze al.
+      // localStorage'daki eski şehir/ilçe bilgisine güvenme.
+      const me: any = await api.users.me();
+
+      localStorage.setItem("user", JSON.stringify(me));
+
+      setUser({
+        name: me.name || me.username || "Üye",
+        city: me.city?.name || me.city || "Türkiye",
+        profilePhoto:
+          me.profilePhoto ||
+          me.profileImage ||
+          me.avatar ||
+          null,
+      });
+    } catch (error) {
+      console.log("Kullanıcı alınamadı:", error);
+
+      // API geçici olarak cevap vermezse mevcut local kullanıcıyı
+      // sadece yedek olarak kullan.
       try {
         const rawUser = localStorage.getItem("user");
 
-        if (rawUser) {
-          const parsed = JSON.parse(rawUser);
+        if (!rawUser) return;
 
-          setUser({
-            name: parsed.name || parsed.username || "Üye",
-            city: parsed.city?.name || parsed.city || "Türkiye",
-            profilePhoto:
-              parsed.profilePhoto ||
-              parsed.profileImage ||
-              parsed.avatar ||
-              null,
-          });
-
-          return;
-        }
-
-        const me: any = await api.users.me();
-
-        localStorage.setItem("user", JSON.stringify(me));
+        const parsed = JSON.parse(rawUser);
 
         setUser({
-          name: me.name || me.username || "Üye",
-          city: me.city?.name || me.city || "Türkiye",
+          name: parsed.name || parsed.username || "Üye",
+          city: parsed.city?.name || parsed.city || "Türkiye",
           profilePhoto:
-            me.profilePhoto ||
-            me.profileImage ||
-            me.avatar ||
+            parsed.profilePhoto ||
+            parsed.profileImage ||
+            parsed.avatar ||
             null,
         });
-      } catch (error) {
-        console.log("Kullanıcı alınamadı:", error);
+      } catch {
+        // localStorage verisi bozuksa sessizce devam et.
       }
-    };
+    }
+  };
 
-    loadUser();
-  }, []);
-
+  loadUser();
+}, []);
   if (!isClient) {
     return (
       <div className="min-h-screen bg-[#080b18] flex items-center justify-center">
