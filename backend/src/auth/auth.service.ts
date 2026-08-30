@@ -95,8 +95,8 @@ export class AuthService {
 
           // Doğum tarihi ve cinsiyet artık ilk kayıt formundan alınmıyor.
           // Veritabanındaki mevcut zorunlu alanlar için geçici varsayılanlar.
-          birthDate: new Date("2000-01-01"),
-          gender: "OTHER",
+          birthDate: new Date(dto.birthDate),
+gender: dto.gender,
 
           cityId: city.id,
           districtId: district.id,
