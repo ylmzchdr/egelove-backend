@@ -212,13 +212,30 @@ if (user?.sub) {
     if (income) where.income = income;
     if (occupation) where.occupation = { contains: occupation, mode: "insensitive" };
 
-    if (username) {
-      where.OR = [
-        { name: { contains: username, mode: "insensitive" } },
-       
-      ];
-    }
-
+   if (username) {
+  where.OR = [
+    {
+      name: {
+        contains: username,
+        mode: "insensitive",
+      },
+    },
+    {
+      username: {
+        contains: username,
+        mode: "insensitive",
+      },
+    },
+    {
+      city: {
+        name: {
+          contains: username,
+          mode: "insensitive",
+        },
+      },
+    },
+  ];
+}
     if (hasPhotos === "true") {
       where.photos = { some: { status: "APPROVED" } };
     }

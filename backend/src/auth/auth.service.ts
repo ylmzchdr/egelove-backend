@@ -53,100 +53,97 @@ export class AuthService {
         );
       }
 
-      /*
-       * ŞEHİR / İLÇE
-       *
-       * Frontend kayıt sırasında şehir ve ilçeyi
-       * isim olarak gönderiyor:
-       *
-       * city: "Malatya"
-       * district: "Darende"
-       *
-       * Burada önce şehri buluyoruz.
-       * Ardından ilçeyi hem ID hem de şehir ID
-       * üzerinden doğruluyoruz.
-       */
+      const cityId = Number(dto.cityId);
+      const districtId = Number(dto.districtId);
 
- const cityId = Number(dto.cityId);
-const districtId = Number(dto.districtId);
+      if (
+        !Number.isInteger(cityId) ||
+        cityId <= 0
+      ) {
+        throw new BadRequestException(
+          "Geçerli bir şehir seçin.",
+        );
+      }
 
-if (!Number.isInteger(cityId) || cityId <= 0) {
-  throw new BadRequestException("Geçerli bir şehir seçin.");
-}
+      if (
+        !Number.isInteger(districtId) ||
+        districtId <= 0
+      ) {
+        throw new BadRequestException(
+          "Geçerli bir ilçe seçin.",
+        );
+      }
 
-if (!Number.isInteger(districtId) || districtId <= 0) {
-  throw new BadRequestException("Geçerli bir ilçe seçin.");
-}
+      const city =
+        await this.prisma.city.findUnique({
+          where: { id: cityId },
+        });
 
-const city = await this.prisma.city.findUnique({
-  where: {
-    id: cityId,
-  },
-});
+      if (!city) {
+        throw new BadRequestException(
+          "Seçilen şehir bulunamadı.",
+        );
+      }
 
-if (!city) {
-  throw new BadRequestException("Seçilen şehir bulunamadı.");
-}
+      const district =
+        await this.prisma.district.findFirst({
+          where: {
+            id: districtId,
+            cityId,
+          },
+        });
 
-const district = await this.prisma.district.findFirst({
-  where: {
-    id: districtId,
-    cityId,
-  },
-});
+      if (!district) {
+        throw new BadRequestException(
+          "Seçilen ilçe, seçilen şehre ait değil.",
+        );
+      }
 
-if (!district) {
-  throw new BadRequestException(
-    "Seçilen ilçe, seçilen şehre ait değil.",
-  );
-}
-      const passwordHash = await argon2.hash(
-        dto.password,
-      );
+      const passwordHash =
+        await argon2.hash(dto.password);
 
       const emailVerifyToken =
         crypto.randomBytes(32).toString("hex");
 
-      /*
-       * KULLANICIYI OLUŞTUR
-       *
-       * Burada artık kesinlikle sabit
-       * Muğla / Fethiye kullanılmıyor.
-       *
-       * Kullanıcının seçtiği şehir ve ilçe
-       * veritabanındaki gerçek ID'leriyle kaydediliyor.
-       */
+      const user =
+        await this.prisma.user.create({
+          data: {
+            name: dto.name,
+            username,
+            email,
+            passwordHash,
 
-      const user = await this.prisma.user.create({
-        data: {
-          name: dto.name,
-          username,
-          email,
-          passwordHash,
+            // Kayıt formunda kullanıcının
+            // seçtiği doğum tarihi ve cinsiyet
+            // doğrudan veritabanına kaydediliyor.
+           birthDate: new Date(dto.birthDate),
+gender: dto.gender,
 
-          birthDate: dto.birthDate
-            ? new Date(dto.birthDate)
-            : new Date("2000-01-01"),
+            cityId: city.id,
+            districtId: district.id,
 
-        gender: dto.gender
-  ? dto.gender as "MALE" | "FEMALE" | "OTHER"
-  : "OTHER",
-          cityId: city.id,
-          districtId: district.id,
+            emailVerifyToken,
+            emailVerifySentAt: new Date(),
+            isEmailVerified: false,
+          },
+        });
 
-          emailVerifyToken,
-          emailVerifySentAt: new Date(),
-          isEmailVerified: false,
-        },
-      });
-
-      const tokens = await this.generateTokens(
-        user.id,
-        user.email,
-      );
+      const tokens =
+        await this.generateTokens(
+          user.id,
+          user.email,
+        );
 
       console.log(
         `✅ Kullanıcı veritabanına kaydedildi: ${email}`,
+      );
+
+      console.log(
+        `📅 Doğum tarihi: ${dto.birthDate}`,
+      );
+
+      console.log(
+        `⚧ Cinsiyet: ${dto.gender}`,
       );
 
       console.log(
@@ -197,10 +194,11 @@ if (!district) {
       );
     }
 
-    const valid = await argon2.verify(
-      user.passwordHash,
-      dto.password,
-    );
+    const valid =
+      await argon2.verify(
+        user.passwordHash,
+        dto.password,
+      );
 
     if (!valid) {
       throw new UnauthorizedException(
@@ -242,15 +240,6 @@ if (!district) {
         });
 
       if (!existingUser) {
-        /*
-         * Google ile ilk girişte şehir bilgisi
-         * henüz bilinmediği için mevcut sistemde
-         * ilk şehir ve ilk ilçe kullanılıyor.
-         *
-         * Kullanıcı daha sonra profilinden
-         * şehir / ilçe bilgisini değiştirebilir.
-         */
-
         const city =
           await this.prisma.city.findFirst();
 
@@ -298,6 +287,7 @@ if (!district) {
           await this.prisma.user.create({
             data: {
               email,
+
               name:
                 user.firstName ||
                 user.displayName ||
@@ -368,7 +358,9 @@ if (!district) {
     }
   }
 
-  async refresh(refreshToken: string) {
+  async refresh(
+    refreshToken: string,
+  ) {
     try {
       const payload =
         this.jwtService.verify(
@@ -515,8 +507,7 @@ if (!district) {
     const code =
       Math.floor(
         100000 +
-          Math.random() *
-            900000,
+          Math.random() * 900000,
       ).toString();
 
     const expiresAt =
@@ -683,7 +674,9 @@ if (!district) {
     };
   }
 
-  private sanitizeUser(user: any) {
+  private sanitizeUser(
+    user: any,
+  ) {
     const {
       passwordHash,
       refreshToken,

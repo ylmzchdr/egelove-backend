@@ -4,7 +4,8 @@ import {
   MinLength,
   IsOptional,
   IsInt,
-  IsPositive,
+  IsDateString,
+  IsIn,
 } from "class-validator";
 
 export class RegisterDto {
@@ -23,21 +24,17 @@ export class RegisterDto {
   @MinLength(8)
   password!: string;
 
-  @IsOptional()
-  @IsString()
-  birthDate?: string;
-
-  @IsOptional()
-  @IsString()
-  gender?: string;
-
-  @IsOptional()
   @IsInt()
-  cityId?: number;
+  cityId!: number;
 
-  @IsOptional()
   @IsInt()
-  districtId?: number;
+  districtId!: number;
+
+  @IsDateString()
+  birthDate!: string;
+
+  @IsIn(["MALE", "FEMALE", "OTHER"])
+  gender!: "MALE" | "FEMALE" | "OTHER";
 
   @IsOptional()
   @IsString()
