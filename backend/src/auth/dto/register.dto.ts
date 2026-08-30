@@ -31,13 +31,13 @@ export class RegisterDto {
   @IsString()
   gender?: string;
 
+  @IsOptional()
   @IsInt()
-  @IsPositive()
-  cityId!: number;
+  cityId?: number;
 
+  @IsOptional()
   @IsInt()
-  @IsPositive()
-  districtId!: number;
+  districtId?: number;
 
   @IsOptional()
   @IsString()
