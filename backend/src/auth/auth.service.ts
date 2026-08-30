@@ -27,110 +27,123 @@ export class AuthService {
     private twofa: TwofaService,
   ) {}
 
-async register(dto: RegisterDto) {
-  try {
-   const email = dto.email.toLowerCase().trim();
-const username = dto.username.trim();
+  async register(dto: RegisterDto) {
+    try {
+      const email = dto.email.toLowerCase().trim();
+      const username = dto.username.trim();
 
-const existing = await this.prisma.user.findUnique({
-  where: { email },
-});
+      const existing = await this.prisma.user.findUnique({
+        where: { email },
+      });
 
-if (existing) {
-  throw new ConflictException("Bu e-posta zaten kayıtlı");
-}
+      if (existing) {
+        throw new ConflictException("Bu e-posta zaten kayıtlı");
+      }
 
-const existingUsername = await this.prisma.user.findUnique({
-  where: { username },
-});
+      const existingUsername = await this.prisma.user.findUnique({
+        where: { username },
+      });
 
-if (existingUsername) {
-  throw new ConflictException("Bu kullanıcı adı zaten kullanılıyor");
-}
+      if (existingUsername) {
+        throw new ConflictException("Bu kullanıcı adı zaten kullanılıyor");
+      }
 
-    const passwordHash = await argon2.hash(dto.password);
-    const emailVerifyToken = crypto.randomBytes(32).toString("hex");
+      const cityId = Number(dto.cityId);
+      const districtId = Number(dto.districtId);
 
-    const city = await this.prisma.city.findFirst({
-      where: { name: "Muğla" },
+      if (!Number.isInteger(cityId) || cityId <= 0) {
+        throw new BadRequestException("Geçerli bir şehir seçilmelidir.");
+      }
+
+      if (!Number.isInteger(districtId) || districtId <= 0) {
+        throw new BadRequestException("Geçerli bir ilçe seçilmelidir.");
+      }
+
+      const city = await this.prisma.city.findUnique({
+        where: { id: cityId },
+      });
+
+      const district = await this.prisma.district.findUnique({
+        where: { id: districtId },
+      });
+
+      if (!city || !district || district.cityId !== city.id) {
+        throw new BadRequestException("Geçersiz şehir/ilçe seçimi.");
+      }
+
+      const passwordHash = await argon2.hash(dto.password);
+      const emailVerifyToken = crypto.randomBytes(32).toString("hex");
+
+      const user = await this.prisma.user.create({
+        data: {
+          name: dto.name,
+          username,
+          email,
+          passwordHash,
+
+          birthDate: dto.birthDate
+            ? new Date(dto.birthDate)
+            : new Date("2000-01-01"),
+
+          gender: dto.gender
+            ? (dto.gender as "MALE" | "FEMALE" | "OTHER")
+            : "OTHER",
+
+          cityId: city.id,
+          districtId: district.id,
+
+          emailVerifyToken,
+          emailVerifySentAt: new Date(),
+          isEmailVerified: false,
+        },
+      });
+
+      const tokens = await this.generateTokens(user.id, user.email);
+
+      console.log(`✅ Kullanıcı veritabanına kaydedildi: ${email}`);
+      console.log(`📍 Kayıt şehri: ${city.name}`);
+      console.log(`📍 Kayıt ilçesi: ${district.name}`);
+
+      return {
+        user: this.sanitizeUser(user),
+        ...tokens,
+        emailVerificationSent: true,
+      };
+    } catch (error) {
+      console.error("Register error:", error);
+      throw error;
+    }
+  }
+
+  async login(dto: LoginDto) {
+    const loginValue = dto.emailOrPhone.trim();
+
+    const user = await this.prisma.user.findFirst({
+      where: {
+        OR: [
+          { email: loginValue.toLowerCase() },
+          { username: loginValue },
+        ],
+      },
     });
 
-    const district = city
-      ? await this.prisma.district.findFirst({
-          where: {
-            cityId: city.id,
-            name: "Fethiye",
-          },
-        })
-      : null;
-
-    if (!city || !district) {
-      throw new BadRequestException(
-        "City/District verisi bulunamadı. Önce şehir ve ilçe seed edilmeli.",
-      );
+    if (!user) {
+      throw new UnauthorizedException("Geçersiz kimlik bilgileri");
     }
 
-   const user = await this.prisma.user.create({
-  data: {
-    name: dto.name,
-    username,
-    email,
-    passwordHash,
-    
-    cityId: city.id,
-    districtId: district.id,
-    emailVerifyToken,
-    emailVerifySentAt: new Date(),
-    isEmailVerified: false,
-  },
-});
+    const valid = await argon2.verify(user.passwordHash, dto.password);
 
-   const tokens = await this.generateTokens(user.id, user.email);
+    if (!valid) {
+      throw new UnauthorizedException("Geçersiz kimlik bilgileri");
+    }
 
-console.log(`✅ Kullanıcı veritabanına kaydedildi: ${email}`);
-
-    console.log(`✅ Kullanıcı veritabanına kaydedildi: ${email}`);
+    const tokens = await this.generateTokens(user.id, user.email);
 
     return {
       user: this.sanitizeUser(user),
       ...tokens,
-      emailVerificationSent: true,
     };
-  } catch (error) {
-    console.error("Register error:", error);
-    throw error;
   }
-}
-
- async login(dto: LoginDto) {
-  const loginValue = dto.emailOrPhone.trim();
-
-  const user = await this.prisma.user.findFirst({
-    where: {
-      OR: [
-        { email: loginValue.toLowerCase() },
-        { username: loginValue },
-      ],
-    },
-  });
-
-  if (!user) {
-    throw new UnauthorizedException("Geçersiz kimlik bilgileri");
-  }
-
-  const valid = await argon2.verify(user.passwordHash, dto.password);
-
-  if (!valid) {
-    throw new UnauthorizedException("Geçersiz kimlik bilgileri");
-  }
-
-  const tokens = await this.generateTokens(user.id, user.email);
-
-  return {
-    user: this.sanitizeUser(user),
-    ...tokens,
-  };
-}
 
   async googleLogin(user: any) {
     try {
@@ -160,40 +173,44 @@ console.log(`✅ Kullanıcı veritabanına kaydedildi: ${email}`);
         }
 
         const usernameBase = (
-  user.displayName ||
-  user.firstName ||
-  email.split("@")[0]
-)
-  .toLowerCase()
-  .replace(/[^a-z0-9]/g, "")
-  .slice(0, 20);
+          user.displayName ||
+          user.firstName ||
+          email.split("@")[0]
+        )
+          .toLowerCase()
+          .replace(/[^a-z0-9]/g, "")
+          .slice(0, 20);
 
-let username = usernameBase || `user${Date.now()}`;
+        let username = usernameBase || `user${Date.now()}`;
 
-const usernameExists = await this.prisma.user.findUnique({
-  where: { username },
-});
+        const usernameExists = await this.prisma.user.findUnique({
+          where: { username },
+        });
 
-if (usernameExists) {
-  username = `${username}${Date.now().toString().slice(-5)}`;
-}
+        if (usernameExists) {
+          username = `${username}${Date.now().toString().slice(-5)}`;
+        }
 
-existingUser = await this.prisma.user.create({
-  data: {
-    email,
-    name: user.firstName || user.displayName || "Google",
-    username,
-    passwordHash: await argon2.hash(
-      crypto.randomBytes(16).toString("hex"),
-    ),
-    birthDate: new Date("2000-01-01"),
-    gender: "OTHER",
-    cityId: city.id,
-    districtId: district.id,
-    isEmailVerified: true,
-    lastLoginAt: new Date(),
-  },
-});
+        existingUser = await this.prisma.user.create({
+          data: {
+            email,
+            name: user.firstName || user.displayName || "Google",
+            username,
+
+            passwordHash: await argon2.hash(
+              crypto.randomBytes(16).toString("hex"),
+            ),
+
+            birthDate: new Date("2000-01-01"),
+            gender: "OTHER",
+
+            cityId: city.id,
+            districtId: district.id,
+
+            isEmailVerified: true,
+            lastLoginAt: new Date(),
+          },
+        });
 
         console.log(`✅ Google kullanıcısı oluşturuldu: ${email}`);
       } else {
@@ -211,170 +228,247 @@ existingUser = await this.prisma.user.create({
       );
 
       return {
-  user: this.sanitizeUser(existingUser),
-  ...tokens,
-};
+        user: this.sanitizeUser(existingUser),
+        ...tokens,
+      };
     } catch (error) {
       console.error("Google login error:", error);
       throw error;
     }
   }
 
- async refresh(refreshToken: string) {
-  try {
-    const payload = this.jwtService.verify(refreshToken, {
-      secret: jwtConstants.refreshSecret,
-    });
+  async refresh(refreshToken: string) {
+    try {
+      const payload = this.jwtService.verify(refreshToken, {
+        secret: jwtConstants.refreshSecret,
+      });
 
-    const user = await this.prisma.user.findUnique({
-      where: { id: payload.sub },
-    });
+      const user = await this.prisma.user.findUnique({
+        where: { id: payload.sub },
+      });
 
-    if (!user) {
-      throw new UnauthorizedException("Kullanıcı bulunamadı");
+      if (!user) {
+        throw new UnauthorizedException("Kullanıcı bulunamadı");
+      }
+
+      const tokens = await this.generateTokens(user.id, user.email);
+
+      return {
+        user: this.sanitizeUser(user),
+        ...tokens,
+      };
+    } catch (e) {
+      throw new UnauthorizedException("Geçersiz refresh token");
     }
-
-    const tokens = await this.generateTokens(user.id, user.email);
-
-    return {
-      user: this.sanitizeUser(user),
-      ...tokens,
-    };
-  } catch (e) {
-    throw new UnauthorizedException("Geçersiz refresh token");
   }
-}
 
   async logout(userId: string) {
     const user = mockUsers.find((u) => u.id === userId);
-    if (user) user.refreshToken = null;
+
+    if (user) {
+      user.refreshToken = null;
+    }
+
     console.log(`✅ Çıkış yapıldı: ${userId}`);
   }
 
   async verifyEmail(token: string) {
-    const user = mockUsers.find((u) => u.emailVerifyToken === token);
-    if (!user) throw new BadRequestException("Geçersiz doğrulama linki");
+    const user = mockUsers.find(
+      (u) => u.emailVerifyToken === token,
+    );
+
+    if (!user) {
+      throw new BadRequestException("Geçersiz doğrulama linki");
+    }
 
     user.isEmailVerified = true;
     user.emailVerifyToken = null;
+
     console.log(`✅ E-posta doğrulandı: ${user.email}`);
-    return { verified: true };
+
+    return {
+      verified: true,
+    };
   }
 
   async resendVerification(userId: string) {
     const user = mockUsers.find((u) => u.id === userId);
-    if (!user) throw new BadRequestException("Kullanıcı bulunamadı");
+
+    if (!user) {
+      throw new BadRequestException("Kullanıcı bulunamadı");
+    }
+
     if (user.isEmailVerified) {
       throw new BadRequestException("E-posta zaten doğrulanmış");
     }
 
     const emailVerifyToken = crypto.randomBytes(32).toString("hex");
+
     user.emailVerifyToken = emailVerifyToken;
     user.emailVerifySentAt = new Date();
 
-    return { sent: true };
+    return {
+      sent: true,
+    };
   }
 
   async forgotPassword(email: string) {
-  const cleanEmail = email.toLowerCase().trim();
+    const cleanEmail = email.toLowerCase().trim();
 
-  console.log("📧 FORGOT PASSWORD GELDİ:", cleanEmail);
+    console.log("📧 FORGOT PASSWORD GELDİ:", cleanEmail);
 
-  const user = await this.prisma.user.findUnique({
-    where: { email: cleanEmail },
-  });
+    const user = await this.prisma.user.findUnique({
+      where: { email: cleanEmail },
+    });
 
-  if (!user) {
-    console.log("❌ Kullanıcı bulunamadı:", cleanEmail);
-    return { sent: true };
+    if (!user) {
+      console.log("❌ Kullanıcı bulunamadı:", cleanEmail);
+      return {
+        sent: true,
+      };
+    }
+
+    const code = Math.floor(
+      100000 + Math.random() * 900000,
+    ).toString();
+
+    const expiresAt = new Date(
+      Date.now() + 15 * 60 * 1000,
+    );
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        emailVerifyToken: code,
+        emailVerifySentAt: expiresAt,
+      },
+    });
+
+    console.log(
+      "🔐 Kod oluşturuldu:",
+      cleanEmail,
+      code,
+    );
+
+    try {
+      await this.email.sendPasswordResetCode(
+        cleanEmail,
+        code,
+      );
+
+      console.log(
+        "✅ Mail gönderme fonksiyonu bitti:",
+        cleanEmail,
+      );
+    } catch (error) {
+      console.error(
+        "❌ Mail gönderme hatası:",
+        error,
+      );
+
+      throw error;
+    }
+
+    return {
+      sent: true,
+    };
   }
 
-  const code = Math.floor(100000 + Math.random() * 900000).toString();
-  const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
-
-  await this.prisma.user.update({
-    where: { id: user.id },
-    data: {
-      emailVerifyToken: code,
-      emailVerifySentAt: expiresAt,
-    },
-  });
-
-  console.log("🔐 Kod oluşturuldu:", cleanEmail, code);
-
-  try {
-    await this.email.sendPasswordResetCode(cleanEmail, code);
-    console.log("✅ Mail gönderme fonksiyonu bitti:", cleanEmail);
-  } catch (error) {
-    console.error("❌ Mail gönderme hatası:", error);
-    throw error;
-  }
-
-  return { sent: true };
-}
-
-async resetPassword(email: string, code: string, newPassword: string) {
-  const cleanEmail = email.toLowerCase().trim();
-
-  const user = await this.prisma.user.findUnique({
-    where: { email: cleanEmail },
-  });
-
-  if (!user) {
-    throw new BadRequestException("Kullanıcı bulunamadı");
-  }
-
-  if (!user.emailVerifyToken || user.emailVerifyToken !== code) {
-    throw new BadRequestException("Geçersiz kod");
-  }
-
-  if (
-    !user.emailVerifySentAt ||
-    user.emailVerifySentAt.getTime() < Date.now()
+  async resetPassword(
+    email: string,
+    code: string,
+    newPassword: string,
   ) {
-    throw new BadRequestException("Kodun süresi dolmuş");
+    const cleanEmail = email.toLowerCase().trim();
+
+    const user = await this.prisma.user.findUnique({
+      where: { email: cleanEmail },
+    });
+
+    if (!user) {
+      throw new BadRequestException(
+        "Kullanıcı bulunamadı",
+      );
+    }
+
+    if (
+      !user.emailVerifyToken ||
+      user.emailVerifyToken !== code
+    ) {
+      throw new BadRequestException("Geçersiz kod");
+    }
+
+    if (
+      !user.emailVerifySentAt ||
+      user.emailVerifySentAt.getTime() < Date.now()
+    ) {
+      throw new BadRequestException(
+        "Kodun süresi dolmuş",
+      );
+    }
+
+    const passwordHash = await argon2.hash(
+      newPassword,
+    );
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        passwordHash,
+        emailVerifyToken: null,
+        emailVerifySentAt: null,
+      },
+    });
+
+    return {
+      reset: true,
+    };
   }
 
-  const passwordHash = await argon2.hash(newPassword);
-
-  await this.prisma.user.update({
-    where: { id: user.id },
-    data: {
-      passwordHash,
-      emailVerifyToken: null,
-      emailVerifySentAt: null,
-    },
-  });
-
-  return { reset: true };
-}
-
-  private async generateTokens(userId: string, email: string) {
+  private async generateTokens(
+    userId: string,
+    email: string,
+  ) {
     const user =
-      (await this.prisma.user.findUnique({ where: { id: userId } })) ||
-      mockUsers.find((u) => u.id === userId);
+      (await this.prisma.user.findUnique({
+        where: { id: userId },
+      })) ||
+      mockUsers.find(
+        (u) => u.id === userId,
+      );
 
-   const payload = {
-  sub: userId,
-  email,
-  name: user?.name || "Kullanıcı",
-  isAdmin: user?.isAdmin || false,
-};
+    const payload = {
+      sub: userId,
+      email,
+      name: user?.name || "Kullanıcı",
+      isAdmin: user?.isAdmin || false,
+    };
 
+    const [
+      accessToken,
+      refreshToken,
+    ] = await Promise.all([
+      this.jwtService.signAsync(
+        payload,
+        {
+          secret: jwtConstants.secret,
+          expiresIn: "3h",
+        },
+      ),
 
-
-    const [accessToken, refreshToken] = await Promise.all([
-      this.jwtService.signAsync(payload, {
-        secret: jwtConstants.secret,
-        expiresIn: "3h",
-      }),
-      this.jwtService.signAsync(payload, {
-        secret: jwtConstants.refreshSecret,
-        expiresIn: "7d",
-      }),
+      this.jwtService.signAsync(
+        payload,
+        {
+          secret: jwtConstants.refreshSecret,
+          expiresIn: "7d",
+        },
+      ),
     ]);
 
-    return { accessToken, refreshToken };
+    return {
+      accessToken,
+      refreshToken,
+    };
   }
 
   private sanitizeUser(user: any) {
