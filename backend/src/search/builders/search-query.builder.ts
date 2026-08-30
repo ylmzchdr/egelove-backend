@@ -32,13 +32,18 @@ export class SearchQueryBuilder {
           mode: "insensitive",
         },
       },
+      {
+        city: {
+          name: {
+            contains: username,
+            mode: "insensitive",
+          },
+        },
+      },
     ];
 
     return this;
   }
-
-  // diğer fonksiyonlar burada devam edecek...
- 
 
   byGender(gender?: Gender) {
     if (!gender) return this;
