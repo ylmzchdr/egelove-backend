@@ -197,7 +197,20 @@ if (user?.sub) {
   where.id = { not: user.sub };
 }
     if (gender) where.gender = gender;
-    if (city) where.cityId = parseInt(city);
+    if (city) {
+  const cityId = Number(city);
+
+  if (Number.isInteger(cityId)) {
+    where.cityId = cityId;
+  } else {
+    where.city = {
+      name: {
+        contains: city,
+        mode: "insensitive",
+      },
+    };
+  }
+}
     if (district) where.districtId = parseInt(district);
     if (education) where.education = education;
     if (smoking) where.smoking = smoking;
