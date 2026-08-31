@@ -135,7 +135,61 @@ const updated = await this.prisma.user.update({
 
   return safe;
 }
+@Get("online")
+async getOnlineUsers(@CurrentUser() user?: any) {
+  const users = await this.prisma.user.findMany({
+    where: {
+      isActive: true,
+      ...(user?.sub && {
+        id: { not: user.sub },
+      }),
+     presence: {
+  isOnline: true,
+},
+    },
+    take: 20,
 
+    include: {
+      city: true,
+      district: true,
+      photos: {
+        where: {
+          status: "APPROVED",
+        },
+        orderBy: [
+          { isMain: "desc" },
+          { createdAt: "desc" },
+        ],
+        take: 1,
+      },
+      presence: true,
+    },
+  });
+
+  return users.map((u: any) => {
+    const {
+      passwordHash,
+      refreshToken,
+      turnstileToken,
+      twoFactorSecret,
+      emailVerifyToken,
+      emailVerifySentAt,
+      presence,
+      ...safe
+    } = u;
+
+    return {
+      ...safe,
+      city: u.city?.name || null,
+      district: u.district?.name || null,
+      profilePhoto:
+        u.avatar ||
+        u.photos?.[0]?.url ||
+        null,
+      isOnline: true,
+    };
+  });
+}
   @Get("search")
 async searchUsers(@CurrentUser() user?: any) {
     const users = await this.prisma.user.findMany({
