@@ -205,37 +205,7 @@ export default function DashboardPage() {
 
           </section>
 
-          {/* =====================================================
-              81 İLDEN ÇEVRİMİÇİ ÜYELER
-          ===================================================== */}
-          <section className="mt-6 w-full rounded-3xl border border-white/10 bg-slate-900/40 p-5 shadow-xl backdrop-blur-xl md:p-6">
-
-            <div className="mb-5 flex items-center justify-between gap-4">
-
-              <div className="flex min-w-0 items-center gap-2">
-                <span className="h-2.5 w-2.5 shrink-0 animate-pulse rounded-full bg-emerald-500" />
-
-                <h2 className="truncate text-xs font-bold uppercase tracking-widest text-emerald-400 md:text-sm">
-                  {t.dashboard.onlineUsersTitle}
-                </h2>
-              </div>
-
-              <Link
-                href="/search"
-                className="shrink-0 text-[10px] font-medium text-slate-500 transition-colors hover:text-purple-400 md:text-xs"
-              >
-                {t.dashboard.viewAllCities}
-              </Link>
-            </div>
-
-            <div className="flex items-start gap-5 overflow-x-auto pb-2 scrollbar-none md:gap-6">
-
-             <OnlineUsers />
-
-
-            </div>
-          </section>
-
+         
           {/* =====================================================
               ANA KARTLAR
           ===================================================== */}
