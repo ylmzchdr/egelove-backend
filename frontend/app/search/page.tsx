@@ -259,6 +259,15 @@ export default function SearchPage() {
   const [maxAge, setMaxAge] = useState("");
 
   const [onlyOnline, setOnlyOnline] = useState(isOnlineFilter);
+  // 🎯 KESİN ÇÖZÜM: URL'de online=true parametresi geldiğinde kutucuğu otomatik doldurur ve aramayı tetikler
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('online') === 'true') {
+        setOnlyOnline(true);
+      }
+    }
+  }, []);
 
   const [onlyPremium, setOnlyPremium] = useState(false);
 
