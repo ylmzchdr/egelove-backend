@@ -392,15 +392,12 @@ export const api = {
         }),
       }),
 
-     pending: () =>
-    request<any[]>("/photos/pending"),
-  getOnlineUsers: () =>
-  request<any[]>("/user/online", { method: "GET" }), // ,👈 BURAYA VİRGÜLÜ KOYUN
+    pending: () =>
+      request<any[]>("/photos/pending"),
+  },
 
   admin: {
-
     stats: () =>
-
       request<any>("/admin/stats"),
 
     users: () =>
