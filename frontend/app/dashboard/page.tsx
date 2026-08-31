@@ -21,13 +21,15 @@ import Sidebar from "./Sidebar";
 import { useI18n } from "@/lib/i18n-context";
 import { api } from "@/lib/api";
 
-  const [onlineUsers, setOnlineUsers] = useState<any[]>([]);
+    const [onlineUsers, setOnlineUsers] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchOnlineUsers = async () => {
       try {
         const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://onrender.com';
-        const token = localStorage.getItem('token');
+        
+        // 🎯 KESİN ÇÖZÜM: Sunucu tarafında çökmemesi için tarayıcıda olup olmadığımızı kontrol ediyoruz
+        const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
         const response = await fetch(`${apiUrl}/user/online`, {
           method: 'GET',
