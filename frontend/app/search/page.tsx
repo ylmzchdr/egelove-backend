@@ -260,14 +260,17 @@ export default function SearchPage() {
 
   const [onlyOnline, setOnlyOnline] = useState(isOnlineFilter);
   // 🎯 KESİN ÇÖZÜM: URL'de online=true parametresi geldiğinde kutucuğu otomatik doldurur ve aramayı tetikler
+   // 🎯 KÖKTEN ÇÖZÜM: Ana sayfadan bırakılan hafıza işaretini okur ve kutucuğu otomatik doldurur
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get('online') === 'true') {
+      const forceOnline = localStorage.getItem('forceOnlineFilter');
+      if (forceOnline === 'true') {
         setOnlyOnline(true);
+        localStorage.removeItem('forceOnlineFilter'); // Filtre tetiklendikten sonra temizlenir
       }
     }
   }, []);
+
 
   const [onlyPremium, setOnlyPremium] = useState(false);
 

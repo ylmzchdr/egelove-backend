@@ -68,12 +68,18 @@ export default function OnlineUsers() {
             {t.dashboard.onlineUsersTitle}
           </h3>
         </div>
-       <span 
-  onClick={() => router.push('/search?online=true')} 
+     <span 
+  onClick={() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('forceOnlineFilter', 'true');
+    }
+    router.push('/search');
+  }} 
   className="text-[11px] text-purple-400 hover:text-purple-300 font-medium cursor-pointer transition-colors duration-200"
 >
   Tümünü Gör
 </span>
+
 
       </div>
 
