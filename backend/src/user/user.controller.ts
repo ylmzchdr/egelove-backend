@@ -135,85 +135,49 @@ const updated = await this.prisma.user.update({
 
   return safe;
 }
-@Get("online")
-async getOnlineUsers(@CurrentUser() user?: any) {
-  const users = await this.prisma.user.findMany({
-    where: {
-      isActive: true,
-      ...(user?.sub && {
-        id: { not: user.sub },
-      }),
-     presence: {
-  isOnline: true,
-},
-    },
-    take: 20,
+  @Get("online")
+  async getOnlineUsers(@CurrentUser() user?: any) {
+    // Son 5 dakika içinde aktif olanları filtrelemek için zamanı hesaplayın
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
 
-    include: {
-      city: true,
-      district: true,
-      photos: {
-        where: {
-          status: "APPROVED",
-        },
-        orderBy: [
-          { isMain: "desc" },
-          { createdAt: "desc" },
-        ],
-        take: 1,
-      },
-      presence: true,
-    },
-  });
-
-  return users.map((u: any) => {
-    const {
-      passwordHash,
-      refreshToken,
-      turnstileToken,
-      twoFactorSecret,
-      emailVerifyToken,
-      emailVerifySentAt,
-      presence,
-      ...safe
-    } = u;
-
-    return {
-      ...safe,
-      city: u.city?.name || null,
-      district: u.district?.name || null,
-      profilePhoto:
-        u.avatar ||
-        u.photos?.[0]?.url ||
-        null,
-      isOnline: true,
-    };
-  });
-}
-  @Get("search")
-async searchUsers(@CurrentUser() user?: any) {
     const users = await this.prisma.user.findMany({
       where: {
-  isActive: true,
-  ...(user?.sub && {
-    id: { not: user.sub },
-  }),
-},
+        isActive: true,
+        ...(user?.sub && {
+          id: { not: user.sub },
+        }),
+        presence: {
+          isOnline: true,
+          lastSeen: {
+            gte: fiveMinutesAgo, // Son 5 dakika içinde istek atmış veya aktif olmuş olanlar
+          },
+        },
+      },
       take: 20,
-      select: {
-        id: true,
-        name: true,
-        birthDate: true,
-        cityId: true,
-        gender: true,
-        bio: true,
-        avatar: true,
-        isVerified: true,
+      include: {
+        city: true,
+        district: true,
+        photos: {
+          where: {
+            status: "APPROVED",
+          },
+          orderBy: [
+            { isMain: "desc" },
+            { createdAt: "desc" },
+          ],
+        },
+        presence: true, // Frontend tarafında kullanmak isterseniz varlığını da dahil ettik
+      },
+      orderBy: {
+        presence: {
+          lastSeen: "desc", // En son aktif olan en üstte görünsün
+        },
       },
     });
 
     return users;
   }
+
 
   @Get("search/filter")
 async filterUsers(
