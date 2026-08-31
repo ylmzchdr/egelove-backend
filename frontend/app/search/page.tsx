@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+
 
 import { api } from "@/lib/api";
 
@@ -245,8 +245,10 @@ function UserCard({ user }: { user: SearchUser }) {
 // --------------------------------------------------
 
 export default function SearchPage() {
-    const searchParams = useSearchParams();
-  const isOnlineFilter = searchParams.get('online') === 'true';
+    // Tarayıcı ortamındaysak URL'deki parametreyi güvenle okur, sunucuda çökmeyi önler
+  const isOnlineFilter = typeof window !== 'undefined' 
+    ? new URLSearchParams(window.location.search).get('online') === 'true' 
+    : false;
 
   const [isClient, setIsClient] = useState(false);
 
