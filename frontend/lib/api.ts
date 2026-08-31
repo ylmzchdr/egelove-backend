@@ -1,4 +1,4 @@
-const API_URL =
+﻿const API_URL =
   process.env.NEXT_PUBLIC_API_URL ||
   "https://egelove-backend.onrender.com";
 
@@ -392,12 +392,15 @@ export const api = {
         }),
       }),
 
-    pending: () =>
-      request<any[]>("/photos/pending"),
-  },
+     pending: () =>
+    request<any[]>("/photos/pending"),
+  getOnlineUsers: () =>
+  request<any[]>("/user/online", { method: "GET" }), // ,👈 BURAYA VİRGÜLÜ KOYUN
 
   admin: {
+
     stats: () =>
+
       request<any>("/admin/stats"),
 
     users: () =>
