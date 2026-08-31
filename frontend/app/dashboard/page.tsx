@@ -2,8 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import OnlineUsers from "@/components/OnlineUsers";
-
+import OnlineUsers from "../../components/OnlineUsers";
 import {
   Camera,
   ChevronRight,
@@ -21,50 +20,7 @@ import Sidebar from "./Sidebar";
 import { useI18n } from "@/lib/i18n-context";
 import { api } from "@/lib/api";
 
-    const [onlineUsers, setOnlineUsers] = useState<any[]>([]);
-
-  useEffect(() => {
-    const fetchOnlineUsers = async () => {
-      try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://onrender.com';
-        
-        // 🎯 KESİN ÇÖZÜM: Sunucu tarafında çökmemesi için tarayıcıda olup olmadığımızı kontrol ediyoruz
-        const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-
-        const response = await fetch(`${apiUrl}/user/online`, {
-          method: 'GET',
-          cache: 'no-store',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(token && { 'Authorization': `Bearer ${token}` })
-          }
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          
-          const formattedData = (data || []).map((user: any) => {
-            const mainPhoto = user.photos?.find((p: any) => p.isMain) || user.photos?.[0];
-            return {
-              id: user.id,
-              name: user.name,
-              city: user.city?.name || 'Ege',
-              avatar: mainPhoto?.url || '/default-avatar.png',
-              color: "from-purple-600 via-pink-500 to-blue-500"
-            };
-          });
-
-          setOnlineUsers(formattedData);
-        }
-      } catch (error) {
-        console.error("Çevrimiçi kullanıcılar çekilirken hata oluştu:", error);
-      }
-    };
-
-    fetchOnlineUsers();
-    const interval = setInterval(fetchOnlineUsers, 60000);
-    return () => clearInterval(interval);
-  }, []);
+   const onlineUsers: any[] = [];
 
 export default function DashboardPage() {
   const [isClient, setIsClient] = useState(false);
@@ -274,33 +230,8 @@ export default function DashboardPage() {
 
             <div className="flex items-start gap-5 overflow-x-auto pb-2 scrollbar-none md:gap-6">
 
-              {onlineUsers.map((user) => (
-                <Link
-                  key={user.id}
-                  href={`/profile/${user.id}`}
-                  className="group flex min-w-[70px] shrink-0 cursor-pointer flex-col items-center gap-1.5"
-                >
-                  <div
-                    className={`relative h-14 w-14 rounded-full bg-gradient-to-tr ${user.color} p-0.5 shadow-lg transition-transform group-hover:scale-105`}
-                  >
-                    <div className="flex h-full w-full items-center justify-center overflow-hidden rounded-full bg-[#121420]">
-                      <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                        {user.name.slice(0, 2)}
-                      </span>
-                    </div>
+             <OnlineUsers />
 
-                    <span className="absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full border-2 border-[#121420] bg-emerald-500" />
-                  </div>
-
-                  <span className="max-w-[65px] truncate text-xs font-bold tracking-wide text-slate-200 transition-colors group-hover:text-purple-400">
-                    {user.name}
-                  </span>
-
-                  <span className="text-[10px] font-medium text-slate-500">
-                    {user.city}
-                  </span>
-                </Link>
-              ))}
 
             </div>
           </section>
