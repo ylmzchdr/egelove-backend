@@ -68,12 +68,13 @@ export default function OnlineUsers() {
             {t.dashboard.onlineUsersTitle}
           </h3>
         </div>
-        <span 
-          onClick={() => router.push('/search')} 
-          className="text-[11px] text-purple-400 hover:text-purple-300 font-medium cursor-pointer transition-colors duration-200"
-        >
-          Tüm İlleri Gör
-        </span>
+       <span 
+  onClick={() => router.push('/search?online=true')} 
+  className="text-[11px] text-purple-400 hover:text-purple-300 font-medium cursor-pointer transition-colors duration-200"
+>
+  Tümünü Gör
+</span>
+
       </div>
 
       <div className="flex items-center gap-4 overflow-x-auto pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
