@@ -365,7 +365,8 @@ export default function DashboardPage() {
 
             {/* İLDE ÜYE BUL */}
             <Link
-              href="/search"
+             href="/search?online=true"
+
               className="flex h-28 min-w-0 flex-col justify-between rounded-2xl border border-white/10 bg-slate-900/40 p-4 transition-all hover:border-amber-500/40"
             >
               <MapPin className="h-4 w-4 text-amber-500" />
