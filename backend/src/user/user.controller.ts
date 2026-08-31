@@ -135,10 +135,10 @@ const updated = await this.prisma.user.update({
 
   return safe;
 }
-  @Get("online")
+   @Get("online")
   async getOnlineUsers(@CurrentUser() user?: any) {
-    // Son 5 dakika içinde aktif olanları filtrelemek için zamanı hesaplayın
-    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+    const fiveMinutesAgo = new Date();
+    fiveMinutesAgo.setUTCMinutes(fiveMinutesAgo.getUTCMinutes() - 5);
 
     const users = await this.prisma.user.findMany({
       where: {
@@ -149,7 +149,7 @@ const updated = await this.prisma.user.update({
         presence: {
           isOnline: true,
           lastSeen: {
-            gte: fiveMinutesAgo, // Son 5 dakika içinde istek atmış veya aktif olmuş olanlar
+            gte: fiveMinutesAgo,
           },
         },
       },
@@ -166,17 +166,18 @@ const updated = await this.prisma.user.update({
             { createdAt: "desc" },
           ],
         },
-        presence: true, // Frontend tarafında kullanmak isterseniz varlığını da dahil ettik
+        presence: true,
       },
       orderBy: {
         presence: {
-          lastSeen: "desc", // En son aktif olan en üstte görünsün
+          lastSeen: "desc",
         },
       },
     });
 
     return users;
   }
+
 
 
   @Get("search/filter")
