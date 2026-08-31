@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+
 import { api } from "@/lib/api";
 
 import {
@@ -243,6 +245,9 @@ function UserCard({ user }: { user: SearchUser }) {
 // --------------------------------------------------
 
 export default function SearchPage() {
+    const searchParams = useSearchParams();
+  const isOnlineFilter = searchParams.get('online') === 'true';
+
   const [isClient, setIsClient] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -251,7 +256,8 @@ export default function SearchPage() {
   const [minAge, setMinAge] = useState("");
   const [maxAge, setMaxAge] = useState("");
 
-  const [onlyOnline, setOnlyOnline] = useState(false);
+  const [onlyOnline, setOnlyOnline] = useState(isOnlineFilter);
+
   const [onlyPremium, setOnlyPremium] = useState(false);
 
   const [results, setResults] = useState<SearchUser[]>([]);
