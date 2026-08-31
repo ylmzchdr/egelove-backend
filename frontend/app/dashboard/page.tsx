@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import OnlineUsers from "@/components/OnlineUsers";
+
 import {
   Camera,
   ChevronRight,
@@ -19,56 +21,48 @@ import Sidebar from "./Sidebar";
 import { useI18n } from "@/lib/i18n-context";
 import { api } from "@/lib/api";
 
-const onlineUsers = [
-  {
-    id: "sabrina",
-    name: "Sabrina",
-    city: "Muğla",
-    color: "from-pink-500 to-purple-600",
-  },
-  {
-    id: "can",
-    name: "Can",
-    city: "Muğla",
-    color: "from-blue-500 to-teal-500",
-  },
-  {
-    id: "merve",
-    name: "Merve",
-    city: "Aydın",
-    color: "from-purple-500 to-pink-500",
-  },
-  {
-    id: "deniz",
-    name: "Deniz",
-    city: "Antalya",
-    color: "from-emerald-500 to-blue-500",
-  },
-  {
-    id: "elif",
-    name: "Elif",
-    city: "İstanbul",
-    color: "from-orange-500 to-amber-500",
-  },
-  {
-    id: "burak",
-    name: "Burak",
-    city: "Ankara",
-    color: "from-indigo-500 to-purple-500",
-  },
-  {
-    id: "zeynep",
-    name: "Zeynep",
-    city: "Diyarbakır",
-    color: "from-rose-500 to-pink-500",
-  },
-  {
-    id: "hakan",
-    name: "Hakan",
-    city: "Trabzon",
-    color: "from-cyan-500 to-blue-500",
-  },
-];
+  const [onlineUsers, setOnlineUsers] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchOnlineUsers = async () => {
+      try {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://onrender.com';
+        const token = localStorage.getItem('token');
+
+        const response = await fetch(`${apiUrl}/user/online`, {
+          method: 'GET',
+          cache: 'no-store',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token && { 'Authorization': `Bearer ${token}` })
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          
+          const formattedData = (data || []).map((user: any) => {
+            const mainPhoto = user.photos?.find((p: any) => p.isMain) || user.photos?.[0];
+            return {
+              id: user.id,
+              name: user.name,
+              city: user.city?.name || 'Ege',
+              avatar: mainPhoto?.url || '/default-avatar.png',
+              color: "from-purple-600 via-pink-500 to-blue-500"
+            };
+          });
+
+          setOnlineUsers(formattedData);
+        }
+      } catch (error) {
+        console.error("Çevrimiçi kullanıcılar çekilirken hata oluştu:", error);
+      }
+    };
+
+    fetchOnlineUsers();
+    const interval = setInterval(fetchOnlineUsers, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
 export default function DashboardPage() {
   const [isClient, setIsClient] = useState(false);

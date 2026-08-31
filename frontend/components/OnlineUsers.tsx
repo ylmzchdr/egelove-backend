@@ -16,8 +16,9 @@ export default function OnlineUsers() {
         const token = localStorage.getItem('token');
 
         // 🎯 KESİN ÇÖZÜM: api nesnesine uğramadan doğrudan ham fetch ile istek atıyoruz
-        const response = await fetch(`${apiUrl}/user/online`, {
+               const response = await fetch(`${apiUrl}/user/online`, {
           method: 'GET',
+          cache: 'no-store', // 👈 NEXT.JS SUNUCU ÖNBELLEĞİNİ TAMAMEN KAPATIR
           headers: {
             'Content-Type': 'application/json',
             ...(token && { 'Authorization': `Bearer ${token}` })
