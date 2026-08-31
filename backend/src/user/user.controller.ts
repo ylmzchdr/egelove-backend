@@ -135,49 +135,85 @@ const updated = await this.prisma.user.update({
 
   return safe;
 }
-   @Get("online")
-  async getOnlineUsers(@CurrentUser() user?: any) {
-    const fiveMinutesAgo = new Date();
-    fiveMinutesAgo.setUTCMinutes(fiveMinutesAgo.getUTCMinutes() - 5);
+  @Get("online")
+async getOnlineUsers(@CurrentUser() user?: any) {
+  const fiveMinutesAgo = new Date();
+  fiveMinutesAgo.setUTCMinutes(
+    fiveMinutesAgo.getUTCMinutes() - 5,
+  );
 
-    const users = await this.prisma.user.findMany({
-      where: {
-        isActive: true,
-        ...(user?.sub && {
-          id: { not: user.sub },
-        }),
-        presence: {
-          isOnline: true,
-          lastSeen: {
-            gte: fiveMinutesAgo,
-          },
-        },
-      },
-      take: 20,
-      include: {
-        city: true,
-        district: true,
-        photos: {
-          where: {
-            status: "APPROVED",
-          },
-          orderBy: [
-            { isMain: "desc" },
-            { createdAt: "desc" },
-          ],
-        },
-        presence: true,
-      },
-      orderBy: {
-        presence: {
-          lastSeen: "desc",
-        },
-      },
-    });
+  const users = await this.prisma.user.findMany({
+    where: {
+      isActive: true,
 
-    return users;
-  }
+      // Giriş yapan kullanıcı kendisini görmesin
+      ...(user?.sub && {
+        id: { not: user.sub },
+      }),
+    },
 
+    take: 50,
+
+    include: {
+      city: true,
+      district: true,
+
+      photos: {
+        where: {
+          status: "APPROVED",
+        },
+        orderBy: [
+          { isMain: "desc" },
+          { createdAt: "desc" },
+        ],
+      },
+
+      presence: true,
+    },
+  });
+
+  const result = users.map((u: any) => {
+    const {
+      passwordHash,
+      refreshToken,
+      turnstileToken,
+      twoFactorSecret,
+      emailVerifyToken,
+      emailVerifySentAt,
+      ...safe
+    } = u;
+
+    const isOnline =
+      !!u.presence?.isOnline &&
+      !!u.presence?.lastSeen &&
+      new Date(u.presence.lastSeen) >= fiveMinutesAgo;
+
+    return {
+      ...safe,
+      isOnline,
+    };
+  });
+
+  // Önce online kullanıcılar,
+  // sonra offline kullanıcılar
+  result.sort((a: any, b: any) => {
+    if (a.isOnline !== b.isOnline) {
+      return a.isOnline ? -1 : 1;
+    }
+
+    const aLastSeen = a.presence?.lastSeen
+      ? new Date(a.presence.lastSeen).getTime()
+      : 0;
+
+    const bLastSeen = b.presence?.lastSeen
+      ? new Date(b.presence.lastSeen).getTime()
+      : 0;
+
+    return bLastSeen - aLastSeen;
+  });
+
+  return result.slice(0, 20);
+}
 
 
   @Get("search/filter")
@@ -313,6 +349,7 @@ if (user?.sub) {
     city: true,
     district: true,
     photos: { where: { status: "APPROVED" }, take: 3 },
+    presence: true,
   },
 });
 
