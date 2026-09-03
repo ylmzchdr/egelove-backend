@@ -82,7 +82,7 @@ export class AuthController {
 async googleAuthRedirect(@Req() req: any, @Res() res: any) {
   const result = await this.authService.googleLogin(req.user);
 
-  const frontendUrl = "https://egelove.tr";
+  const frontendUrl = "https://senveben.com.tr";
 
   const user = encodeURIComponent(JSON.stringify(result.user));
 
