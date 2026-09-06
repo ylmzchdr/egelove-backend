@@ -223,16 +223,10 @@ export default function DashboardPage() {
             ===================================================== */}
             <div className="mb-2 flex w-full flex-col items-center justify-center gap-3 text-center">
 
-              <div className="flex select-none items-center gap-2">
-                
+              <h1 className="text-3xl font-black tracking-tight text-[#EC4B99]">
+  senveben.com.tr
+</h1>
 
-                <h1 className="text-3xl font-black tracking-tight bg-gradient-to-r from-[#2D1721] via-[#BE185D] to-[#EC4899] bg-clip-text text-transparent">
-                 senveben
-                  <span className="text-xl font-bold text-[#EC4899]">
-                    .TR
-                  </span>
-                </h1>
-              </div>
 
               <div className="inline-flex items-center gap-2 rounded-full border border-pink-400/70 bg-[#EFA3C0] px-4 py-1.5 backdrop-blur-md">
                 <span className="relative flex h-2 w-2">
