@@ -1,0 +1,1115 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  Bell,
+  Crown,
+  Check,
+  ChevronDown,
+  ChevronRight,
+  Heart,
+  Home,
+  Languages,
+  Loader2,
+  MapPin,
+  MessageCircle,
+  Search,
+  Settings,
+  Sparkles,
+  ThumbsUp,
+  User,
+  Users,
+  X,
+} from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import AuthDialog from "@/components/AuthDialog";
+import { api } from "@/lib/api";
+import { useI18n } from "@/lib/i18n-context";
+
+type TabType = "received" | "sent";
+
+function calcAge(birthDate: string): number {
+  const bd = new Date(birthDate);
+  const today = new Date();
+
+  let age = today.getFullYear() - bd.getFullYear();
+  const month = today.getMonth() - bd.getMonth();
+
+  if (month < 0 || (month === 0 && today.getDate() < bd.getDate())) {
+    age--;
+  }
+
+  return age;
+}
+
+function getOtherUser(match: any, myId: string | null) {
+  if (!match || !myId) return null;
+
+  const senderId = String(match.senderId ?? "");
+  const receiverId = String(match.receiverId ?? "");
+  const currentId = String(myId);
+
+  if (senderId === currentId) {
+    return (
+      match.receiver ||
+      match.receiverUser ||
+      match.likedUser ||
+      match.user ||
+      null
+    );
+  }
+
+  if (receiverId === currentId) {
+    return (
+      match.sender || match.senderUser || match.user || match.likedUser || null
+    );
+  }
+
+  return (
+    match.receiver || match.sender || match.user || match.likedUser || null
+  );
+}
+
+function getAvatar(user: any): string | undefined {
+  return (
+    user?.avatar ||
+    user?.profileImage ||
+    user?.photoUrl ||
+    user?.photos?.find((p: any) => p?.isMain)?.url ||
+    user?.photos?.[0]?.url ||
+    undefined
+  );
+}
+
+function getInitials(user: any): string {
+  const first = user?.name?.charAt(0) || "";
+  const last = user?.surname?.charAt(0) || "";
+
+  const initials = `${first}${last}`.trim();
+
+  return initials || "?";
+}
+
+function getFullName(user: any): string {
+  const name = user?.name || "";
+  const surname = user?.surname || "";
+
+  return `${name} ${surname}`.trim() || "SenVeBen Ãœyesi";
+}
+
+function getCity(user: any): string {
+  return user?.city?.name || user?.cityName || user?.location?.city || "";
+}
+
+function getDistrict(user: any): string {
+  return (
+    user?.district?.name || user?.districtName || user?.location?.district || ""
+  );
+}
+
+export default function LikesPage() {
+  const [searchText, setSearchText] = useState("");
+  const router = useRouter();
+  const { lang, setLang } = useI18n();
+
+  const [authTab, setAuthTab] = useState<"login" | "register" | null>(null);
+
+  const [tab, setTab] = useState<TabType>("received");
+  const [matches, setMatches] = useState<any[]>([]);
+  const [myId, setMyId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [isPremium, setIsPremium] = useState(false);
+  const [likingId, setLikingId] = useState<string | null>(null);
+
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [languageOpen, setLanguageOpen] = useState(false);
+
+  const t = useMemo(() => {
+    const translations: Record<string, Record<string, string>> = {
+      TR: {
+        likes: "BeÄŸeniler",
+        subtitle: "Seni beÄŸenenler ve senin beÄŸendiklerin",
+        likedYou: "Seni BeÄŸenenler",
+        youLiked: "BeÄŸendiklerin",
+        noOneLiked: "HenÃ¼z seni beÄŸenen yok",
+        noOneLikedDesc:
+          "Profilini tamamla ve SenVeBen'da daha fazla kiÅŸiye gÃ¶rÃ¼n.",
+        youLikedNobody: "HenÃ¼z kimseyi beÄŸenmedin",
+        youLikedNobodyDesc:
+          "Sana uygun kiÅŸileri bul ve ilgini Ã§eken profillere gÃ¶z at.",
+        explore: "Sana Uygun KiÅŸiyi Bul",
+        editProfile: "Profilimi DÃ¼zenle",
+        profile: "Profili GÃ¶r",
+        respond: "KarÅŸÄ±lÄ±k Ver",
+        mutual: "EÅŸleÅŸtiniz!",
+        sendMessage: "Mesaj GÃ¶nder",
+        online: "Ã‡evrimiÃ§i",
+        home: "Ana Sayfa",
+        discover: "Sana Uygun KiÅŸiyi Bul",
+        likesMenu: "BeÄŸeniler",
+        messages: "Mesajlar",
+        premium: "Premium",
+        myProfile: "Profilim",
+        settings: "Ayarlar",
+        notifications: "Bildirimler",
+        search: "Ä°sim, ÅŸehir veya kullanÄ±cÄ± adÄ± ara...",
+        login: "GiriÅŸ Yap",
+        register: "KayÄ±t Ol",
+        logout: "Ã‡Ä±kÄ±ÅŸ Yap",
+        welcome: "HoÅŸ geldin",
+        members: "Ã¼ye",
+        location: "Konum",
+        premiumTitle: "Bu kiÅŸi seni beÄŸendi!",
+        premiumDesc: "FotoÄŸrafÄ±nÄ± gÃ¶rmek ve kim olduÄŸunu keÅŸfetmek iÃ§in Premium'a geÃ§.",
+        premiumButton: "Premium'a GeÃ§",
+        premiumPhoto: "Bu kim acaba?",
+      },
+
+      EN: {
+        likes: "Likes",
+        subtitle: "People who liked you and people you liked",
+        likedYou: "Liked You",
+        youLiked: "You Liked",
+        noOneLiked: "No one has liked you yet",
+        noOneLikedDesc:
+          "Complete your profile and become more visible on SenVeBen.",
+        youLikedNobody: "You haven't liked anyone yet",
+        youLikedNobodyDesc:
+          "Discover new people and explore profiles that interest you.",
+        explore: "Discover Members",
+        editProfile: "Edit My Profile",
+        profile: "View Profile",
+        respond: "Like Back",
+        mutual: "It's a Match!",
+        sendMessage: "Send Message",
+        online: "Online",
+        home: "Home",
+        discover: "Discover",
+        likesMenu: "Likes",
+        messages: "Messages",
+        premium: "Premium",
+        myProfile: "My Profile",
+        settings: "Settings",
+        notifications: "Notifications",
+        search: "Search name, city or username...",
+        login: "Log In",
+        register: "Register",
+        logout: "Log Out",
+        welcome: "Welcome",
+        members: "members",
+        location: "Location",
+        premiumTitle: "This person liked you!",
+        premiumDesc: "Go Premium to see their photo and discover who they are.",
+        premiumButton: "Go Premium",
+        premiumPhoto: "Who could this be?",
+      },
+
+      RU: {
+        likes: "ĞÑ€Ğ°Ğ²Ğ¸Ñ‚ÑÑ",
+        subtitle: "ĞšÑ‚Ğ¾ Ğ»Ğ°Ğ¹ĞºĞ½ÑƒĞ» Ğ²Ğ°Ñ Ğ¸ ĞºĞ¾Ğ³Ğ¾ Ğ»Ğ°Ğ¹ĞºĞ½ÑƒĞ»Ğ¸ Ğ²Ñ‹",
+        likedYou: "Ğ›Ğ°Ğ¹ĞºĞ½ÑƒĞ»Ğ¸ Ğ²Ğ°Ñ",
+        youLiked: "Ğ’Ñ‹ Ğ»Ğ°Ğ¹ĞºĞ½ÑƒĞ»Ğ¸",
+        noOneLiked: "Ğ’Ğ°Ñ Ğ¿Ğ¾ĞºĞ° Ğ½Ğ¸ĞºÑ‚Ğ¾ Ğ½Ğµ Ğ»Ğ°Ğ¹ĞºĞ½ÑƒĞ»",
+        noOneLikedDesc: "Ğ—Ğ°Ğ¿Ğ¾Ğ»Ğ½Ğ¸Ñ‚Ğµ Ğ¿Ñ€Ğ¾Ñ„Ğ¸Ğ»ÑŒ Ğ¸ ÑÑ‚Ğ°Ğ½ÑŒÑ‚Ğµ Ğ·Ğ°Ğ¼ĞµÑ‚Ğ½ĞµĞµ Ğ½Ğ° SenVeBen.",
+        youLikedNobody: "Ğ’Ñ‹ Ğ¿Ğ¾ĞºĞ° Ğ½Ğ¸ĞºĞ¾Ğ³Ğ¾ Ğ½Ğµ Ğ»Ğ°Ğ¹ĞºĞ½ÑƒĞ»Ğ¸",
+        youLikedNobodyDesc:
+          "ĞÑ‚ĞºÑ€Ğ¾Ğ¹Ñ‚Ğµ Ğ´Ğ»Ñ ÑĞµĞ±Ñ Ğ½Ğ¾Ğ²Ñ‹Ñ… Ğ»ÑĞ´ĞµĞ¹ Ğ¸ Ğ¸Ğ½Ñ‚ĞµÑ€ĞµÑĞ½Ñ‹Ğµ Ğ¿Ñ€Ğ¾Ñ„Ğ¸Ğ»Ğ¸.",
+        explore: "ĞĞ°Ğ¹Ñ‚Ğ¸ ÑƒÑ‡Ğ°ÑÑ‚Ğ½Ğ¸ĞºĞ¾Ğ²",
+        editProfile: "Ğ˜Ğ·Ğ¼ĞµĞ½Ğ¸Ñ‚ÑŒ Ğ¿Ñ€Ğ¾Ñ„Ğ¸Ğ»ÑŒ",
+        profile: "Ğ¡Ğ¼Ğ¾Ñ‚Ñ€ĞµÑ‚ÑŒ Ğ¿Ñ€Ğ¾Ñ„Ğ¸Ğ»ÑŒ",
+        respond: "ĞÑ‚Ğ²ĞµÑ‚Ğ¸Ñ‚ÑŒ Ğ»Ğ°Ğ¹ĞºĞ¾Ğ¼",
+        mutual: "Ğ£ Ğ²Ğ°Ñ Ğ²Ğ·Ğ°Ğ¸Ğ¼Ğ½Ğ°Ñ ÑĞ¸Ğ¼Ğ¿Ğ°Ñ‚Ğ¸Ñ!",
+        sendMessage: "ĞĞ°Ğ¿Ğ¸ÑĞ°Ñ‚ÑŒ ÑĞ¾Ğ¾Ğ±Ñ‰ĞµĞ½Ğ¸Ğµ",
+        online: "Ğ’ ÑĞµÑ‚Ğ¸",
+        home: "Ğ“Ğ»Ğ°Ğ²Ğ½Ğ°Ñ",
+        discover: "ĞĞ±Ğ·Ğ¾Ñ€",
+        likesMenu: "ĞÑ€Ğ°Ğ²Ğ¸Ñ‚ÑÑ",
+        messages: "Ğ¡Ğ¾Ğ¾Ğ±Ñ‰ĞµĞ½Ğ¸Ñ",
+        premium: "Premium",
+        myProfile: "ĞœĞ¾Ğ¹ Ğ¿Ñ€Ğ¾Ñ„Ğ¸Ğ»ÑŒ",
+        settings: "ĞĞ°ÑÑ‚Ñ€Ğ¾Ğ¹ĞºĞ¸",
+        notifications: "Ğ£Ğ²ĞµĞ´Ğ¾Ğ¼Ğ»ĞµĞ½Ğ¸Ñ",
+        search: "Ğ˜Ğ¼Ñ, Ğ³Ğ¾Ñ€Ğ¾Ğ´ Ğ¸Ğ»Ğ¸ Ğ¸Ğ¼Ñ Ğ¿Ğ¾Ğ»ÑŒĞ·Ğ¾Ğ²Ğ°Ñ‚ĞµĞ»Ñ...",
+        login: "Ğ’Ğ¾Ğ¹Ñ‚Ğ¸",
+        register: "Ğ ĞµĞ³Ğ¸ÑÑ‚Ñ€Ğ°Ñ†Ğ¸Ñ",
+        logout: "Ğ’Ñ‹Ğ¹Ñ‚Ğ¸",
+        welcome: "Ğ”Ğ¾Ğ±Ñ€Ğ¾ Ğ¿Ğ¾Ğ¶Ğ°Ğ»Ğ¾Ğ²Ğ°Ñ‚ÑŒ",
+        members: "ÑƒÑ‡Ğ°ÑÑ‚Ğ½Ğ¸ĞºĞ¾Ğ²",
+        location: "ĞœĞµÑÑ‚Ğ¾Ğ¿Ğ¾Ğ»Ğ¾Ğ¶ĞµĞ½Ğ¸Ğµ",
+        premiumTitle: "Ğ­Ñ‚Ğ¾Ñ‚ Ñ‡ĞµĞ»Ğ¾Ğ²ĞµĞº Ğ»Ğ°Ğ¹ĞºĞ½ÑƒĞ» Ğ²Ğ°Ñ!",
+        premiumDesc: "ĞŸĞµÑ€ĞµĞ¹Ğ´Ğ¸Ñ‚Ğµ Ğ½Ğ° Premium, Ñ‡Ñ‚Ğ¾Ğ±Ñ‹ ÑƒĞ²Ğ¸Ğ´ĞµÑ‚ÑŒ Ñ„Ğ¾Ñ‚Ğ¾ Ğ¸ ÑƒĞ·Ğ½Ğ°Ñ‚ÑŒ, ĞºÑ‚Ğ¾ ÑÑ‚Ğ¾.",
+        premiumButton: "ĞŸĞµÑ€ĞµĞ¹Ñ‚Ğ¸ Ğ½Ğ° Premium",
+        premiumPhoto: "ĞšÑ‚Ğ¾ Ğ¶Ğµ ÑÑ‚Ğ¾?",
+      },
+
+      AR: {
+        likes: "Ø§Ù„Ø¥Ø¹Ø¬Ø§Ø¨Ø§Øª",
+        subtitle: "Ù…Ù† Ø£Ø¹Ø¬Ø¨ÙˆØ§ Ø¨Ùƒ ÙˆÙ…Ù† Ø£Ø¹Ø¬Ø¨Øª Ø¨Ù‡Ù…",
+        likedYou: "Ù…Ù† Ø£Ø¹Ø¬Ø¨ÙˆØ§ Ø¨Ùƒ",
+        youLiked: "Ù…Ù† Ø£Ø¹Ø¬Ø¨Øª Ø¨Ù‡Ù…",
+        noOneLiked: "Ù„Ù… ÙŠØ¹Ø¬Ø¨ Ø¨Ùƒ Ø£Ø­Ø¯ Ø¨Ø¹Ø¯",
+        noOneLikedDesc: "Ø£ÙƒÙ…Ù„ Ù…Ù„ÙÙƒ Ø§Ù„Ø´Ø®ØµÙŠ ÙˆÙƒÙ† Ø£ÙƒØ«Ø± Ø¸Ù‡ÙˆØ±Ù‹Ø§ Ø¹Ù„Ù‰ SenVeBen.",
+        youLikedNobody: "Ù„Ù… ØªØ¹Ø¬Ø¨ Ø¨Ø£Ø­Ø¯ Ø¨Ø¹Ø¯",
+        youLikedNobodyDesc: "Ø§ÙƒØªØ´Ù Ø£Ø´Ø®Ø§ØµÙ‹Ø§ Ø¬Ø¯Ø¯ ÙˆØªØµÙØ­ Ø§Ù„Ù…Ù„ÙØ§Øª Ø§Ù„ØªÙŠ ØªÙ‡Ù…Ùƒ.",
+        explore: "Ø§ÙƒØªØ´Ù Ø§Ù„Ø£Ø¹Ø¶Ø§Ø¡",
+        editProfile: "ØªØ¹Ø¯ÙŠÙ„ Ø§Ù„Ù…Ù„Ù Ø§Ù„Ø´Ø®ØµÙŠ",
+        profile: "Ø¹Ø±Ø¶ Ø§Ù„Ù…Ù„Ù",
+        respond: "Ø§Ù„Ø¥Ø¹Ø¬Ø§Ø¨ Ø¨Ø§Ù„Ù…Ù‚Ø§Ø¨Ù„",
+        mutual: "Ø¥Ù†Ù‡Ø§ Ù…Ø·Ø§Ø¨Ù‚Ø©!",
+        sendMessage: "Ø¥Ø±Ø³Ø§Ù„ Ø±Ø³Ø§Ù„Ø©",
+        online: "Ù…ØªØµÙ„",
+        home: "Ø§Ù„Ø±Ø¦ÙŠØ³ÙŠØ©",
+        discover: "Ø§ÙƒØªØ´Ù",
+        likesMenu: "Ø§Ù„Ø¥Ø¹Ø¬Ø§Ø¨Ø§Øª",
+        messages: "Ø§Ù„Ø±Ø³Ø§Ø¦Ù„",
+        premium: "Premium",
+        myProfile: "Ù…Ù„ÙÙŠ Ø§Ù„Ø´Ø®ØµÙŠ",
+        settings: "Ø§Ù„Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª",
+        notifications: "Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª",
+        search: "Ø§Ø¨Ø­Ø« Ø¨Ø§Ù„Ø§Ø³Ù… Ø£Ùˆ Ø§Ù„Ù…Ø¯ÙŠÙ†Ø© Ø£Ùˆ Ø§Ø³Ù… Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…...",
+        login: "ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„",
+        register: "Ø¥Ù†Ø´Ø§Ø¡ Ø­Ø³Ø§Ø¨",
+        logout: "ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø®Ø±ÙˆØ¬",
+        welcome: "Ù…Ø±Ø­Ø¨Ù‹Ø§",
+        members: "Ø¹Ø¶Ùˆ",
+        location: "Ø§Ù„Ù…ÙˆÙ‚Ø¹",
+        premiumTitle: "Ù‡Ø°Ø§ Ø§Ù„Ø´Ø®Øµ Ø£Ø¹Ø¬Ø¨ Ø¨Ùƒ!",
+        premiumDesc: "Ø§Ù†ØªÙ‚Ù„ Ø¥Ù„Ù‰ Premium Ù„Ø±Ø¤ÙŠØ© ØµÙˆØ±ØªÙ‡ ÙˆÙ…Ø¹Ø±ÙØ© Ù…Ù† Ù‡Ùˆ.",
+        premiumButton: "Ø§Ù„Ø§Ù†ØªÙ‚Ø§Ù„ Ø¥Ù„Ù‰ Premium",
+        premiumPhoto: "Ù…Ù† ÙŠØ§ ØªØ±Ù‰ØŸ",
+      },
+    };
+
+    return translations[lang] || translations.TR;
+  }, [lang]);
+  const load = async () => {
+    setLoading(true);
+
+    try {
+      // GiriÅŸ yapan gerÃ§ek kullanÄ±cÄ±yÄ± API'den al
+      const me: any = await api.users.me();
+
+      const uid = me?.id ?? me?.user?.id ?? me?.data?.id ?? null;
+      const premiumStatus =
+  me?.isPremium === true ||
+  me?.premium === true ||
+  me?.isGold === true ||
+  me?.subscription?.isPremium === true ||
+  me?.subscription?.active === true ||
+  me?.subscriptionStatus === "ACTIVE";
+
+setIsPremium(premiumStatus);
+
+      setMyId(uid ? String(uid) : null);
+
+      if (!uid) {
+        setMatches([]);
+        return;
+      }
+
+      const data: any = await api.matches.list();
+
+      const list = Array.isArray(data)
+        ? data
+        : (data?.matches ?? data?.data ?? []);
+
+      setMatches(Array.isArray(list) ? list : []);
+    } catch (error) {
+      console.error("Likes yÃ¼klenemedi:", error);
+      setMatches([]);
+      setMyId(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    load();
+  }, []);
+
+  const handleLike = async (userId: string) => {
+    if (likingId) return;
+
+    try {
+      setLikingId(userId);
+
+      await api.matches.like(userId);
+
+      await load();
+    } catch (error) {
+      console.error("BeÄŸeni gÃ¶nderilemedi:", error);
+      alert(
+        lang === "TR"
+          ? "BeÄŸeni gÃ¶nderilemedi."
+          : lang === "EN"
+            ? "Like could not be sent."
+            : lang === "RU"
+              ? "ĞĞµ ÑƒĞ´Ğ°Ğ»Ğ¾ÑÑŒ Ğ¾Ñ‚Ğ¿Ñ€Ğ°Ğ²Ğ¸Ñ‚ÑŒ Ğ»Ğ°Ğ¹Ğº."
+              : "ØªØ¹Ø°Ø± Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ø¥Ø¹Ø¬Ø§Ø¨.",
+      );
+    } finally {
+      setLikingId(null);
+    }
+  };
+
+  const safeMatches = Array.isArray(matches) ? matches : [];
+
+  const received = safeMatches.filter(
+    (match) => String(match?.receiverId ?? "") === String(myId ?? ""),
+  );
+
+  const sent = safeMatches.filter(
+    (match) => String(match?.senderId ?? "") === String(myId ?? ""),
+  );
+
+  const visibleMatches = tab === "received" ? received : sent;
+
+  const navigate = (url: string) => {
+    window.location.href = url;
+  };
+
+  return (
+    <div className="min-h-screen bg-[#070b15] text-[#2D1721]">
+      {/* MOBILE MENU OVERLAY */}
+      {mobileMenuOpen && (
+        <div
+          className="fixed inset-0 z-[100] bg-white backdrop-blur-sm md:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+        >
+          <aside
+            className="h-full w-[280px] bg-[#090d19] border-r border-pink-200 p-5"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-pink-600 flex items-center justify-center">
+                  <Heart className="w-5 h-5 fill-white" />
+                </div>
+
+                <div>
+                  <div className="font-black text-lg">
+                    EGE<span className="text-pink-400">LOVE</span>
+                  </div>
+
+                  <div className="text-[8px] tracking-[3px] text-[#2D1721]/30">
+                    EGE & AKDENÄ°Z
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                className="text-[#7A5363] hover:text-[#2D1721]"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <SidebarLinks t={t} active="likes" navigate={navigate} />
+          </aside>
+        </div>
+      )}
+
+      <div className="flex min-h-screen">
+        {/* DESKTOP SIDEBAR */}
+        <aside className="hidden md:flex fixed left-0 top-0 bottom-0 z-50 w-[282px] flex-col bg-[#080c17] border-r border-pink-200">
+          {/* LOGO */}
+          <div className="h-[134px] flex items-center px-7 border-b border-pink-200">
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-500 via-rose-500 to-pink-600 flex items-center justify-center shadow-lg shadow-pink-500/20">
+                  <Heart className="w-6 h-6 fill-white text-[#2D1721]" />
+                </div>
+
+                <span className="absolute -right-1 -top-1 w-3 h-3 rounded-full bg-emerald-400 border-2 border-[#080c17]" />
+              </div>
+
+              <div>
+                <div className="text-xl font-black tracking-tight">
+                  EGE<span className="text-pink-400">LOVE</span>
+                </div>
+
+                <div className="text-[9px] tracking-[3px] text-[#2D1721]/25 mt-1">
+                  EGE & AKDENÄ°Z
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* MENU */}
+          <div className="flex-1 px-4 py-7 overflow-y-auto">
+            <div className="px-4 mb-4 text-[10px] tracking-[3px] text-[#2D1721]/25 uppercase">
+              MenÃ¼
+            </div>
+
+            <SidebarLinks t={t} active="likes" navigate={navigate} />
+
+            <div className="px-4 mt-9 mb-4 text-[10px] tracking-[3px] text-[#2D1721]/25 uppercase">
+              HesabÄ±m
+            </div>
+
+            <button
+              onClick={() => navigate("/profile")}
+              className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-[#6B4454] hover:text-[#2D1721] hover:bg-pink-50 transition"
+            >
+              <User className="w-5 h-5" />
+              <span className="text-sm font-medium">{t.myProfile}</span>
+            </button>
+
+            <button
+              onClick={() => navigate("/settings")}
+              className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-[#6B4454] hover:text-[#2D1721] hover:bg-pink-50 transition"
+            >
+              <Settings className="w-5 h-5" />
+              <span className="text-sm font-medium">{t.settings}</span>
+            </button>
+          </div>
+
+          {/* LOGOUT */}
+          <div className="p-4 border-t border-pink-200">
+            <button
+              onClick={() => {
+                localStorage.removeItem("accessToken");
+                navigate("/");
+              }}
+              className="w-full flex items-center justify-center gap-3 rounded-xl border border-pink-200 bg-white/[0.02] hover:bg-white py-3 text-sm text-[#6B4454] hover:text-[#2D1721] transition"
+            >
+              <ChevronRight className="w-4 h-4 rotate-180" />
+              {t.logout}
+            </button>
+
+            <div className="text-center text-[9px] text-[#2D1721]/20 mt-4 tracking-widest">
+              SENVEBEN Â© 2026
+            </div>
+          </div>
+        </aside>
+
+        {/* MAIN */}
+        <main className="flex-1 md:ml-[282px] min-w-0">
+          {/* TOP BAR */}
+          <header className="sticky top-0 z-[100] px-4 md:px-8 pt-4 pointer-events-auto">
+            <div className="h-[70px] rounded-2xl border border-pink-200 bg-[#0c111d]/90 backdrop-blur-xl flex items-center gap-3 px-3 md:px-5 shadow-2xl shadow-black/20">
+              {/* MOBILE MENU */}
+              <button
+                onClick={() => setMobileMenuOpen(true)}
+                className="md:hidden shrink-0 w-10 h-10 rounded-xl border border-pink-200 flex items-center justify-center text-[#6B4454] hover:text-[#2D1721]"
+              >
+                <Users className="w-5 h-5" />
+              </button>
+
+              <div className="flex items-center gap-2 ml-auto">
+                {/* LANGUAGES */}
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setLang("TR")}
+                    className={`h-10 px-3 rounded-xl border text-xs font-bold transition ${
+                      lang === "TR"
+                        ? "border-pink-400/40 bg-pink-500/15 text-pink-300"
+                        : "border-pink-200 bg-white/[0.02] text-[#7A5363] hover:text-[#2D1721] hover:bg-pink-50"
+                    }`}
+                  >
+                    ğŸ‡¹ğŸ‡· TR
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setLang("EN")}
+                    className={`h-10 px-3 rounded-xl border text-xs font-bold transition ${
+                      lang === "EN"
+                        ? "border-pink-400/40 bg-pink-500/15 text-pink-300"
+                        : "border-pink-200 bg-white/[0.02] text-[#7A5363] hover:text-[#2D1721] hover:bg-pink-50"
+                    }`}
+                  >
+                    ğŸ‡¬ğŸ‡§ EN
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setLang("RU")}
+                    className={`h-10 px-3 rounded-xl border text-xs font-bold transition ${
+                      lang === "RU"
+                        ? "border-pink-400/40 bg-pink-500/15 text-pink-300"
+                        : "border-pink-200 bg-white/[0.02] text-[#7A5363] hover:text-[#2D1721] hover:bg-pink-50"
+                    }`}
+                  >
+                    ğŸ‡·ğŸ‡º RU
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setLang("AR")}
+                    className={`h-10 px-3 rounded-xl border text-xs font-bold transition ${
+                      lang === "AR"
+                        ? "border-pink-400/40 bg-pink-500/15 text-pink-300"
+                        : "border-pink-200 bg-white/[0.02] text-[#7A5363] hover:text-[#2D1721] hover:bg-pink-50"
+                    }`}
+                  >
+                    ğŸ‡¸ğŸ‡¦ AR
+                  </button>
+                </div>
+
+                {/* NOTIFICATION */}
+                <button
+                  onClick={() => navigate("/notifications")}
+                  className="relative w-11 h-11 rounded-xl border border-pink-200 flex items-center justify-center text-[#7A5363] hover:text-[#2D1721] hover:bg-pink-50 transition"
+                >
+                  <Bell className="w-5 h-5" />
+
+                  <span className="absolute right-2 top-2 w-2 h-2 rounded-full bg-pink-400" />
+                </button>
+
+                {/* PROFILE */}
+                <button
+                  onClick={() => navigate("/profile")}
+                  className="flex items-center gap-2 h-11 rounded-xl border border-pink-200 px-2 md:px-3 hover:bg-pink-50 transition"
+                >
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 to-pink-600 flex items-center justify-center text-xs font-bold">
+                    {getInitials({
+                      name: "y",
+                      surname: "l",
+                    })}
+                  </div>
+
+                  <span className="hidden md:block text-sm font-semibold">
+                    yÄ±lmaz
+                  </span>
+
+                  <ChevronRight className="hidden md:block w-4 h-4 rotate-90 text-[#8A6372]" />
+                </button>
+              </div>
+            </div>
+          </header>
+
+          {/* PAGE CONTENT */}
+          <section className="px-4 md:px-8 py-8 md:py-10">
+            <div className="max-w-[1280px] mx-auto">
+              {/* PAGE TITLE */}
+              <div className="mb-8">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-11 h-11 rounded-xl bg-pink-500/10 border border-pink-400/20 flex items-center justify-center">
+                    <Heart className="w-5 h-5 text-pink-400" />
+                  </div>
+
+                  <div>
+                    <h1 className="text-3xl md:text-4xl font-black tracking-tight">
+                      {t.likes}
+                    </h1>
+
+                    <p className="text-sm text-[#8A6372] mt-1">{t.subtitle}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* STAT / INTRO CARD */}
+              <div className="relative overflow-hidden rounded-3xl border border-pink-200 bg-gradient-to-br from-[#15182a] via-[#101524] to-[#171126] p-6 md:p-7 mb-7">
+                <div className="absolute -right-20 -top-24 w-72 h-72 rounded-full bg-fuchsia-500/10 blur-3xl" />
+                <div className="absolute -left-20 -bottom-28 w-72 h-72 rounded-full bg-cyan-500/10 blur-3xl" />
+
+                <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-6">
+                  <div>
+                    <div className="inline-flex items-center gap-2 rounded-full border border-pink-400/20 bg-pink-400/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-pink-300">
+                      <Sparkles className="w-3.5 h-3.5" />
+                      SenVeBen
+                    </div>
+
+                    <h2 className="mt-4 text-xl md:text-2xl font-bold">
+                      {tab === "received" ? t.likedYou : t.youLiked}
+                    </h2>
+
+                    <p className="text-sm text-[#8A6372] mt-1">
+                      {tab === "received"
+                        ? `${received.length} ${t.members}`
+                        : `${sent.length} ${t.members}`}
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={() => navigate("/search")}
+                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-fuchsia-500 to-pink-500 px-5 py-3 text-sm font-bold shadow-lg shadow-pink-500/20 hover:scale-[1.02] transition"
+                  >
+                    <Search className="w-4 h-4" />
+                    {t.explore}
+                  </button>
+                </div>
+              </div>
+
+              {/* PREMIUM REMINDER */}
+              {tab === "received" && !isPremium && (
+                <button
+                  type="button"
+                  onClick={() => navigate("/premium")}
+                  className="group relative w-full overflow-hidden rounded-3xl border border-yellow-400/20 bg-gradient-to-r from-[#24180b] via-[#19121c] to-[#1b0f20] p-5 md:p-6 mb-8 text-left transition-all duration-300 hover:border-yellow-400/40 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-yellow-500/10"
+                >
+                  <div className="absolute -right-16 -top-20 h-52 w-52 rounded-full bg-yellow-400/10 blur-3xl" />
+                  <div className="relative flex flex-col md:flex-row md:items-center gap-4 md:gap-5">
+                    <div className="shrink-0 w-14 h-14 rounded-2xl bg-yellow-400/10 border border-yellow-400/20 flex items-center justify-center">
+                      <Crown className="w-7 h-7 text-yellow-300" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-base md:text-lg font-black text-[#2D1721]">
+                        {t.premiumTitle}
+                      </div>
+                      <div className="mt-1 text-sm leading-6 text-[#7A5363]">
+                        {t.premiumDesc}
+                      </div>
+                    </div>
+                    <span className="shrink-0 inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-yellow-400 to-amber-500 px-5 py-3 text-sm font-black text-[#17100a] shadow-lg shadow-yellow-500/15 group-hover:scale-[1.02] transition">
+                      <Crown className="w-4 h-4" />
+                      {t.premiumButton}
+                    </span>
+                  </div>
+                </button>
+              )}
+
+              {/* TABS */}
+              <div className="border-b border-pink-200 mb-8">
+                <div className="flex gap-7">
+                  <button
+                    onClick={() => setTab("received")}
+                    className={`relative flex items-center gap-2 pb-4 text-sm font-semibold transition ${
+                      tab === "received"
+                        ? "text-[#2D1721]"
+                        : "text-[#8A6372] hover:text-[#6B4454]"
+                    }`}
+                  >
+                    <Heart
+                      className={`w-4 h-4 ${
+                        tab === "received" ? "text-pink-400" : ""
+                      }`}
+                    />
+
+                    {t.likedYou}
+
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-[10px] ${
+                        tab === "received"
+                          ? "bg-pink-500/15 text-pink-300"
+                          : "bg-pink-50 text-[#2D1721]/30"
+                      }`}
+                    >
+                      {received.length}
+                    </span>
+
+                  {tab === "received" && !isPremium && (
+                      <span className="absolute bottom-0 left-0 right-0 h-[2px] rounded-full bg-gradient-to-r from-pink-500 to-fuchsia-500" />
+                    )}
+                  </button>
+
+                  <button
+                    onClick={() => setTab("sent")}
+                    className={`relative flex items-center gap-2 pb-4 text-sm font-semibold transition ${
+                      tab === "sent"
+                        ? "text-[#2D1721]"
+                        : "text-[#8A6372] hover:text-[#6B4454]"
+                    }`}
+                  >
+                    <ThumbsUp
+                      className={`w-4 h-4 ${
+                        tab === "sent" ? "text-pink-500" : ""
+                      }`}
+                    />
+
+                    {t.youLiked}
+
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-[10px] ${
+                        tab === "sent"
+                          ? "bg-cyan-500/15 text-pink-500"
+                          : "bg-pink-50 text-[#2D1721]/30"
+                      }`}
+                    >
+                      {sent.length}
+                    </span>
+
+                    {tab === "sent" && (
+                      <span className="absolute bottom-0 left-0 right-0 h-[2px] rounded-full bg-gradient-to-r from-cyan-500 to-blue-500" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* LOADING */}
+              {loading && (
+                <div className="py-24 flex flex-col items-center justify-center">
+                  <div className="w-14 h-14 rounded-2xl bg-pink-500/10 border border-pink-400/20 flex items-center justify-center mb-4">
+                    <Loader2 className="w-7 h-7 text-pink-400 animate-spin" />
+                  </div>
+
+                  <p className="text-sm text-[#2D1721]/30">
+                    {lang === "TR"
+                      ? "BeÄŸeniler yÃ¼kleniyor..."
+                      : lang === "EN"
+                        ? "Loading likes..."
+                        : lang === "RU"
+                          ? "Ğ—Ğ°Ğ³Ñ€ÑƒĞ·ĞºĞ° Ğ»Ğ°Ğ¹ĞºĞ¾Ğ²..."
+                          : "Ø¬Ø§Ø±ÙŠ ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ø¥Ø¹Ø¬Ø§Ø¨Ø§Øª..."}
+                  </p>
+                </div>
+              )}
+
+              {/* NOT LOGGED IN */}
+              {!loading && !myId && (
+                <EmptyState
+                  icon={<Heart className="w-10 h-10 text-pink-400" />}
+                  title={
+                    lang === "TR"
+                      ? "GiriÅŸ yapmalÄ±sÄ±n"
+                      : lang === "EN"
+                        ? "You must log in"
+                        : lang === "RU"
+                          ? "ĞĞµĞ¾Ğ±Ñ…Ğ¾Ğ´Ğ¸Ğ¼Ğ¾ Ğ²Ğ¾Ğ¹Ñ‚Ğ¸"
+                          : "ÙŠØ¬Ø¨ ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„"
+                  }
+                  description={
+                    lang === "TR"
+                      ? "BeÄŸenilerini gÃ¶rmek iÃ§in hesabÄ±na giriÅŸ yap."
+                      : lang === "EN"
+                        ? "Log in to see your likes."
+                        : lang === "RU"
+                          ? "Ğ’Ğ¾Ğ¹Ğ´Ğ¸Ñ‚Ğµ, Ñ‡Ñ‚Ğ¾Ğ±Ñ‹ ÑƒĞ²Ğ¸Ğ´ĞµÑ‚ÑŒ ÑĞ²Ğ¾Ğ¸ Ğ»Ğ°Ğ¹ĞºĞ¸."
+                          : "Ø³Ø¬Ù„ Ø§Ù„Ø¯Ø®ÙˆÙ„ Ù„Ø±Ø¤ÙŠØ© Ø¥Ø¹Ø¬Ø§Ø¨Ø§ØªÙƒ."
+                  }
+                  buttonText={t.login}
+                  onClick={() => setAuthTab("login")}
+                />
+              )}
+
+              {/* EMPTY RECEIVED */}
+              {!loading &&
+                myId &&
+                tab === "received" &&
+                received.length === 0 && (
+                  <EmptyState
+                    icon={<Heart className="w-10 h-10 text-pink-400" />}
+                    title={t.noOneLiked}
+                    description={t.noOneLikedDesc}
+                    buttonText={t.editProfile}
+                    onClick={() => navigate("/profile")}
+                  />
+                )}
+
+              {/* EMPTY SENT */}
+              {!loading && myId && tab === "sent" && sent.length === 0 && (
+                <EmptyState
+                  icon={<Search className="w-10 h-10 text-pink-500" />}
+                  title={t.youLikedNobody}
+                  description={t.youLikedNobodyDesc}
+                  buttonText={t.explore}
+                  onClick={() => navigate("/search")}
+                />
+              )}
+
+              {/* PROFILE GRID */}
+              {!loading && myId && visibleMatches.length > 0 && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+                  {visibleMatches.map((match) => {
+                    const other = getOtherUser(match, myId);
+
+                    if (!other?.id) return null;
+
+                    const avatar = getAvatar(other);
+                    const name = getFullName(other);
+                    const age = other.birthDate
+                      ? calcAge(other.birthDate)
+                      : undefined;
+
+                    const city = getCity(other);
+                    const district = getDistrict(other);
+
+                    const location =
+                      city && district
+                        ? `${city} â€¢ ${district}`
+                        : city || district || "";
+
+                    const isMutual =
+                      match?.isMutual === true || match?.mutual === true;
+
+                    return (
+                      <article
+                        key={match.id}
+                        className="group relative overflow-hidden rounded-3xl border border-pink-200 bg-[#0d1422] hover:border-pink-400/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-pink-500/10"
+                      >
+                        {/* IMAGE */}
+                       <button
+  onClick={() => {
+    if (tab === "received" && !isPremium) {
+      navigate("/premium");
+      return;
+    }
+
+    navigate(`/profile/${other.id}`);
+  }}
+  className="relative block w-full aspect-[4/4.2] overflow-hidden bg-gradient-to-br from-[#172035] to-[#101522]"
+>
+                          {avatar ? (
+                            <img
+                              src={avatar}
+                              alt={name}
+                             className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${
+  tab === "received" && !isPremium ? "blur-xl scale-105" : ""
+}`}
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-pink-500/20 via-pink-400/10 to-cyan-500/10">
+                              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-pink-500 to-pink-600 flex items-center justify-center text-3xl font-black shadow-xl">
+                                {getInitials(other)}
+                              </div>
+                            </div>
+                          )}
+
+                          {tab === "received" && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/15">
+                              <div className="rounded-2xl border border-yellow-300/25 bg-black/55 backdrop-blur-md px-5 py-4 text-center shadow-2xl">
+                                <Crown className="w-7 h-7 text-yellow-300 mx-auto mb-2" />
+                                <div className="text-sm font-black text-[#2D1721]">{t.premiumPhoto}</div>
+                                <div className="text-[10px] text-yellow-200/70 mt-1">{t.premiumButton}</div>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* GRADIENT */}
+                          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/80 to-transparent" />
+
+                          {/* VERIFIED */}
+                          {other?.isVerified && (
+                            <div className="absolute top-4 left-4 w-8 h-8 rounded-full bg-cyan-500 flex items-center justify-center border-2 border-white/30 shadow-lg">
+                              <Check className="w-4 h-4 text-[#2D1721]" />
+                            </div>
+                          )}
+
+                          {/* ONLINE */}
+                          {other?.isOnline && (
+                            <div className="absolute top-4 right-4 flex items-center gap-1.5 rounded-full bg-pink-50 backdrop-blur-md px-2.5 py-1.5 border border-pink-200">
+                              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+
+                              <span className="text-[9px] font-semibold text-[#4A2835]">
+                                {t.online}
+                              </span>
+                            </div>
+                          )}
+                        </button>
+
+                        {/* CONTENT */}
+                        <div className="p-5">
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="min-w-0">
+                              <h3 className="text-lg font-bold truncate">
+                                {name}
+                                {age !== undefined && (
+                                  <span className="text-pink-500 ml-1">
+                                    {age}
+                                  </span>
+                                )}
+                              </h3>
+
+                              {location && (
+                                <div className="flex items-center gap-1.5 mt-1.5 text-xs text-[#8A6372]">
+                                  <MapPin className="w-3.5 h-3.5 text-pink-500" />
+                                  <span className="truncate">{location}</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          {other?.bio && (
+                            <p className="text-xs text-[#8A6372] line-clamp-2 mt-3 min-h-[32px]">
+                              {other.bio}
+                            </p>
+                          )}
+
+                          {/* ACTIONS */}
+                          <div className="mt-5 flex gap-2">
+                           <button
+  onClick={() => {
+    if (tab === "received" && !isPremium) {
+      navigate("/premium");
+      return;
+    }
+
+    navigate(`/profile/${other.id}`);
+  }}
+  className="flex-1 h-10 rounded-xl border border-pink-200 bg-white/[0.03] hover:bg-white/[0.07] text-xs font-semibold text-[#6B4454] hover:text-[#2D1721] transition"
+>
+  {t.profile}
+</button>
+
+                            {tab === "received" && !isMutual && (
+                              <button
+                                disabled={likingId === String(other.id)}
+                                onClick={() => handleLike(String(other.id))}
+                                className="flex-1 h-10 rounded-xl bg-gradient-to-r from-pink-500 to-fuchsia-500 hover:from-pink-400 hover:to-fuchsia-400 text-xs font-bold transition shadow-lg shadow-pink-500/10 disabled:opacity-50 flex items-center justify-center gap-1.5"
+                              >
+                                {likingId === String(other.id) ? (
+                                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                ) : (
+                                  <Heart className="w-3.5 h-3.5 fill-white" />
+                                )}
+
+                                {t.respond}
+                              </button>
+                            )}
+
+                            {isMutual && (
+                              <button
+                                onClick={() =>
+                                navigate(`/messages/direct?userId=${other.id}`)
+
+                                }
+                                className="flex-1 h-10 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-pink-500 text-xs font-bold transition shadow-lg shadow-emerald-500/10 flex items-center justify-center gap-1.5"
+                              >
+                                <MessageCircle className="w-3.5 h-3.5" />
+                                {t.sendMessage}
+                              </button>
+                            )}
+                          </div>
+
+                          {/* MUTUAL LABEL */}
+                          {isMutual && (
+                            <div className="mt-3 flex items-center justify-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-emerald-300">
+                              <Heart className="w-3 h-3 fill-emerald-400 text-emerald-400" />
+                              {t.mutual}
+                            </div>
+                          )}
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </section>
+        </main>
+      </div>
+
+      <AuthDialog activeTab={authTab} onClose={() => setAuthTab(null)} />
+    </div>
+  );
+}
+
+/* -------------------------------------------------------
+   SIDEBAR
+------------------------------------------------------- */
+
+function SidebarLinks({
+  t,
+  active,
+  navigate,
+}: {
+  t: Record<string, string>;
+  active: string;
+  navigate: (url: string) => void;
+}) {
+  const items = [
+    {
+      id: "home",
+      label: t.home,
+      icon: Home,
+      url: "/dashboard",
+    },
+    {
+      id: "discover",
+      label: t.discover,
+      icon: Search,
+      url: "/search",
+    },
+    {
+      id: "likes",
+      label: t.likesMenu,
+      icon: Heart,
+      url: "/likes",
+    },
+    {
+      id: "messages",
+      label: t.messages,
+      icon: MessageCircle,
+      url: "/messages",
+    },
+    {
+      id: "premium",
+      label: t.premium,
+      icon: Sparkles,
+      url: "/premium",
+    },
+  ];
+
+  return (
+    <nav className="space-y-1">
+      {items.map((item) => {
+        const Icon = item.icon;
+        const isActive = active === item.id;
+
+        return (
+          <button
+            key={item.id}
+            onClick={() => navigate(item.url)}
+            className={`relative w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all ${
+              isActive
+                ? "bg-gradient-to-r from-pink-500/15 via-pink-400/10 to-transparent text-[#2D1721]"
+                : "text-[#7A5363] hover:text-[#2D1721] hover:bg-pink-50"
+            }`}
+          >
+            {isActive && (
+              <span className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-gradient-to-b from-pink-400 to-purple-500" />
+            )}
+
+            <Icon className={`w-5 h-5 ${isActive ? "text-pink-400" : ""}`} />
+
+            <span className="text-sm font-semibold">{item.label}</span>
+
+            {isActive && (
+              <ChevronRight className="w-4 h-4 ml-auto text-pink-400" />
+            )}
+          </button>
+        );
+      })}
+    </nav>
+  );
+}
+
+/* -------------------------------------------------------
+   EMPTY STATE
+------------------------------------------------------- */
+
+function EmptyState({
+  icon,
+  title,
+  description,
+  buttonText,
+  onClick,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  buttonText: string;
+  onClick: () => void;
+}) {
+  return (
+    <div className="relative overflow-hidden rounded-3xl border border-pink-200 bg-gradient-to-br from-[#101827] to-[#0b111d] min-h-[360px] flex items-center justify-center px-6">
+      <div className="absolute w-80 h-80 rounded-full bg-pink-500/5 blur-3xl -top-40 left-1/2 -translate-x-1/2" />
+
+      <div className="relative text-center max-w-md">
+        <div className="w-20 h-20 rounded-3xl bg-white/[0.03] border border-pink-200 flex items-center justify-center mx-auto mb-6">
+          {icon}
+        </div>
+
+        <h3 className="text-xl font-bold text-[#2D1721] mb-2">{title}</h3>
+
+        <p className="text-sm leading-6 text-[#8A6372] mb-7">{description}</p>
+
+        <button
+          onClick={onClick}
+          className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-pink-500 to-fuchsia-500 px-5 py-3 text-sm font-bold shadow-lg shadow-pink-500/15 hover:scale-[1.02] transition"
+        >
+          {buttonText}
+          <ChevronRight className="w-4 h-4" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+
+

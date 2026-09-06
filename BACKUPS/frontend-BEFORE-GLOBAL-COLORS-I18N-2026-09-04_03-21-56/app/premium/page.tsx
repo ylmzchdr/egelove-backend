@@ -1,0 +1,341 @@
+"use client";
+
+import { useState } from "react";
+import { Check, Crown, Star, Zap, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import AuthDialog from "@/components/AuthDialog";
+import { useI18n } from "@/lib/i18n-context";
+
+const plansTR = [
+  {
+    id: "MONTHLY",
+    name: "Aylık",
+    price: 399.99,
+    originalPrice: 499.99,
+    currency: "TL",
+    paymentUrl: "https://shopier.com/46963153",
+    icon: Star,
+    features: ["Sınırsız mesaj", "Kimler beğendi gör", "Ön planda profil", "Filtreleme"],
+  },
+  {
+    id: "QUARTERLY",
+    name: "3 Aylık",
+    price: 999,
+    originalPrice: 1299,
+    currency: "TL",
+    paymentUrl: "https://shopier.com/46963423",
+    icon: Zap,
+    popular: true,
+    features: ["Sınırsız mesaj", "Kimler beğendi gör", "Ön planda profil", "Filtreleme", "Gelişmiş arama"],
+  },
+  {
+    id: "SEMI_ANNUAL",
+    name: "6 Aylık",
+    price: 1799,
+    originalPrice: 2199,
+    currency: "TL",
+    paymentUrl: "https://shopier.com/46963489",
+    icon: Sparkles,
+    features: ["Tüm özellikler", "Öncelikli destek", "VIP rozet"],
+  },
+  {
+    id: "ANNUAL",
+    name: "12 Aylık",
+    price: 2199,
+    originalPrice: 2799,
+    currency: "TL",
+    paymentUrl: "https://shopier.com/46963553",
+    icon: Crown,
+    features: ["Tüm özellikler", "Öncelikli destek", "VIP rozet", "En avantajlı"],
+  },
+];
+
+const plansEN = [
+  {
+    id: "MONTHLY",
+    name: "1 Month",
+    price: 12.99,
+    originalPrice: 15.99,
+    currency: "$",
+    paymentUrl: "https://shopier.com/47884827",
+    icon: Star,
+    features: ["Unlimited messages", "See who liked you", "Featured profile", "Filters"],
+  },
+  {
+    id: "QUARTERLY",
+    name: "3 Months",
+    price: 29.99,
+    originalPrice: 39.99,
+    currency: "$",
+    paymentUrl: "https://shopier.com/47884852",
+    icon: Zap,
+    popular: true,
+    features: ["Unlimited messages", "See who liked you", "Featured profile", "Filters", "Advanced search"],
+  },
+  {
+    id: "SEMI_ANNUAL",
+    name: "6 Months",
+    price: 49.99,
+    originalPrice: 69.99,
+    currency: "$",
+    paymentUrl: "https://shopier.com/47884878",
+    icon: Sparkles,
+    features: ["All features", "Priority support", "VIP badge"],
+  },
+  {
+    id: "ANNUAL",
+    name: "12 Months",
+    price: 79.99,
+    originalPrice: 109.99,
+    currency: "$",
+    paymentUrl: "https://shopier.com/47884893",
+    icon: Crown,
+    features: ["All features", "Priority support", "VIP badge", "Best value"],
+  },
+];
+
+const plansRU = [
+  {
+    id: "MONTHLY",
+    name: "1 месяц",
+    price: 12.99,
+    originalPrice: 15.99,
+    currency: "$",
+    paymentUrl: "https://shopier.com/47884827",
+    icon: Star,
+    features: ["Безлимитные сообщения", "Кто вас лайкнул", "Продвижение профиля", "Фильтры"],
+  },
+  {
+    id: "QUARTERLY",
+    name: "3 месяца",
+    price: 29.99,
+    originalPrice: 39.99,
+    currency: "$",
+    paymentUrl: "https://shopier.com/47884852",
+    icon: Zap,
+    popular: true,
+    features: ["Безлимитные сообщения", "Кто вас лайкнул", "Продвижение профиля", "Фильтры", "Расширенный поиск"],
+  },
+  {
+    id: "SEMI_ANNUAL",
+    name: "6 месяцев",
+    price: 49.99,
+    originalPrice: 69.99,
+    currency: "$",
+    paymentUrl: "https://shopier.com/47884878",
+    icon: Sparkles,
+    features: ["Все функции", "Приоритетная поддержка", "VIP-значок"],
+  },
+  {
+    id: "ANNUAL",
+    name: "12 месяцев",
+    price: 79.99,
+    originalPrice: 109.99,
+    currency: "$",
+    paymentUrl: "https://shopier.com/47884893",
+    icon: Crown,
+    features: ["Все функции", "Приоритетная поддержка", "VIP-значок", "Самый выгодный"],
+  },
+];
+
+const plansAR = [
+  {
+    id: "MONTHLY",
+    name: "شهر واحد",
+    price: 12.99,
+    originalPrice: 15.99,
+    currency: "$",
+    paymentUrl: "https://shopier.com/47884827",
+    icon: Star,
+    features: ["رسائل غير محدودة", "اعرف من أعجب بك", "إبراز الملف الشخصي", "الفلاتر"],
+  },
+  {
+    id: "QUARTERLY",
+    name: "3 أشهر",
+    price: 29.99,
+    originalPrice: 39.99,
+    currency: "$",
+    paymentUrl: "https://shopier.com/47884852",
+    icon: Zap,
+    popular: true,
+    features: ["رسائل غير محدودة", "اعرف من أعجب بك", "إبراز الملف الشخصي", "الفلاتر", "بحث متقدم"],
+  },
+  {
+    id: "SEMI_ANNUAL",
+    name: "6 أشهر",
+    price: 49.99,
+    originalPrice: 69.99,
+    currency: "$",
+    paymentUrl: "https://shopier.com/47884878",
+    icon: Sparkles,
+    features: ["كل المميزات", "دعم ذو أولوية", "شارة VIP"],
+  },
+  {
+    id: "ANNUAL",
+    name: "12 شهراً",
+    price: 79.99,
+    originalPrice: 109.99,
+    currency: "$",
+    paymentUrl: "https://shopier.com/47884893",
+    icon: Crown,
+    features: ["كل المميزات", "دعم ذو أولوية", "شارة VIP", "الأكثر توفيراً"],
+  },
+];
+
+export default function PremiumPage() {
+  const [authTab, setAuthTab] = useState<"login" | "register" | null>(null);
+  const [selected, setSelected] = useState<string>("QUARTERLY");
+
+  const { lang } = useI18n();
+
+  const plans =
+    lang === "TR"
+      ? plansTR
+      : lang === "RU"
+      ? plansRU
+      : lang === "AR"
+      ? plansAR
+      : plansEN;
+
+  const title =
+    lang === "TR"
+      ? "Premium Üyelik"
+      : lang === "RU"
+      ? "Премиум-подписка"
+      : lang === "AR"
+      ? "العضوية المميزة"
+      : "Premium Membership";
+
+  const subtitle =
+    lang === "TR"
+      ? "Gerçek aşkı bulmak için bir adım önde ol"
+      : lang === "RU"
+      ? "Будьте на шаг впереди, чтобы найти настоящую связь"
+      : lang === "AR"
+      ? "كن متقدماً بخطوة للعثور على علاقة حقيقية"
+      : "Stay one step ahead to find real connection";
+
+  const popularText =
+    lang === "TR"
+      ? "Popüler"
+      : lang === "RU"
+      ? "Популярно"
+      : lang === "AR"
+      ? "الأكثر شيوعاً"
+      : "Popular";
+
+  const buyText =
+    lang === "TR"
+      ? "Satın Al"
+      : lang === "RU"
+      ? "Купить"
+      : lang === "AR"
+      ? "اشترِ الآن"
+      : "Buy Now";
+
+  const formatPrice = (price: number) => {
+    return price % 1 === 0 ? price.toString() : price.toFixed(2);
+  };
+
+  const handleBuy = (planId: string) => {
+    const token = localStorage.getItem("accessToken");
+
+    if (!token) {
+      setAuthTab("login");
+      return;
+    }
+
+    const plan = plans.find((p) => p.id === planId);
+    if (!plan) return;
+
+    window.location.href = plan.paymentUrl;
+  };
+
+  return (
+    <div className="min-h-screen bg-pink-950 text-[#2D1721]">
+      <Header onOpenLogin={() => setAuthTab("login")} onOpenRegister={() => setAuthTab("register")} />
+
+      <section className="py-20">
+        <div className="mx-auto max-w-7xl px-4 text-center">
+          <Crown className="w-12 h-12 text-yellow-400 mx-auto mb-4" />
+
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{title}</h1>
+
+          <p className="text-[#6B4454] max-w-xl mx-auto mb-12">{subtitle}</p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+            {plans.map((plan) => {
+              const Icon = plan.icon;
+
+              return (
+                <Card
+                  key={plan.id}
+                  className={`relative p-6 cursor-pointer transition-all duration-300 ${
+                    selected === plan.id
+                      ? "border-pink-500 bg-pink-900/60 scale-105"
+                      : "border-pink-200 bg-pink-50 hover:border-pink-400/30"
+                  }`}
+                  onClick={() => setSelected(plan.id)}
+                >
+                  {plan.popular && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-pink-600 text-[#2D1721] text-xs font-bold px-4 py-1 rounded-full">
+                      {popularText}
+                    </div>
+                  )}
+
+                  <Icon className={`w-8 h-8 mx-auto mb-3 ${selected === plan.id ? "text-pink-300" : "text-[#7A5363]"}`} />
+
+                  <h3 className="text-xl font-bold mb-1">{plan.name}</h3>
+
+                  <div className="mb-4">
+                    <span className="text-3xl font-bold text-pink-300">
+                      {formatPrice(plan.price)}
+                    </span>
+
+                    <span className="text-[#8A6372] text-base"> {plan.currency}</span>
+
+                    {plan.originalPrice && (
+                      <span className="block text-[#9B7483] text-xs line-through">
+                        {formatPrice(plan.originalPrice)} {plan.currency}
+                      </span>
+                    )}
+                  </div>
+
+                  <ul className="text-left text-base space-y-2 mb-6">
+                    {plan.features.map((feature, index) => (
+                      <li key={index} className="flex items-center gap-2 text-[#6B4454]">
+                        <Check className="w-4 h-4 text-pink-400" />
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <Button
+                    className={`w-full ${
+                      selected === plan.id
+                        ? "bg-pink-600 hover:bg-pink-700"
+                        : "bg-pink-50 hover:bg-white/20"
+                    } text-[#2D1721]`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleBuy(plan.id);
+                    }}
+                  >
+                    {buyText}
+                  </Button>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+
+      <AuthDialog activeTab={authTab} onClose={() => setAuthTab(null)} />
+    </div>
+  );
+}

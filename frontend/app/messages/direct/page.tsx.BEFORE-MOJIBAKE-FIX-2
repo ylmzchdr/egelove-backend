@@ -1,0 +1,189 @@
+﻿"use client";
+
+import React, { useState, Suspense } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "http://localhost:3001";
+
+function DirectMessageContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const targetUserId = searchParams.get("userId");
+
+  const [messageText, setMessageText] = useState("");
+  const [status, setStatus] = useState("");
+
+  const handleSendMessage = async () => {
+    if (!messageText.trim() || !targetUserId) {
+      setStatus("LÃ¼tfen bir mesaj yazÄ±n.");
+      return;
+    }
+
+    setStatus("MesajÄ±nÄ±z gÃ¶nderiliyor...");
+
+    try {
+      const token = localStorage.getItem("accessToken");
+
+      if (!token) {
+        setStatus("Oturumunuz bulunamadÄ±. LÃ¼tfen tekrar giriÅŸ yapÄ±n.");
+        return;
+      }
+
+      // 1ï¸âƒ£ Ã–nce kullanÄ±cÄ±yla konuÅŸmayÄ± oluÅŸtur / mevcut konuÅŸmayÄ± getir
+      const conversationResponse = await fetch(
+        `${API_URL}/conversations`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            userId: targetUserId,
+          }),
+        }
+      );
+
+      if (!conversationResponse.ok) {
+        const errorText = await conversationResponse.text();
+
+        console.error(
+          "KonuÅŸma oluÅŸturma hatasÄ±:",
+          conversationResponse.status,
+          errorText
+        );
+
+        setStatus("KonuÅŸma baÅŸlatÄ±lamadÄ±.");
+        return;
+      }
+
+      const conversation = await conversationResponse.json();
+
+      console.log("KonuÅŸma:", conversation);
+
+      if (!conversation?.id) {
+        console.error("Conversation ID bulunamadÄ±:", conversation);
+        setStatus("KonuÅŸma bilgisi alÄ±namadÄ±.");
+        return;
+      }
+
+      // 2ï¸âƒ£ Conversation ID ile mesajÄ± gÃ¶nder
+      const messageResponse = await fetch(
+        `${API_URL}/conversations/${conversation.id}/messages`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            content: messageText.trim(),
+          }),
+        }
+      );
+
+      if (!messageResponse.ok) {
+        const errorText = await messageResponse.text();
+
+        console.error(
+          "Mesaj gÃ¶nderme hatasÄ±:",
+          messageResponse.status,
+          errorText
+        );
+
+        try {
+          const errorData = JSON.parse(errorText);
+
+          setStatus(
+            errorData?.message ||
+              "Mesaj gÃ¶nderilemedi."
+          );
+        } catch {
+          setStatus("Mesaj gÃ¶nderilemedi.");
+        }
+
+        return;
+      }
+
+      const message = await messageResponse.json();
+
+      console.log("GÃ¶nderilen mesaj:", message);
+
+      setStatus("Mesaj baÅŸarÄ±yla gÃ¶nderildi!");
+      setMessageText("");
+
+      setTimeout(() => {
+        router.push("/messages");
+      }, 1200);
+
+    } catch (error) {
+      console.error("MESAJ GÃ–NDERME HATASI:", error);
+
+      setStatus(
+        "BaÄŸlantÄ± hatasÄ± oluÅŸtu. Konsolu kontrol edin."
+      );
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-[#121420] text-[#2D1721] flex flex-col items-center justify-center p-4">
+
+      <div className="w-full max-w-md bg-[#1a1d30] rounded-xl p-6 shadow-xl border border-slate-800">
+
+        <h2 className="text-xl font-bold mb-2 text-center text-purple-400">
+          HÄ±zlÄ± Mesaj GÃ¶nder
+        </h2>
+
+        <p className="text-xs text-[#8A6372] mb-6 text-center">
+          KullanÄ±cÄ±ya doÄŸrudan mesaj iletiliyorsunuz.
+        </p>
+
+        <textarea
+          className="w-full h-32 bg-[#121420] border border-slate-700 rounded-lg p-3 text-[#2D1721] placeholder-slate-500 focus:outline-none focus:border-2 border-[#880e4f] resize-none text-sm mb-4"
+          placeholder="MesajÄ±nÄ±zÄ± buraya yazÄ±n..."
+          value={messageText}
+          onChange={(e) => setMessageText(e.target.value)}
+        />
+
+        <button
+          onClick={handleSendMessage}
+          className="w-full bg-pink-500 hover:bg-purple-700 text-[#2D1721] font-semibold py-3 px-4 rounded-lg transition duration-200 text-sm shadow-lg"
+        >
+          MesajÄ± GÃ¶nder
+        </button>
+
+        {status && (
+          <p className="mt-4 text-xs text-center font-medium text-pink-500 bg-purple-950/30 py-2 rounded-md border border-purple-900/50">
+            {status}
+          </p>
+        )}
+        <button
+  type="button"
+  onClick={() => router.push("/messages")}
+  className="w-full mt-3 border border-slate-600 hover:border-2 border-[#880e4f] text-[#6B4454] hover:text-[#2D1721] font-medium py-2.5 px-4 rounded-lg transition duration-200 text-sm"
+>
+  â† Geri DÃ¶n
+</button>
+
+      </div>
+
+    </div>
+  );
+}
+
+export default function DirectMessagePage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[#121420] text-[#2D1721] flex items-center justify-center">
+          YÃ¼kleniyor...
+        </div>
+      }
+    >
+      <DirectMessageContent />
+    </Suspense>
+  );
+}

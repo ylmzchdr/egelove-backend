@@ -1,0 +1,531 @@
+"use client";
+
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import OnlineUsers from "../../components/OnlineUsers";
+import {
+  Camera,
+  ChevronRight,
+  Download,
+  Heart,
+  Loader2,
+  MessageCircle,
+  Search,
+  Share2,
+  Smartphone,
+  User,
+  X,
+} from "lucide-react";
+
+import Topbar from "@/components/dashboard/Topbar";
+import Sidebar from "./Sidebar";
+import { useI18n } from "@/lib/i18n-context";
+import { api } from "@/lib/api";
+
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{
+    outcome: "accepted" | "dismissed";
+    platform: string;
+  }>;
+}
+
+export default function DashboardPage() {
+  const [isClient, setIsClient] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const [deferredPrompt, setDeferredPrompt] =
+    useState<BeforeInstallPromptEvent | null>(null);
+
+  const [isStandalone, setIsStandalone] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
+  const [showInstallHelp, setShowInstallHelp] = useState(false);
+  const [installMessage, setInstallMessage] = useState("");
+
+  const { t } = useI18n();
+
+  const [user, setUser] = useState({
+    name: "Üye",
+    city: "Türkiye",
+    profilePhoto: null as string | null,
+  });
+
+  useEffect(() => {
+    const loadUser = async () => {
+      setIsClient(true);
+
+      try {
+        const me: any = await api.users.me();
+
+        localStorage.setItem("user", JSON.stringify(me));
+
+        setUser({
+          name: me.name || me.username || "Üye",
+          city: me.city?.name || me.city || "Türkiye",
+          profilePhoto:
+            me.profilePhoto ||
+            me.profileImage ||
+            me.avatar ||
+            null,
+        });
+      } catch (error) {
+        console.log("Kullanıcı alınamadı:", error);
+
+        try {
+          const rawUser = localStorage.getItem("user");
+
+          if (!rawUser) return;
+
+          const parsed = JSON.parse(rawUser);
+
+          setUser({
+            name: parsed.name || parsed.username || "Üye",
+            city: parsed.city?.name || parsed.city || "Türkiye",
+            profilePhoto:
+              parsed.profilePhoto ||
+              parsed.profileImage ||
+              parsed.avatar ||
+              null,
+          });
+        } catch {
+          // localStorage verisi bozuksa sessizce devam et.
+        }
+      }
+    };
+
+    loadUser();
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const navigatorWithStandalone = navigator as Navigator & {
+      standalone?: boolean;
+    };
+
+    const standalone =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      navigatorWithStandalone.standalone === true;
+
+    const userAgent = navigator.userAgent.toLowerCase();
+
+    const isiPhoneOrIPad =
+      /iphone|ipad|ipod/.test(userAgent) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+    setIsStandalone(standalone);
+    setIsIOS(isiPhoneOrIPad);
+
+    const handleBeforeInstallPrompt = (event: Event) => {
+      event.preventDefault();
+
+      setDeferredPrompt(event as BeforeInstallPromptEvent);
+      setInstallMessage("");
+    };
+
+    const handleAppInstalled = () => {
+      setDeferredPrompt(null);
+      setIsStandalone(true);
+      setShowInstallHelp(false);
+      setInstallMessage("senveben telefonuna başarıyla yüklendi.");
+    };
+
+    window.addEventListener(
+      "beforeinstallprompt",
+      handleBeforeInstallPrompt
+    );
+
+    window.addEventListener("appinstalled", handleAppInstalled);
+
+    return () => {
+      window.removeEventListener(
+        "beforeinstallprompt",
+        handleBeforeInstallPrompt
+      );
+
+      window.removeEventListener("appinstalled", handleAppInstalled);
+    };
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (isStandalone) {
+      setInstallMessage("senveben zaten telefonunda yüklü.");
+      return;
+    }
+
+    if (isIOS) {
+      setShowInstallHelp(true);
+      setInstallMessage("");
+      return;
+    }
+
+    if (deferredPrompt) {
+      try {
+        await deferredPrompt.prompt();
+
+        const choice = await deferredPrompt.userChoice;
+
+        setDeferredPrompt(null);
+
+        if (choice.outcome === "accepted") {
+          setInstallMessage("senveben yükleniyor...");
+        } else {
+          setInstallMessage(
+            "Kurulum iptal edildi. İstersen daha sonra tekrar deneyebilirsin."
+          );
+        }
+      } catch (error) {
+        console.log("PWA kurulum hatası:", error);
+
+        setShowInstallHelp(true);
+        setInstallMessage("");
+      }
+
+      return;
+    }
+
+    setShowInstallHelp(true);
+    setInstallMessage("");
+  };
+
+  if (!isClient) {
+    return (
+      <div className="min-h-screen bg-[#F8D6E3] flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-purple-500 animate-spin" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen w-full overflow-x-hidden bg-[#F8D6E3] text-white">
+      <div className="flex min-h-screen w-full">
+
+        {/* SOL SIDEBAR */}
+        <aside
+          className={`fixed inset-y-0 left-0 z-50 w-[286px] shrink-0 bg-[#F8D6E3] transition-transform duration-300 lg:sticky lg:top-0 lg:block lg:translate-x-0 ${
+            isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
+          <Sidebar
+            isOpen={isSidebarOpen}
+            onClose={() => setIsSidebarOpen(false)}
+          />
+        </aside>
+
+        {/* SAĞ ANA İÇERİK */}
+        <main className="min-h-screen min-w-0 flex-1 overflow-x-hidden">
+          <div className="w-full pl-0 pr-4 pb-10 pt-4 sm:pr-5 md:pr-6 lg:pr-7 xl:pr-8">
+
+            {/* =====================================================
+                senveben LOGO + SLOGAN
+            ===================================================== */}
+            <div className="mb-2 flex w-full flex-col items-center justify-center gap-3 text-center">
+
+              <div className="flex select-none items-center gap-2">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-[#EC4899] to-[#DB2777] shadow-lg shadow-pink-500/20">
+                  <span className="text-xl font-black tracking-tighter text-white">
+                    E
+                  </span>
+                </div>
+
+                <h1 className="text-3xl font-black tracking-tight bg-gradient-to-r from-[#2D1721] via-[#BE185D] to-[#EC4899] bg-clip-text text-transparent">
+                 senveben
+                  <span className="text-xl font-bold text-[#EC4899]">
+                    .TR
+                  </span>
+                </h1>
+              </div>
+
+              <div className="inline-flex items-center gap-2 rounded-full border border-pink-400/70 bg-[#EFA3C0] px-4 py-1.5 backdrop-blur-md">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-400 opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan-500" />
+                </span>
+
+                <p className="text-xs font-bold tracking-wide text-[#EC4899]">
+                  {t.dashboard.connectionTitle}
+                </p>
+              </div>
+            </div>
+
+            <div className="mb-6 w-full">
+              <Topbar
+                userName={user.name}
+                userCity={user.city}
+                profilePhoto={user.profilePhoto}
+                onOpenMobileMenu={() => setIsSidebarOpen(true)}
+              />
+            </div>
+
+            <OnlineUsers />
+
+            <section className="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
+
+              {/* PROFİLİM */}
+              <Link href="/profile/edit" className="group min-w-0">
+                <div className="h-full rounded-2xl border border-pink-400/70 bg-gradient-to-r from-[#EFA3C0] to-[#EFA3C0] p-5 transition-all hover:border-pink-400 hover:shadow-lg hover:shadow-pink-500/10">
+                  <div className="flex items-center gap-4">
+
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-pink-400/70 bg-[#F2B4CD]">
+                      <User className="h-6 w-6 text-[#C9186B]" />
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <h2 className="text-base font-black md:text-lg">
+                        {t.dashboard.profileTitle}
+                      </h2>
+
+                      <p className="mt-1 text-xs text-[#6A3048] md:text-sm">
+                        {t.dashboard.profileDesc}
+                      </p>
+                    </div>
+
+                    <ChevronRight className="h-5 w-5 shrink-0 text-[#C9186B] transition-transform group-hover:translate-x-1" />
+                  </div>
+                </div>
+              </Link>
+
+              {/* BİRİNİ BUL */}
+              <Link href="/search" className="group min-w-0">
+                <div className="h-full rounded-2xl border border-pink-400/70 bg-[#EFA3C0] p-5 transition-all hover:bg-[#EFA3C0]">
+                  <div className="flex items-center gap-4">
+
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-pink-400/70 bg-[#EFA3C0]">
+                      <Search className="h-6 w-6 text-[#C9186B]" />
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <h2 className="text-base font-black text-white md:text-lg">
+                        {t.dashboard.find}
+                      </h2>
+
+                      <p className="mt-1 truncate text-xs text-[#6A3048] md:text-sm">
+                        {t.dashboard.findProfileDesc}
+                      </p>
+                    </div>
+
+                    <ChevronRight className="h-5 w-5 shrink-0 text-[#C9186B] transition-transform group-hover:translate-x-1" />
+                  </div>
+                </div>
+              </Link>
+
+            </section>
+
+            <section className="mt-6 grid w-full grid-cols-1 gap-6 md:grid-cols-2">
+
+              {/* CANLI SOHBET */}
+              <Link href="/messages" className="group block min-w-0">
+                <div className="relative h-full overflow-hidden rounded-3xl border border-pink-400/70 bg-gradient-to-br from-[#EFA3C0] to-[#EFA3C0] p-6 shadow-xl shadow-pink-500/10 backdrop-blur-xl transition-all duration-300 hover:border-pink-400/60">
+
+                  <div className="absolute right-0 top-0 -mr-10 -mt-10 h-32 w-32 rounded-full bg-[#EFA3C0] blur-3xl transition-all duration-500 group-hover:bg-[#F2B4CD]" />
+
+                  <div className="relative mb-4 flex items-center gap-4">
+
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-2 border-[#880e4f]/30 bg-[#F2B4CD]">
+                      <Camera className="h-5 w-5 animate-pulse text-[#C9186B]" />
+                    </div>
+
+                    <div className="min-w-0">
+                      <h3 className="text-sm font-bold tracking-wide text-white md:text-base">
+                        {t.dashboard.liveChatTitle}
+                      </h3>
+
+                      <span className="mt-1 inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-[10px] font-semibold tracking-wider text-emerald-400">
+                        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
+                        {t.dashboard.liveChatStatus}
+                      </span>
+                    </div>
+
+                  </div>
+
+                  <p className="relative text-xs leading-relaxed tracking-wide text-[#572438] md:text-sm">
+                    {t.dashboard.liveChatDesc}
+                  </p>
+
+                </div>
+              </Link>
+
+              {/* TELEFONA YÜKLE */}
+              <div className="relative h-full min-w-0 overflow-hidden rounded-3xl border border-pink-400/70 bg-gradient-to-br from-[#EFA3C0] via-[#EFA3C0] to-[#EFA3C0] p-6 shadow-xl shadow-pink-500/10 backdrop-blur-xl">
+
+                <div className="absolute right-0 top-0 -mr-10 -mt-10 h-32 w-32 rounded-full bg-[#EFA3C0] blur-3xl" />
+
+                <div className="relative flex h-full flex-col">
+
+                  <div className="mb-4 flex items-center gap-4">
+
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-pink-400/70 bg-[#EFA3C0]">
+                      <Smartphone className="h-5 w-5 text-[#EC4899]" />
+                    </div>
+
+                    <div className="min-w-0">
+                      <h3 className="text-sm font-bold tracking-wide text-white md:text-base">
+                        {t.dashboard.installPhoneTitle}
+                      </h3>
+
+                      <span
+                        className={`mt-1 inline-block rounded-md border px-2 py-1 text-[9px] font-bold tracking-wider ${
+                          isStandalone
+                            ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                            : "border-pink-400/70 bg-[#EFA3C0] text-[#EC4899]"
+                        }`}
+                      >
+                        {isStandalone ? "TELEFONUNDA YÜKLÜ" : t.dashboard.free}
+                      </span>
+                    </div>
+
+                  </div>
+
+                  <p className="relative mb-4 text-xs leading-relaxed tracking-wide text-[#6A3048] md:text-sm">
+                    {t.dashboard.installPhoneDesc}
+                  </p>
+
+                  {!isStandalone && (
+                    <button
+                      type="button"
+                      onClick={handleInstallClick}
+                      className="relative mt-auto flex w-full items-center justify-center gap-2 rounded-xl border border-pink-400 bg-gradient-to-r from-pink-500/20 to-rose-500/20 px-4 py-3 text-sm font-black text-white transition-all hover:border-pink-400 hover:from-cyan-500/30 hover:to-purple-500/30 active:scale-[0.99]"
+                    >
+                      <Download className="h-4 w-4" />
+                      {t.dashboard.installPhoneButton}
+                    </button>
+                  )}
+
+                  {isStandalone && (
+                    <div className="relative mt-auto flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm font-bold text-emerald-400">
+                      <Smartphone className="h-4 w-4" />
+                      senveben Telefonunda
+                    </div>
+                  )}
+
+                  {installMessage && (
+                    <p className="mt-3 text-xs leading-relaxed text-[#C9186B]">
+                      {installMessage}
+                    </p>
+                  )}
+
+                </div>
+              </div>
+
+            </section>
+
+            {/* PWA KURULUM YARDIMI */}
+            {showInstallHelp && !isStandalone && (
+              <div className="mt-4 overflow-hidden rounded-2xl border border-pink-400/70 bg-[#EFA3C0] shadow-xl shadow-pink-500/10">
+
+                <div className="flex items-start justify-between gap-4 p-5">
+
+                  <div className="flex min-w-0 gap-3">
+
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-pink-400/70 bg-[#EFA3C0]">
+                      <Share2 className="h-5 w-5 text-[#EC4899]" />
+                    </div>
+
+                    <div className="min-w-0">
+                      <h3 className="text-sm font-black text-white">
+                        {isIOS
+                          ? "iPhone'a senveben Nasıl Eklenir?"
+                          : "senveben'ı Ana Ekrana Ekle"}
+                      </h3>
+
+                      {isIOS ? (
+                        <p className="mt-2 text-xs leading-6 text-[#572438] md:text-sm">
+                          Safari&apos;de alttaki
+                          <span className="font-bold text-[#C9186B]">
+                            {" "}Paylaş{" "}
+                          </span>
+                          simgesine dokun. Açılan menüden
+                          <span className="font-bold text-white">
+                            {" "}Ana Ekrana Ekle{" "}
+                          </span>
+                          seçeneğini seç ve ardından
+                          <span className="font-bold text-[#C9186B]">
+                            {" "}Ekle
+                          </span>
+                          butonuna dokun.
+                        </p>
+                      ) : (
+                        <p className="mt-2 text-xs leading-6 text-[#572438] md:text-sm">
+                          Tarayıcının menüsünü aç ve
+                          <span className="font-bold text-white">
+                            {" "}Uygulamayı yükle{" "}
+                          </span>
+                          veya
+                          <span className="font-bold text-white">
+                            {" "}Ana ekrana ekle{" "}
+                          </span>
+                          seçeneğini kullan. Kurulum seçeneği görünmüyorsa
+                          sayfayı normal tarayıcı sekmesinde açıp tekrar dene.
+                        </p>
+                      )}
+                    </div>
+
+                  </div>
+
+                  <button
+                    type="button"
+                    aria-label="Kurulum yardımını kapat"
+                    onClick={() => setShowInstallHelp(false)}
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-pink-400/70 bg-[#EFA3C0] text-[#6A3048] transition hover:bg-[#EFA3C0]/[0.08] hover:text-white"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+
+                </div>
+              </div>
+            )}
+
+            {/* =====================================================
+                ALT KARTLAR
+            ===================================================== */}
+            <section className="mt-6 grid w-full grid-cols-2 gap-4 md:grid-cols-2">
+
+              {/* YENİ BEĞENİ */}
+              <Link
+                href="/likes"
+                className="flex h-28 min-w-0 flex-col justify-between rounded-2xl border border-pink-400/70 bg-[#EFA3C0] p-4 transition-all hover:border-pink-500/40"
+              >
+                <Heart className="h-4 w-4 text-[#EC4899]" />
+
+                <div>
+                  <span className="block text-xs font-bold text-[#2D1721]">
+                    {t.dashboard.newLike}
+                  </span>
+
+                  <span className="mt-0.5 block text-[10px] font-semibold text-emerald-400">
+                    ● {t.dashboard.active}
+                  </span>
+                </div>
+              </Link>
+
+              {/* MESAJLAR */}
+              <Link
+                href="/messages"
+                className="flex h-28 min-w-0 flex-col justify-between rounded-2xl border border-pink-400/70 bg-[#EFA3C0] p-4 transition-all hover:border-pink-400"
+              >
+                <MessageCircle className="h-4 w-4 text-[#EC4899]" />
+
+                <div>
+                  <span className="block text-xs font-bold text-[#2D1721]">
+                    {t.dashboard.messages}
+                  </span>
+
+                  <span className="mt-0.5 block text-[10px] font-medium text-slate-500">
+                    {t.dashboard.openChats}
+                  </span>
+                </div>
+              </Link>
+
+            </section>
+
+            {/* ALT BOŞLUK */}
+            <div className="h-10" />
+
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}

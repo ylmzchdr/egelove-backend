@@ -1,0 +1,414 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import ProfilePhotoUpload from "@/components/ProfilePhotoUpload";
+import { api } from "@/lib/api";
+import { useI18n } from "@/lib/i18n-context";
+
+const ONBOARDING_TEXT = {
+  TR: {
+    steps: ["Temel Bilgiler", "Fiziksel", "Yaşam Tarzı", "Hakkımda", "Fotoğraflar"],
+    title: "Profilini Oluştur",
+    nameQuestion: "Adın soyadın nedir?",
+    name: "Ad", surname: "Soyad", birthDate: "Doğum Tarihi", gender: "Cinsiyet",
+    phone: "Telefon (isteğe bağlı)", city: "İl", district: "İlçe",
+    select: "Seçin", selectCityFirst: "Önce il seçin",
+    physicalQuestion: "Fiziksel özelliklerin neler?",
+    height: "Boy (cm)", weight: "Kilo (kg)", bodyType: "Vücut Tipi",
+    hairColor: "Saç Rengi", eyeColor: "Göz Rengi", bloodType: "Kan Grubu",
+    lifestyleQuestion: "Yaşam tarzın nasıl?", education: "Eğitim", occupation: "Meslek",
+    income: "Gelir", maritalStatus: "Medeni Durum", children: "Çocuk",
+    smoking: "Sigara", alcohol: "Alkol", religion: "Din",
+    aboutMe: "Kendinden bahset", aboutPlaceholder: "Hobilerin, ilgi alanların, hayallerin...",
+    lookingFor: "Partnerinde aradığın özellikler", lookingForPlaceholder: "Nasıl birini arıyorsun?",
+    hobbies: "Hobiler (virgülle ayırın)", hobbiesPlaceholder: "Yüzme, kitap okuma, seyahat",
+    photos: "Profil fotoğrafların",
+    photoNote: "En az 1 fotoğraf yüklemen önerilir. Fotoğraflar onaylandıktan sonra profilin görünür olacak.",
+    back: "Geri", next: "Devam", saving: "Kaydediliyor...", complete: "Tamamla",
+    genderOptions: { MALE: "Erkek", FEMALE: "Kadın", OTHER: "Diğer" },
+    educationOptions: { PRIMARY: "İlkokul", SECONDARY: "Ortaokul", HIGH_SCHOOL: "Lise", ASSOCIATE: "Ön Lisans", BACHELOR: "Lisans", MASTER: "Yüksek Lisans", DOCTORATE: "Doktora" },
+    incomeOptions: { VERY_LOW: "Asgari ücret", LOW: "10-20 bin TL", MEDIUM: "20-40 bin TL", HIGH: "40-70 bin TL", VERY_HIGH: "70 bin TL üzeri" },
+    maritalOptions: { NEVER_MARRIED: "Hiç evlenmedi", DIVORCED: "Boşandı", WIDOWED: "Eşi vefat etti", SEPARATED: "Ayrı yaşıyor" },
+    childrenOptions: { NONE: "Yok", HAS_LIVING_WITH: "Var (yanımda)", HAS_NOT_LIVING: "Var (yanımda değil)" },
+    smokingOptions: { NEVER: "İçmiyorum", QUIT: "Bıraktım", OCCASIONAL: "Ara sıra", REGULAR: "İçiyorum" },
+    alcoholOptions: { NEVER: "Kullanmıyorum", QUIT: "Bıraktım", OCCASIONAL: "Sosyal içici", REGULAR: "Kullanıyorum" },
+    religionOptions: { VERY_RELIGIOUS: "Çok dindar", RELIGIOUS: "Dindar", MODERATE: "Orta", NOT_RELIGIOUS: "Dindar değil", ATHEIST: "Ateist" },
+    bodyTypeOptions: { SLIM: "Zayıf", ATHLETIC: "Atletik", NORMAL: "Normal", CURVY: "Tombul", PLUS: "Kilolu" },
+    hairColorOptions: { BLACK: "Siyah", BROWN: "Kahverengi", BLOND: "Sarı", RED: "Kızıl", WHITE: "Beyaz", BALD: "Kel", OTHER: "Diğer" },
+    eyeColorOptions: { BROWN: "Kahverengi", BLUE: "Mavi", GREEN: "Yeşil", HAZEL: "Ela", BLACK: "Siyah", OTHER: "Diğer" },
+  },
+  EN: {
+    steps: ["Basic Information", "Physical", "Lifestyle", "About Me", "Photos"],
+    title: "Create Your Profile",
+    nameQuestion: "What is your name?",
+    name: "First Name", surname: "Last Name", birthDate: "Date of Birth", gender: "Gender",
+    phone: "Phone (optional)", city: "City", district: "District",
+    select: "Select", selectCityFirst: "Select a city first",
+    physicalQuestion: "What are your physical characteristics?",
+    height: "Height (cm)", weight: "Weight (kg)", bodyType: "Body Type",
+    hairColor: "Hair Color", eyeColor: "Eye Color", bloodType: "Blood Type",
+    lifestyleQuestion: "What is your lifestyle like?", education: "Education", occupation: "Occupation",
+    income: "Income", maritalStatus: "Marital Status", children: "Children",
+    smoking: "Smoking", alcohol: "Alcohol", religion: "Religion",
+    aboutMe: "Tell us about yourself", aboutPlaceholder: "Your hobbies, interests, dreams...",
+    lookingFor: "What are you looking for in a partner?", lookingForPlaceholder: "What kind of person are you looking for?",
+    hobbies: "Hobbies (separate with commas)", hobbiesPlaceholder: "Swimming, reading, travel",
+    photos: "Your profile photos",
+    photoNote: "We recommend uploading at least 1 photo. Your profile will be visible after your photos are approved.",
+    back: "Back", next: "Continue", saving: "Saving...", complete: "Complete",
+    genderOptions: { MALE: "Male", FEMALE: "Female", OTHER: "Other" },
+    educationOptions: { PRIMARY: "Primary School", SECONDARY: "Secondary School", HIGH_SCHOOL: "High School", ASSOCIATE: "Associate Degree", BACHELOR: "Bachelor's Degree", MASTER: "Master's Degree", DOCTORATE: "Doctorate" },
+    incomeOptions: { VERY_LOW: "Minimum wage", LOW: "10-20 thousand TL", MEDIUM: "20-40 thousand TL", HIGH: "40-70 thousand TL", VERY_HIGH: "Over 70 thousand TL" },
+    maritalOptions: { NEVER_MARRIED: "Never married", DIVORCED: "Divorced", WIDOWED: "Widowed", SEPARATED: "Separated" },
+    childrenOptions: { NONE: "None", HAS_LIVING_WITH: "Yes (living with me)", HAS_NOT_LIVING: "Yes (not living with me)" },
+    smokingOptions: { NEVER: "I don't smoke", QUIT: "I quit", OCCASIONAL: "Occasionally", REGULAR: "I smoke" },
+    alcoholOptions: { NEVER: "I don't drink", QUIT: "I quit", OCCASIONAL: "Socially", REGULAR: "I drink" },
+    religionOptions: { VERY_RELIGIOUS: "Very religious", RELIGIOUS: "Religious", MODERATE: "Moderate", NOT_RELIGIOUS: "Not religious", ATHEIST: "Atheist" },
+    bodyTypeOptions: { SLIM: "Slim", ATHLETIC: "Athletic", NORMAL: "Average", CURVY: "Curvy", PLUS: "Plus-size" },
+    hairColorOptions: { BLACK: "Black", BROWN: "Brown", BLOND: "Blond", RED: "Red", WHITE: "White", BALD: "Bald", OTHER: "Other" },
+    eyeColorOptions: { BROWN: "Brown", BLUE: "Blue", GREEN: "Green", HAZEL: "Hazel", BLACK: "Black", OTHER: "Other" },
+  },
+  RU: {
+    steps: ["Основная информация", "Внешность", "Образ жизни", "О себе", "Фотографии"],
+    title: "Создайте свой профиль",
+    nameQuestion: "Как вас зовут?",
+    name: "Имя", surname: "Фамилия", birthDate: "Дата рождения", gender: "Пол",
+    phone: "Телефон (необязательно)", city: "Город", district: "Район",
+    select: "Выберите", selectCityFirst: "Сначала выберите город",
+    physicalQuestion: "Какие у вас физические характеристики?",
+    height: "Рост (см)", weight: "Вес (кг)", bodyType: "Телосложение",
+    hairColor: "Цвет волос", eyeColor: "Цвет глаз", bloodType: "Группа крови",
+    lifestyleQuestion: "Какой у вас образ жизни?", education: "Образование", occupation: "Профессия",
+    income: "Доход", maritalStatus: "Семейное положение", children: "Дети",
+    smoking: "Курение", alcohol: "Алкоголь", religion: "Религия",
+    aboutMe: "Расскажите о себе", aboutPlaceholder: "Ваши хобби, интересы, мечты...",
+    lookingFor: "Что вы ищете в партнере?", lookingForPlaceholder: "Какого человека вы ищете?",
+    hobbies: "Хобби (через запятую)", hobbiesPlaceholder: "Плавание, чтение, путешествия",
+    photos: "Ваши фотографии профиля",
+    photoNote: "Рекомендуется загрузить хотя бы 1 фотографию. Профиль станет видимым после одобрения фотографий.",
+    back: "Назад", next: "Продолжить", saving: "Сохранение...", complete: "Завершить",
+    genderOptions: { MALE: "Мужчина", FEMALE: "Женщина", OTHER: "Другое" },
+    educationOptions: { PRIMARY: "Начальная школа", SECONDARY: "Средняя школа", HIGH_SCHOOL: "Старшая школа", ASSOCIATE: "Среднее специальное", BACHELOR: "Бакалавриат", MASTER: "Магистратура", DOCTORATE: "Докторантура" },
+    incomeOptions: { VERY_LOW: "Минимальная зарплата", LOW: "10-20 тыс. TL", MEDIUM: "20-40 тыс. TL", HIGH: "40-70 тыс. TL", VERY_HIGH: "Более 70 тыс. TL" },
+    maritalOptions: { NEVER_MARRIED: "Никогда не был(а) в браке", DIVORCED: "В разводе", WIDOWED: "Вдовец / вдова", SEPARATED: "Живем раздельно" },
+    childrenOptions: { NONE: "Нет", HAS_LIVING_WITH: "Есть (живут со мной)", HAS_NOT_LIVING: "Есть (живут отдельно)" },
+    smokingOptions: { NEVER: "Не курю", QUIT: "Бросил(а)", OCCASIONAL: "Иногда", REGULAR: "Курю" },
+    alcoholOptions: { NEVER: "Не употребляю", QUIT: "Отказался(ась)", OCCASIONAL: "Иногда в компании", REGULAR: "Употребляю" },
+    religionOptions: { VERY_RELIGIOUS: "Очень религиозный", RELIGIOUS: "Религиозный", MODERATE: "Умеренно", NOT_RELIGIOUS: "Нерелигиозный", ATHEIST: "Атеист" },
+    bodyTypeOptions: { SLIM: "Стройное", ATHLETIC: "Спортивное", NORMAL: "Обычное", CURVY: "Пышное", PLUS: "Полное" },
+    hairColorOptions: { BLACK: "Черные", BROWN: "Каштановые", BLOND: "Светлые", RED: "Рыжие", WHITE: "Белые", BALD: "Лысый", OTHER: "Другое" },
+    eyeColorOptions: { BROWN: "Карие", BLUE: "Голубые", GREEN: "Зеленые", HAZEL: "Ореховые", BLACK: "Черные", OTHER: "Другое" },
+  },
+  AR: {
+    steps: ["المعلومات الأساسية", "المظهر", "نمط الحياة", "نبذة عني", "الصور"],
+    title: "أنشئ ملفك الشخصي",
+    nameQuestion: "ما اسمك؟",
+    name: "الاسم", surname: "اسم العائلة", birthDate: "تاريخ الميلاد", gender: "الجنس",
+    phone: "الهاتف (اختياري)", city: "المدينة", district: "المنطقة",
+    select: "اختر", selectCityFirst: "اختر المدينة أولاً",
+    physicalQuestion: "ما صفاتك الجسدية؟",
+    height: "الطول (سم)", weight: "الوزن (كغ)", bodyType: "بنية الجسم",
+    hairColor: "لون الشعر", eyeColor: "لون العينين", bloodType: "فصيلة الدم",
+    lifestyleQuestion: "كيف هو نمط حياتك؟", education: "التعليم", occupation: "المهنة",
+    income: "الدخل", maritalStatus: "الحالة الاجتماعية", children: "الأطفال",
+    smoking: "التدخين", alcohol: "الكحول", religion: "الدين",
+    aboutMe: "تحدث عن نفسك", aboutPlaceholder: "هواياتك واهتماماتك وأحلامك...",
+    lookingFor: "ما الصفات التي تبحث عنها في شريكك؟", lookingForPlaceholder: "ما نوع الشخص الذي تبحث عنه؟",
+    hobbies: "الهوايات (افصل بينها بفواصل)", hobbiesPlaceholder: "السباحة، القراءة، السفر",
+    photos: "صور ملفك الشخصي",
+    photoNote: "ننصح بتحميل صورة واحدة على الأقل. سيصبح ملفك الشخصي مرئياً بعد الموافقة على الصور.",
+    back: "رجوع", next: "متابعة", saving: "جارٍ الحفظ...", complete: "إكمال",
+    genderOptions: { MALE: "ذكر", FEMALE: "أنثى", OTHER: "آخر" },
+    educationOptions: { PRIMARY: "ابتدائي", SECONDARY: "متوسط", HIGH_SCHOOL: "ثانوي", ASSOCIATE: "دبلوم", BACHELOR: "بكالوريوس", MASTER: "ماجستير", DOCTORATE: "دكتوراه" },
+    incomeOptions: { VERY_LOW: "الحد الأدنى للأجور", LOW: "10-20 ألف ليرة تركية", MEDIUM: "20-40 ألف ليرة تركية", HIGH: "40-70 ألف ليرة تركية", VERY_HIGH: "أكثر من 70 ألف ليرة تركية" },
+    maritalOptions: { NEVER_MARRIED: "لم يسبق له الزواج", DIVORCED: "مطلق", WIDOWED: "أرمل", SEPARATED: "منفصل" },
+    childrenOptions: { NONE: "لا يوجد", HAS_LIVING_WITH: "يوجد (يعيشون معي)", HAS_NOT_LIVING: "يوجد (لا يعيشون معي)" },
+    smokingOptions: { NEVER: "لا أدخن", QUIT: "أقلعت", OCCASIONAL: "أحياناً", REGULAR: "أدخن" },
+    alcoholOptions: { NEVER: "لا أشرب", QUIT: "توقفت", OCCASIONAL: "اجتماعياً", REGULAR: "أشرب" },
+    religionOptions: { VERY_RELIGIOUS: "متدين جداً", RELIGIOUS: "متدين", MODERATE: "متوسط", NOT_RELIGIOUS: "غير متدين", ATHEIST: "ملحد" },
+    bodyTypeOptions: { SLIM: "نحيف", ATHLETIC: "رياضي", NORMAL: "متوسط", CURVY: "ممتلئ", PLUS: "زائد الوزن" },
+    hairColorOptions: { BLACK: "أسود", BROWN: "بني", BLOND: "أشقر", RED: "أحمر", WHITE: "أبيض", BALD: "أصلع", OTHER: "آخر" },
+    eyeColorOptions: { BROWN: "بني", BLUE: "أزرق", GREEN: "أخضر", HAZEL: "عسلي", BLACK: "أسود", OTHER: "آخر" },
+  },
+} as const;
+
+type OnboardingLang = keyof typeof ONBOARDING_TEXT;
+
+const BLOOD_TYPE_OPTIONS = [
+  { value: "A_POSITIVE", label: "A+" }, { value: "A_NEGATIVE", label: "A-" },
+  { value: "B_POSITIVE", label: "B+" }, { value: "B_NEGATIVE", label: "B-" },
+  { value: "AB_POSITIVE", label: "AB+" }, { value: "AB_NEGATIVE", label: "AB-" },
+  { value: "ZERO_POSITIVE", label: "0+" }, { value: "ZERO_NEGATIVE", label: "0-" },
+];
+
+interface City { id: number; name: string; }
+interface District { id: number; name: string; }
+
+export default function OnboardingPage() {
+  const router = useRouter();
+  const { lang } = useI18n();
+  const currentLang = (lang in ONBOARDING_TEXT ? lang : "TR") as OnboardingLang;
+  const text = ONBOARDING_TEXT[currentLang];
+  const isRtl = currentLang === "AR";
+  const [step, setStep] = useState(0);
+  const [saving, setSaving] = useState(false);
+  const [cities, setCities] = useState<City[]>([]);
+  const [districts, setDistricts] = useState<District[]>([]);
+
+  const [form, setForm] = useState({
+    name: "", surname: "", birthDate: "", gender: "", phone: "",
+    cityId: 0, districtId: 0,
+    height: 0, weight: 0, bodyType: "", hairColor: "", eyeColor: "", bloodType: "",
+    education: "", occupation: "", income: "", maritalStatus: "",
+    children: "", smoking: "", alcohol: "", religion: "",
+    aboutMe: "", lookingFor: "", hobbies: "",
+  });
+
+  const update = (key: string, value: any) => setForm((p) => ({ ...p, [key]: value }));
+
+  useEffect(() => {
+    if (!localStorage.getItem("accessToken")) { router.push("/"); return; }
+    api.cities.list().then(setCities).catch(() => {});
+    api.users.me().then((p: any) => {
+      if (p.name) setForm((prev) => ({
+        ...prev,
+        name: p.name || "", surname: p.surname || "", birthDate: p.birthDate?.split("T")[0] || "",
+        gender: p.gender || "", phone: p.phone || "", cityId: p.cityId || 0, districtId: p.districtId || 0,
+        height: p.height || 0, weight: p.weight || 0, bodyType: p.bodyType || "",
+        hairColor: p.hairColor || "", eyeColor: p.eyeColor || "", bloodType: p.bloodType || "",
+        education: p.education || "", occupation: p.occupation || "", income: p.income || "",
+        maritalStatus: p.maritalStatus || "", children: p.children || "",
+        smoking: p.smoking || "", alcohol: p.alcohol || "", religion: p.religion || "",
+        aboutMe: p.aboutMe || "", lookingFor: p.lookingFor || "",
+       hobbies: Array.isArray(p.hobbies) ? p.hobbies.join(", ") : (p.hobbies || ""),
+      }));
+      if (p.cityId) api.cities.districts(p.cityId).then(setDistricts).catch(() => {});
+    }).catch(() => router.push("/"));
+  }, []);
+
+  const loadDistricts = async (cityId: number) => {
+    update("cityId", cityId);
+    update("districtId", 0);
+    setDistricts([]);
+    if (cityId) api.cities.districts(cityId).then(setDistricts).catch(() => {});
+  };
+
+  const canProceed = () => {
+    if (step === 0) return form.name && form.surname && form.birthDate && form.gender;
+    return true;
+  };
+
+  const saveAndNext = async () => {
+    if (step < text.steps.length - 1) { setStep(step + 1); return; }
+    setSaving(true);
+    try {
+      const payload: any = {
+        name: form.name, surname: form.surname, birthDate: form.birthDate,
+        gender: form.gender, phone: form.phone || undefined,
+        cityId: form.cityId || undefined, districtId: form.districtId || undefined,
+        height: form.height || undefined, weight: form.weight || undefined,
+        bodyType: form.bodyType || undefined, hairColor: form.hairColor || undefined,
+        eyeColor: form.eyeColor || undefined, bloodType: form.bloodType || undefined,
+        education: form.education || undefined, occupation: form.occupation || undefined,
+        income: form.income || undefined, maritalStatus: form.maritalStatus || undefined,
+        children: form.children || undefined, smoking: form.smoking || undefined,
+        alcohol: form.alcohol || undefined, religion: form.religion || undefined,
+        aboutMe: form.aboutMe || undefined, lookingFor: form.lookingFor || undefined,
+        hobbies: form.hobbies.split(",").map((h: string) => h.trim()).filter(Boolean),
+      };
+      Object.keys(payload).forEach((k) => payload[k] === undefined && delete payload[k]);
+      await api.users.update(payload);
+      router.push("/");
+    } catch {
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const progress = ((step + 1) / text.steps.length) * 100;
+
+  const optionEntries = (options: Record<string, string>) =>
+    Object.entries(options).map(([value, label]) => ({ value, label }));
+
+
+  return (
+    <div className="min-h-screen bg-pink-950 text-[#2D1721]">
+      <Header />
+      <section className="py-12">
+        <div className="mx-auto max-w-2xl px-4">
+          <div className="bg-pink-50 border border-pink-200 rounded-xl p-8">
+            <div className="flex justify-between mb-2">
+              <h1 className="text-2xl font-bold">{text.title}</h1>
+              <span className="text-[#8A6372] text-base">{step + 1}/{text.steps.length}</span>
+            </div>
+
+            <div className="w-full bg-pink-50 rounded-full h-2 mb-8">
+              <div className="bg-pink-500 h-2 rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
+            </div>
+
+            {step === 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="md:col-span-2"><Label className="text-lg">{text.nameQuestion}</Label></div>
+                <div><Label>{text.name}</Label><Input className="bg-pink-950/50 border-pink-200 text-[#2D1721]" value={form.name} onChange={(e) => update("name", e.target.value)} /></div>
+                <div><Label>{text.surname}</Label><Input className="bg-pink-950/50 border-pink-200 text-[#2D1721]" value={form.surname} onChange={(e) => update("surname", e.target.value)} /></div>
+                <div><Label>{text.birthDate}</Label><Input type="date" className="bg-pink-950/50 border-pink-200 text-[#2D1721]" value={form.birthDate} onChange={(e) => update("birthDate", e.target.value)} /></div>
+                <div>
+                  <Label>{text.gender}</Label>
+                  <Select value={form.gender} onValueChange={(v) => update("gender", v)}>
+                    <SelectTrigger className="bg-pink-950/50 border-pink-200 text-[#2D1721]"><SelectValue placeholder={text.select} /></SelectTrigger>
+                    <SelectContent>
+                      {optionEntries(text.genderOptions).map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div><Label>{text.phone}</Label><Input className="bg-pink-950/50 border-pink-200 text-[#2D1721]" value={form.phone} onChange={(e) => update("phone", e.target.value)} /></div>
+                <div>
+                  <Label>{text.city}</Label>
+                  <Select value={form.cityId ? String(form.cityId) : ""} onValueChange={(v) => loadDistricts(parseInt(v))}>
+                    <SelectTrigger className="bg-pink-950/50 border-pink-200 text-[#2D1721]"><SelectValue placeholder={text.select} /></SelectTrigger>
+                    <SelectContent>
+                      {cities.map((c) => <SelectItem key={c.id} value={String(c.id)}>{c.name}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>{text.district}</Label>
+                  <Select value={form.districtId ? String(form.districtId) : ""} onValueChange={(v) => update("districtId", parseInt(v))}>
+                    <SelectTrigger className="bg-pink-950/50 border-pink-200 text-[#2D1721]"><SelectValue placeholder={text.selectCityFirst} /></SelectTrigger>
+                    <SelectContent>
+                      {districts.map((d) => <SelectItem key={d.id} value={String(d.id)}>{d.name}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            )}
+
+            {step === 1 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="md:col-span-2"><Label className="text-lg">{text.physicalQuestion}</Label></div>
+                <div><Label>{text.height}</Label><Input type="number" className="bg-pink-950/50 border-pink-200 text-[#2D1721]" value={form.height || ""} onChange={(e) => update("height", e.target.value ? parseInt(e.target.value) : 0)} /></div>
+                <div><Label>{text.weight}</Label><Input type="number" className="bg-pink-950/50 border-pink-200 text-[#2D1721]" value={form.weight || ""} onChange={(e) => update("weight", e.target.value ? parseInt(e.target.value) : 0)} /></div>
+                <div><Label>{text.bodyType}</Label>
+                  <Select value={form.bodyType} onValueChange={(v) => update("bodyType", v)}>
+                    <SelectTrigger className="bg-pink-950/50 border-pink-200 text-[#2D1721]"><SelectValue placeholder={text.select} /></SelectTrigger>
+                    <SelectContent>{optionEntries(text.bodyTypeOptions).map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+                <div><Label>{text.hairColor}</Label>
+                  <Select value={form.hairColor} onValueChange={(v) => update("hairColor", v)}>
+                    <SelectTrigger className="bg-pink-950/50 border-pink-200 text-[#2D1721]"><SelectValue placeholder={text.select} /></SelectTrigger>
+                    <SelectContent>{optionEntries(text.hairColorOptions).map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+                <div><Label>{text.eyeColor}</Label>
+                  <Select value={form.eyeColor} onValueChange={(v) => update("eyeColor", v)}>
+                    <SelectTrigger className="bg-pink-950/50 border-pink-200 text-[#2D1721]"><SelectValue placeholder={text.select} /></SelectTrigger>
+                    <SelectContent>{optionEntries(text.eyeColorOptions).map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+                <div><Label>{text.bloodType}</Label>
+                  <Select value={form.bloodType} onValueChange={(v) => update("bloodType", v)}>
+                    <SelectTrigger className="bg-pink-950/50 border-pink-200 text-[#2D1721]"><SelectValue placeholder={text.select} /></SelectTrigger>
+                    <SelectContent>{BLOOD_TYPE_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+              </div>
+            )}
+
+            {step === 2 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="md:col-span-2"><Label className="text-lg">{text.lifestyleQuestion}</Label></div>
+                <div><Label>{text.education}</Label>
+                  <Select value={form.education} onValueChange={(v) => update("education", v)}>
+                    <SelectTrigger className="bg-pink-950/50 border-pink-200 text-[#2D1721]"><SelectValue placeholder={text.select} /></SelectTrigger>
+                    <SelectContent>{optionEntries(text.educationOptions).map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+                <div><Label>{text.occupation}</Label><Input className="bg-pink-950/50 border-pink-200 text-[#2D1721]" value={form.occupation} onChange={(e) => update("occupation", e.target.value)} /></div>
+                <div><Label>{text.income}</Label>
+                  <Select value={form.income} onValueChange={(v) => update("income", v)}>
+                    <SelectTrigger className="bg-pink-950/50 border-pink-200 text-[#2D1721]"><SelectValue placeholder={text.select} /></SelectTrigger>
+                    <SelectContent>{optionEntries(text.incomeOptions).map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+                <div><Label>{text.maritalStatus}</Label>
+                  <Select value={form.maritalStatus} onValueChange={(v) => update("maritalStatus", v)}>
+                    <SelectTrigger className="bg-pink-950/50 border-pink-200 text-[#2D1721]"><SelectValue placeholder={text.select} /></SelectTrigger>
+                    <SelectContent>{optionEntries(text.maritalOptions).map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+                <div><Label>{text.children}</Label>
+                  <Select value={form.children} onValueChange={(v) => update("children", v)}>
+                    <SelectTrigger className="bg-pink-950/50 border-pink-200 text-[#2D1721]"><SelectValue placeholder={text.select} /></SelectTrigger>
+                    <SelectContent>{optionEntries(text.childrenOptions).map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+                <div><Label>{text.smoking}</Label>
+                  <Select value={form.smoking} onValueChange={(v) => update("smoking", v)}>
+                    <SelectTrigger className="bg-pink-950/50 border-pink-200 text-[#2D1721]"><SelectValue placeholder={text.select} /></SelectTrigger>
+                    <SelectContent>{optionEntries(text.smokingOptions).map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+                <div><Label>{text.alcohol}</Label>
+                  <Select value={form.alcohol} onValueChange={(v) => update("alcohol", v)}>
+                    <SelectTrigger className="bg-pink-950/50 border-pink-200 text-[#2D1721]"><SelectValue placeholder={text.select} /></SelectTrigger>
+                    <SelectContent>{optionEntries(text.alcoholOptions).map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+                <div><Label>{text.religion}</Label>
+                  <Select value={form.religion} onValueChange={(v) => update("religion", v)}>
+                    <SelectTrigger className="bg-pink-950/50 border-pink-200 text-[#2D1721]"><SelectValue placeholder={text.select} /></SelectTrigger>
+                    <SelectContent>{optionEntries(text.religionOptions).map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+              </div>
+            )}
+
+            {step === 3 && (
+              <div className="space-y-4">
+                <Label className="text-lg">{text.aboutMe}</Label>
+                <textarea className="w-full bg-pink-950/50 border border-pink-200 rounded-lg p-3 text-[#2D1721] min-h-[120px] resize-y" placeholder={text.aboutPlaceholder} value={form.aboutMe} onChange={(e) => update("aboutMe", e.target.value)} />
+                <Label className="text-lg">{text.lookingFor}</Label>
+                <textarea className="w-full bg-pink-950/50 border border-pink-200 rounded-lg p-3 text-[#2D1721] min-h-[80px] resize-y" placeholder={text.lookingForPlaceholder} value={form.lookingFor} onChange={(e) => update("lookingFor", e.target.value)} />
+                <Label>{text.hobbies}</Label>
+                <Input className="bg-pink-950/50 border-pink-200 text-[#2D1721]" placeholder={text.hobbiesPlaceholder} value={form.hobbies} onChange={(e) => update("hobbies", e.target.value)} />
+              </div>
+            )}
+
+            {step === 4 && (
+              <div>
+                <Label className="text-lg mb-4 block">{text.photos}</Label>
+                <ProfilePhotoUpload />
+                <p className="text-[#8A6372] text-base mt-4">{text.photoNote}</p>
+              </div>
+            )}
+
+            <div className="flex gap-3 mt-8">
+              {step > 0 && (
+                <Button variant="outline" className="border-pink-300 text-[#2D1721] flex-1" onClick={() => setStep(step - 1)}>
+                  {text.back}
+                </Button>
+              )}
+              <Button
+                className="bg-pink-600 hover:bg-pink-700 text-[#2D1721] flex-1 disabled:opacity-50"
+                onClick={saveAndNext}
+                disabled={!canProceed() || saving}
+              >
+                {step < text.steps.length - 1 ? text.next : saving ? text.saving : text.complete}
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+      <Footer />
+    </div>
+  );
+}
+

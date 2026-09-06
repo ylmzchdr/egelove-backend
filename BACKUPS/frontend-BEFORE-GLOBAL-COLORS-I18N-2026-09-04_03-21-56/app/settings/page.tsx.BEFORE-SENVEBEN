@@ -1,0 +1,599 @@
+﻿"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import {
+  Bell,
+  Check,
+  ChevronRight,
+  Globe2,
+  Heart,
+  Lock,
+
+  Palette,
+  ShieldCheck,
+  Sparkles,
+  UserRound,
+  Volume2,
+  Eye,
+  MessageCircle,
+} from "lucide-react";
+
+import Sidebar from "@/components/dashboard/Sidebar";
+import Topbar from "@/components/dashboard/Topbar";
+import Header from "@/components/Header";
+import { useI18n } from "@/lib/i18n-context";
+import type { Lang } from "@/lib/i18n";
+
+type ToggleProps = {
+  checked: boolean;
+  onChange: (value: boolean) => void;
+  label: string;
+};
+
+function Toggle({ checked, onChange, label }: ToggleProps) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      aria-label={label}
+      onClick={() => onChange(!checked)}
+      className={[
+        "relative h-7 w-12 shrink-0 rounded-full border transition-all duration-300",
+        checked
+          ? "border-pink-400/40 bg-gradient-to-r from-fuchsia-500 to-blue-500 shadow-[0_0_24px_rgba(217,70,239,0.22)]"
+          : "border-pink-200 bg-white",
+      ].join(" ")}
+    >
+      <span
+        className={[
+          "absolute top-1 h-5 w-5 rounded-full bg-white shadow-md transition-all duration-300",
+          checked ? "left-6" : "left-1",
+        ].join(" ")}
+      />
+    </button>
+  );
+}
+
+const languageOptions: Array<{
+  code: Lang;
+  label: string;
+  native: string;
+  flag: string;
+}> = [
+  { code: "TR", label: "TÃ¼rkÃ§e", native: "TÃ¼rkÃ§e", flag: "ğŸ‡¹ğŸ‡·" },
+  { code: "EN", label: "English", native: "English", flag: "ğŸ‡¬ğŸ‡§" },
+  { code: "RU", label: "Ğ ÑƒÑÑĞºĞ¸Ğ¹", native: "Ğ ÑƒÑÑĞºĞ¸Ğ¹", flag: "ğŸ‡·ğŸ‡º" },
+  { code: "AR", label: "Ø§Ù„Ø¹Ø±Ø¨ÙŠØ©", native: "Ø§Ù„Ø¹Ø±Ø¨ÙŠØ©", flag: "ğŸ‡¸ğŸ‡¦" },
+];
+
+const copy = {
+  TR: {
+    title: "Ayarlar",
+    subtitle: "EgeLove deneyimini kendine gÃ¶re Ã¶zelleÅŸtir.",
+    appearance: "GÃ¶rÃ¼nÃ¼m",
+    appearanceDesc: "EgeLove'Ä±n gÃ¶rÃ¼nÃ¼mÃ¼nÃ¼ ve ekran tercihlerini yÃ¶net.",
+    language: "Dil",
+    languageDesc: "EgeLove'da kullanmak istediÄŸin dili seÃ§.",
+    notifications: "Bildirimler",
+    notificationsDesc: "Sana hangi bildirimlerin gÃ¶nderileceÄŸini seÃ§.",
+    newMessages: "Yeni mesajlar",
+    newMessagesDesc: "Yeni bir mesaj geldiÄŸinde bildirim al.",
+    likes: "BeÄŸeniler",
+    likesDesc: "Biri seni beÄŸendiÄŸinde bildirim al.",
+    matches: "EÅŸleÅŸmeler",
+    matchesDesc: "Yeni bir eÅŸleÅŸme olduÄŸunda bildirim al.",
+    sounds: "Bildirim sesleri",
+    soundsDesc: "Bildirimlerde ses kullan.",
+    privacy: "Gizlilik ve gÃ¼venlik",
+    privacyDesc: "HesabÄ±nÄ±n gÃ¶rÃ¼nÃ¼rlÃ¼ÄŸÃ¼nÃ¼ ve gÃ¼venliÄŸini yÃ¶net.",
+    online: "Ã‡evrimiÃ§i durumunu gÃ¶ster",
+    onlineDesc: "DiÄŸer Ã¼yeler Ã§evrimiÃ§i olduÄŸunu gÃ¶rebilsin.",
+    read: "Okundu bilgisini gÃ¶ster",
+    readDesc: "MesajlarÄ±n okundu bilgisini karÅŸÄ± tarafa gÃ¶ster.",
+    profile: "Profil ayarlarÄ±",
+    profileDesc: "Profil bilgilerini ve fotoÄŸrafÄ±nÄ± dÃ¼zenle.",
+    editProfile: "Profilimi DÃ¼zenle",
+    security: "GÃ¼venlik",
+    securityDesc: "HesabÄ±nÄ± gÃ¼vende tutmak iÃ§in profil bilgilerini kontrol et.",
+    account: "Hesap",
+    accountDesc: "HesabÄ±nla ilgili iÅŸlemler.",
+    help: "YardÄ±m Merkezi",
+    logout: "Ã‡Ä±kÄ±ÅŸ Yap",
+    saved: "AyarlarÄ±n kaydedildi",
+    secure: "HesabÄ±n gÃ¼vende",
+    secureDesc: "EgeLove hesabÄ±n gÃ¼venli baÄŸlantÄ± ile korunuyor.",
+    premium: "Premium",
+    premiumDesc: "Daha fazla Ã¶zellik ve gÃ¶rÃ¼nÃ¼rlÃ¼k iÃ§in Premium'u keÅŸfet.",
+    premiumCta: "Premium'u Ä°ncele",
+    active: "Aktif",
+  },
+  EN: {
+    title: "Settings",
+    subtitle: "Customize your EgeLove experience.",
+    appearance: "Appearance",
+    appearanceDesc: "Manage how EgeLove looks and feels.",
+    language: "Language",
+    languageDesc: "Choose the language you want to use on EgeLove.",
+    notifications: "Notifications",
+    notificationsDesc: "Choose which notifications you want to receive.",
+    newMessages: "New messages",
+    newMessagesDesc: "Get notified when a new message arrives.",
+    likes: "Likes",
+    likesDesc: "Get notified when someone likes you.",
+    matches: "Matches",
+    matchesDesc: "Get notified when you have a new match.",
+    sounds: "Notification sounds",
+    soundsDesc: "Use sounds for notifications.",
+    privacy: "Privacy & security",
+    privacyDesc: "Manage your account visibility and security.",
+    online: "Show online status",
+    onlineDesc: "Let other members see when you're online.",
+    read: "Show read receipts",
+    readDesc: "Let others see when you have read their messages.",
+    profile: "Profile settings",
+    profileDesc: "Edit your profile information and photo.",
+    editProfile: "Edit My Profile",
+    security: "Security",
+    securityDesc: "Review your profile information to keep your account secure.",
+    account: "Account",
+    accountDesc: "Account-related actions.",
+    help: "Help Center",
+    logout: "Log Out",
+    saved: "Settings saved",
+    secure: "Your account is secure",
+    secureDesc: "Your EgeLove account is protected with a secure connection.",
+    premium: "Premium",
+    premiumDesc: "Discover Premium for more features and visibility.",
+    premiumCta: "Explore Premium",
+    active: "Active",
+  },
+  RU: {
+    title: "ĞĞ°ÑÑ‚Ñ€Ğ¾Ğ¹ĞºĞ¸",
+    subtitle: "ĞĞ°ÑÑ‚Ñ€Ğ¾Ğ¹Ñ‚Ğµ EgeLove Ğ¿Ğ¾Ğ´ ÑĞµĞ±Ñ.",
+    appearance: "Ğ’Ğ½ĞµÑˆĞ½Ğ¸Ğ¹ Ğ²Ğ¸Ğ´",
+    appearanceDesc: "Ğ£Ğ¿Ñ€Ğ°Ğ²Ğ»ÑĞ¹Ñ‚Ğµ Ğ²Ğ½ĞµÑˆĞ½Ğ¸Ğ¼ Ğ²Ğ¸Ğ´Ğ¾Ğ¼ EgeLove.",
+    language: "Ğ¯Ğ·Ñ‹Ğº",
+    languageDesc: "Ğ’Ñ‹Ğ±ĞµÑ€Ğ¸Ñ‚Ğµ ÑĞ·Ñ‹Ğº EgeLove.",
+    notifications: "Ğ£Ğ²ĞµĞ´Ğ¾Ğ¼Ğ»ĞµĞ½Ğ¸Ñ",
+    notificationsDesc: "Ğ’Ñ‹Ğ±ĞµÑ€Ğ¸Ñ‚Ğµ Ğ½ÑƒĞ¶Ğ½Ñ‹Ğµ ÑƒĞ²ĞµĞ´Ğ¾Ğ¼Ğ»ĞµĞ½Ğ¸Ñ.",
+    newMessages: "ĞĞ¾Ğ²Ñ‹Ğµ ÑĞ¾Ğ¾Ğ±Ñ‰ĞµĞ½Ğ¸Ñ",
+    newMessagesDesc: "ĞŸĞ¾Ğ»ÑƒÑ‡Ğ°Ğ¹Ñ‚Ğµ ÑƒĞ²ĞµĞ´Ğ¾Ğ¼Ğ»ĞµĞ½Ğ¸Ñ Ğ¾ Ğ½Ğ¾Ğ²Ñ‹Ñ… ÑĞ¾Ğ¾Ğ±Ñ‰ĞµĞ½Ğ¸ÑÑ….",
+    likes: "Ğ›Ğ°Ğ¹ĞºĞ¸",
+    likesDesc: "ĞŸĞ¾Ğ»ÑƒÑ‡Ğ°Ğ¹Ñ‚Ğµ ÑƒĞ²ĞµĞ´Ğ¾Ğ¼Ğ»ĞµĞ½Ğ¸Ñ, ĞºĞ¾Ğ³Ğ´Ğ° Ğ²Ğ°Ñ Ğ»Ğ°Ğ¹ĞºĞ°ÑÑ‚.",
+    matches: "Ğ¡Ğ¾Ğ²Ğ¿Ğ°Ğ´ĞµĞ½Ğ¸Ñ",
+    matchesDesc: "ĞŸĞ¾Ğ»ÑƒÑ‡Ğ°Ğ¹Ñ‚Ğµ ÑƒĞ²ĞµĞ´Ğ¾Ğ¼Ğ»ĞµĞ½Ğ¸Ñ Ğ¾ Ğ½Ğ¾Ğ²Ñ‹Ñ… ÑĞ¾Ğ²Ğ¿Ğ°Ğ´ĞµĞ½Ğ¸ÑÑ….",
+    sounds: "Ğ—Ğ²ÑƒĞºĞ¸ ÑƒĞ²ĞµĞ´Ğ¾Ğ¼Ğ»ĞµĞ½Ğ¸Ğ¹",
+    soundsDesc: "Ğ˜ÑĞ¿Ğ¾Ğ»ÑŒĞ·Ğ¾Ğ²Ğ°Ñ‚ÑŒ Ğ·Ğ²ÑƒĞºĞ¸ ÑƒĞ²ĞµĞ´Ğ¾Ğ¼Ğ»ĞµĞ½Ğ¸Ğ¹.",
+    privacy: "ĞšĞ¾Ğ½Ñ„Ğ¸Ğ´ĞµĞ½Ñ†Ğ¸Ğ°Ğ»ÑŒĞ½Ğ¾ÑÑ‚ÑŒ Ğ¸ Ğ±ĞµĞ·Ğ¾Ğ¿Ğ°ÑĞ½Ğ¾ÑÑ‚ÑŒ",
+    privacyDesc: "Ğ£Ğ¿Ñ€Ğ°Ğ²Ğ»ÑĞ¹Ñ‚Ğµ Ğ²Ğ¸Ğ´Ğ¸Ğ¼Ğ¾ÑÑ‚ÑŒÑ Ğ¸ Ğ±ĞµĞ·Ğ¾Ğ¿Ğ°ÑĞ½Ğ¾ÑÑ‚ÑŒÑ Ğ°ĞºĞºĞ°ÑƒĞ½Ñ‚Ğ°.",
+    online: "ĞŸĞ¾ĞºĞ°Ğ·Ñ‹Ğ²Ğ°Ñ‚ÑŒ ÑÑ‚Ğ°Ñ‚ÑƒÑ Ğ¾Ğ½Ğ»Ğ°Ğ¹Ğ½",
+    onlineDesc: "Ğ Ğ°Ğ·Ñ€ĞµÑˆĞ¸Ñ‚ÑŒ Ğ´Ñ€ÑƒĞ³Ğ¸Ğ¼ Ğ²Ğ¸Ğ´ĞµÑ‚ÑŒ, Ñ‡Ñ‚Ğ¾ Ğ²Ñ‹ Ğ¾Ğ½Ğ»Ğ°Ğ¹Ğ½.",
+    read: "ĞŸĞ¾ĞºĞ°Ğ·Ñ‹Ğ²Ğ°Ñ‚ÑŒ Ğ¿Ñ€Ğ¾Ñ‡Ğ¸Ñ‚Ğ°Ğ½Ğ½Ñ‹Ğµ ÑĞ¾Ğ¾Ğ±Ñ‰ĞµĞ½Ğ¸Ñ",
+    readDesc: "Ğ Ğ°Ğ·Ñ€ĞµÑˆĞ¸Ñ‚ÑŒ Ğ´Ñ€ÑƒĞ³Ğ¸Ğ¼ Ğ²Ğ¸Ğ´ĞµÑ‚ÑŒ Ğ¿Ñ€Ğ¾Ñ‡Ñ‚ĞµĞ½Ğ¸Ğµ ÑĞ¾Ğ¾Ğ±Ñ‰ĞµĞ½Ğ¸Ğ¹.",
+    profile: "ĞĞ°ÑÑ‚Ñ€Ğ¾Ğ¹ĞºĞ¸ Ğ¿Ñ€Ğ¾Ñ„Ğ¸Ğ»Ñ",
+    profileDesc: "Ğ˜Ğ·Ğ¼ĞµĞ½ÑĞ¹Ñ‚Ğµ Ğ´Ğ°Ğ½Ğ½Ñ‹Ğµ Ğ¿Ñ€Ğ¾Ñ„Ğ¸Ğ»Ñ Ğ¸ Ñ„Ğ¾Ñ‚Ğ¾Ğ³Ñ€Ğ°Ñ„Ğ¸Ñ.",
+    editProfile: "Ğ˜Ğ·Ğ¼ĞµĞ½Ğ¸Ñ‚ÑŒ Ğ¿Ñ€Ğ¾Ñ„Ğ¸Ğ»ÑŒ",
+    security: "Ğ‘ĞµĞ·Ğ¾Ğ¿Ğ°ÑĞ½Ğ¾ÑÑ‚ÑŒ",
+    securityDesc: "ĞŸÑ€Ğ¾Ğ²ĞµÑ€ÑŒÑ‚Ğµ Ğ´Ğ°Ğ½Ğ½Ñ‹Ğµ Ğ¿Ñ€Ğ¾Ñ„Ğ¸Ğ»Ñ Ğ´Ğ»Ñ Ğ·Ğ°Ñ‰Ğ¸Ñ‚Ñ‹ Ğ°ĞºĞºĞ°ÑƒĞ½Ñ‚Ğ°.",
+    account: "ĞĞºĞºĞ°ÑƒĞ½Ñ‚",
+    accountDesc: "Ğ”ĞµĞ¹ÑÑ‚Ğ²Ğ¸Ñ Ñ Ğ°ĞºĞºĞ°ÑƒĞ½Ñ‚Ğ¾Ğ¼.",
+    help: "Ğ¦ĞµĞ½Ñ‚Ñ€ Ğ¿Ğ¾Ğ¼Ğ¾Ñ‰Ğ¸",
+    logout: "Ğ’Ñ‹Ğ¹Ñ‚Ğ¸",
+    saved: "ĞĞ°ÑÑ‚Ñ€Ğ¾Ğ¹ĞºĞ¸ ÑĞ¾Ñ…Ñ€Ğ°Ğ½ĞµĞ½Ñ‹",
+    secure: "Ğ’Ğ°Ñˆ Ğ°ĞºĞºĞ°ÑƒĞ½Ñ‚ Ğ·Ğ°Ñ‰Ğ¸Ñ‰Ñ‘Ğ½",
+    secureDesc: "ĞĞºĞºĞ°ÑƒĞ½Ñ‚ EgeLove Ğ·Ğ°Ñ‰Ğ¸Ñ‰Ñ‘Ğ½ Ğ±ĞµĞ·Ğ¾Ğ¿Ğ°ÑĞ½Ñ‹Ğ¼ ÑĞ¾ĞµĞ´Ğ¸Ğ½ĞµĞ½Ğ¸ĞµĞ¼.",
+    premium: "Premium",
+    premiumDesc: "ĞÑ‚ĞºÑ€Ğ¾Ğ¹Ñ‚Ğµ Premium Ğ´Ğ»Ñ Ğ´Ğ¾Ğ¿Ğ¾Ğ»Ğ½Ğ¸Ñ‚ĞµĞ»ÑŒĞ½Ñ‹Ñ… Ñ„ÑƒĞ½ĞºÑ†Ğ¸Ğ¹.",
+    premiumCta: "ĞÑ‚ĞºÑ€Ñ‹Ñ‚ÑŒ Premium",
+    active: "ĞĞºÑ‚Ğ¸Ğ²Ğ½Ğ°",
+  },
+  AR: {
+    title: "Ø§Ù„Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª",
+    subtitle: "Ø®ØµÙ‘Øµ ØªØ¬Ø±Ø¨Ø© EgeLove ÙƒÙ…Ø§ ØªØ±ÙŠØ¯.",
+    appearance: "Ø§Ù„Ù…Ø¸Ù‡Ø±",
+    appearanceDesc: "ØªØ­ÙƒÙ… ÙÙŠ Ù…Ø¸Ù‡Ø± EgeLove.",
+    language: "Ø§Ù„Ù„ØºØ©",
+    languageDesc: "Ø§Ø®ØªØ± Ø§Ù„Ù„ØºØ© Ø§Ù„ØªÙŠ ØªØ±ÙŠØ¯ Ø§Ø³ØªØ®Ø¯Ø§Ù…Ù‡Ø§.",
+    notifications: "Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª",
+    notificationsDesc: "Ø§Ø®ØªØ± Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª Ø§Ù„ØªÙŠ ØªØ±ÙŠØ¯ Ø§Ø³ØªÙ„Ø§Ù…Ù‡Ø§.",
+    newMessages: "Ø§Ù„Ø±Ø³Ø§Ø¦Ù„ Ø§Ù„Ø¬Ø¯ÙŠØ¯Ø©",
+    newMessagesDesc: "Ø§Ø­ØµÙ„ Ø¹Ù„Ù‰ Ø¥Ø´Ø¹Ø§Ø± Ø¹Ù†Ø¯ ÙˆØµÙˆÙ„ Ø±Ø³Ø§Ù„Ø© Ø¬Ø¯ÙŠØ¯Ø©.",
+    likes: "Ø§Ù„Ø¥Ø¹Ø¬Ø§Ø¨Ø§Øª",
+    likesDesc: "Ø§Ø­ØµÙ„ Ø¹Ù„Ù‰ Ø¥Ø´Ø¹Ø§Ø± Ø¹Ù†Ø¯Ù…Ø§ ÙŠØ¹Ø¬Ø¨ Ø¨Ùƒ Ø´Ø®Øµ.",
+    matches: "Ø§Ù„ØªØ·Ø§Ø¨Ù‚Ø§Øª",
+    matchesDesc: "Ø§Ø­ØµÙ„ Ø¹Ù„Ù‰ Ø¥Ø´Ø¹Ø§Ø± Ø¹Ù†Ø¯ ÙˆØ¬ÙˆØ¯ ØªØ·Ø§Ø¨Ù‚ Ø¬Ø¯ÙŠØ¯.",
+    sounds: "Ø£ØµÙˆØ§Øª Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª",
+    soundsDesc: "Ø§Ø³ØªØ®Ø¯Ù… Ø§Ù„Ø£ØµÙˆØ§Øª Ù…Ø¹ Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª.",
+    privacy: "Ø§Ù„Ø®ØµÙˆØµÙŠØ© ÙˆØ§Ù„Ø£Ù…Ø§Ù†",
+    privacyDesc: "ØªØ­ÙƒÙ… ÙÙŠ Ø¸Ù‡ÙˆØ± Ø­Ø³Ø§Ø¨Ùƒ ÙˆØ£Ù…Ø§Ù†Ù‡.",
+    online: "Ø¥Ø¸Ù‡Ø§Ø± Ø­Ø§Ù„Ø© Ø§Ù„Ø§ØªØµØ§Ù„",
+    onlineDesc: "Ø§Ù„Ø³Ù…Ø§Ø­ Ù„Ù„Ø£Ø¹Ø¶Ø§Ø¡ Ø¨Ø±Ø¤ÙŠØ© Ø£Ù†Ùƒ Ù…ØªØµÙ„.",
+    read: "Ø¥Ø¸Ù‡Ø§Ø± Ø¥ÙŠØµØ§Ù„Ø§Øª Ø§Ù„Ù‚Ø±Ø§Ø¡Ø©",
+    readDesc: "Ø§Ù„Ø³Ù…Ø§Ø­ Ù„Ù„Ø¢Ø®Ø±ÙŠÙ† Ø¨Ù…Ø¹Ø±ÙØ© Ø£Ù†Ùƒ Ù‚Ø±Ø£Øª Ø§Ù„Ø±Ø³Ø§Ø¦Ù„.",
+    profile: "Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª Ø§Ù„Ù…Ù„Ù Ø§Ù„Ø´Ø®ØµÙŠ",
+    profileDesc: "Ø¹Ø¯Ù‘Ù„ Ù…Ø¹Ù„ÙˆÙ…Ø§Øª Ù…Ù„ÙÙƒ ÙˆØµÙˆØ±ØªÙƒ.",
+    editProfile: "ØªØ¹Ø¯ÙŠÙ„ Ù…Ù„ÙÙŠ",
+    security: "Ø§Ù„Ø£Ù…Ø§Ù†",
+    securityDesc: "Ø±Ø§Ø¬Ø¹ Ù…Ø¹Ù„ÙˆÙ…Ø§Øª Ù…Ù„ÙÙƒ Ù„Ù„Ø­ÙØ§Ø¸ Ø¹Ù„Ù‰ Ø£Ù…Ø§Ù† Ø§Ù„Ø­Ø³Ø§Ø¨.",
+    account: "Ø§Ù„Ø­Ø³Ø§Ø¨",
+    accountDesc: "Ø¥Ø¬Ø±Ø§Ø¡Ø§Øª Ù…ØªØ¹Ù„Ù‚Ø© Ø¨Ø§Ù„Ø­Ø³Ø§Ø¨.",
+    help: "Ù…Ø±ÙƒØ² Ø§Ù„Ù…Ø³Ø§Ø¹Ø¯Ø©",
+    logout: "ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø®Ø±ÙˆØ¬",
+    saved: "ØªÙ… Ø­ÙØ¸ Ø§Ù„Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª",
+    secure: "Ø­Ø³Ø§Ø¨Ùƒ Ø¢Ù…Ù†",
+    secureDesc: "Ø­Ø³Ø§Ø¨ EgeLove Ù…Ø­Ù…ÙŠ Ø¨Ø§ØªØµØ§Ù„ Ø¢Ù…Ù†.",
+    premium: "Premium",
+    premiumDesc: "Ø§ÙƒØªØ´Ù Premium Ù„Ù„Ù…Ø²ÙŠØ¯ Ù…Ù† Ø§Ù„Ù…ÙŠØ²Ø§Øª.",
+    premiumCta: "Ø§Ø³ØªÙƒØ´Ù Premium",
+    active: "Ù†Ø´Ø·",
+  },
+} as const;
+
+export default function SettingsPage() {
+  const { lang, setLang } = useI18n();
+  const t = copy[lang] ?? copy.TR;
+
+  const [newMessages, setNewMessages] = useState(true);
+  const [likes, setLikes] = useState(true);
+  const [matches, setMatches] = useState(true);
+  const [sounds, setSounds] = useState(true);
+  const [online, setOnline] = useState(true);
+  const [readReceipts, setReadReceipts] = useState(true);
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    const readBool = (key: string, fallback: boolean) => {
+      const value = localStorage.getItem(key);
+      return value === null ? fallback : value === "true";
+    };
+
+    setNewMessages(readBool("egelove-notify-messages", true));
+    setLikes(readBool("egelove-notify-likes", true));
+    setMatches(readBool("egelove-notify-matches", true));
+    setSounds(readBool("egelove-notify-sounds", true));
+    setOnline(readBool("egelove-show-online", true));
+    setReadReceipts(readBool("egelove-read-receipts", true));
+
+  }, []);
+
+  const saveValue = (key: string, value: boolean) => {
+    localStorage.setItem(key, String(value));
+    setSaved(true);
+    window.setTimeout(() => setSaved(false), 1600);
+  };
+
+  const changeLanguage = (nextLang: Lang) => {
+    setLang(nextLang);
+    setSaved(true);
+    window.setTimeout(() => setSaved(false), 1600);
+  };
+
+  const Row = ({
+    icon: Icon,
+    title,
+    description,
+    children,
+  }: {
+    icon: typeof Bell;
+    title: string;
+    description: string;
+    children?: React.ReactNode;
+  }) => (
+    <div className="flex items-center gap-4 border-b border-pink-100 py-5 last:border-b-0">
+      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/[0.07] bg-white text-pink-300">
+        <Icon className="h-5 w-5" strokeWidth={1.8} />
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="font-bold text-[#2D1721]">{title}</p>
+        <p className="mt-1 text-sm leading-6 text-[#8A6372]">{description}</p>
+      </div>
+      {children}
+    </div>
+  );
+
+  const Section = ({
+    icon: Icon,
+    title,
+    description,
+    children,
+  }: {
+    icon: typeof Bell;
+    title: string;
+    description: string;
+    children: React.ReactNode;
+  }) => (
+    <section className="overflow-hidden rounded-[28px] border border-white/[0.08] bg-white shadow-[0_25px_80px_rgba(0,0,0,0.18)] backdrop-blur-2xl">
+      <div className="border-b border-pink-100 px-6 py-5 sm:px-7">
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-fuchsia-500/20 to-blue-500/20 text-pink-300">
+            <Icon className="h-5 w-5" strokeWidth={1.8} />
+          </div>
+          <div>
+            <h2 className="text-lg font-black text-[#2D1721]">{title}</h2>
+            <p className="mt-0.5 text-sm text-[#8A6372]">{description}</p>
+          </div>
+        </div>
+      </div>
+      <div className="px-6 sm:px-7">{children}</div>
+    </section>
+  );
+
+  return (
+    <div
+      className="min-h-screen bg-[#080b14] text-[#2D1721]"
+      dir={lang === "AR" ? "rtl" : "ltr"}
+    >
+      <div className="lg:hidden">
+        <Header />
+      </div>
+
+      <div className="flex min-h-screen">
+        <div className="hidden shrink-0 lg:block">
+          <div className="sticky top-0 h-screen">
+            <Sidebar />
+          </div>
+        </div>
+
+        <main className="relative min-w-0 flex-1 overflow-hidden bg-[radial-gradient(circle_at_10%_5%,rgba(56,189,248,0.09),transparent_28%),radial-gradient(circle_at_92%_14%,rgba(217,70,239,0.09),transparent_30%),linear-gradient(135deg,#070a12_0%,#0d101a_52%,#090c15_100%)]">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -left-40 -top-48 h-[500px] w-[500px] rounded-full bg-pink-500/[0.13] blur-[130px]"
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -right-48 top-40 h-[520px] w-[520px] rounded-full bg-violet-500/[0.11] blur-[140px]"
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute bottom-0 left-1/3 h-[400px] w-[400px] rounded-full bg-cyan-500/[0.07] blur-[130px]"
+          />
+
+          <div className="relative z-10">
+            <div className="hidden lg:block">
+              <Topbar />
+            </div>
+
+            <div className="mx-auto w-full max-w-[1180px] px-4 py-6 sm:px-6 sm:py-8 xl:px-8">
+              <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-pink-400/20 bg-pink-500/[0.08] px-3 py-1.5 text-xs font-bold text-pink-300">
+                    <SettingsIcon />
+                    {t.title}
+                  </div>
+                  <h1 className="text-3xl font-black tracking-tight text-slate-950 dark:text-[#2D1721] sm:text-4xl">
+                    {t.title}
+                  </h1>
+                  <p className="mt-2 max-w-2xl text-sm leading-6 text-[#8A6372] dark:text-[#7A5363] sm:text-base">
+                    {t.subtitle}
+                  </p>
+                </div>
+
+                {saved && (
+                  <div className="inline-flex items-center gap-2 self-start rounded-2xl border border-emerald-400/20 bg-emerald-400/[0.08] px-4 py-2.5 text-sm font-bold text-emerald-300 sm:self-auto">
+                    <Check className="h-4 w-4" />
+                    {t.saved}
+                  </div>
+                )}
+              </div>
+
+              <div className="grid gap-5 xl:grid-cols-[1fr_1fr]">
+                <Section
+                  icon={Palette}
+                  title={t.appearance}
+                  description={t.appearanceDesc}
+                >
+                  <Row
+                    icon={Globe2}
+                    title={t.language}
+                    description={t.languageDesc}
+                  >
+                    <div className="flex flex-wrap justify-end gap-1.5">
+                      {languageOptions.map((item) => (
+                        <button
+                          key={item.code}
+                          type="button"
+                          onClick={() => changeLanguage(item.code)}
+                          className={[
+                            "rounded-xl border px-3 py-2 text-xs font-black transition-all",
+                            lang === item.code
+                              ? "border-pink-400/30 bg-gradient-to-r from-fuchsia-500/20 to-blue-500/20 text-[#2D1721] shadow-[0_0_22px_rgba(217,70,239,0.15)]"
+                              : "border-white/[0.08] bg-white text-[#8A6372] hover:border-pink-200 hover:text-[#2D1721]",
+                          ].join(" ")}
+                        >
+                          {item.flag} {item.code}
+                        </button>
+                      ))}
+                    </div>
+                  </Row>
+                </Section>
+
+                <Section
+                  icon={Bell}
+                  title={t.notifications}
+                  description={t.notificationsDesc}
+                >
+                  <Row
+                    icon={MessageCircle}
+                    title={t.newMessages}
+                    description={t.newMessagesDesc}
+                  >
+                    <Toggle
+                      checked={newMessages}
+                      label={t.newMessages}
+                      onChange={(value) => {
+                        setNewMessages(value);
+                        saveValue("egelove-notify-messages", value);
+                      }}
+                    />
+                  </Row>
+
+                  <Row
+                    icon={Heart}
+                    title={t.likes}
+                    description={t.likesDesc}
+                  >
+                    <Toggle
+                      checked={likes}
+                      label={t.likes}
+                      onChange={(value) => {
+                        setLikes(value);
+                        saveValue("egelove-notify-likes", value);
+                      }}
+                    />
+                  </Row>
+
+                  <Row
+                    icon={Sparkles}
+                    title={t.matches}
+                    description={t.matchesDesc}
+                  >
+                    <Toggle
+                      checked={matches}
+                      label={t.matches}
+                      onChange={(value) => {
+                        setMatches(value);
+                        saveValue("egelove-notify-matches", value);
+                      }}
+                    />
+                  </Row>
+
+                  <Row
+                    icon={Volume2}
+                    title={t.sounds}
+                    description={t.soundsDesc}
+                  >
+                    <Toggle
+                      checked={sounds}
+                      label={t.sounds}
+                      onChange={(value) => {
+                        setSounds(value);
+                        saveValue("egelove-notify-sounds", value);
+                      }}
+                    />
+                  </Row>
+                </Section>
+
+                <Section
+                  icon={ShieldCheck}
+                  title={t.privacy}
+                  description={t.privacyDesc}
+                >
+                  <Row
+                    icon={Eye}
+                    title={t.online}
+                    description={t.onlineDesc}
+                  >
+                    <Toggle
+                      checked={online}
+                      label={t.online}
+                      onChange={(value) => {
+                        setOnline(value);
+                        saveValue("egelove-show-online", value);
+                      }}
+                    />
+                  </Row>
+
+                  <Row
+                    icon={MessageCircle}
+                    title={t.read}
+                    description={t.readDesc}
+                  >
+                    <Toggle
+                      checked={readReceipts}
+                      label={t.read}
+                      onChange={(value) => {
+                        setReadReceipts(value);
+                        saveValue("egelove-read-receipts", value);
+                      }}
+                    />
+                  </Row>
+
+                  <Row
+                    icon={Lock}
+                    title={t.security}
+                    description={t.securityDesc}
+                  >
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/20 bg-emerald-400/[0.08] px-3 py-1.5 text-xs font-bold text-emerald-300">
+                      <Check className="h-3.5 w-3.5" />
+                      {t.active}
+                    </span>
+                  </Row>
+                </Section>
+
+                <Section
+                  icon={UserRound}
+                  title={t.account}
+                  description={t.accountDesc}
+                >
+                  <Row
+                    icon={UserRound}
+                    title={t.profile}
+                    description={t.profileDesc}
+                  >
+                    <Link
+                      href="/profile/edit"
+                      className="inline-flex items-center gap-2 rounded-xl border border-pink-400/20 bg-pink-500/[0.08] px-4 py-2.5 text-xs font-black text-pink-200 transition hover:bg-pink-500/[0.14]"
+                    >
+                      {t.editProfile}
+                      <ChevronRight className="h-4 w-4" />
+                    </Link>
+                  </Row>
+
+                  <Row
+                    icon={ShieldCheck}
+                    title={t.secure}
+                    description={t.secureDesc}
+                  >
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-400/10 text-emerald-300">
+                      <ShieldCheck className="h-5 w-5" />
+                    </div>
+                  </Row>
+
+                  <Row
+                    icon={Sparkles}
+                    title={t.premium}
+                    description={t.premiumDesc}
+                  >
+                    <Link
+                      href="/premium"
+                      className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-fuchsia-500 to-blue-500 px-4 py-2.5 text-xs font-black text-[#2D1721] shadow-[0_12px_30px_rgba(168,85,247,0.2)] transition hover:-translate-y-0.5"
+                    >
+                      {t.premiumCta}
+                      <ChevronRight className="h-4 w-4" />
+                    </Link>
+                  </Row>
+
+                  <div className="py-5">
+                    <Link
+                      href="/help"
+                      className="group flex items-center justify-between rounded-2xl border border-white/[0.07] bg-white px-4 py-3.5 transition hover:border-pink-200 hover:bg-white/[0.05]"
+                    >
+                      <span className="text-sm font-bold text-[#6B4454] group-hover:text-[#2D1721]">
+                        {t.help}
+                      </span>
+                      <ChevronRight className="h-4 w-4 text-slate-600 transition group-hover:translate-x-0.5 group-hover:text-pink-300" />
+                    </Link>
+                  </div>
+                </Section>
+              </div>
+
+              <div className="mt-5 flex items-center justify-center gap-2 pb-5 text-xs text-slate-600">
+                <Lock className="h-3.5 w-3.5" />
+                EgeLove â€¢ GÃ¼venli ve kiÅŸisel deneyim
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
+
+function SettingsIcon() {
+  return <Palette className="h-3.5 w-3.5" />;
+}
+
+
+

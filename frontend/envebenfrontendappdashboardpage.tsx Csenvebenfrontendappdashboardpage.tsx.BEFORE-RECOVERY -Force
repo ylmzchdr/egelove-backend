@@ -1,0 +1,21 @@
+[1mdiff --git "a/C:\\senveben\\BACKUPS\\frontend-BEFORE-GLOBAL-COLORS-I18N-2026-09-04_03-21-56\\app\\dashboard\\page.tsx.BEFORE-LAST-I18N" "b/C:\\senveben\\BACKUPS\\frontend-BEFORE-GLOBAL-COLORS-I18N-2026-09-04_03-21-56\\app\\dashboard\\page.tsx"[m
+[1mindex 434cbb5..450b2b1 100644[m
+[1m--- "a/C:\\senveben\\BACKUPS\\frontend-BEFORE-GLOBAL-COLORS-I18N-2026-09-04_03-21-56\\app\\dashboard\\page.tsx.BEFORE-LAST-I18N"[m
+[1m+++ "b/C:\\senveben\\BACKUPS\\frontend-BEFORE-GLOBAL-COLORS-I18N-2026-09-04_03-21-56\\app\\dashboard\\page.tsx"[m
+[36m@@ -379,8 +379,7 @@[m [mexport default function DashboardPage() {[m
+                   </div>[m
+ [m
+                   <p className="relative mb-4 text-xs leading-relaxed tracking-wide text-[#6A3048] md:text-sm">[m
+[31m-                    senveben&apos;a ana ekranından tek dokunuşla ulaş.[m
+[31m-                    Tarayıcıyı açmadan uygulama gibi kullan.[m
+[32m+[m[32m                    {t.dashboard.installPhoneDesc}[m
+                   </p>[m
+ [m
+                   {!isStandalone && ([m
+[36m@@ -529,4 +528,4 @@[m [mexport default function DashboardPage() {[m
+       </div>[m
+     </div>[m
+   );[m
+[31m-}[m
+\ No newline at end of file[m
+[32m+[m[32m}[m

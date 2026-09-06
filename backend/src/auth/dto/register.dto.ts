@@ -36,6 +36,9 @@ export class RegisterDto {
   @IsIn(["MALE", "FEMALE", "OTHER"])
   gender!: "MALE" | "FEMALE" | "OTHER";
 
+  @IsIn(["MALE", "FEMALE"])
+  seekingGender!: "MALE" | "FEMALE";
+
   @IsOptional()
   @IsString()
   turnstileToken?: string;

@@ -133,6 +133,7 @@ model User {
   name               String
   birthDate          DateTime?
   gender             Gender?
+  seekingGender      Gender?
   cityId             Int
   city               City      @relation(fields: [cityId], references: [id])
   districtId         Int

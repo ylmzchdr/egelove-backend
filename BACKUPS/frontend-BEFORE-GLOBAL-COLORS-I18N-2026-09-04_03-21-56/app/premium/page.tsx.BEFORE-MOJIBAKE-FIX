@@ -1,0 +1,341 @@
+﻿"use client";
+
+import { useState } from "react";
+import { Check, Crown, Star, Zap, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import AuthDialog from "@/components/AuthDialog";
+import { useI18n } from "@/lib/i18n-context";
+
+const plansTR = [
+  {
+    id: "MONTHLY",
+    name: "AylÄ±k",
+    price: 399.99,
+    originalPrice: 499.99,
+    currency: "TL",
+    paymentUrl: "https://shopier.com/46963153",
+    icon: Star,
+    features: ["SÄ±nÄ±rsÄ±z mesaj", "Kimler beÄŸendi gÃ¶r", "Ã–n planda profil", "Filtreleme"],
+  },
+  {
+    id: "QUARTERLY",
+    name: "3 AylÄ±k",
+    price: 999,
+    originalPrice: 1299,
+    currency: "TL",
+    paymentUrl: "https://shopier.com/46963423",
+    icon: Zap,
+    popular: true,
+    features: ["SÄ±nÄ±rsÄ±z mesaj", "Kimler beÄŸendi gÃ¶r", "Ã–n planda profil", "Filtreleme", "GeliÅŸmiÅŸ arama"],
+  },
+  {
+    id: "SEMI_ANNUAL",
+    name: "6 AylÄ±k",
+    price: 1799,
+    originalPrice: 2199,
+    currency: "TL",
+    paymentUrl: "https://shopier.com/46963489",
+    icon: Sparkles,
+    features: ["TÃ¼m Ã¶zellikler", "Ã–ncelikli destek", "VIP rozet"],
+  },
+  {
+    id: "ANNUAL",
+    name: "12 AylÄ±k",
+    price: 2199,
+    originalPrice: 2799,
+    currency: "TL",
+    paymentUrl: "https://shopier.com/46963553",
+    icon: Crown,
+    features: ["TÃ¼m Ã¶zellikler", "Ã–ncelikli destek", "VIP rozet", "En avantajlÄ±"],
+  },
+];
+
+const plansEN = [
+  {
+    id: "MONTHLY",
+    name: "1 Month",
+    price: 12.99,
+    originalPrice: 15.99,
+    currency: "$",
+    paymentUrl: "https://shopier.com/47884827",
+    icon: Star,
+    features: ["Unlimited messages", "See who liked you", "Featured profile", "Filters"],
+  },
+  {
+    id: "QUARTERLY",
+    name: "3 Months",
+    price: 29.99,
+    originalPrice: 39.99,
+    currency: "$",
+    paymentUrl: "https://shopier.com/47884852",
+    icon: Zap,
+    popular: true,
+    features: ["Unlimited messages", "See who liked you", "Featured profile", "Filters", "Advanced search"],
+  },
+  {
+    id: "SEMI_ANNUAL",
+    name: "6 Months",
+    price: 49.99,
+    originalPrice: 69.99,
+    currency: "$",
+    paymentUrl: "https://shopier.com/47884878",
+    icon: Sparkles,
+    features: ["All features", "Priority support", "VIP badge"],
+  },
+  {
+    id: "ANNUAL",
+    name: "12 Months",
+    price: 79.99,
+    originalPrice: 109.99,
+    currency: "$",
+    paymentUrl: "https://shopier.com/47884893",
+    icon: Crown,
+    features: ["All features", "Priority support", "VIP badge", "Best value"],
+  },
+];
+
+const plansRU = [
+  {
+    id: "MONTHLY",
+    name: "1 Ğ¼ĞµÑÑÑ†",
+    price: 12.99,
+    originalPrice: 15.99,
+    currency: "$",
+    paymentUrl: "https://shopier.com/47884827",
+    icon: Star,
+    features: ["Ğ‘ĞµĞ·Ğ»Ğ¸Ğ¼Ğ¸Ñ‚Ğ½Ñ‹Ğµ ÑĞ¾Ğ¾Ğ±Ñ‰ĞµĞ½Ğ¸Ñ", "ĞšÑ‚Ğ¾ Ğ²Ğ°Ñ Ğ»Ğ°Ğ¹ĞºĞ½ÑƒĞ»", "ĞŸÑ€Ğ¾Ğ´Ğ²Ğ¸Ğ¶ĞµĞ½Ğ¸Ğµ Ğ¿Ñ€Ğ¾Ñ„Ğ¸Ğ»Ñ", "Ğ¤Ğ¸Ğ»ÑŒÑ‚Ñ€Ñ‹"],
+  },
+  {
+    id: "QUARTERLY",
+    name: "3 Ğ¼ĞµÑÑÑ†Ğ°",
+    price: 29.99,
+    originalPrice: 39.99,
+    currency: "$",
+    paymentUrl: "https://shopier.com/47884852",
+    icon: Zap,
+    popular: true,
+    features: ["Ğ‘ĞµĞ·Ğ»Ğ¸Ğ¼Ğ¸Ñ‚Ğ½Ñ‹Ğµ ÑĞ¾Ğ¾Ğ±Ñ‰ĞµĞ½Ğ¸Ñ", "ĞšÑ‚Ğ¾ Ğ²Ğ°Ñ Ğ»Ğ°Ğ¹ĞºĞ½ÑƒĞ»", "ĞŸÑ€Ğ¾Ğ´Ğ²Ğ¸Ğ¶ĞµĞ½Ğ¸Ğµ Ğ¿Ñ€Ğ¾Ñ„Ğ¸Ğ»Ñ", "Ğ¤Ğ¸Ğ»ÑŒÑ‚Ñ€Ñ‹", "Ğ Ğ°ÑÑˆĞ¸Ñ€ĞµĞ½Ğ½Ñ‹Ğ¹ Ğ¿Ğ¾Ğ¸ÑĞº"],
+  },
+  {
+    id: "SEMI_ANNUAL",
+    name: "6 Ğ¼ĞµÑÑÑ†ĞµĞ²",
+    price: 49.99,
+    originalPrice: 69.99,
+    currency: "$",
+    paymentUrl: "https://shopier.com/47884878",
+    icon: Sparkles,
+    features: ["Ğ’ÑĞµ Ñ„ÑƒĞ½ĞºÑ†Ğ¸Ğ¸", "ĞŸÑ€Ğ¸Ğ¾Ñ€Ğ¸Ñ‚ĞµÑ‚Ğ½Ğ°Ñ Ğ¿Ğ¾Ğ´Ğ´ĞµÑ€Ğ¶ĞºĞ°", "VIP-Ğ·Ğ½Ğ°Ñ‡Ğ¾Ğº"],
+  },
+  {
+    id: "ANNUAL",
+    name: "12 Ğ¼ĞµÑÑÑ†ĞµĞ²",
+    price: 79.99,
+    originalPrice: 109.99,
+    currency: "$",
+    paymentUrl: "https://shopier.com/47884893",
+    icon: Crown,
+    features: ["Ğ’ÑĞµ Ñ„ÑƒĞ½ĞºÑ†Ğ¸Ğ¸", "ĞŸÑ€Ğ¸Ğ¾Ñ€Ğ¸Ñ‚ĞµÑ‚Ğ½Ğ°Ñ Ğ¿Ğ¾Ğ´Ğ´ĞµÑ€Ğ¶ĞºĞ°", "VIP-Ğ·Ğ½Ğ°Ñ‡Ğ¾Ğº", "Ğ¡Ğ°Ğ¼Ñ‹Ğ¹ Ğ²Ñ‹Ğ³Ğ¾Ğ´Ğ½Ñ‹Ğ¹"],
+  },
+];
+
+const plansAR = [
+  {
+    id: "MONTHLY",
+    name: "Ø´Ù‡Ø± ÙˆØ§Ø­Ø¯",
+    price: 12.99,
+    originalPrice: 15.99,
+    currency: "$",
+    paymentUrl: "https://shopier.com/47884827",
+    icon: Star,
+    features: ["Ø±Ø³Ø§Ø¦Ù„ ØºÙŠØ± Ù…Ø­Ø¯ÙˆØ¯Ø©", "Ø§Ø¹Ø±Ù Ù…Ù† Ø£Ø¹Ø¬Ø¨ Ø¨Ùƒ", "Ø¥Ø¨Ø±Ø§Ø² Ø§Ù„Ù…Ù„Ù Ø§Ù„Ø´Ø®ØµÙŠ", "Ø§Ù„ÙÙ„Ø§ØªØ±"],
+  },
+  {
+    id: "QUARTERLY",
+    name: "3 Ø£Ø´Ù‡Ø±",
+    price: 29.99,
+    originalPrice: 39.99,
+    currency: "$",
+    paymentUrl: "https://shopier.com/47884852",
+    icon: Zap,
+    popular: true,
+    features: ["Ø±Ø³Ø§Ø¦Ù„ ØºÙŠØ± Ù…Ø­Ø¯ÙˆØ¯Ø©", "Ø§Ø¹Ø±Ù Ù…Ù† Ø£Ø¹Ø¬Ø¨ Ø¨Ùƒ", "Ø¥Ø¨Ø±Ø§Ø² Ø§Ù„Ù…Ù„Ù Ø§Ù„Ø´Ø®ØµÙŠ", "Ø§Ù„ÙÙ„Ø§ØªØ±", "Ø¨Ø­Ø« Ù…ØªÙ‚Ø¯Ù…"],
+  },
+  {
+    id: "SEMI_ANNUAL",
+    name: "6 Ø£Ø´Ù‡Ø±",
+    price: 49.99,
+    originalPrice: 69.99,
+    currency: "$",
+    paymentUrl: "https://shopier.com/47884878",
+    icon: Sparkles,
+    features: ["ÙƒÙ„ Ø§Ù„Ù…Ù…ÙŠØ²Ø§Øª", "Ø¯Ø¹Ù… Ø°Ùˆ Ø£ÙˆÙ„ÙˆÙŠØ©", "Ø´Ø§Ø±Ø© VIP"],
+  },
+  {
+    id: "ANNUAL",
+    name: "12 Ø´Ù‡Ø±Ø§Ù‹",
+    price: 79.99,
+    originalPrice: 109.99,
+    currency: "$",
+    paymentUrl: "https://shopier.com/47884893",
+    icon: Crown,
+    features: ["ÙƒÙ„ Ø§Ù„Ù…Ù…ÙŠØ²Ø§Øª", "Ø¯Ø¹Ù… Ø°Ùˆ Ø£ÙˆÙ„ÙˆÙŠØ©", "Ø´Ø§Ø±Ø© VIP", "Ø§Ù„Ø£ÙƒØ«Ø± ØªÙˆÙÙŠØ±Ø§Ù‹"],
+  },
+];
+
+export default function PremiumPage() {
+  const [authTab, setAuthTab] = useState<"login" | "register" | null>(null);
+  const [selected, setSelected] = useState<string>("QUARTERLY");
+
+  const { lang } = useI18n();
+
+  const plans =
+    lang === "TR"
+      ? plansTR
+      : lang === "RU"
+      ? plansRU
+      : lang === "AR"
+      ? plansAR
+      : plansEN;
+
+  const title =
+    lang === "TR"
+      ? "Premium Ãœyelik"
+      : lang === "RU"
+      ? "ĞŸÑ€ĞµĞ¼Ğ¸ÑƒĞ¼-Ğ¿Ğ¾Ğ´Ğ¿Ğ¸ÑĞºĞ°"
+      : lang === "AR"
+      ? "Ø§Ù„Ø¹Ø¶ÙˆÙŠØ© Ø§Ù„Ù…Ù…ÙŠØ²Ø©"
+      : "Premium Membership";
+
+  const subtitle =
+    lang === "TR"
+      ? "GerÃ§ek aÅŸkÄ± bulmak iÃ§in bir adÄ±m Ã¶nde ol"
+      : lang === "RU"
+      ? "Ğ‘ÑƒĞ´ÑŒÑ‚Ğµ Ğ½Ğ° ÑˆĞ°Ğ³ Ğ²Ğ¿ĞµÑ€ĞµĞ´Ğ¸, Ñ‡Ñ‚Ğ¾Ğ±Ñ‹ Ğ½Ğ°Ğ¹Ñ‚Ğ¸ Ğ½Ğ°ÑÑ‚Ğ¾ÑÑ‰ÑƒÑ ÑĞ²ÑĞ·ÑŒ"
+      : lang === "AR"
+      ? "ÙƒÙ† Ù…ØªÙ‚Ø¯Ù…Ø§Ù‹ Ø¨Ø®Ø·ÙˆØ© Ù„Ù„Ø¹Ø«ÙˆØ± Ø¹Ù„Ù‰ Ø¹Ù„Ø§Ù‚Ø© Ø­Ù‚ÙŠÙ‚ÙŠØ©"
+      : "Stay one step ahead to find real connection";
+
+  const popularText =
+    lang === "TR"
+      ? "PopÃ¼ler"
+      : lang === "RU"
+      ? "ĞŸĞ¾Ğ¿ÑƒĞ»ÑÑ€Ğ½Ğ¾"
+      : lang === "AR"
+      ? "Ø§Ù„Ø£ÙƒØ«Ø± Ø´ÙŠÙˆØ¹Ø§Ù‹"
+      : "Popular";
+
+  const buyText =
+    lang === "TR"
+      ? "SatÄ±n Al"
+      : lang === "RU"
+      ? "ĞšÑƒĞ¿Ğ¸Ñ‚ÑŒ"
+      : lang === "AR"
+      ? "Ø§Ø´ØªØ±Ù Ø§Ù„Ø¢Ù†"
+      : "Buy Now";
+
+  const formatPrice = (price: number) => {
+    return price % 1 === 0 ? price.toString() : price.toFixed(2);
+  };
+
+  const handleBuy = (planId: string) => {
+    const token = localStorage.getItem("accessToken");
+
+    if (!token) {
+      setAuthTab("login");
+      return;
+    }
+
+    const plan = plans.find((p) => p.id === planId);
+    if (!plan) return;
+
+    window.location.href = plan.paymentUrl;
+  };
+
+  return (
+    <div className="min-h-screen bg-pink-950 text-[#2D1721]">
+      <Header onOpenLogin={() => setAuthTab("login")} onOpenRegister={() => setAuthTab("register")} />
+
+      <section className="py-20">
+        <div className="mx-auto max-w-7xl px-4 text-center">
+          <Crown className="w-12 h-12 text-yellow-400 mx-auto mb-4" />
+
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{title}</h1>
+
+          <p className="text-[#6B4454] max-w-xl mx-auto mb-12">{subtitle}</p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+            {plans.map((plan) => {
+              const Icon = plan.icon;
+
+              return (
+                <Card
+                  key={plan.id}
+                  className={`relative p-6 cursor-pointer transition-all duration-300 ${
+                    selected === plan.id
+                      ? "border-pink-500 bg-pink-900/60 scale-105"
+                      : "border-pink-200 bg-pink-50 hover:border-pink-400/30"
+                  }`}
+                  onClick={() => setSelected(plan.id)}
+                >
+                  {plan.popular && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-pink-600 text-[#2D1721] text-xs font-bold px-4 py-1 rounded-full">
+                      {popularText}
+                    </div>
+                  )}
+
+                  <Icon className={`w-8 h-8 mx-auto mb-3 ${selected === plan.id ? "text-pink-300" : "text-[#7A5363]"}`} />
+
+                  <h3 className="text-xl font-bold mb-1">{plan.name}</h3>
+
+                  <div className="mb-4">
+                    <span className="text-3xl font-bold text-pink-300">
+                      {formatPrice(plan.price)}
+                    </span>
+
+                    <span className="text-[#8A6372] text-base"> {plan.currency}</span>
+
+                    {plan.originalPrice && (
+                      <span className="block text-[#9B7483] text-xs line-through">
+                        {formatPrice(plan.originalPrice)} {plan.currency}
+                      </span>
+                    )}
+                  </div>
+
+                  <ul className="text-left text-base space-y-2 mb-6">
+                    {plan.features.map((feature, index) => (
+                      <li key={index} className="flex items-center gap-2 text-[#6B4454]">
+                        <Check className="w-4 h-4 text-pink-400" />
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <Button
+                    className={`w-full ${
+                      selected === plan.id
+                        ? "bg-pink-600 hover:bg-pink-700"
+                        : "bg-pink-50 hover:bg-white/20"
+                    } text-[#2D1721]`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleBuy(plan.id);
+                    }}
+                  >
+                    {buyText}
+                  </Button>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+
+      <AuthDialog activeTab={authTab} onClose={() => setAuthTab(null)} />
+    </div>
+  );
+}

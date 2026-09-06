@@ -114,9 +114,8 @@ setUserName(getFirstName(user));
     <header className="sticky top-0 z-50 bg-[#FFC000] text-black shadow-md border-b border-black/10 font-sans">
       <div className="mx-auto max-w-7xl px-4 py-3 flex justify-between items-center">
         <Link href="/" className="flex items-center gap-2 no-underline">
-          <Heart className="w-7 h-7 text-black fill-black" />
           <span className="text-xl font-black tracking-tighter text-black lowercase">
-            egelove
+         senveben.com.tr
           </span>
         </Link>
 

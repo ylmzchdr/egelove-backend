@@ -1,0 +1,2040 @@
+"use client";
+import React, {
+  FormEvent,
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { useSearchParams } from "next/navigation";
+import { useI18n } from "@/lib/i18n-context";
+import { api } from "@/lib/api";
+/* =========================================================
+   TÄ°PLER
+   ========================================================= */
+type User = {
+  id: string;
+  name?: string;
+  username?: string;
+  city?: string;
+  profileImage?: string | null;
+  profilePhoto?: string | null;
+};
+type Message = {
+  id: string;
+  content: string;
+  senderId?: string;
+  receiverId?: string;
+  createdAt?: string;
+  isMine?: boolean;
+};
+type Conversation = {
+  id: string;
+  userId?: string;
+  participantId?: string;
+  participant?: User | null;
+  user?: User | null;
+  lastMessage?: Message | null;
+  updatedAt?: string;
+  unreadCount?: number;
+};
+/* =========================================================
+   TOKEN
+   ========================================================= */
+function getAccessToken(): string | null {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  return localStorage.getItem("accessToken");
+}
+
+/* =========================================================
+   JWT'DEN KULLANICI ID
+   ========================================================= */
+
+function getCurrentUserId(): string | null {
+  const token = getAccessToken();
+
+  if (!token) {
+    return null;
+  }
+
+  try {
+    const parts = token.split(".");
+
+    if (parts.length < 2) {
+      return null;
+    }
+
+    const payload = parts[1];
+
+    const normalized = payload
+      .replace(/-/g, "+")
+      .replace(/_/g, "/");
+
+    const padded =
+      normalized +
+      "=".repeat(
+        (4 - (normalized.length % 4)) % 4,
+      );
+
+    const decoded = decodeURIComponent(
+      atob(padded)
+        .split("")
+        .map(
+          (char) =>
+            "%" +
+            ("00" +
+              char.charCodeAt(0).toString(16)
+            ).slice(-2),
+        )
+        .join(""),
+    );
+
+    const data = JSON.parse(decoded);
+
+    if (data?.sub !== undefined) {
+      return String(data.sub);
+    }
+
+    if (data?.id !== undefined) {
+      return String(data.id);
+    }
+
+    if (data?.userId !== undefined) {
+      return String(data.userId);
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/* =========================================================
+   GÃœVENLÄ° STRING
+   ========================================================= */
+
+function safeString(
+  value: unknown,
+): string {
+  if (typeof value === "string") {
+    return value.trim();
+  }
+
+  if (
+    typeof value === "number" ||
+    typeof value === "boolean"
+  ) {
+    return String(value);
+  }
+
+  return "";
+}
+
+/* =========================================================
+   KULLANICI NORMALÄ°ZASYONU
+   ========================================================= */
+
+function normalizeUser(
+  raw: any,
+): User | null {
+  if (!raw || typeof raw !== "object") {
+    return null;
+  }
+
+  const rawId =
+    raw.id ??
+    raw._id ??
+    raw.userId;
+
+  if (
+    rawId === undefined ||
+    rawId === null ||
+    String(rawId).trim() === ""
+  ) {
+    return null;
+  }
+
+  let name = "";
+
+  if (typeof raw.name === "string") {
+    name = raw.name.trim();
+  } else if (
+    raw.name &&
+    typeof raw.name === "object"
+  ) {
+    name =
+      safeString(raw.name.name) ||
+      safeString(raw.name.Name) ||
+      safeString(raw.name.username);
+  }
+
+  if (!name) {
+    name = safeString(raw.username);
+  }
+
+  return {
+    id: String(rawId),
+    name: name || "KullanÄ±cÄ±",
+    username:
+      safeString(raw.username) || undefined,
+    city:
+      safeString(raw.city) || undefined,
+    profileImage:
+      safeString(raw.profileImage) ||
+      safeString(raw.avatar) ||
+      null,
+    profilePhoto:
+      safeString(raw.profilePhoto) ||
+      safeString(raw.avatar) ||
+      null,
+  };
+}
+
+/* =========================================================
+   MESAJ NORMALÄ°ZASYONU
+   ========================================================= */
+
+function normalizeMessage(
+  raw: any,
+  fallbackId: string,
+): Message | null {
+  if (
+    raw === null ||
+    raw === undefined ||
+    raw === ""
+  ) {
+    return null;
+  }
+
+  /*
+   * Backend bazÄ± durumlarda son mesajÄ±
+   * doÄŸrudan string gÃ¶nderebilir.
+   */
+  if (typeof raw === "string") {
+    return {
+      id: fallbackId,
+      content: raw,
+    };
+  }
+
+  if (
+    typeof raw !== "object"
+  ) {
+    return null;
+  }
+
+  const id = String(
+    raw.id ??
+      raw._id ??
+      fallbackId,
+  );
+
+  const content = safeString(
+    raw.content ??
+      raw.message ??
+      raw.text,
+  );
+
+  const senderId =
+    raw.senderId ??
+    raw.sender?.id ??
+    raw.sender?._id ??
+    raw.fromUserId ??
+    raw.from?.id ??
+    raw.from?._id;
+
+  const receiverId =
+    raw.receiverId ??
+    raw.recipientId ??
+    raw.receiver?.id ??
+    raw.receiver?._id ??
+    raw.toUserId ??
+    raw.to?.id ??
+    raw.to?._id;
+
+  const createdAt =
+    raw.createdAt ??
+    raw.sentAt ??
+    raw.created_at ??
+    raw.date ??
+    raw.timestamp;
+
+  let isMine: boolean | undefined;
+
+  if (typeof raw.isMine === "boolean") {
+    isMine = raw.isMine;
+  } else if (
+    typeof raw.mine === "boolean"
+  ) {
+    isMine = raw.mine;
+  }
+
+  return {
+    id,
+    content,
+    senderId:
+      senderId !== undefined &&
+      senderId !== null
+        ? String(senderId)
+        : undefined,
+    receiverId:
+      receiverId !== undefined &&
+      receiverId !== null
+        ? String(receiverId)
+        : undefined,
+    createdAt:
+      createdAt !== undefined &&
+      createdAt !== null
+        ? String(createdAt)
+        : undefined,
+    isMine,
+  };
+}
+
+/* =========================================================
+   ANA MESAJ Ä°Ã‡ERÄ°ÄÄ°
+   ========================================================= */
+
+function MessagesContent() {
+  const searchParams =
+    useSearchParams();
+
+  const [conversations, setConversations] =
+    useState<Conversation[]>([]);
+
+  const [messages, setMessages] =
+    useState<Message[]>([]);
+
+  const [selectedUser, setSelectedUser] =
+    useState<User | null>(null);
+
+  const [
+    selectedConversationId,
+    setSelectedConversationId,
+  ] = useState<string | null>(null);
+
+  const [draft, setDraft] =
+    useState("");
+
+  const [
+    loadingConversations,
+    setLoadingConversations,
+  ] = useState(true);
+
+  const [
+    loadingMessages,
+    setLoadingMessages,
+  ] = useState(false);
+
+  const [sending, setSending] =
+    useState(false);
+
+  const [error, setError] =
+    useState("");
+
+  const { lang, setLang } = useI18n();
+
+  const t = useMemo(() => {
+    const translations: Record<string, Record<string, string>> = {
+      TR: {
+        user: "KullanÄ±cÄ±", home: "Ana Sayfa", myPage: "Benim Sayfam", likes: "BeÄŸeniler", messages: "Mesajlar", premium: "Premium",
+        welcome: "HoÅŸ geldin", logout: "Ã‡Ä±kÄ±ÅŸ", backHome: "ANA SAYFAYA GERÄ° DÃ–N", heroTitle: "BÄ°REBÄ°R CANLI", heroTitleAccent: "GÃ–RÃœNTÃœLÃœ GÃ–RÃœÅME",
+        heroDesc1: "BeÄŸenip eÅŸleÅŸtiÄŸin kiÅŸilerle birebir canlÄ± gÃ¶rÃ¼ntÃ¼lÃ¼ konuÅŸ.", heroDesc2: "Yeni insanlarÄ± sadece mesajlaÅŸarak deÄŸil, yÃ¼z yÃ¼ze tanÄ±manÄ±n keyfini yaÅŸa.",
+        safe: "GÃ¼venli", safeSub: "GÃ¶rÃ¼ÅŸmeler", real: "GerÃ§ek", realSub: "KiÅŸiler", instant: "AnÄ±nda", instantSub: "BaÄŸlantÄ±", closer: "Daha YakÄ±n", closerSub: "BaÄŸlar",
+        premiumFeature: "PREMIUM Ã–ZELLÄ°ÄÄ°", unlimitedVideo: "SÄ±nÄ±rsÄ±z gÃ¶rÃ¼ntÃ¼lÃ¼ gÃ¶rÃ¼ÅŸme", readReceipt: "Okundu bilgisi", boostProfile: "Profilini Ã¶ne Ã§Ä±kar", adFree: "ReklamsÄ±z kullanÄ±m",
+        goPremium: "PREMÄ°UM'A GEÃ‡", premiumOnly: "Bu Ã¶zellik Premium Ã¼yelikle kullanÄ±labilir.", chatTitle: "Mesajlar", all: "TÃ¼mÃ¼", new: "Yeni", online: "Ã‡evrimiÃ§i", favorites: "Favoriler",
+        search: "Ara...", loading: "Mesajlar yÃ¼kleniyor...", noMessage: "HenÃ¼z mesaj yok", noMessageDesc: "BeÄŸendiÄŸin kiÅŸilerle eÅŸleÅŸtiÄŸinde burada konuÅŸmalarÄ±nÄ± gÃ¶receksin.",
+        total: "Toplam", conversations: "konuÅŸma", onlineStatus: "Ã‡evrimiÃ§i", premiumVideo: "Premium ile GÃ¶rÃ¼ntÃ¼lÃ¼ GÃ¶rÃ¼ÅŸ", today: "BugÃ¼n",
+        noConversationMessages: "Bu konuÅŸmada henÃ¼z mesaj yok.", startChat: "Sohbet baÅŸlat", startChatDesc: "Sol taraftan bir konuÅŸma seÃ§. EÅŸleÅŸtiÄŸin kiÅŸiyle mesajlaÅŸmaya hemen baÅŸlayabilirsin.",
+        messagePlaceholder: "MesajÄ±nÄ± yaz...", send: "GÃ–NDER", sending: "...", enterHint: "Enter ile gÃ¶nder â€¢ Shift + Enter ile yeni satÄ±r",
+        moreFor: "Bu ve daha fazlasÄ± iÃ§in", premiumGo: "Premiumâ€™a geÃ§!", premiumDesc: "CanlÄ± gÃ¶rÃ¼ntÃ¼lÃ¼ gÃ¶rÃ¼ÅŸme, okundu bilgisi, profilini Ã¶ne Ã§Ä±karma, reklamsÄ±z kullanÄ±m ve daha birÃ§ok avantaj seni bekliyor.",
+        specialFilters: "Ã–zel filtreler ve daha fazlasÄ±", securePayment: "GÃ¼venli ve hÄ±zlÄ± Ã¶deme",
+      },
+      EN: {
+        user: "User", home: "Home", myPage: "My Page", likes: "Likes", messages: "Messages", premium: "Premium", welcome: "Welcome", logout: "Log Out", backHome: "BACK TO HOME",
+        heroTitle: "ONE-TO-ONE LIVE", heroTitleAccent: "VIDEO CHAT", heroDesc1: "Have a one-to-one live video chat with people you like and match with.", heroDesc2: "Don't just message new people â€” enjoy getting to know them face to face.",
+        safe: "Safe", safeSub: "Conversations", real: "Real", realSub: "People", instant: "Instant", instantSub: "Connection", closer: "Closer", closerSub: "Bonds",
+        premiumFeature: "PREMIUM FEATURE", unlimitedVideo: "Unlimited video calls", readReceipt: "Read receipts", boostProfile: "Boost your profile", adFree: "Ad-free experience", goPremium: "GO PREMIUM", premiumOnly: "This feature is available with Premium membership.",
+        chatTitle: "Messages", all: "All", new: "New", online: "Online", favorites: "Favorites", search: "Search...", loading: "Loading messages...", noMessage: "No messages yet", noMessageDesc: "When you match with people you like, your conversations will appear here.",
+        total: "Total", conversations: "conversations", onlineStatus: "Online", premiumVideo: "Video chat with Premium", today: "Today", noConversationMessages: "No messages in this conversation yet.",
+        startChat: "Start a chat", startChatDesc: "Select a conversation on the left to start messaging your match.", messagePlaceholder: "Write a message...", send: "SEND", sending: "...", enterHint: "Press Enter to send â€¢ Shift + Enter for a new line",
+        moreFor: "For this and much more", premiumGo: "Go Premium!", premiumDesc: "Live video calls, read receipts, profile boosts, ad-free use and many more benefits are waiting for you.", specialFilters: "Special filters and more", securePayment: "Secure and fast payment",
+      },
+      RU: {
+        user: "ĞŸĞ¾Ğ»ÑŒĞ·Ğ¾Ğ²Ğ°Ñ‚ĞµĞ»ÑŒ", home: "Ğ“Ğ»Ğ°Ğ²Ğ½Ğ°Ñ", myPage: "ĞœĞ¾Ñ ÑÑ‚Ñ€Ğ°Ğ½Ğ¸Ñ†Ğ°", likes: "ĞÑ€Ğ°Ğ²Ğ¸Ñ‚ÑÑ", messages: "Ğ¡Ğ¾Ğ¾Ğ±Ñ‰ĞµĞ½Ğ¸Ñ", premium: "Premium", welcome: "Ğ”Ğ¾Ğ±Ñ€Ğ¾ Ğ¿Ğ¾Ğ¶Ğ°Ğ»Ğ¾Ğ²Ğ°Ñ‚ÑŒ", logout: "Ğ’Ñ‹Ğ¹Ñ‚Ğ¸", backHome: "ĞĞ Ğ“Ğ›ĞĞ’ĞĞ£Ğ®",
+        heroTitle: "Ğ›Ğ˜Ğ§ĞĞ«Ğ™ Ğ–Ğ˜Ğ’ĞĞ™", heroTitleAccent: "Ğ’Ğ˜Ğ”Ğ•ĞĞ§ĞĞ¢", heroDesc1: "ĞĞ±Ñ‰Ğ°Ğ¹Ñ‚ĞµÑÑŒ Ğ¿Ğ¾ Ğ²Ğ¸Ğ´ĞµĞ¾ÑĞ²ÑĞ·Ğ¸ Ğ¾Ğ´Ğ¸Ğ½ Ğ½Ğ° Ğ¾Ğ´Ğ¸Ğ½ Ñ Ğ»ÑĞ´ÑŒĞ¼Ğ¸, ĞºĞ¾Ñ‚Ğ¾Ñ€Ñ‹Ğµ Ğ²Ğ°Ğ¼ Ğ¿Ğ¾Ğ½Ñ€Ğ°Ğ²Ğ¸Ğ»Ğ¸ÑÑŒ Ğ¸ Ñ ĞºĞ¾Ñ‚Ğ¾Ñ€Ñ‹Ğ¼Ğ¸ Ğ²Ñ‹ ÑĞ¾Ğ²Ğ¿Ğ°Ğ»Ğ¸.", heroDesc2: "ĞĞµ Ñ‚Ğ¾Ğ»ÑŒĞºĞ¾ Ğ¿ĞµÑ€ĞµĞ¿Ğ¸ÑÑ‹Ğ²Ğ°Ğ¹Ñ‚ĞµÑÑŒ â€” Ğ¿Ğ¾Ğ·Ğ½Ğ°ĞºĞ¾Ğ¼ÑŒÑ‚ĞµÑÑŒ Ñ Ğ½Ğ¾Ğ²Ñ‹Ğ¼Ğ¸ Ğ»ÑĞ´ÑŒĞ¼Ğ¸ Ğ»Ğ¸Ñ†Ğ¾Ğ¼ Ğº Ğ»Ğ¸Ñ†Ñƒ.",
+        safe: "Ğ‘ĞµĞ·Ğ¾Ğ¿Ğ°ÑĞ½Ñ‹Ğµ", safeSub: "Ğ Ğ°Ğ·Ğ³Ğ¾Ğ²Ğ¾Ñ€Ñ‹", real: "Ğ ĞµĞ°Ğ»ÑŒĞ½Ñ‹Ğµ", realSub: "Ğ›ÑĞ´Ğ¸", instant: "ĞœĞ³Ğ½Ğ¾Ğ²ĞµĞ½Ğ½Ğ°Ñ", instantSub: "Ğ¡Ğ²ÑĞ·ÑŒ", closer: "Ğ‘Ğ»Ğ¸Ğ¶Ğµ", closerSub: "Ğ”Ñ€ÑƒĞ³ Ğº Ğ´Ñ€ÑƒĞ³Ñƒ", premiumFeature: "Ğ¤Ğ£ĞĞšĞ¦Ğ˜Ğ¯ PREMIUM",
+        unlimitedVideo: "Ğ‘ĞµĞ·Ğ»Ğ¸Ğ¼Ğ¸Ñ‚Ğ½Ñ‹Ğµ Ğ²Ğ¸Ğ´ĞµĞ¾Ğ·Ğ²Ğ¾Ğ½ĞºĞ¸", readReceipt: "Ğ¡Ñ‚Ğ°Ñ‚ÑƒÑ Ğ¿Ñ€Ğ¾Ñ‡Ñ‚ĞµĞ½Ğ¸Ñ", boostProfile: "ĞŸÑ€Ğ¾Ğ´Ğ²Ğ¸Ğ¶ĞµĞ½Ğ¸Ğµ Ğ¿Ñ€Ğ¾Ñ„Ğ¸Ğ»Ñ", adFree: "Ğ‘ĞµĞ· Ñ€ĞµĞºĞ»Ğ°Ğ¼Ñ‹", goPremium: "ĞŸĞ•Ğ Ğ•Ğ™Ğ¢Ğ˜ ĞĞ PREMIUM", premiumOnly: "Ğ­Ñ‚Ğ° Ñ„ÑƒĞ½ĞºÑ†Ğ¸Ñ Ğ´Ğ¾ÑÑ‚ÑƒĞ¿Ğ½Ğ° Ñ Ğ¿Ğ¾Ğ´Ğ¿Ğ¸ÑĞºĞ¾Ğ¹ Premium.",
+        chatTitle: "Ğ¡Ğ¾Ğ¾Ğ±Ñ‰ĞµĞ½Ğ¸Ñ", all: "Ğ’ÑĞµ", new: "ĞĞ¾Ğ²Ñ‹Ğµ", online: "Ğ’ ÑĞµÑ‚Ğ¸", favorites: "Ğ˜Ğ·Ğ±Ñ€Ğ°Ğ½Ğ½Ğ¾Ğµ", search: "ĞŸĞ¾Ğ¸ÑĞº...", loading: "Ğ—Ğ°Ğ³Ñ€ÑƒĞ·ĞºĞ° ÑĞ¾Ğ¾Ğ±Ñ‰ĞµĞ½Ğ¸Ğ¹...", noMessage: "Ğ¡Ğ¾Ğ¾Ğ±Ñ‰ĞµĞ½Ğ¸Ğ¹ Ğ¿Ğ¾ĞºĞ° Ğ½ĞµÑ‚", noMessageDesc: "ĞšĞ¾Ğ³Ğ´Ğ° Ğ²Ñ‹ ÑĞ¾Ğ²Ğ¿Ğ°Ğ´Ñ‘Ñ‚Ğµ Ñ Ğ¿Ğ¾Ğ½Ñ€Ğ°Ğ²Ğ¸Ğ²ÑˆĞ¸Ğ¼Ğ¸ÑÑ Ğ»ÑĞ´ÑŒĞ¼Ğ¸, Ğ²Ğ°ÑˆĞ¸ Ñ€Ğ°Ğ·Ğ³Ğ¾Ğ²Ğ¾Ñ€Ñ‹ Ğ¿Ğ¾ÑĞ²ÑÑ‚ÑÑ Ğ·Ğ´ĞµÑÑŒ.",
+        total: "Ğ’ÑĞµĞ³Ğ¾", conversations: "Ñ€Ğ°Ğ·Ğ³Ğ¾Ğ²Ğ¾Ñ€Ğ¾Ğ²", onlineStatus: "Ğ’ ÑĞµÑ‚Ğ¸", premiumVideo: "Ğ’Ğ¸Ğ´ĞµĞ¾Ñ‡Ğ°Ñ‚ Ñ Premium", today: "Ğ¡ĞµĞ³Ğ¾Ğ´Ğ½Ñ", noConversationMessages: "Ğ’ ÑÑ‚Ğ¾Ğ¼ Ñ€Ğ°Ğ·Ğ³Ğ¾Ğ²Ğ¾Ñ€Ğµ Ğ¿Ğ¾ĞºĞ° Ğ½ĞµÑ‚ ÑĞ¾Ğ¾Ğ±Ñ‰ĞµĞ½Ğ¸Ğ¹.", startChat: "ĞĞ°Ñ‡Ğ°Ñ‚ÑŒ Ñ€Ğ°Ğ·Ğ³Ğ¾Ğ²Ğ¾Ñ€", startChatDesc: "Ğ’Ñ‹Ğ±ĞµÑ€Ğ¸Ñ‚Ğµ Ñ€Ğ°Ğ·Ğ³Ğ¾Ğ²Ğ¾Ñ€ ÑĞ»ĞµĞ²Ğ°, Ñ‡Ñ‚Ğ¾Ğ±Ñ‹ Ğ½Ğ°Ñ‡Ğ°Ñ‚ÑŒ Ğ¾Ğ±Ñ‰ĞµĞ½Ğ¸Ğµ Ñ Ğ²Ğ°ÑˆĞ¸Ğ¼ ÑĞ¾Ğ²Ğ¿Ğ°Ğ´ĞµĞ½Ğ¸ĞµĞ¼.",
+        messagePlaceholder: "ĞĞ°Ğ¿Ğ¸ÑˆĞ¸Ñ‚Ğµ ÑĞ¾Ğ¾Ğ±Ñ‰ĞµĞ½Ğ¸Ğµ...", send: "ĞĞ¢ĞŸĞ ĞĞ’Ğ˜Ğ¢Ğ¬", sending: "...", enterHint: "Enter â€” Ğ¾Ñ‚Ğ¿Ñ€Ğ°Ğ²Ğ¸Ñ‚ÑŒ â€¢ Shift + Enter â€” Ğ½Ğ¾Ğ²Ğ°Ñ ÑÑ‚Ñ€Ğ¾ĞºĞ°", moreFor: "Ğ˜ ÑÑ‚Ğ¾, Ğ¸ Ğ¼Ğ½Ğ¾Ğ³Ğ¾Ğµ Ğ´Ñ€ÑƒĞ³Ğ¾Ğµ", premiumGo: "ĞŸĞµÑ€ĞµĞ¹Ğ´Ğ¸Ñ‚Ğµ Ğ½Ğ° Premium!", premiumDesc: "Ğ’Ğ¸Ğ´ĞµĞ¾Ğ·Ğ²Ğ¾Ğ½ĞºĞ¸, ÑƒĞ²ĞµĞ´Ğ¾Ğ¼Ğ»ĞµĞ½Ğ¸Ñ Ğ¾ Ğ¿Ñ€Ğ¾Ñ‡Ñ‚ĞµĞ½Ğ¸Ğ¸, Ğ¿Ñ€Ğ¾Ğ´Ğ²Ğ¸Ğ¶ĞµĞ½Ğ¸Ğµ Ğ¿Ñ€Ğ¾Ñ„Ğ¸Ğ»Ñ, Ğ¸ÑĞ¿Ğ¾Ğ»ÑŒĞ·Ğ¾Ğ²Ğ°Ğ½Ğ¸Ğµ Ğ±ĞµĞ· Ñ€ĞµĞºĞ»Ğ°Ğ¼Ñ‹ Ğ¸ Ğ¼Ğ½Ğ¾Ğ³Ğ¸Ğµ Ğ´Ñ€ÑƒĞ³Ğ¸Ğµ Ğ¿Ñ€ĞµĞ¸Ğ¼ÑƒÑ‰ĞµÑÑ‚Ğ²Ğ° Ğ¶Ğ´ÑƒÑ‚ Ğ²Ğ°Ñ.", specialFilters: "Ğ¡Ğ¿ĞµÑ†Ğ¸Ğ°Ğ»ÑŒĞ½Ñ‹Ğµ Ñ„Ğ¸Ğ»ÑŒÑ‚Ñ€Ñ‹ Ğ¸ Ğ¼Ğ½Ğ¾Ğ³Ğ¾Ğµ Ğ´Ñ€ÑƒĞ³Ğ¾Ğµ", securePayment: "Ğ‘ĞµĞ·Ğ¾Ğ¿Ğ°ÑĞ½Ğ°Ñ Ğ¸ Ğ±Ñ‹ÑÑ‚Ñ€Ğ°Ñ Ğ¾Ğ¿Ğ»Ğ°Ñ‚Ğ°",
+      },
+      AR: {
+        user: "Ù…Ø³ØªØ®Ø¯Ù…", home: "Ø§Ù„Ø±Ø¦ÙŠØ³ÙŠØ©", myPage: "ØµÙØ­ØªÙŠ", likes: "Ø§Ù„Ø¥Ø¹Ø¬Ø§Ø¨Ø§Øª", messages: "Ø§Ù„Ø±Ø³Ø§Ø¦Ù„", premium: "Premium", welcome: "Ù…Ø±Ø­Ø¨Ù‹Ø§", logout: "Ø®Ø±ÙˆØ¬", backHome: "Ø§Ù„Ø¹ÙˆØ¯Ø© Ø¥Ù„Ù‰ Ø§Ù„ØµÙØ­Ø© Ø§Ù„Ø±Ø¦ÙŠØ³ÙŠØ©",
+        heroTitle: "Ù…ÙƒØ§Ù„Ù…Ø© Ù…Ø¨Ø§Ø´Ø±Ø©", heroTitleAccent: "ÙÙŠØ¯ÙŠÙˆ ÙØ±Ø¯ÙŠØ©", heroDesc1: "ØªØ­Ø¯Ø« Ø¹Ø¨Ø± Ø§Ù„ÙÙŠØ¯ÙŠÙˆ Ø¨Ø´ÙƒÙ„ ÙØ±Ø¯ÙŠ Ù…Ø¹ Ø§Ù„Ø£Ø´Ø®Ø§Øµ Ø§Ù„Ø°ÙŠÙ† Ø£Ø¹Ø¬Ø¨Øª Ø¨Ù‡Ù… ÙˆØªØ·Ø§Ø¨Ù‚Øª Ù…Ø¹Ù‡Ù….", heroDesc2: "Ù„Ø§ ØªÙƒØªÙÙ Ø¨Ø§Ù„Ø±Ø³Ø§Ø¦Ù„ØŒ Ø§Ø³ØªÙ…ØªØ¹ Ø¨Ø§Ù„ØªØ¹Ø±Ù Ø¹Ù„Ù‰ Ø£Ø´Ø®Ø§Øµ Ø¬Ø¯Ø¯ ÙˆØ¬Ù‡Ù‹Ø§ Ù„ÙˆØ¬Ù‡.",
+        safe: "Ù…Ø­Ø§Ø¯Ø«Ø§Øª", safeSub: "Ø¢Ù…Ù†Ø©", real: "Ø£Ø´Ø®Ø§Øµ", realSub: "Ø­Ù‚ÙŠÙ‚ÙŠÙˆÙ†", instant: "Ø§ØªØµØ§Ù„", instantSub: "ÙÙˆØ±ÙŠ", closer: "Ø±ÙˆØ§Ø¨Ø·", closerSub: "Ø£Ù‚Ø±Ø¨", premiumFeature: "Ù…ÙŠØ²Ø© PREMIUM",
+        unlimitedVideo: "Ù…ÙƒØ§Ù„Ù…Ø§Øª ÙÙŠØ¯ÙŠÙˆ ØºÙŠØ± Ù…Ø­Ø¯ÙˆØ¯Ø©", readReceipt: "Ø¥Ø´Ø¹Ø§Ø±Ø§Øª Ø§Ù„Ù‚Ø±Ø§Ø¡Ø©", boostProfile: "Ø¥Ø¨Ø±Ø§Ø² Ø§Ù„Ù…Ù„Ù Ø§Ù„Ø´Ø®ØµÙŠ", adFree: "Ø§Ø³ØªØ®Ø¯Ø§Ù… Ø¨Ù„Ø§ Ø¥Ø¹Ù„Ø§Ù†Ø§Øª", goPremium: "Ø§Ù„Ø§Ù†ØªÙ‚Ø§Ù„ Ø¥Ù„Ù‰ PREMIUM", premiumOnly: "Ù‡Ø°Ù‡ Ø§Ù„Ù…ÙŠØ²Ø© Ù…ØªØ§Ø­Ø© Ù…Ø¹ Ø¹Ø¶ÙˆÙŠØ© Premium.",
+        chatTitle: "Ø§Ù„Ø±Ø³Ø§Ø¦Ù„", all: "Ø§Ù„ÙƒÙ„", new: "Ø¬Ø¯ÙŠØ¯", online: "Ù…ØªØµÙ„", favorites: "Ø§Ù„Ù…ÙØ¶Ù„Ø©", search: "Ø¨Ø­Ø«...", loading: "Ø¬Ø§Ø±Ù ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ø±Ø³Ø§Ø¦Ù„...", noMessage: "Ù„Ø§ ØªÙˆØ¬Ø¯ Ø±Ø³Ø§Ø¦Ù„ Ø¨Ø¹Ø¯", noMessageDesc: "Ø¹Ù†Ø¯Ù…Ø§ ØªØªØ·Ø§Ø¨Ù‚ Ù…Ø¹ Ø§Ù„Ø£Ø´Ø®Ø§Øµ Ø§Ù„Ø°ÙŠÙ† Ø£Ø¹Ø¬Ø¨Øª Ø¨Ù‡Ù…ØŒ Ø³ØªØ¸Ù‡Ø± Ù…Ø­Ø§Ø¯Ø«Ø§ØªÙƒ Ù‡Ù†Ø§.",
+        total: "Ø¥Ø¬Ù…Ø§Ù„ÙŠ", conversations: "Ù…Ø­Ø§Ø¯Ø«Ø§Øª", onlineStatus: "Ù…ØªØµÙ„", premiumVideo: "Ù…Ø­Ø§Ø¯Ø«Ø© ÙÙŠØ¯ÙŠÙˆ Ù…Ø¹ Premium", today: "Ø§Ù„ÙŠÙˆÙ…", noConversationMessages: "Ù„Ø§ ØªÙˆØ¬Ø¯ Ø±Ø³Ø§Ø¦Ù„ ÙÙŠ Ù‡Ø°Ù‡ Ø§Ù„Ù…Ø­Ø§Ø¯Ø«Ø© Ø¨Ø¹Ø¯.", startChat: "Ø§Ø¨Ø¯Ø£ Ù…Ø­Ø§Ø¯Ø«Ø©", startChatDesc: "Ø§Ø®ØªØ± Ù…Ø­Ø§Ø¯Ø«Ø© Ù…Ù† Ø§Ù„ÙŠØ³Ø§Ø± Ù„Ø¨Ø¯Ø¡ Ù…Ø±Ø§Ø³Ù„Ø© Ø§Ù„Ø´Ø®Øµ Ø§Ù„Ø°ÙŠ ØªØ·Ø§Ø¨Ù‚Øª Ù…Ø¹Ù‡.",
+        messagePlaceholder: "Ø§ÙƒØªØ¨ Ø±Ø³Ø§Ù„ØªÙƒ...", send: "Ø¥Ø±Ø³Ø§Ù„", sending: "...", enterHint: "Ø§Ø¶ØºØ· Enter Ù„Ù„Ø¥Ø±Ø³Ø§Ù„ â€¢ Shift + Enter Ù„Ø³Ø·Ø± Ø¬Ø¯ÙŠØ¯", moreFor: "Ù„Ù„Ù…Ø²ÙŠØ¯ Ù…Ù† Ø§Ù„Ù…Ø²Ø§ÙŠØ§", premiumGo: "Ø§Ù†ØªÙ‚Ù„ Ø¥Ù„Ù‰ Premium!", premiumDesc: "Ù…ÙƒØ§Ù„Ù…Ø§Øª ÙÙŠØ¯ÙŠÙˆ Ù…Ø¨Ø§Ø´Ø±Ø©ØŒ Ø¥Ø´Ø¹Ø§Ø±Ø§Øª Ø§Ù„Ù‚Ø±Ø§Ø¡Ø©ØŒ Ø¥Ø¨Ø±Ø§Ø² Ø§Ù„Ù…Ù„Ù Ø§Ù„Ø´Ø®ØµÙŠØŒ Ø§Ø³ØªØ®Ø¯Ø§Ù… Ø¨Ù„Ø§ Ø¥Ø¹Ù„Ø§Ù†Ø§Øª ÙˆØ§Ù„Ø¹Ø¯ÙŠØ¯ Ù…Ù† Ø§Ù„Ù…Ø²Ø§ÙŠØ§ Ø¨Ø§Ù†ØªØ¸Ø§Ø±Ùƒ.", specialFilters: "ÙÙ„Ø§ØªØ± Ø®Ø§ØµØ© ÙˆØ§Ù„Ù…Ø²ÙŠØ¯", securePayment: "Ø¯ÙØ¹ Ø¢Ù…Ù† ÙˆØ³Ø±ÙŠØ¹",
+      },
+    };
+    return translations[lang] || translations.TR;
+  }, [lang]);
+
+  const [isPremium, setIsPremium] = useState(false);
+
+  const [search, setSearch] =
+    useState("");
+
+  const [
+    messageFilter,
+    setMessageFilter,
+  ] = useState<
+    "all" | "incoming" | "outgoing"
+  >("all");
+
+  const targetUserId =
+    searchParams.get("userId");
+
+  const targetThreadId =
+    searchParams.get("thread");
+
+  /* =======================================================
+     KULLANICI ADI
+     ======================================================= */
+
+  const getUserName = useCallback(
+    (
+      user?: User | null,
+    ): string => {
+      if (!user) {
+        return t.user;
+      }
+
+      const name =
+        safeString(user.name);
+
+      if (name) {
+        return name;
+      }
+
+      const username =
+        safeString(user.username);
+
+      if (username) {
+        return username;
+      }
+
+      return t.user;
+    },
+    [t],
+  );
+
+  /* =======================================================
+     PROFÄ°L FOTOÄRAFI
+     ======================================================= */
+
+  const getProfileImage =
+    useCallback(
+      (
+        user?: User | null,
+      ): string | null => {
+        if (!user) {
+          return null;
+        }
+
+        return (
+          safeString(
+            user.profileImage,
+          ) ||
+          safeString(
+            user.profilePhoto,
+          ) ||
+          null
+        );
+      },
+      [],
+    );
+
+  /* =======================================================
+     KONUÅMA NORMALÄ°ZASYONU
+     ======================================================= */
+
+  const normalizeConversation =
+    useCallback(
+      (
+        raw: any,
+        index: number,
+      ): Conversation | null => {
+        if (!raw || typeof raw !== "object") {
+          return null;
+        }
+
+        const idValue =
+          raw.id ??
+          raw.conversationId ??
+          raw._id ??
+          raw.threadId;
+
+        if (
+          idValue === undefined ||
+          idValue === null ||
+          String(idValue).trim() === ""
+        ) {
+          return null;
+        }
+
+        /* Backend user1/user2 biÃ§imi + eski API biÃ§imleri */
+        const currentUserId = getCurrentUserId();
+        const rawUser1 = raw.user1 ?? raw.userA ?? null;
+        const rawUser2 = raw.user2 ?? raw.userB ?? null;
+
+        let participantRaw =
+          raw.participant ??
+          raw.otherUser ??
+          raw.user ??
+          raw.receiver ??
+          raw.recipient ??
+          null;
+
+        if (!participantRaw && (rawUser1 || rawUser2)) {
+          const user1Id = rawUser1?.id ?? rawUser1?._id ?? rawUser1?.userId;
+          const user2Id = rawUser2?.id ?? rawUser2?._id ?? rawUser2?.userId;
+
+          if (currentUserId) {
+            if (String(user1Id) === String(currentUserId)) {
+              participantRaw = rawUser2;
+            } else if (String(user2Id) === String(currentUserId)) {
+              participantRaw = rawUser1;
+            }
+          }
+
+          participantRaw = participantRaw ?? rawUser2 ?? rawUser1 ?? null;
+        }
+
+        const participant = normalizeUser(participantRaw);
+
+        const userId =
+          raw.userId ??
+          raw.participantId ??
+          participant?.id ??
+          participantRaw?.id ??
+          participantRaw?._id ??
+          participantRaw?.userId;
+
+        const lastRaw =
+          raw.lastMessage ??
+          raw.latestMessage ??
+          raw.last_message ??
+          (Array.isArray(raw.messages) ? raw.messages[0] : null) ??
+          null;
+
+        const lastMessage = normalizeMessage(
+          lastRaw,
+          `${String(idValue)}-last-${index}`,
+        );
+
+        return {
+          id: String(idValue),
+          userId:
+            userId !== undefined &&
+            userId !== null &&
+            String(userId).trim() !== ""
+              ? String(userId)
+              : undefined,
+          participantId:
+            participant?.id ??
+            (userId !== undefined && userId !== null
+              ? String(userId)
+              : undefined),
+          participant,
+          user: participant,
+          lastMessage,
+          updatedAt:
+            safeString(raw.updatedAt) ||
+            lastMessage?.createdAt ||
+            undefined,
+          unreadCount: Number(
+            raw.unreadCount ??
+              raw.unread ??
+              0,
+          ),
+        };
+      },
+      [],
+    );
+
+  /* =======================================================
+     KONUÅMALARI GETÄ°R
+     ======================================================= */
+
+  const loadConversations =
+    useCallback(async () => {
+      try {
+        setLoadingConversations(true);
+        setError("");
+
+        const data: any =
+          await api.conversations.list();
+
+        let list: any[] = [];
+
+        if (Array.isArray(data)) {
+          list = data;
+        } else if (
+          Array.isArray(
+            data?.conversations,
+          )
+        ) {
+          list =
+            data.conversations;
+        } else if (
+          Array.isArray(data?.items)
+        ) {
+          list = data.items;
+        } else if (
+          Array.isArray(data?.data)
+        ) {
+          list = data.data;
+        }
+
+        const normalized =
+          list
+            .map(
+              (
+                item,
+                index,
+              ) =>
+                normalizeConversation(
+                  item,
+                  index,
+                ),
+            )
+            .filter(
+              (
+                item,
+              ): item is Conversation =>
+                item !== null,
+            );
+
+        setConversations(
+          normalized,
+        );
+      } catch (err: any) {
+        console.error(
+          "KonuÅŸmalar alÄ±namadÄ±:",
+          err,
+        );
+
+        setError(
+          safeString(err?.message) ||
+            safeString(err?.error) ||
+            t.loading,
+        );
+
+        setConversations([]);
+      } finally {
+        setLoadingConversations(
+          false,
+        );
+      }
+    }, [
+      normalizeConversation,
+      t,
+    ]);
+
+  /* =======================================================
+     MESAJLARI GETÄ°R
+     ======================================================= */
+
+  const loadMessages =
+    useCallback(
+      async (
+        conversationId: string,
+      ) => {
+        try {
+          setLoadingMessages(true);
+          setError("");
+
+          const data: any =
+            await api.conversations.messages(conversationId);
+
+          let list: any[] = [];
+
+          if (Array.isArray(data)) {
+            list = data;
+          } else if (
+            Array.isArray(
+              data?.messages,
+            )
+          ) {
+            list = data.messages;
+          } else if (
+            Array.isArray(data?.items)
+          ) {
+            list = data.items;
+          } else if (
+            Array.isArray(data?.data)
+          ) {
+            list = data.data;
+          }
+
+          const currentUserId =
+            getCurrentUserId();
+
+          const normalized =
+            list
+              .map(
+                (
+                  item,
+                  index,
+                ) =>
+                  normalizeMessage(
+                    item,
+                    `${conversationId}-${index}`,
+                  ),
+              )
+              .filter(
+                (
+                  item,
+                ): item is Message =>
+                  item !== null,
+              )
+              .map(
+                (message) => {
+                  if (
+                    typeof message.isMine ===
+                    "boolean"
+                  ) {
+                    return message;
+                  }
+
+                  if (
+                    currentUserId &&
+                    message.senderId
+                  ) {
+                    return {
+                      ...message,
+                      isMine:
+                        String(
+                          message.senderId,
+                        ) ===
+                        String(
+                          currentUserId,
+                        ),
+                    };
+                  }
+
+                  return {
+                    ...message,
+                    isMine: false,
+                  };
+                },
+              );
+
+          setMessages(
+            normalized,
+          );
+        } catch (err: any) {
+          console.error(
+            "Mesajlar alÄ±namadÄ±:",
+            err,
+          );
+
+          setError(
+            safeString(err?.message) ||
+              safeString(err?.error) ||
+              t.loading,
+          );
+
+          setMessages([]);
+        } finally {
+          setLoadingMessages(
+            false,
+          );
+        }
+      },
+      [t],
+    );
+
+  /* =======================================================
+     Ä°LK YÃœKLEME
+     ======================================================= */
+
+  useEffect(() => {
+    loadConversations();
+  }, [
+    loadConversations,
+  ]);
+
+  /* =======================================================
+     PREMIUM DURUMU
+     ======================================================= */
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadPremiumStatus = async () => {
+      try {
+        const me = await api.users.me();
+
+        if (cancelled) return;
+
+        const premiumExpiresAt =
+          me?.premiumExpiresAt;
+
+        const premium =
+          !!premiumExpiresAt &&
+          new Date(
+            premiumExpiresAt,
+          ).getTime() > Date.now();
+
+        setIsPremium(premium);
+      } catch (err) {
+        console.error(
+          "Premium durumu alÄ±namadÄ±:",
+          err,
+        );
+
+        if (!cancelled) {
+          setIsPremium(false);
+        }
+      }
+    };
+
+    loadPremiumStatus();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  /* =======================================================
+     AKTÄ°F KONUÅMA
+     ======================================================= */
+
+  const activeConversation =
+    useMemo(() => {
+      if (
+        !selectedConversationId
+      ) {
+        return null;
+      }
+
+      return (
+        conversations.find(
+          (conversation) =>
+            String(
+              conversation.id,
+            ) ===
+            String(
+              selectedConversationId,
+            ),
+        ) ?? null
+      );
+    }, [
+      conversations,
+      selectedConversationId,
+    ]);
+
+  /* =======================================================
+     AKTÄ°F KULLANICI
+     ======================================================= */
+
+  const activeUser =
+    useMemo(() => {
+      const user =
+        selectedUser ??
+        activeConversation?.participant ??
+        activeConversation?.user ??
+        null;
+
+      return user
+        ? normalizeUser(user)
+        : null;
+    }, [
+      selectedUser,
+      activeConversation,
+    ]);
+
+  /* =======================================================
+     KONUÅMA LÄ°STESÄ° FÄ°LTRE
+     ======================================================= */
+
+  const filteredConversations =
+    useMemo(() => {
+      const term =
+        search
+          .trim()
+          .toLocaleLowerCase(
+            "tr-TR",
+          );
+
+      const currentUserId =
+        getCurrentUserId();
+
+      return conversations.filter(
+        (conversation) => {
+          const user =
+            conversation.participant ??
+            conversation.user;
+
+          const name =
+            getUserName(user);
+
+          const city =
+            safeString(
+              user?.city,
+            );
+
+          const matchesSearch =
+            !term ||
+            `${name} ${city}`
+              .toLocaleLowerCase(
+                "tr-TR",
+              )
+              .includes(term);
+
+          if (!matchesSearch) {
+            return false;
+          }
+
+          /*
+           * TÃœMÃœ
+           */
+          if (
+            messageFilter === "all"
+          ) {
+            return true;
+          }
+
+          /*
+           * Son mesaj yoksa gelen/giden
+           * filtresinde gÃ¶sterme.
+           */
+          const lastMessage =
+            conversation.lastMessage;
+
+          if (!lastMessage) {
+            return false;
+          }
+
+          /*
+           * Ã–nce backend'in isMine bilgisini kullan.
+           */
+          let isMine =
+            lastMessage.isMine;
+
+          /*
+           * isMine yoksa senderId Ã¼zerinden
+           * kendimiz hesapla.
+           */
+          if (
+            typeof isMine !==
+            "boolean"
+          ) {
+            if (
+              currentUserId &&
+              lastMessage.senderId
+            ) {
+              isMine =
+                String(
+                  lastMessage.senderId,
+                ) ===
+                String(
+                  currentUserId,
+                );
+            } else if (
+              currentUserId &&
+              lastMessage.receiverId
+            ) {
+              isMine =
+                String(
+                  lastMessage.receiverId,
+                ) !==
+                String(
+                  currentUserId,
+                );
+            } else {
+              isMine = false;
+            }
+          }
+
+          if (
+            messageFilter ===
+            "outgoing"
+          ) {
+            return isMine;
+          }
+
+          return !isMine;
+        },
+      );
+    }, [
+      conversations,
+      search,
+      messageFilter,
+      getUserName,
+    ]);
+
+  /* =======================================================
+     KONUÅMA AÃ‡
+     ======================================================= */
+
+  const openConversation =
+    useCallback(
+      async (
+        conversation: Conversation,
+      ) => {
+        const user =
+          conversation.participant ??
+          conversation.user ??
+          null;
+
+        if (user) {
+          const normalizedUser =
+            normalizeUser(user);
+
+          if (normalizedUser) {
+            setSelectedUser(
+              normalizedUser,
+            );
+          }
+        }
+
+        setError("");
+
+        setSelectedConversationId(
+          String(
+            conversation.id,
+          ),
+        );
+      },
+      [],
+    );
+
+  /* =======================================================
+     PROFÄ°LDEN KONUÅMA AÃ‡ / OLUÅTUR
+     ======================================================= */
+
+  const openConversationWithUser =
+    useCallback(
+      async (
+        user: User,
+      ) => {
+        const normalizedUser =
+          normalizeUser(user);
+
+        if (!normalizedUser) {
+          setError(
+            t.user,
+          );
+          return;
+        }
+
+        setSelectedUser(
+          normalizedUser,
+        );
+
+        setError("");
+
+        /*
+         * Ã–nce mevcut konuÅŸmayÄ± bul.
+         */
+        const existing =
+          conversations.find(
+            (conversation) => {
+              const participant =
+                conversation.participant ??
+                conversation.user;
+
+              const participantId =
+                participant?.id ??
+                conversation.userId ??
+                conversation.participantId;
+
+              return (
+                participantId !==
+                  undefined &&
+                String(
+                  participantId,
+                ) ===
+                  String(
+                    normalizedUser.id,
+                  )
+              );
+            },
+          );
+
+        if (existing) {
+          setSelectedConversationId(
+            String(existing.id),
+          );
+          return;
+        }
+
+        /*
+         * Mevcut konuÅŸma yoksa oluÅŸtur.
+         */
+        try {
+          const created =
+            await api.conversations.create(normalizedUser.id);
+
+          const conversationId =
+            created?.id ??
+            created?.conversationId ??
+            created?._id ??
+            created?.threadId;
+
+          if (
+            conversationId ===
+              undefined ||
+            conversationId === null
+          ) {
+            /*
+             * BazÄ± backend'ler POST sonrasÄ±
+             * doÄŸrudan konuÅŸmayÄ± dÃ¶ndÃ¼rÃ¼yor olabilir.
+             */
+            const fallback =
+              normalizeConversation(
+                created,
+                0,
+              );
+
+            if (fallback) {
+              setConversations(
+                (previous) => {
+                  const exists =
+                    previous.some(
+                      (item) =>
+                        String(
+                          item.id,
+                        ) ===
+                        String(
+                          fallback.id,
+                        ),
+                    );
+
+                  return exists
+                    ? previous
+                    : [
+                        fallback,
+                        ...previous,
+                      ];
+                },
+              );
+
+              setSelectedConversationId(
+                String(
+                  fallback.id,
+                ),
+              );
+
+              return;
+            }
+
+            throw new Error(
+              t.noConversationMessages,
+            );
+          }
+
+          const newConversation: Conversation =
+            {
+              id: String(
+                conversationId,
+              ),
+              userId:
+                normalizedUser.id,
+              participantId:
+                normalizedUser.id,
+              participant:
+                normalizedUser,
+              user:
+                normalizedUser,
+              lastMessage:
+                null,
+              unreadCount: 0,
+            };
+
+          setConversations(
+            (previous) => {
+              const exists =
+                previous.some(
+                  (item) =>
+                    String(
+                      item.id,
+                    ) ===
+                    String(
+                      conversationId,
+                    ),
+                );
+
+              if (exists) {
+                return previous;
+              }
+
+              return [
+                newConversation,
+                ...previous,
+              ];
+            },
+          );
+
+          setSelectedConversationId(
+            String(
+              conversationId,
+            ),
+          );
+        } catch (err: any) {
+          console.error(
+            "KonuÅŸma oluÅŸturulamadÄ±:",
+            err,
+          );
+
+          setError(
+            safeString(err?.message) ||
+              safeString(err?.error) ||
+              t.startChat,
+          );
+        }
+      },
+      [conversations, t, normalizeConversation],
+    );
+
+  /* =======================================================
+     URL'DEKÄ° THREAD
+     ======================================================= */
+
+  useEffect(() => {
+    if (!targetThreadId) {
+      return;
+    }
+
+    const conversation =
+      conversations.find(
+        (item) =>
+          String(item.id) ===
+          String(
+            targetThreadId,
+          ),
+      );
+
+    if (!conversation) {
+      return;
+    }
+
+    setSelectedConversationId(
+      String(conversation.id),
+    );
+
+    const user =
+      conversation.participant ??
+      conversation.user;
+
+    const normalizedUser =
+      normalizeUser(user);
+
+    if (normalizedUser) {
+      setSelectedUser(
+        normalizedUser,
+      );
+    }
+  }, [
+    targetThreadId,
+    conversations,
+  ]);
+
+  /* =======================================================
+     URL'DEKÄ° USER ID
+     ======================================================= */
+
+  useEffect(() => {
+    if (!targetUserId) {
+      return;
+    }
+
+    let cancelled = false;
+
+    const openTargetUser =
+      async () => {
+        /*
+         * Ã–nce mevcut konuÅŸmalarda ara.
+         */
+        const existing =
+          conversations.find(
+            (conversation) => {
+              const user =
+                conversation.participant ??
+                conversation.user;
+
+              const id =
+                user?.id ??
+                conversation.userId ??
+                conversation.participantId;
+
+              return (
+                id !== undefined &&
+                String(id) ===
+                  String(
+                    targetUserId,
+                  )
+              );
+            },
+          );
+
+        if (existing) {
+          if (cancelled) {
+            return;
+          }
+
+          const user =
+            existing.participant ??
+            existing.user;
+
+          const normalizedUser =
+            normalizeUser(user);
+
+          if (normalizedUser) {
+            setSelectedUser(
+              normalizedUser,
+            );
+          } else {
+            setSelectedUser({
+              id: String(
+                targetUserId,
+              ),
+              name: t.user,
+            });
+          }
+
+          setSelectedConversationId(
+            String(existing.id),
+          );
+
+          return;
+        }
+
+        /*
+         * Mevcut konuÅŸma yoksa Ã¶nce kullanÄ±cÄ±yÄ± getir.
+         */
+        try {
+          let targetUser: User = {
+            id: String(
+              targetUserId,
+            ),
+            name: t.user,
+          };
+
+          try {
+           const user =
+  (await api.users.get(String(targetUserId))) as User;
+            const normalized =
+  normalizeUser({
+    ...user,
+    id: user?.id ?? targetUserId,
+  });
+
+            if (normalized) {
+              targetUser =
+                normalized;
+            }
+          } catch {
+            /*
+             * KullanÄ±cÄ± endpoint'i baÅŸarÄ±sÄ±z
+             * olsa bile userId elimizde.
+             */
+          }
+
+          if (cancelled) {
+            return;
+          }
+
+          setSelectedUser(
+            targetUser,
+          );
+
+          /*
+           * KonuÅŸmayÄ± oluÅŸtur.
+           */
+          const created =
+            await api.conversations.create(targetUser.id);
+
+          if (cancelled) {
+            return;
+          }
+
+          const conversationId =
+            created?.id ??
+            created?.conversationId ??
+            created?._id ??
+            created?.threadId;
+
+          if (
+            conversationId ===
+              undefined ||
+            conversationId === null
+          ) {
+            const fallback =
+              normalizeConversation(
+                created,
+                0,
+              );
+
+            if (!fallback) {
+              throw new Error(
+                t.noConversationMessages,
+              );
+            }
+
+            setConversations(
+              (previous) => [
+                fallback,
+                ...previous.filter(
+                  (item) =>
+                    String(
+                      item.id,
+                    ) !==
+                    String(
+                      fallback.id,
+                    ),
+                ),
+              ],
+            );
+
+            setSelectedConversationId(
+              String(
+                fallback.id,
+              ),
+            );
+
+            return;
+          }
+
+          const newConversation: Conversation =
+            {
+              id: String(
+                conversationId,
+              ),
+              userId:
+                targetUser.id,
+              participantId:
+                targetUser.id,
+              participant:
+                targetUser,
+              user:
+                targetUser,
+              lastMessage:
+                null,
+              unreadCount: 0,
+            };
+
+          setConversations(
+            (previous) => {
+              const exists =
+                previous.some(
+                  (item) =>
+                    String(
+                      item.id,
+                    ) ===
+                    String(
+                      conversationId,
+                    ),
+                );
+
+              return exists
+                ? previous
+                : [
+                    newConversation,
+                    ...previous,
+                  ];
+            },
+          );
+
+          setSelectedConversationId(
+            String(
+              conversationId,
+            ),
+          );
+        } catch (err: any) {
+          if (cancelled) {
+            return;
+          }
+
+          console.error(
+            "Mesaj konuÅŸmasÄ± baÅŸlatÄ±lamadÄ±:",
+            err,
+          );
+
+          setError(
+            safeString(err?.message) ||
+              safeString(err?.error) ||
+              t.startChat,
+          );
+        }
+      };
+
+    openTargetUser();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    targetUserId,
+    conversations,
+    t,
+    normalizeConversation,
+  ]);
+
+  /* =======================================================
+     SEÃ‡Ä°LÄ° KONUÅMANIN MESAJLARI
+     ======================================================= */
+
+  useEffect(() => {
+    if (!selectedConversationId) {
+      setMessages([]);
+      return;
+    }
+
+    loadMessages(
+      selectedConversationId,
+    );
+  }, [
+    selectedConversationId,
+    loadMessages,
+  ]);
+
+  /* =======================================================
+     MESAJ GÃ–NDER
+     ======================================================= */
+
+  async function handleSend(
+    event: FormEvent<HTMLFormElement>,
+  ) {
+    event.preventDefault();
+
+    const content =
+      draft.trim();
+
+    if (
+      !content ||
+      !selectedConversationId ||
+      sending
+    ) {
+      return;
+    }
+
+    try {
+      setSending(true);
+      setError("");
+
+      const sent =
+        await api.conversations.send(selectedConversationId, content);
+
+      const currentUserId =
+        getCurrentUserId();
+
+      const newMessage: Message =
+        normalizeMessage(
+          sent,
+          `${Date.now()}`,
+        ) ?? {
+          id: `${Date.now()}`,
+          content,
+        };
+
+      const finalMessage: Message =
+        {
+          ...newMessage,
+          content:
+            newMessage.content ||
+            content,
+          isMine:
+            typeof newMessage.isMine ===
+            "boolean"
+              ? newMessage.isMine
+              : true,
+          senderId:
+            newMessage.senderId ??
+            currentUserId ??
+            undefined,
+          createdAt:
+            newMessage.createdAt ??
+            new Date().toISOString(),
+        };
+
+      setMessages(
+        (previous) => [
+          ...previous,
+          finalMessage,
+        ],
+      );
+
+      setDraft("");
+
+      /*
+       * Sol taraftaki son mesajÄ± gÃ¼ncelle.
+       */
+      setConversations(
+        (previous) =>
+          previous.map(
+            (conversation) =>
+              String(
+                conversation.id,
+              ) ===
+              String(
+                selectedConversationId,
+              )
+                ? {
+                    ...conversation,
+                    lastMessage:
+                      finalMessage,
+                    updatedAt:
+                      finalMessage.createdAt,
+                  }
+                : conversation,
+          ),
+      );
+    } catch (err: any) {
+      console.error(
+        "Mesaj gÃ¶nderilemedi:",
+        err,
+      );
+
+      setError(
+        safeString(err?.message) ||
+          safeString(err?.error) ||
+          t.send,
+      );
+    } finally {
+      setSending(false);
+    }
+  }
+
+  /* =======================================================
+     ZAMAN
+     ======================================================= */
+
+  function formatTime(
+    value?: string,
+  ): string {
+    if (!value) {
+      return "";
+    }
+
+    const date =
+      new Date(value);
+
+    if (
+      Number.isNaN(
+        date.getTime(),
+      )
+    ) {
+      return "";
+    }
+
+    return date.toLocaleTimeString(
+      lang === "EN" ? "en-US" : lang === "RU" ? "ru-RU" : lang === "AR" ? "ar-SA" : "tr-TR",
+      {
+        hour: "2-digit",
+        minute: "2-digit",
+      },
+    );
+  }
+
+  /* =======================================================
+     YENÄ° MESAJLAR UI â€” NEON / PREMIUM
+     ======================================================= */
+
+  const activeName = getUserName(activeUser);
+  const activeImage = getProfileImage(activeUser);
+  const activeCity = safeString(activeUser?.city) || "TÃ¼rkiye";
+
+  const goDashboard = () => {
+    window.location.href = "/dashboard";
+  };
+
+  const goPremium = () => {
+    window.location.href = "/premium";
+  };
+
+  const openVideo = () => {
+    if (!isPremium) {
+      goPremium();
+      return;
+    }
+
+    const width = 450;
+    const height = 650;
+    const left = Math.max(0, (window.screen.width - width) / 2);
+    const top = Math.max(0, (window.screen.height - height) / 2);
+
+    window.open(
+      "/canavar-video",
+      "EgeloveLivePopup",
+      `width=${width},height=${height},top=${top},left=${left},resizable=no,scrollbars=no,status=no,location=no,toolbar=no,menubar=no`,
+    );
+  };
+
+  const avatar = (user: User | null | undefined, size = "h-12 w-12") => {
+    const image = getProfileImage(user);
+    const name = getUserName(user);
+
+    if (image) {
+      return (
+        <img
+          src={image}
+          alt={name}
+          className={`${size} shrink-0 rounded-full object-cover ring-1 ring-white/20`}
+        />
+      );
+    }
+
+    return (
+      <div
+        className={`${size} shrink-0 rounded-full bg-gradient-to-br from-fuchsia-500 via-pink-400 to-blue-500 flex items-center justify-center font-black text-[#2D1721] ring-1 ring-white/20`}
+      >
+        {name.slice(0, 1).toUpperCase()}
+      </div>
+    );
+  };
+
+  return (
+    <div dir={lang === "AR" ? "rtl" : "ltr"} className="min-h-screen bg-[#020817] text-[#2D1721] overflow-x-hidden">
+      {/* ÃœST NAV */}
+      <header className="sticky top-0 z-50 border-b border-pink-200 bg-[#020817]/95 backdrop-blur-xl">
+        <div className="mx-auto flex min-h-[72px] max-w-[1450px] items-center gap-6 px-4 sm:px-6 lg:px-8">
+          <button
+            type="button"
+            onClick={goDashboard}
+            className="mr-auto flex items-center gap-2 text-xl font-black tracking-tight sm:text-2xl"
+          >
+            <span className="text-3xl text-pink-500">â™¥</span>
+            <span>senveben</span>
+          </button>
+
+          <nav className="hidden items-center gap-8 lg:flex">
+            <button type="button" onClick={goDashboard} className="font-semibold text-[#2D1721] hover:text-[#2D1721]">{t.home}</button>
+            <button type="button" onClick={() => (window.location.href = "/profile")} className="font-semibold text-[#2D1721] hover:text-[#2D1721]">{t.myPage}</button>
+            <button type="button" onClick={() => (window.location.href = "/likes")} className="font-semibold text-[#2D1721] hover:text-[#2D1721]">{t.likes}</button>
+            <button type="button" className="relative font-semibold text-pink-400 after:absolute after:-bottom-6 after:left-0 after:right-0 after:h-0.5 after:bg-pink-500">{t.messages}</button>
+            <button type="button" onClick={goPremium} className="font-semibold text-[#2D1721] hover:text-[#2D1721]">{t.premium} ğŸ‘‘</button>
+          </nav>
+
+          <div className="hidden items-center gap-1 sm:flex">
+            {(["TR", "EN", "RU", "AR"] as const).map((language) => (
+              <button
+                key={language}
+                type="button"
+                onClick={() => setLang(language)}
+                aria-pressed={lang === language}
+                className={`rounded-full border px-3 py-1.5 text-sm font-semibold transition ${lang === language ? "border-2 border-[#880e4f] bg-pink-500 text-[#2D1721] shadow-lg shadow-purple-500/30" : "border-pink-200 bg-pink-50 text-[#4A2835] hover:bg-pink-50"}`}
+              >
+                {language}
+              </button>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            className="hidden rounded-xl border border-[#ffc000]/50 bg-[#ffc000] px-5 py-3 font-black text-black shadow-lg shadow-yellow-500/10 sm:block"
+          >
+            {t.welcome}
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              localStorage.removeItem("accessToken");
+              localStorage.removeItem("refreshToken");
+              window.location.href = "/";
+            }}
+            className="rounded-xl bg-white px-4 py-3 font-bold text-black hover:bg-white/90"
+          >
+            {t.logout}
+          </button>
+        </div>
+      </header>
+
+      <main className="mx-auto max-w-[1450px] px-4 py-5 sm:px-6 lg:px-8 lg:py-7">
+        <button
+          type="button"
+          onClick={goDashboard}
+          className="mb-5 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-pink-500 to-fuchsia-500 px-5 py-3 font-black shadow-lg shadow-purple-600/30 transition hover:scale-[1.01]"
+        >
+          <span className="text-xl">â†</span>
+          {t.backHome}
+        </button>
+
+        {/* PREMIUM VIDEO HERO */}
+        <section className="relative overflow-hidden rounded-[28px] border border-fuchsia-500/60 bg-[radial-gradient(circle_at_15%_55%,rgba(168,85,247,.30),transparent_30%),radial-gradient(circle_at_92%_55%,rgba(37,99,235,.28),transparent_34%),linear-gradient(110deg,#18052b,#080d2b_55%,#06164a)] p-4 shadow-2xl shadow-purple-950/40 sm:p-6 lg:p-7">
+          <div className="pointer-events-none absolute -left-20 top-10 h-48 w-48 rounded-full bg-fuchsia-500/20 blur-3xl" />
+          <div className="pointer-events-none absolute -right-20 bottom-0 h-56 w-56 rounded-full bg-blue-500/20 blur-3xl" />
+
+          <div className="relative grid items-center gap-7 lg:grid-cols-[330px_1fr_330px]">
+            <div className="hidden min-h-[210px] items-center justify-center lg:flex">
+              <div className="relative flex h-44 w-44 items-center justify-center rounded-full bg-gradient-to-br from-fuchsia-500 via-pink-400 to-blue-600 shadow-[0_0_70px_rgba(168,85,247,.65)]">
+                <div className="absolute inset-4 rounded-full border border-white/30" />
+                <span className="relative text-7xl text-[#2D1721] drop-shadow-lg">â–£</span>
+                <span className="absolute -left-10 top-6 text-2xl text-pink-400">â™¥</span>
+                <span className="absolute -right-9 top-16 text-2xl text-purple-400">â™¥</span>
+                <span className="absolute -left-4 bottom-2 text-lg text-pink-500">âœ¦</span>
+              </div>
+            </div>
+
+            <div className="text-center">
+              <h1 className="text-2xl font-black leading-tight sm:text-3xl lg:text-[34px]">
+                {t.heroTitle} <span className="bg-gradient-to-r from-fuchsia-400 to-pink-500 bg-clip-text text-transparent">{t.heroTitleAccent}</span>
+              </h1>
+              <p className="mx-auto mt-3 max-w-2xl text-base leading-7 text-[#2D1721]/85 sm:text-lg">
+                {t.heroDesc1}
+                <br className="hidden sm:block" />
+                {t.heroDesc2}
+              </p>
+
+              <div className="mx-auto mt-7 grid max-w-2xl grid-cols-2 divide-x divide-white/10 sm:grid-cols-4">
+                {[
+                  ["â™™", t.safe, t.safeSub, "text-emerald-400"],
+                  ["â™£", t.real, t.realSub, "text-purple-400"],
+                  ["ÏŸ", t.instant, t.instantSub, "text-yellow-400"],
+                  ["â™¥", t.closer, t.closerSub, "text-pink-400"],
+                ].map(([icon, title, sub, color]) => (
+                  <div key={title} className="px-2 py-2 sm:px-4">
+                    <div className={`mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full border border-current text-xl ${color}`}>{icon}</div>
+                    <div className="font-semibold text-[#2D1721]">{title}</div>
+                    <div className="text-sm text-[#4A2835]">{sub}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-2 border-[#880e4f]/40 bg-[#0a1233]/70 p-4 shadow-xl backdrop-blur-xl sm:p-5">
+              <div className="mx-auto -mt-8 mb-4 w-fit rounded-full border border-[#ffc000]/50 bg-[#130d28] px-4 py-2 text-sm font-black text-[#ffc000]">ğŸ‘‘ {t.premiumFeature}</div>
+              <ul className="space-y-3 text-sm sm:text-base">
+                {[
+                  t.unlimitedVideo,
+                  t.readReceipt,
+                  t.boostProfile,
+                  t.adFree,
+                ].map((item) => (
+                  <li key={item} className="flex items-center gap-3"><span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-xs font-black">âœ“</span>{item}</li>
+                ))}
+              </ul>
+              <button type="button" onClick={goPremium} className="mt-5 w-full rounded-full bg-gradient-to-r from-[#ffc000] to-[#ffb000] px-5 py-3 font-black text-black shadow-lg shadow-yellow-500/20 transition hover:scale-[1.01]">ğŸ‘‘ {t.goPremium}</button>
+              <p className="mt-2 text-center text-xs text-[#7A5363]">{t.premiumOnly}</p>
+            </div>
+          </div>
+        </section>
+
+        {/* MESAJLAR + AKTÄ°F SOHBET */}
+        <section className="mt-5 grid gap-5 lg:grid-cols-[420px_1fr]">
+          {/* SOL PANEL */}
+          <aside className="flex min-h-[650px] flex-col overflow-hidden rounded-[26px] border border-2 border-[#880e4f]/30 bg-[#050c20]/85 shadow-2xl shadow-black/20">
+            <div className="border-b border-pink-200 p-5 sm:p-6">
+              <div className="flex items-center justify-between">
+                <h2 className="text-3xl font-black">{t.chatTitle}</h2>
+                <button type="button" className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-pink-500 to-fuchsia-500 text-2xl font-light shadow-lg shadow-purple-500/30">+</button>
+              </div>
+
+              <div className="mt-5 grid grid-cols-4 gap-2">
+                {[
+                  ["all", t.all],
+                  ["incoming", t.new],
+                  ["outgoing", t.online],
+                  ["all", t.favorites],
+                ].map(([value, label], index) => (
+                  <button
+                    key={`${value}-${label}`}
+                    type="button"
+                    onClick={() => setMessageFilter(value as any)}
+                    className={`rounded-full border px-2 py-2.5 text-xs font-bold sm:text-sm ${index === 0 && messageFilter === "all" ? "border-2 border-[#880e4f] bg-gradient-to-r from-pink-500 to-fuchsia-500" : "border-pink-200 bg-white/[0.02] text-[#2D1721]/75 hover:bg-pink-50"}`}
+                  >
+                    {label}{label === t.new ? <span className="ml-1 text-pink-500">â—</span> : label === t.online ? <span className="ml-1 text-emerald-400">â—</span> : ""}
+                  </button>
+                ))}
+              </div>
+
+              <div className="relative mt-4">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#6B4454]">âŒ•</span>
+                <input
+                  type="text"
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                  placeholder={t.search}
+                  className="h-12 w-full rounded-2xl border border-pink-200 bg-black/35 pl-11 pr-4 text-[#2D1721] outline-none transition focus:border-2 border-[#880e4f]"
+                />
+              </div>
+            </div>
+
+            <div className="min-h-0 flex-1 overflow-y-auto">
+              {loadingConversations ? (
+                <div className="flex h-64 items-center justify-center text-[#7A5363]">{t.loading}</div>
+              ) : filteredConversations.length ? (
+                filteredConversations.map((conversation) => {
+                  const user = conversation.participant ?? conversation.user ?? null;
+                  const isActive = String(selectedConversationId) === String(conversation.id);
+                  const last = conversation.lastMessage?.content || t.noMessage;
+                  return (
+                    <button
+                      key={conversation.id}
+                      type="button"
+                      onClick={() => openConversation(conversation)}
+                      className={`flex w-full items-center gap-3 border-b border-pink-100 px-4 py-3 text-left transition ${isActive ? "bg-gradient-to-r from-purple-700/70 via-fuchsia-700/40 to-transparent ring-1 ring-inset ring-fuchsia-500" : "hover:bg-white/[0.05]"}`}
+                    >
+                      {avatar(user, "h-12 w-12")}
+                      <span className="min-w-0 flex-1">
+                        <span className="flex items-center justify-between gap-2">
+                          <span className="truncate font-black">{getUserName(user)}</span>
+                          <span className="text-xs text-[#7A5363]">{conversation.updatedAt ? formatTime(conversation.updatedAt) : ""}</span>
+                        </span>
+                        <span className="mt-1 flex items-center gap-1 truncate text-sm text-[#7A5363]">
+                          <span className="text-yellow-400">â–®</span>{last}
+                        </span>
+                      </span>
+                      {conversation.unreadCount ? <span className="rounded-full bg-pink-500 px-2 py-0.5 text-xs font-black">{conversation.unreadCount}</span> : null}
+                    </button>
+                  );
+                })
+              ) : (
+                <div className="flex h-64 flex-col items-center justify-center px-6 text-center text-[#7A5363]">
+                  <div className="mb-3 text-5xl">ğŸ’¬</div>
+                  <p className="font-bold">{t.noMessage}</p>
+                  <p className="mt-2 text-sm">{t.noMessageDesc}</p>
+                </div>
+              )}
+            </div>
+
+            <div className="border-t border-pink-200 px-5 py-3 text-center text-sm text-[#6B4454]">
+              <span className="text-pink-500">â™¥</span> {t.total} {filteredConversations.length || conversations.length} {t.conversations}
+            </div>
+          </aside>
+
+          {/* SAÄ SOHBET */}
+          <section className="flex min-h-[650px] flex-col overflow-hidden rounded-[26px] border border-2 border-[#880e4f]/30 bg-[#050b20]/85 shadow-2xl shadow-black/20">
+            {activeConversation ? (
+              <>
+                <div className="flex flex-wrap items-center gap-3 border-b border-pink-200 p-4 sm:p-5">
+                  {avatar(activeUser, "h-14 w-14")}
+                  <div className="mr-auto min-w-[170px]">
+                    <h2 className="text-xl font-black sm:text-2xl">{activeName}</h2>
+                    <p className="text-sm text-[#2D1721]/65">{activeUser?.city ? `24 â€¢ ${activeCity}` : activeCity}</p>
+                  </div>
+                  <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-sm font-bold text-emerald-400">â— {t.onlineStatus}</span>
+                  <button type="button" className="hidden h-11 w-11 items-center justify-center rounded-full border border-pink-200 text-2xl text-pink-400 hover:bg-pink-50 sm:flex">â™¡</button>
+                  <button type="button" className="px-1 text-xl text-[#6B4454]">â‹®</button>
+                  <button type="button" onClick={openVideo} className="rounded-full bg-gradient-to-r from-fuchsia-500 to-pink-600 px-5 py-3 text-sm font-black shadow-lg shadow-purple-600/30 transition hover:scale-[1.01] sm:text-base">ğŸ‘‘ {t.premiumVideo}</button>
+                </div>
+
+                <div className="relative flex-1 overflow-y-auto bg-[radial-gradient(circle_at_60%_50%,rgba(79,70,229,.10),transparent_35%)] p-5 sm:p-8">
+                  <div className="mb-7 flex items-center gap-4 text-xs text-[#8A6372]"><span className="h-px flex-1 bg-pink-50" />{t.today}<span className="h-px flex-1 bg-pink-50" /></div>
+
+                  {loadingMessages ? (
+                    <div className="flex h-56 items-center justify-center text-[#7A5363]">{t.loading}</div>
+                  ) : messages.length ? (
+                    <div className="space-y-4">
+                      {messages.map((message) => {
+                        const mine = !!message.isMine;
+                        return (
+                          <div key={message.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
+                            <div className={`max-w-[78%] rounded-[20px] px-5 py-3 ${mine ? "bg-gradient-to-br from-pink-500 to-pink-600 shadow-lg shadow-purple-900/20" : "bg-[#17254b]"}`}>
+                              <div className="text-base leading-6">{message.content}</div>
+                              <div className="mt-1 text-right text-[11px] text-[#7A5363]">{message.createdAt ? formatTime(message.createdAt) : ""}{mine ? "  âœ“âœ“" : ""}</div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="flex h-56 items-center justify-center text-[#8A6372]">{t.noConversationMessages}</div>
+                  )}
+                </div>
+
+                {error && <div className="border-t border-red-500/20 bg-red-500/10 px-5 py-3 text-sm text-red-300">{error}</div>}
+
+                <form onSubmit={handleSend} className="border-t border-pink-200 bg-[#080e25] p-4 sm:p-5">
+                  <div className="flex items-end gap-3">
+                    <button type="button" className="hidden h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-pink-200 bg-pink-50 text-2xl sm:flex">â˜º</button>
+                    <textarea
+                      value={draft}
+                      onChange={(event) => setDraft(event.target.value)}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter" && !event.shiftKey) {
+                          event.preventDefault();
+                          if (draft.trim() && !sending) event.currentTarget.form?.requestSubmit();
+                        }
+                      }}
+                      placeholder={t.messagePlaceholder}
+                      rows={2}
+                      disabled={sending}
+                      className="min-h-[58px] flex-1 resize-none rounded-2xl border border-pink-200 bg-black/35 px-4 py-3 text-[#2D1721] outline-none transition focus:border-2 border-[#880e4f]"
+                    />
+                    <button type="submit" disabled={sending || !draft.trim()} className="h-14 shrink-0 rounded-2xl bg-gradient-to-r from-pink-500 to-fuchsia-500 px-6 font-black shadow-lg shadow-purple-700/20 disabled:cursor-not-allowed disabled:opacity-40">{sending ? t.sending : `â¤ ${t.send}`}</button>
+                  </div>
+                  <p className="mt-2 pl-1 text-[10px] text-[#8A6372]">{t.enterHint}</p>
+                </form>
+              </>
+            ) : (
+              <div className="flex flex-1 items-center justify-center p-8 text-center">
+                <div className="max-w-md">
+                  <div className="mb-5 text-6xl">ğŸ’¬</div>
+                  <h2 className="text-2xl font-black">{t.startChat}</h2>
+                  <p className="mt-3 text-[#7A5363]">{t.startChatDesc}</p>
+                </div>
+              </div>
+            )}
+          </section>
+        </section>
+
+        {/* ALT PREMIUM CTA */}
+        <section className="mt-5 overflow-hidden rounded-[26px] border border-2 border-[#880e4f]/50 bg-[radial-gradient(circle_at_12%_50%,rgba(168,85,247,.32),transparent_30%),linear-gradient(100deg,#17062d,#081129_55%,#071b49)] p-5 shadow-2xl sm:p-7">
+          <div className="grid items-center gap-6 lg:grid-cols-[260px_1fr_1fr_270px]">
+            <div className="hidden items-center justify-center lg:flex">
+              <div className="relative flex h-40 w-48 items-end justify-center rounded-[30px] bg-gradient-to-t from-purple-950/80 to-transparent">
+                <div className="absolute bottom-2 h-16 w-40 rounded-full bg-gradient-to-r from-purple-700 to-blue-600 shadow-[0_0_45px_rgba(139,92,246,.65)]" />
+                <div className="relative mb-10 text-7xl drop-shadow-[0_0_20px_rgba(255,192,0,.55)]">ğŸ‘‘</div>
+              </div>
+            </div>
+            <div>
+              <h2 className="text-3xl font-black leading-tight">{t.moreFor}</h2>
+              <h3 className="mt-1 text-4xl font-black text-transparent bg-gradient-to-r from-fuchsia-400 to-pink-500 bg-clip-text">{t.premiumGo}</h3>
+              <p className="mt-4 max-w-xl text-base leading-7 text-[#2D1721]/65">{t.premiumDesc}</p>
+            </div>
+            <ul className="space-y-3 text-base text-[#2D1721]/85">
+              {[t.unlimitedVideo, t.readReceipt, t.boostProfile, t.adFree, t.specialFilters].map((item) => (
+                <li key={item} className="flex items-center gap-3"><span className="flex h-5 w-5 items-center justify-center rounded-full bg-pink-500 text-xs font-black">âœ“</span>{item}</li>
+              ))}
+            </ul>
+            <div>
+              <button type="button" onClick={goPremium} className="w-full rounded-full bg-gradient-to-r from-[#ffc000] to-[#ffb000] px-5 py-4 text-lg font-black text-black shadow-xl shadow-yellow-500/20 transition hover:scale-[1.01]">ğŸ‘‘ {t.goPremium}</button>
+              <p className="mt-4 text-center text-sm text-[#7A5363]">â™¡ {t.securePayment}</p>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  );
+}
+
+/* =========================================================
+   NEXT.JS SUSPENSE
+   ========================================================= */
+
+export default function MessagesPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-[#020817] text-[#2D1721]">
+          <div className="font-semibold text-[#7A5363]">Mesajlar yÃ¼kleniyor...</div>
+        </div>
+      }
+    >
+      <MessagesContent />
+    </Suspense>
+  );
+}
+
+
+

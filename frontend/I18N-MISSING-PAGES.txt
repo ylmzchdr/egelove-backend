@@ -1,0 +1,738 @@
+
+================ app\onboarding\page.tsx ================
+
+   1: "use client";
+   3: import { useState, useEffect } from "react";
+   4: import { useRouter } from "next/navigation";
+   5: import { Button } from "@/components/ui/button";
+   6: import { Input } from "@/components/ui/input";
+   7: import { Label } from "@/components/ui/label";
+   8: import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+   9: import Header from "@/components/Header";
+  10: import Footer from "@/components/Footer";
+  11: import ProfilePhotoUpload from "@/components/ProfilePhotoUpload";
+  12: import { api } from "@/lib/api";
+  14: const STEPS = ["Temel Bilgiler", "Fiziksel", "Yaşam Tarzı", "Hakkımda", "Fotoğraflar"];
+  16: const GENDER_OPTIONS = [
+  17: { value: "MALE", label: "Erkek" },
+  18: { value: "FEMALE", label: "Kadın" },
+  19: { value: "OTHER", label: "Diğer" },
+  22: const EDUCATION_OPTIONS = [
+  23: { value: "PRIMARY", label: "İlkokul" },
+  24: { value: "SECONDARY", label: "Ortaokul" },
+  25: { value: "HIGH_SCHOOL", label: "Lise" },
+  26: { value: "ASSOCIATE", label: "Ön Lisans" },
+  27: { value: "BACHELOR", label: "Lisans" },
+  28: { value: "MASTER", label: "Yüksek Lisans" },
+  29: { value: "DOCTORATE", label: "Doktora" },
+  32: const INCOME_OPTIONS = [
+  33: { value: "VERY_LOW", label: "Asgari ücret" },
+  34: { value: "LOW", label: "10-20 bin TL" },
+  35: { value: "MEDIUM", label: "20-40 bin TL" },
+  36: { value: "HIGH", label: "40-70 bin TL" },
+  37: { value: "VERY_HIGH", label: "70 bin TL üzeri" },
+  40: const MARITAL_OPTIONS = [
+  41: { value: "NEVER_MARRIED", label: "Hiç evlenmedi" },
+  42: { value: "DIVORCED", label: "Boşandı" },
+  43: { value: "WIDOWED", label: "Eşi vefat etti" },
+  44: { value: "SEPARATED", label: "Ayrı yaşıyor" },
+  47: const CHILDREN_OPTIONS = [
+  48: { value: "NONE", label: "Yok" },
+  49: { value: "HAS_LIVING_WITH", label: "Var (yanımda)" },
+  50: { value: "HAS_NOT_LIVING", label: "Var (yanımda değil)" },
+  53: const SMOKING_OPTIONS = [
+  54: { value: "NEVER", label: "İçmiyorum" },
+  55: { value: "QUIT", label: "Bıraktım" },
+  56: { value: "OCCASIONAL", label: "Ara sıra" },
+  57: { value: "REGULAR", label: "İçiyorum" },
+  60: const ALCOHOL_OPTIONS = [
+  61: { value: "NEVER", label: "Kullanmıyorum" },
+  62: { value: "QUIT", label: "Bıraktım" },
+  63: { value: "OCCASIONAL", label: "Sosyal içici" },
+  64: { value: "REGULAR", label: "Kullanıyorum" },
+  67: const RELIGION_OPTIONS = [
+  68: { value: "VERY_RELIGIOUS", label: "Çok dindar" },
+  69: { value: "RELIGIOUS", label: "Dindar" },
+  70: { value: "MODERATE", label: "Orta" },
+  71: { value: "NOT_RELIGIOUS", label: "Dindar değil" },
+  72: { value: "ATHEIST", label: "Ateist" },
+  75: const BODY_TYPE_OPTIONS = [
+  76: { value: "SLIM", label: "Zayıf" },
+  77: { value: "ATHLETIC", label: "Atletik" },
+  78: { value: "NORMAL", label: "Normal" },
+  79: { value: "CURVY", label: "Tombul" },
+  80: { value: "PLUS", label: "Kilolu" },
+  83: const HAIR_COLOR_OPTIONS = [
+  84: { value: "BLACK", label: "Siyah" },
+  85: { value: "BROWN", label: "Kahverengi" },
+  86: { value: "BLOND", label: "Sarı" },
+  87: { value: "RED", label: "Kızıl" },
+  88: { value: "WHITE", label: "Beyaz" },
+  89: { value: "BALD", label: "Kel" },
+  90: { value: "OTHER", label: "Diğer" },
+  93: const EYE_COLOR_OPTIONS = [
+  94: { value: "BROWN", label: "Kahverengi" },
+  95: { value: "BLUE", label: "Mavi" },
+  96: { value: "GREEN", label: "Yeşil" },
+  97: { value: "HAZEL", label: "Ela" },
+  98: { value: "BLACK", label: "Siyah" },
+  99: { value: "OTHER", label: "Diğer" },
+ 102: const BLOOD_TYPE_OPTIONS = [
+ 103: { value: "A_POSITIVE", label: "A+" }, { value: "A_NEGATIVE", label: "A-" },
+ 104: { value: "B_POSITIVE", label: "B+" }, { value: "B_NEGATIVE", label: "B-" },
+ 105: { value: "AB_POSITIVE", label: "AB+" }, { value: "AB_NEGATIVE", label: "AB-" },
+ 106: { value: "ZERO_POSITIVE", label: "0+" }, { value: "ZERO_NEGATIVE", label: "0-" },
+ 109: interface City { id: number; name: string; }
+ 110: interface District { id: number; name: string; }
+ 112: export default function OnboardingPage() {
+ 115: const [saving, setSaving] = useState(false);
+ 116: const [cities, setCities] = useState<City[]>([]);
+ 117: const [districts, setDistricts] = useState<District[]>([]);
+ 120: name: "", surname: "", birthDate: "", gender: "", phone: "",
+ 121: cityId: 0, districtId: 0,
+ 122: height: 0, weight: 0, bodyType: "", hairColor: "", eyeColor: "", bloodType: "",
+ 123: education: "", occupation: "", income: "", maritalStatus: "",
+ 124: children: "", smoking: "", alcohol: "", religion: "",
+ 125: aboutMe: "", lookingFor: "", hobbies: "",
+ 128: const update = (key: string, value: any) => setForm((p) => ({ ...p, [key]: value }));
+ 131: if (!localStorage.getItem("accessToken")) { router.push("/"); return; }
+ 132: api.cities.list().then(setCities).catch(() => {});
+ 133: api.users.me().then((p: any) => {
+ 134: if (p.name) setForm((prev) => ({
+ 136: name: p.name || "", surname: p.surname || "", birthDate: p.birthDate?.split("T")[0] || "",
+ 137: gender: p.gender || "", phone: p.phone || "", cityId: p.cityId || 0, districtId: p.districtId || 0,
+ 138: height: p.height || 0, weight: p.weight || 0, bodyType: p.bodyType || "",
+ 139: hairColor: p.hairColor || "", eyeColor: p.eyeColor || "", bloodType: p.bloodType || "",
+ 140: education: p.education || "", occupation: p.occupation || "", income: p.income || "",
+ 141: maritalStatus: p.maritalStatus || "", children: p.children || "",
+ 142: smoking: p.smoking || "", alcohol: p.alcohol || "", religion: p.religion || "",
+ 143: aboutMe: p.aboutMe || "", lookingFor: p.lookingFor || "",
+ 144: hobbies: Array.isArray(p.hobbies) ? p.hobbies.join(", ") : (p.hobbies || ""),
+ 146: if (p.cityId) api.cities.districts(p.cityId).then(setDistricts).catch(() => {});
+ 150: const loadDistricts = async (cityId: number) => {
+ 151: update("cityId", cityId);
+ 152: update("districtId", 0);
+ 153: setDistricts([]);
+ 154: if (cityId) api.cities.districts(cityId).then(setDistricts).catch(() => {});
+ 158: if (step === 0) return form.name && form.surname && form.birthDate && form.gender;
+ 163: if (step < STEPS.length - 1) { setStep(step + 1); return; }
+ 164: setSaving(true);
+ 167: name: form.name, surname: form.surname, birthDate: form.birthDate,
+ 168: gender: form.gender, phone: form.phone || undefined,
+ 169: cityId: form.cityId || undefined, districtId: form.districtId || undefined,
+ 170: height: form.height || undefined, weight: form.weight || undefined,
+ 171: bodyType: form.bodyType || undefined, hairColor: form.hairColor || undefined,
+ 172: eyeColor: form.eyeColor || undefined, bloodType: form.bloodType || undefined,
+ 173: education: form.education || undefined, occupation: form.occupation || undefined,
+ 174: income: form.income || undefined, maritalStatus: form.maritalStatus || undefined,
+ 175: children: form.children || undefined, smoking: form.smoking || undefined,
+ 176: alcohol: form.alcohol || undefined, religion: form.religion || undefined,
+ 177: aboutMe: form.aboutMe || undefined, lookingFor: form.lookingFor || undefined,
+ 178: hobbies: form.hobbies.split(",").map((h: string) => h.trim()).filter(Boolean),
+ 180: Object.keys(payload).forEach((k) => payload[k] === undefined && delete payload[k]);
+ 181: await api.users.update(payload);
+ 184: } finally {
+ 185: setSaving(false);
+ 192: <div className="min-h-screen bg-pink-950 text-[#2D1721]">
+ 194: <section className="py-12">
+ 195: <div className="mx-auto max-w-2xl px-4">
+ 196: <div className="bg-pink-50 border border-pink-200 rounded-xl p-8">
+ 197: <div className="flex justify-between mb-2">
+ 198: <h1 className="text-2xl font-bold">Profilini Oluştur</h1>
+ 200: </div>
+ 202: <div className="w-full bg-pink-50 rounded-full h-2 mb-8">
+ 203: <div className="bg-pink-500 h-2 rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
+ 204: </div>
+ 207: <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+ 208: <div className="md:col-span-2"><Label className="text-lg">Adın soyadın nedir?</Label></div>
+ 209: <div><Label>Ad</Label><Input className="bg-pink-950/50 border-pink-200 text-[#2D1721]" value={form.name} onChange={(e) => update("name", e.target.value)} /></div>
+ 210: <div><Label>Soyad</Label><Input className="bg-pink-950/50 border-pink-200 text-[#2D1721]" value={form.surname} onChange={(e) => update("surname", e.target.value)} /></div>
+ 211: <div><Label>Doğum Tarihi</Label><Input type="date" className="bg-pink-950/50 border-pink-200 text-[#2D1721]" value={form.birthDate} onChange={(e) => update("birthDate", e.target.value)} /></div>
+ 212: <div>
+ 213: <Label>Cinsiyet</Label>
+ 215: <SelectTrigger className="bg-pink-950/50 border-pink-200 text-[#2D1721]"><SelectValue placeholder="Seçin" /></SelectTrigger>
+ 217: {GENDER_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+ 220: </div>
+ 221: <div><Label>Telefon (isteğe bağlı)</Label><Input className="bg-pink-950/50 border-pink-200 text-[#2D1721]" value={form.phone} onChange={(e) => update("phone", e.target.value)} /></div>
+ 222: <div>
+ 223: <Label>İl</Label>
+ 224: <Select value={form.cityId ? String(form.cityId) : ""} onValueChange={(v) => loadDistricts(parseInt(v))}>
+ 225: <SelectTrigger className="bg-pink-950/50 border-pink-200 text-[#2D1721]"><SelectValue placeholder="Seçin" /></SelectTrigger>
+ 227: {cities.map((c) => <SelectItem key={c.id} value={String(c.id)}>{c.name}</SelectItem>)}
+ 230: </div>
+ 231: <div>
+ 232: <Label>İlçe</Label>
+ 233: <Select value={form.districtId ? String(form.districtId) : ""} onValueChange={(v) => update("districtId", parseInt(v))}>
+ 234: <SelectTrigger className="bg-pink-950/50 border-pink-200 text-[#2D1721]"><SelectValue placeholder="Önce il seçin" /></SelectTrigger>
+ 236: {districts.map((d) => <SelectItem key={d.id} value={String(d.id)}>{d.name}</SelectItem>)}
+ 239: </div>
+ 240: </div>
+ 244: <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+ 245: <div className="md:col-span-2"><Label className="text-lg">Fiziksel özelliklerin neler?</Label></div>
+ 246: <div><Label>Boy (cm)</Label><Input type="number" className="bg-pink-950/50 border-pink-200 text-[#2D1721]" value={form.height || ""} onChange={(e) => update("height", e.target.value ? parseInt(e.target.value) : 0)} /></div>
+ 247: <div><Label>Kilo (kg)</Label><Input type="number" className="bg-pink-950/50 border-pink-200 text-[#2D1721]" value={form.weight || ""} onChange={(e) => update("weight", e.target.value ? parseInt(e.target.value) : 0)} /></div>
+ 248: <div><Label>Vücut Tipi</Label>
+ 250: <SelectTrigger className="bg-pink-950/50 border-pink-200 text-[#2D1721]"><SelectValue placeholder="Seçin" /></SelectTrigger>
+ 251: <SelectContent>{BODY_TYPE_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+ 253: </div>
+ 254: <div><Label>Saç Rengi</Label>
+ 255: <Select value={form.hairColor} onValueChange={(v) => update("hairColor", v)}>
+ 256: <SelectTrigger className="bg-pink-950/50 border-pink-200 text-[#2D1721]"><SelectValue placeholder="Seçin" /></SelectTrigger>
+ 257: <SelectContent>{HAIR_COLOR_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+ 259: </div>
+ 260: <div><Label>Göz Rengi</Label>
+ 262: <SelectTrigger className="bg-pink-950/50 border-pink-200 text-[#2D1721]"><SelectValue placeholder="Seçin" /></SelectTrigger>
+ 263: <SelectContent>{EYE_COLOR_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+ 265: </div>
+ 266: <div><Label>Kan Grubu</Label>
+ 268: <SelectTrigger className="bg-pink-950/50 border-pink-200 text-[#2D1721]"><SelectValue placeholder="Seçin" /></SelectTrigger>
+ 269: <SelectContent>{BLOOD_TYPE_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+ 271: </div>
+ 272: </div>
+ 276: <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+ 277: <div className="md:col-span-2"><Label className="text-lg">Yaşam tarzın nasıl?</Label></div>
+ 278: <div><Label>Eğitim</Label>
+ 279: <Select value={form.education} onValueChange={(v) => update("education", v)}>
+ 280: <SelectTrigger className="bg-pink-950/50 border-pink-200 text-[#2D1721]"><SelectValue placeholder="Seçin" /></SelectTrigger>
+ 281: <SelectContent>{EDUCATION_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+ 283: </div>
+ 284: <div><Label>Meslek</Label><Input className="bg-pink-950/50 border-pink-200 text-[#2D1721]" value={form.occupation} onChange={(e) => update("occupation", e.target.value)} /></div>
+ 285: <div><Label>Gelir</Label>
+ 286: <Select value={form.income} onValueChange={(v) => update("income", v)}>
+ 287: <SelectTrigger className="bg-pink-950/50 border-pink-200 text-[#2D1721]"><SelectValue placeholder="Seçin" /></SelectTrigger>
+ 288: <SelectContent>{INCOME_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+ 290: </div>
+ 291: <div><Label>Medeni Durum</Label>
+ 292: <Select value={form.maritalStatus} onValueChange={(v) => update("maritalStatus", v)}>
+ 293: <SelectTrigger className="bg-pink-950/50 border-pink-200 text-[#2D1721]"><SelectValue placeholder="Seçin" /></SelectTrigger>
+ 294: <SelectContent>{MARITAL_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+ 296: </div>
+ 297: <div><Label>Çocuk</Label>
+ 298: <Select value={form.children} onValueChange={(v) => update("children", v)}>
+ 299: <SelectTrigger className="bg-pink-950/50 border-pink-200 text-[#2D1721]"><SelectValue placeholder="Seçin" /></SelectTrigger>
+ 300: <SelectContent>{CHILDREN_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+ 302: </div>
+ 303: <div><Label>Sigara</Label>
+ 304: <Select value={form.smoking} onValueChange={(v) => update("smoking", v)}>
+ 305: <SelectTrigger className="bg-pink-950/50 border-pink-200 text-[#2D1721]"><SelectValue placeholder="Seçin" /></SelectTrigger>
+ 306: <SelectContent>{SMOKING_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+ 308: </div>
+ 309: <div><Label>Alkol</Label>
+ 311: <SelectTrigger className="bg-pink-950/50 border-pink-200 text-[#2D1721]"><SelectValue placeholder="Seçin" /></SelectTrigger>
+ 312: <SelectContent>{ALCOHOL_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+ 314: </div>
+ 315: <div><Label>Din</Label>
+ 316: <Select value={form.religion} onValueChange={(v) => update("religion", v)}>
+ 317: <SelectTrigger className="bg-pink-950/50 border-pink-200 text-[#2D1721]"><SelectValue placeholder="Seçin" /></SelectTrigger>
+ 318: <SelectContent>{RELIGION_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+ 320: </div>
+ 321: </div>
+ 325: <div className="space-y-4">
+ 326: <Label className="text-lg">Kendinden bahset</Label>
+ 327: <textarea className="w-full bg-pink-950/50 border border-pink-200 rounded-lg p-3 text-[#2D1721] min-h-[120px] resize-y" placeholder="Hobilerin, ilgi alanların, hayallerin..." value={form.aboutMe} onChange={(e) => update("aboutMe", e.target.value)} />
+ 328: <Label className="text-lg">Partnerinde aradığın özellikler</Label>
+ 329: <textarea className="w-full bg-pink-950/50 border border-pink-200 rounded-lg p-3 text-[#2D1721] min-h-[80px] resize-y" placeholder="Nasıl birini arıyorsun?" value={form.lookingFor} onChange={(e) => update("lookingFor", e.target.value)} />
+ 330: <Label>Hobiler (virgülle ayırın)</Label>
+ 331: <Input className="bg-pink-950/50 border-pink-200 text-[#2D1721]" placeholder="Yüzme, kitap okuma, seyahat" value={form.hobbies} onChange={(e) => update("hobbies", e.target.value)} />
+ 332: </div>
+ 336: <div>
+ 337: <Label className="text-lg mb-4 block">Profil fotoğrafların</Label>
+ 338: <ProfilePhotoUpload />
+ 339: <p className="text-[#8A6372] text-base mt-4">En az 1 fotoğraf yüklemen önerilir. Fotoğraflar onaylandıktan sonra profilin görünür olacak.</p>
+ 340: </div>
+ 343: <div className="flex gap-3 mt-8">
+ 345: <Button variant="outline" className="border-pink-300 text-[#2D1721] flex-1" onClick={() => setStep(step - 1)}>
+ 346: Geri
+ 350: className="bg-pink-600 hover:bg-pink-700 text-[#2D1721] flex-1 disabled:opacity-50"
+ 351: onClick={saveAndNext}
+ 352: disabled={!canProceed() || saving}
+ 354: {step < STEPS.length - 1 ? "Devam" : saving ? "Kaydediliyor..." : "Tamamla"}
+ 356: </div>
+ 357: </div>
+ 358: </div>
+ 359: </section>
+ 361: </div>
+
+================ app\search\page.tsx ================
+
+   1: "use client";
+   3: import React, { useEffect, useState } from "react";
+   4: import Link from "next/link";
+   7: import { api } from "@/lib/api";
+   9: import {
+  11: SlidersHorizontal,
+  13: Shield,
+  15: MapPin,
+  18: } from "lucide-react";
+  21: // KULLANICI TİPİ
+  24: interface SearchUser {
+  25: id: string;
+  26: username: string;
+  27: name: string;
+  29: city: string;
+  30: district: string;
+  31: avatar: string | null;
+  32: photo: string | null;
+  33: online: boolean;
+  34: premium: boolean;
+  35: verified: boolean;
+  36: lastSeen: string | null;
+  39: interface SearchResponse {
+  42: limit: number;
+  48: // INPUT
+  51: interface StyledInputProps
+  52: extends React.InputHTMLAttributes<HTMLInputElement> {}
+  54: function StyledInput({
+  57: }: StyledInputProps) {
+  59: <input
+  60: className={`h-11 w-full rounded-xl border border-white/12 bg-white/[0.05] px-3 text-base text-[#2D1721] outline-none transition focus:ring-2 focus:ring-cyan-400 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+  67: // YAŞ ARALIĞI
+  70: interface RangeInputsProps {
+  71: minValue: string;
+  72: maxValue: string;
+  73: onMinChange: (value: string) => void;
+  74: onMaxChange: (value: string) => void;
+  77: function RangeInputs({
+  78: minValue,
+  80: onMinChange,
+  82: }: RangeInputsProps) {
+  84: <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+  85: <StyledInput
+  87: min="18"
+  89: placeholder="En az"
+  90: value={minValue}
+  91: onChange={(event) => onMinChange(event.target.value)}
+  96: <StyledInput
+  98: min="18"
+ 100: placeholder="En çok"
+ 104: </div>
+ 112: interface FilterCheckboxProps {
+ 114: onCheckedChange: (value: boolean) => void;
+ 115: icon: React.ReactNode;
+ 116: label: string;
+ 120: function FilterCheckbox({
+ 123: icon,
+ 126: }: FilterCheckboxProps) {
+ 129: className={`flex cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 transition select-none ${
+ 131: ? "border-pink-300/50 bg-pink-400/10 text-[#2D1721]"
+ 132: : "border-pink-200 bg-white/[0.04] text-[#6B4454] hover:bg-white/[0.07] hover:text-[#2D1721]"
+ 135: <input
+ 139: className="h-4 w-4 rounded border-white/30 bg-transparent text-pink-500 focus:ring-0 accent-cyan-400"
+ 142: <span className="relative text-pink-500">
+ 143: {icon}
+ 146: <span className="absolute -right-1 -top-1 h-2 w-2 animate-ping rounded-full bg-emerald-400" />
+ 150: <span className="text-base font-semibold">
+ 158: // SONUÇ KARTI
+ 161: function UserCard({ user }: { user: SearchUser }) {
+ 163: const image = user.photo || user.avatar;
+ 166: <Link
+ 167: href={`/profile/${user.id}`}
+ 168: className="group block cursor-pointer rounded-2xl border border-pink-200 bg-white/[0.04] p-4 transition hover:border-pink-400/40 hover:bg-white/[0.07]"
+ 170: <div className="flex items-center gap-4">
+ 172: {/* FOTOĞRAF */}
+ 173: <div className="relative shrink-0">
+ 174: <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border border-pink-200 bg-[#EFA3C0]">
+ 175: {image ? (
+ 176: <img
+ 177: src={image}
+ 184: </div>
+ 186: {/* ONLINE */}
+ 187: {user.online && (
+ 188: <span className="absolute bottom-0 right-0 h-4 w-4 rounded-full border-2 border-pink-300/60 bg-emerald-400" />
+ 190: </div>
+ 192: {/* BİLGİLER */}
+ 193: <div className="min-w-0 flex-1">
+ 195: <div className="flex items-center gap-2">
+ 200: {user.verified && (
+ 201: <span className="rounded-full bg-pink-500/10 px-2 py-0.5 text-xs font-semibold text-pink-500">
+ 206: {user.premium && (
+ 207: <span className="rounded-full bg-purple-400/10 px-2 py-0.5 text-xs font-semibold text-pink-500">
+ 208: VIP
+ 211: </div>
+ 217: <div className="mt-1 flex flex-wrap items-center gap-3 text-sm text-[#7A5363]">
+ 220: <span>{user.age} yaş</span>
+ 223: {user.city && (
+ 224: <span className="flex items-center gap-1">
+ 225: <MapPin className="h-3.5 w-3.5" />
+ 226: {user.city}
+ 230: {user.online && (
+ 231: <span className="font-semibold text-emerald-400">
+ 232: Çevrimiçi
+ 236: </div>
+ 237: </div>
+ 238: </div>
+ 239: </Link>
+ 244: // ANA ARAMA SAYFASI
+ 247: export default function SearchPage() {
+ 248: // Tarayıcı ortamındaysak URL'deki parametreyi güvenle okur, sunucuda çökmeyi önler
+ 249: const isOnlineFilter = typeof window !== 'undefined'
+ 250: ? new URLSearchParams(window.location.search).get('online') === 'true'
+ 253: const [isClient, setIsClient] = useState(false);
+ 256: const [showFilters, setShowFilters] = useState(false);
+ 258: const [minAge, setMinAge] = useState("");
+ 261: const [onlyOnline, setOnlyOnline] = useState(isOnlineFilter);
+ 262: // 🎯 KESİN ÇÖZÜM: URL'de online=true parametresi geldiğinde kutucuğu otomatik doldurur ve aramayı tetikler
+ 263: // 🎯 KÖKTEN ÇÖZÜM: Ana sayfadan bırakılan hafıza işaretini okur ve kutucuğu otomatik doldurur
+ 265: if (typeof window !== 'undefined') {
+ 266: const forceOnline = localStorage.getItem('forceOnlineFilter');
+ 267: if (forceOnline === 'true') {
+ 268: setOnlyOnline(true);
+ 269: localStorage.removeItem('forceOnlineFilter'); // Filtre tetiklendikten sonra temizlenir
+ 275: const [onlyPremium, setOnlyPremium] = useState(false);
+ 280: const [loading, setLoading] = useState(false);
+ 285: setIsClient(true);
+ 289: // GERÇEK ARAMA
+ 292: async function performSearch() {
+ 293: const query = searchQuery.trim();
+ 295: // Boş aramada sonuç göstermiyoruz
+ 296: if (
+ 298: !minAge &&
+ 300: !onlyOnline &&
+ 301: !onlyPremium
+ 310: setLoading(true);
+ 314: const payload: Record<string, unknown> = {
+ 315: limit: 20,
+ 319: // İsim / kullanıcı adı
+ 320: if (query.length > 0) {
+ 324: // Yaş
+ 325: if (minAge) {
+ 326: payload.minAge = Number(minAge);
+ 329: if (maxAge) {
+ 333: // Çevrimiçi
+ 334: if (onlyOnline) {
+ 335: payload.online = true;
+ 338: // VIP
+ 339: if (onlyPremium) {
+ 340: payload.premium = true;
+ 343: console.log("🔍 ARAMA GÖNDERİLİYOR:", payload);
+ 345: const response = (await api.users.search(
+ 349: console.log("🟢 ARAMA CEVABI:", response);
+ 351: const normalizedUsers = (response?.users ?? [])
+ 354: id: String(user.id ?? user.userId ?? user._id ?? ""),
+ 356: .filter((user) => user.id);
+ 358: setResults(normalizedUsers);
+ 363: console.error("🔴 ARAMA HATASI:", err);
+ 370: err instanceof Error
+ 372: : "Arama sırasında bir hata oluştu."
+ 374: } finally {
+ 375: setLoading(false);
+ 380: // ENTER İLE ARAMA
+ 383: function handleKeyDown(
+ 384: event: React.KeyboardEvent<HTMLInputElement>
+ 386: if (event.key === "Enter") {
+ 393: // FİLTRE DEĞİŞİNCE ARA
+ 397: if (!hasSearched) return;
+ 399: const timer = setTimeout(() => {
+ 403: return () => clearTimeout(timer);
+ 404: }, [minAge, maxAge, onlyOnline, onlyPremium]);
+ 406: if (!isClient) {
+ 411: <div className="min-h-screen bg-[#EFA3C0] px-4 py-6 text-[#2D1721] sm:px-6">
+ 417: <div className="mx-auto mb-8 mt-6 flex w-full max-w-xl flex-col items-center justify-center gap-3 text-center">
+ 419: <div className="flex select-none items-center gap-2">
+ 421: <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-pink-500 to-rose-500 shadow-lg shadow-purple-500/20">
+ 422: <span className="text-xl font-black tracking-tighter text-[#2D1721]">
+ 425: </div>
+ 427: <h1 className="bg-gradient-to-r from-white via-pink-200 to-pink-500 bg-clip-text text-3xl font-black tracking-tight text-transparent">
+ 429: <span className="text-xl font-bold text-pink-500">
+ 434: </div>
+ 436: <div className="inline-flex items-center gap-2 rounded-full border border-pink-200 bg-white/[0.03] px-4 py-1.5 backdrop-blur-md">
+ 438: <span className="relative flex h-2 w-2">
+ 439: <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-pink-500 opacity-75" />
+ 440: <span className="relative inline-flex h-2 w-2 rounded-full bg-[#EC4899]" />
+ 443: <p className="text-xs font-bold tracking-wide text-pink-500">
+ 444: 81 İLDEN CANLI VE GÜVENLİ BAĞLANTI MERKEZİ
+ 447: </div>
+ 448: </div>
+ 454: <div className="mx-auto w-full max-w-xl space-y-4">
+ 456: <div className="relative flex items-center gap-2">
+ 458: <div className="relative flex-1">
+ 462: <input
+ 464: placeholder="İsim, şehir veya kullanıcı adı ara..."
+ 468: className="h-12 w-full rounded-xl border border-white/12 bg-white/[0.05] pl-11 pr-4 text-base text-[#2D1721] outline-none transition focus:border-pink-400/50 focus:ring-2 focus:ring-cyan-400/20"
+ 471: </div>
+ 472: <Link
+ 474: className="mx-auto mt-3 inline-flex items-center gap-2 rounded-xl border border-pink-200 bg-white/[0.03] px-4 py-2 text-sm font-semibold text-[#6B4454] transition-all duration-200 hover:border-pink-400/30 hover:bg-pink-500/[0.06] hover:text-pink-500"
+ 476: ← Anasayfaya Dön
+ 477: </Link>
+ 483: onClick={performSearch}
+ 484: disabled={loading}
+ 485: className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-pink-400/40 bg-pink-500/10 text-pink-500 transition hover:bg-pink-500/20 disabled:cursor-not-allowed disabled:opacity-50"
+ 486: title="Ara"
+ 488: {loading ? (
+ 489: <Loader2 className="h-5 w-5 animate-spin" />
+ 495: {/* FİLTRE */}
+ 499: onClick={() => setShowFilters(!showFilters)}
+ 500: className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border transition ${
+ 501: showFilters
+ 502: ? "border-pink-400 bg-pink-500/10 text-pink-500"
+ 503: : "border-white/12 bg-white/[0.05] text-[#6B4454] hover:bg-white/[0.08]"
+ 505: title="Filtreler"
+ 507: <SlidersHorizontal className="h-5 w-5" />
+ 510: </div>
+ 513: {/* FİLTRELER */}
+ 516: {showFilters && (
+ 517: <div className="space-y-5 rounded-2xl border border-pink-200 bg-white/40 p-5 backdrop-blur-xl">
+ 519: <div className="space-y-2">
+ 521: <label className="flex items-center gap-2 text-sm font-semibold text-[#6B4454]">
+ 522: <Users className="h-4 w-4 text-pink-500" />
+ 523: Yaş Aralığı
+ 526: <RangeInputs
+ 527: minValue={minAge}
+ 529: onMinChange={setMinAge}
+ 533: </div>
+ 535: <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+ 537: <FilterCheckbox
+ 538: checked={onlyOnline}
+ 539: onCheckedChange={setOnlyOnline}
+ 540: icon={<Zap className="h-4 w-4" />}
+ 541: label="Sadece Çevrimiçi"
+ 545: <FilterCheckbox
+ 546: checked={onlyPremium}
+ 547: onCheckedChange={setOnlyPremium}
+ 548: icon={<Shield className="h-4 w-4" />}
+ 549: label="Sadece VIP Üyeler"
+ 552: </div>
+ 554: </div>
+ 562: <div className="rounded-xl border border-red-400/30 bg-red-400/10 p-4 text-center text-sm text-red-300">
+ 564: </div>
+ 568: {/* SONUÇ SAYISI */}
+ 571: {hasSearched && !loading && !error && (
+ 572: <div className="flex items-center justify-between px-1 pt-3">
+ 576: ? "Sonuç bulunamadı"
+ 577: : `${total} sonuç bulundu`}
+ 580: {searchQuery.trim() && (
+ 581: <span className="text-sm font-semibold text-pink-500">
+ 582: "{searchQuery.trim()}"
+ 586: </div>
+ 590: {/* YÜKLENİYOR */}
+ 593: {loading && (
+ 594: <div className="flex flex-col items-center justify-center py-12 text-center">
+ 596: <Loader2 className="mb-3 h-8 w-8 animate-spin text-pink-500" />
+ 599: Kullanıcılar aranıyor...
+ 602: </div>
+ 606: {/* SONUÇLAR */}
+ 609: {!loading && hasSearched && !error && results.length > 0 && (
+ 610: <div className="grid gap-3 pt-2">
+ 614: key={user.id}
+ 619: </div>
+ 623: {/* SONUÇ YOK */}
+ 626: {!loading &&
+ 630: <div className="rounded-2xl border border-pink-200 bg-white/[0.03] px-6 py-12 text-center">
+ 635: Kullanıcı bulunamadı
+ 639: Arama kriterlerini değiştirip tekrar deneyebilirsin.
+ 642: </div>
+ 646: {/* İLK AÇILIŞ */}
+ 649: {!hasSearched && !loading && (
+ 650: <div className="pt-8 text-center">
+ 655: Bir isim, kullanıcı adı veya şehir yazıp
+ 660: </div>
+ 663: </div>
+ 664: </div>
+
+================ app\messages\direct\page.tsx ================
+
+   1: "use client";
+   3: import React, { useState, Suspense } from "react";
+   4: import { useSearchParams, useRouter } from "next/navigation";
+   6: const API_URL =
+   7: process.env.NEXT_PUBLIC_API_URL ||
+  10: function DirectMessageContent() {
+  14: const targetUserId = searchParams.get("userId");
+  19: const handleSendMessage = async () => {
+  20: if (!messageText.trim() || !targetUserId) {
+  21: setStatus("Lütfen bir mesaj yazın.");
+  25: setStatus("Mesajınız gönderiliyor...");
+  28: const token = localStorage.getItem("accessToken");
+  30: if (!token) {
+  31: setStatus("Oturumunuz bulunamadı. Lütfen tekrar giriş yapın.");
+  35: // 1️⃣ Önce kullanıcıyla konuşmayı oluştur / mevcut konuşmayı getir
+  36: const conversationResponse = await fetch(
+  37: `${API_URL}/conversations`,
+  41: "Content-Type": "application/json",
+  42: Authorization: `Bearer ${token}`,
+  44: body: JSON.stringify({
+  45: userId: targetUserId,
+  50: if (!conversationResponse.ok) {
+  51: const errorText = await conversationResponse.text();
+  54: "Konuşma oluşturma hatası:",
+  55: conversationResponse.status,
+  59: setStatus("Konuşma başlatılamadı.");
+  63: const conversation = await conversationResponse.json();
+  65: console.log("Konuşma:", conversation);
+  67: if (!conversation?.id) {
+  68: console.error("Conversation ID bulunamadı:", conversation);
+  69: setStatus("Konuşma bilgisi alınamadı.");
+  73: // 2️⃣ Conversation ID ile mesajı gönder
+  74: const messageResponse = await fetch(
+  75: `${API_URL}/conversations/${conversation.id}/messages`,
+  79: "Content-Type": "application/json",
+  80: Authorization: `Bearer ${token}`,
+  82: body: JSON.stringify({
+  83: content: messageText.trim(),
+  88: if (!messageResponse.ok) {
+  89: const errorText = await messageResponse.text();
+  92: "Mesaj gönderme hatası:",
+ 102: "Mesaj gönderilemedi."
+ 105: setStatus("Mesaj gönderilemedi.");
+ 111: const message = await messageResponse.json();
+ 113: console.log("Gönderilen mesaj:", message);
+ 115: setStatus("Mesaj başarıyla gönderildi!");
+ 118: setTimeout(() => {
+ 123: console.error("MESAJ GÖNDERME HATASI:", error);
+ 126: "Bağlantı hatası oluştu. Konsolu kontrol edin."
+ 132: <div className="min-h-screen bg-[#EFA3C0] text-[#2D1721] flex flex-col items-center justify-center p-4">
+ 134: <div className="w-full max-w-md bg-[#1a1d30] rounded-xl p-6 shadow-xl border border-pink-300/60">
+ 137: Hızlı Mesaj Gönder
+ 141: Kullanıcıya doğrudan mesaj iletiliyorsunuz.
+ 145: className="w-full h-32 bg-[#EFA3C0] border border-pink-300/70 rounded-lg p-3 text-[#2D1721] placeholder-slate-500 focus:outline-none focus:border-pink-400 resize-none text-sm mb-4"
+ 146: placeholder="Mesajınızı buraya yazın..."
+ 152: onClick={handleSendMessage}
+ 153: className="w-full bg-pink-500 hover:bg-[#C9186B] text-[#2D1721] font-semibold py-3 px-4 rounded-lg transition duration-200 text-sm shadow-lg"
+ 155: Mesajı Gönder
+ 159: <p className="mt-4 text-xs text-center font-medium text-pink-500 bg-pink-950/30 py-2 rounded-md border border-pink-500/50">
+ 165: onClick={() => router.push("/messages")}
+ 166: className="w-full mt-3 border border-pink-300/70 hover:border-pink-400 text-[#6B4454] hover:text-[#2D1721] font-medium py-2.5 px-4 rounded-lg transition duration-200 text-sm"
+ 168: ← Geri Dön
+ 171: </div>
+ 173: </div>
+ 177: export default function DirectMessagePage() {
+ 181: <div className="min-h-screen bg-[#EFA3C0] text-[#2D1721] flex items-center justify-center">
+ 182: Yükleniyor...
+ 183: </div>
+ 186: <DirectMessageContent />
+
+================ components\SearchFilters.tsx ================
+
+   1: "use client";
+   3: import React from "react";
+   5: type City = {
+   6: id: number;
+   7: name: string;
+  10: type District = {
+  11: id: number;
+  12: name: string;
+  15: type Filters = {
+  16: gender: string;
+  17: cityId: string;
+  18: districtId: string;
+  19: minAge: string;
+  20: maxAge: string;
+  23: type K = keyof Filters;
+  26: filters: Filters;
+  27: cities: City[];
+  28: districts: District[];
+  29: updateFilter: (key: K, value: Filters[K]) => void;
+  30: clearFilters: () => void;
+  31: handleSearch: () => void;
+  33: // Dil
+  37: const translations = {
+  39: gender: "Cinsiyet",
+  40: select: "SeÃ§iniz",
+  44: city: "Åehir",
+  45: selectCity: "Åehir seÃ§in",
+  47: district: "Ä°lÃ§e",
+  48: selectDistrict: "Ä°lÃ§e seÃ§in",
+  51: minimum: "Minimum",
+  52: maximum: "Maksimum",
+  54: clear: "Temizle",
+  64: city: "City",
+  65: selectCity: "Select city",
+  67: district: "District",
+  68: selectDistrict: "Select district",
+  71: minimum: "Minimum",
+  72: maximum: "Maximum",
+  79: gender: "ĞŸĞ¾Ğ»",
+  80: select: "Ğ’Ñ‹Ğ±ĞµÑ€Ğ¸Ñ‚Ğµ",
+  81: male: "ĞœÑƒĞ¶Ñ‡Ğ¸Ğ½Ğ°",
+  82: female: "Ğ–ĞµĞ½Ñ‰Ğ¸Ğ½Ğ°",
+  84: city: "Ğ“Ğ¾Ñ€Ğ¾Ğ´",
+  85: selectCity: "Ğ’Ñ‹Ğ±ĞµÑ€Ğ¸Ñ‚Ğµ Ğ³Ğ¾Ñ€Ğ¾Ğ´",
+  87: district: "Ğ Ğ°Ğ¹Ğ¾Ğ½",
+  88: selectDistrict: "Ğ’Ñ‹Ğ±ĞµÑ€Ğ¸Ñ‚Ğµ Ñ€Ğ°Ğ¹Ğ¾Ğ½",
+  90: ageRange: "Ğ’Ğ¾Ğ·Ñ€Ğ°ÑÑ‚",
+  91: minimum: "ĞœĞ¸Ğ½Ğ¸Ğ¼ÑƒĞ¼",
+  92: maximum: "ĞœĞ°ĞºÑĞ¸Ğ¼ÑƒĞ¼",
+  94: clear: "ĞÑ‡Ğ¸ÑÑ‚Ğ¸Ñ‚ÑŒ",
+  95: apply: "ĞŸÑ€Ğ¸Ğ¼ĞµĞ½Ğ¸Ñ‚ÑŒ",
+ 104: city: "Ø§Ù„Ù…Ø¯ÙŠÙ†Ø©",
+ 105: selectCity: "Ø§Ø®ØªØ± Ø§Ù„Ù…Ø¯ÙŠÙ†Ø©",
+ 107: district: "Ø§Ù„Ù…Ù†Ø·Ù‚Ø©",
+ 108: selectDistrict: "Ø§Ø®ØªØ± Ø§Ù„Ù…Ù†Ø·Ù‚Ø©",
+ 111: minimum: "Ø§Ù„Ø­Ø¯ Ø§Ù„Ø£Ø¯Ù†Ù‰",
+ 112: maximum: "Ø§Ù„Ø­Ø¯ Ø§Ù„Ø£Ù‚ØµÙ‰",
+ 119: export default function SearchFilters({
+ 120: filters,
+ 121: cities,
+ 122: districts,
+ 123: updateFilter,
+ 124: clearFilters,
+ 128: const t = translations[language];
+ 130: const isArabic = language === "ar";
+ 133: <div
+ 134: dir={isArabic ? "rtl" : "ltr"}
+ 137: {/* Cinsiyet */}
+ 138: <div>
+ 144: className="w-full mt-2 h-11 rounded-xl bg-pink-50 border border-pink-300 px-3 text-[#2D1721]"
+ 145: value={filters.gender}
+ 147: updateFilter("gender", e.target.value)
+ 150: <option value="">
+ 152: </option>
+ 154: <option value="MALE">
+ 156: </option>
+ 158: <option value="FEMALE">
+ 160: </option>
+ 162: </div>
+ 164: {/* Åehir */}
+ 165: <div>
+ 167: {t.city}
+ 171: className="w-full mt-2 h-11 rounded-xl bg-pink-50 border border-pink-300 px-3 text-[#2D1721]"
+ 172: value={filters.cityId}
+ 174: updateFilter("cityId", e.target.value)
+ 177: <option value="">
+ 178: {t.selectCity}
+ 179: </option>
+ 181: {cities.map((city) => (
+ 182: <option
+ 183: key={city.id}
+ 184: value={city.id}
+ 186: {city.name}
+ 187: </option>
+ 190: </div>
+ 193: <div>
+ 195: {t.district}
+ 199: className="w-full mt-2 h-11 rounded-xl bg-pink-50 border border-pink-300 px-3 text-[#2D1721]"
+ 200: value={filters.districtId}
+ 201: disabled={!filters.cityId}
+ 203: updateFilter("districtId", e.target.value)
+ 206: <option value="">
+ 207: {t.selectDistrict}
+ 208: </option>
+ 210: {districts.map((district) => (
+ 211: <option
+ 212: key={district.id}
+ 213: value={district.id}
+ 215: {district.name}
+ 216: </option>
+ 219: </div>
+ 222: <div>
+ 227: <div className="grid grid-cols-2 gap-3 mt-2">
+ 228: <input
+ 230: min="18"
+ 232: placeholder={t.minimum}
+ 233: value={filters.minAge}
+ 235: updateFilter("minAge", e.target.value)
+ 237: className="w-full h-11 rounded-xl bg-pink-50 border border-pink-300 px-3 text-[#2D1721] placeholder:text-[#8A6372]"
+ 240: <input
+ 242: min="18"
+ 244: placeholder={t.maximum}
+ 245: value={filters.maxAge}
+ 247: updateFilter("maxAge", e.target.value)
+ 249: className="w-full h-11 rounded-xl bg-pink-50 border border-pink-300 px-3 text-[#2D1721] placeholder:text-[#8A6372]"
+ 251: </div>
+ 252: </div>
+ 255: <div className="flex gap-3 pt-3 pb-2">
+ 258: onClick={clearFilters}
+ 259: className="flex-1 h-12 rounded-xl border border-pink-300 text-[#2D1721]"
+ 266: onClick={handleSearch}
+ 271: </div>
+ 272: </div>

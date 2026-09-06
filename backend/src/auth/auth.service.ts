@@ -97,6 +97,7 @@ export class AuthService {
           // Veritabanındaki mevcut zorunlu alanlar için geçici varsayılanlar.
           birthDate: new Date(dto.birthDate),
 gender: dto.gender,
+          seekingGender: dto.seekingGender,
 
           cityId: city.id,
           districtId: district.id,

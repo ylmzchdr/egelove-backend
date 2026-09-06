@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
@@ -54,6 +54,7 @@ type RegisterData = {
   password: string;
   birthDate: string;
   gender: string;
+  seekingGender: string;
   cityId: string;
   districtId: string;
 };
@@ -70,6 +71,7 @@ const initialRegisterData: RegisterData = {
   password: "",
   birthDate: "",
   gender: "",
+  seekingGender: "",
   cityId: "",
   districtId: "",
 };
@@ -289,6 +291,11 @@ export default function AuthDialog({
       return;
     }
 
+    if (!registerData.seekingGender) {
+      alert("Lütfen aradığınız kişiyi seçin.");
+      return;
+    }
+
     if (!registerData.cityId) {
       alert("Lütfen şehir seçin.");
       return;
@@ -369,6 +376,7 @@ export default function AuthDialog({
          */
         birthDate: registerData.birthDate,
         gender: registerData.gender,
+        seekingGender: registerData.seekingGender,
         cityId,
         districtId,
 
