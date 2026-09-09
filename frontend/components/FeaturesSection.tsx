@@ -12,7 +12,7 @@ const features = [
     icon: Shield,
     title: "Güvenli ve Özenli",
     description:
-      "EGELOVE, daha güvenli ve keyifli bir tanışma deneyimi için tasarlanmıştır.",
+      "SENveBEN, daha güvenli ve keyifli bir tanışma deneyimi için tasarlanmıştır.",
   },
   {
     icon: Smartphone,
@@ -22,7 +22,7 @@ const features = [
   },
   {
     icon: Sparkles,
-    title: "EgeMatch AI",
+    title: "SENveBEN AI",
     description:
       "Yapay zekâ destekli özelliklerle sana daha uygun bağlantıları keşfetmenin keyfini çıkar.",
   },
@@ -44,7 +44,7 @@ export default function FeaturesSection() {
           <div className="mb-4 text-3xl text-[#FFC000]">❤️</div>
 
           <h2 className="text-4xl font-extrabold tracking-tight text-white md:text-5xl">
-            Neden <span className="text-[#FFC000]">EGELOVE?</span>
+            Neden <span className="text-[#FFC000]">SENveBEN?</span>
           </h2>
 
           <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-white/70 md:text-xl">

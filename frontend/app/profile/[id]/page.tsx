@@ -48,7 +48,7 @@ const TEXT: Record<LangKey, Record<string, string>> = {
   aiSuggestion: "AI Önerisi",
   commonHobbies: "Ortak İlgi Alanları",
   startCompatibleChat: "Uyumlu Sohbet Başlat",
-  loginForEgematch: "EgeMatch AI analizi için giriş yapmalısın.",
+  loginForEgematch: "SENveBEN AI analizi için giriş yapmalısın.",
   },
   EN: {
     loading: "Loading profile...",
@@ -83,7 +83,7 @@ const TEXT: Record<LangKey, Record<string, string>> = {
   aiSuggestion: "AI Suggestion",
   commonHobbies: "Common Interests",
   startCompatibleChat: "Start Compatible Chat",
-  loginForEgematch: "You must log in for EgeMatch AI analysis.",
+  loginForEgematch: "You must log in for SENveBEN AI analysis.",
   },
   RU: {
     loading: "Профиль загружается...",
@@ -118,7 +118,7 @@ const TEXT: Record<LangKey, Record<string, string>> = {
     aiSuggestion: "Рекомендация ИИ",
     commonHobbies: "Общие интересы",
     startCompatibleChat: "Начать совместимый чат",
-    loginForEgematch: "Для анализа EgeMatch AI необходимо войти в систему.",
+    loginForEgematch: "Для анализа SENveBEN AI необходимо войти в систему.",
   },
   AR: {
     loading: "جارٍ تحميل الملف...",
@@ -153,7 +153,7 @@ const TEXT: Record<LangKey, Record<string, string>> = {
     aiSuggestion: "اقتراح الذكاء الاصطناعي",
     commonHobbies: "الاهتمامات المشتركة",
     startCompatibleChat: "ابدأ محادثة متوافقة",
-    loginForEgematch: "يجب تسجيل الدخول لتحليل EgeMatch AI.",
+    loginForEgematch: "يجب تسجيل الدخول لتحليل SENveBEN AI.",
   },
 };
 
@@ -568,7 +568,7 @@ useEffect(() => {
   <div className="flex items-center justify-between mb-4">
     <div>
       <h2 className="text-2xl font-black text-pink-200">
-        ❤️ EgeMatch AI™
+        ❤️ SENveBEN AI™
       </h2>
       <p className="text-xs text-white/60 mt-1">
         {tx.egematchSlogan}

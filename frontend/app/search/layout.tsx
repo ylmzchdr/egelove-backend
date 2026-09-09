@@ -1,18 +1,23 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Üyeleri Keşfet | EgeLove",
+  title: "Üyeleri Keşfet",
+
   description:
-    "Türkiye'nin 81 ilinden yeni insanları keşfet. Şehir, yaş ve diğer filtrelerle sana uygun profilleri bul ve yeni insanlarla tanış.",
+    "Türkiye'nin 81 ilinden yeni insanları keşfet. Şehir ve diğer filtrelerle sana uygun profilleri bul ve yeni insanlarla tanış.",
+
   alternates: {
-    canonical: "https://egelove.tr/search",
+    canonical: "https://senveben.com.tr/search",
   },
+
   openGraph: {
-    title: "Üyeleri Keşfet | EgeLove",
+    title: "Üyeleri Keşfet | SENveBEN",
+
     description:
       "Türkiye'nin 81 ilinden yeni insanları keşfet. Sana uygun profilleri bul ve yeni insanlarla tanış.",
-    url: "https://egelove.tr/search",
-    siteName: "EgeLove",
+
+    url: "https://senveben.com.tr/search",
+    siteName: "SENveBEN",
     type: "website",
   },
 };

@@ -27,10 +27,10 @@ export default function ContactSection() {
             </h3>
 
             <a
-              href="mailto:hello@egelove.tr"
+              href="mailto:hello@senveben.com.tr"
               className="text-[#FFC000] hover:underline break-all"
             >
-              hello@egelove.tr
+              hello@senveben.com.tr
             </a>
           </div>
 
@@ -42,12 +42,12 @@ export default function ContactSection() {
             </h3>
 
             <a
-              href="https://egelove.tr"
+              href="https://senveben.com.tr"
               target="_blank"
               rel="noopener noreferrer"
               className="text-[#FFC000] hover:underline break-all"
             >
-              https://egelove.tr
+              https://senveben.com.tr
             </a>
           </div>
 
@@ -59,7 +59,7 @@ export default function ContactSection() {
             </h3>
 
             <p className="text-[#FFC000] font-semibold">
-              ❤️ EgeMatch AI Destekli
+              ❤️ SENveBEN AI Destekli
             </p>
           </div>
 

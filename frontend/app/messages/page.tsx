@@ -1714,7 +1714,7 @@ function MessagesContent() {
             className="mr-auto flex items-center gap-2 text-xl font-black tracking-tight sm:text-2xl"
           >
             <span className="text-3xl text-pink-500">♥</span>
-            <span>egelove</span>
+           <span>SENveBEN</span>
           </button>
 
           <nav className="hidden items-center gap-8 lg:flex">

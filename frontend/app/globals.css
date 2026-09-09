@@ -1,4 +1,4 @@
-@import "tailwindcss";
+﻿@import "tailwindcss";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -40,17 +40,16 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  --color-pink-50: #e0f2fe;
-  --color-pink-100: #bae6fd;
-  --color-pink-200: #7dd3fc;
-  --color-pink-300: #38bdf8;
-  --color-[#F6BA48]: #0ea5e9;
-  --color-pink-500: #0284c7;
-  --color-pink-600: #0077b6;
-  --color-pink-700: #03045e;
-  --color-pink-800: #075985;
-  --color-pink-900: #0c4a6e;
-  --color-pink-950: #082f49;
+  --color-pink-50: #fdf2f8;
+  --color-pink-100: #fce7f3;
+  --color-pink-200: #fbcfe8;
+  --color-pink-300: #f9a8d4;
+  --color-pink-500: #ec4899;
+  --color-pink-600: #db2777;
+  --color-pink-700: #be185d;
+  --color-pink-800: #9d174d;
+  --color-pink-900: #831843;
+  --color-pink-950: #500724;
 }
 
 :root {
@@ -97,3 +96,4 @@ body {
   background-color: var(--background);
   color: var(--foreground);
 }
+

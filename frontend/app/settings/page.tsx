@@ -71,11 +71,11 @@ const languageOptions: Array<{
 const copy = {
   TR: {
     title: "Ayarlar",
-    subtitle: "EgeLove deneyimini kendine göre özelleştir.",
+    subtitle: "SENveBEN deneyimini kendine göre özelleştir.",
     appearance: "Görünüm",
-    appearanceDesc: "EgeLove'ın görünümünü ve ekran tercihlerini yönet.",
+    appearanceDesc: "SENveBEN'in görünümünü ve ekran tercihlerini yönet.",
     language: "Dil",
-    languageDesc: "EgeLove'da kullanmak istediğin dili seç.",
+    languageDesc: "SENveBEN'de kullanmak istediğin dili seç.",
     notifications: "Bildirimler",
     notificationsDesc: "Sana hangi bildirimlerin gönderileceğini seç.",
     newMessages: "Yeni mesajlar",
@@ -103,7 +103,7 @@ const copy = {
     logout: "Çıkış Yap",
     saved: "Ayarların kaydedildi",
     secure: "Hesabın güvende",
-    secureDesc: "EgeLove hesabın güvenli bağlantı ile korunuyor.",
+    secureDesc: "SENveBEN hesabın güvenli bağlantı ile korunuyor.",
     premium: "Premium",
     premiumDesc: "Daha fazla özellik ve görünürlük için Premium'u keşfet.",
     premiumCta: "Premium'u İncele",
@@ -111,11 +111,11 @@ const copy = {
   },
   EN: {
     title: "Settings",
-    subtitle: "Customize your EgeLove experience.",
+    subtitle: "Customize your SENveBEN experience.",
     appearance: "Appearance",
-    appearanceDesc: "Manage how EgeLove looks and feels.",
+    appearanceDesc: "Manage how SENveBEN looks and feels.",
     language: "Language",
-    languageDesc: "Choose the language you want to use on EgeLove.",
+    languageDesc: "Choose the language you want to use on SENveBEN.",
     notifications: "Notifications",
     notificationsDesc: "Choose which notifications you want to receive.",
     newMessages: "New messages",
@@ -143,7 +143,7 @@ const copy = {
     logout: "Log Out",
     saved: "Settings saved",
     secure: "Your account is secure",
-    secureDesc: "Your EgeLove account is protected with a secure connection.",
+    secureDesc: "Your SENveBEN account is protected with a secure connection.",
     premium: "Premium",
     premiumDesc: "Discover Premium for more features and visibility.",
     premiumCta: "Explore Premium",
@@ -151,11 +151,11 @@ const copy = {
   },
   RU: {
     title: "Настройки",
-    subtitle: "Настройте EgeLove под себя.",
+    subtitle: "Настройте SENveBEN под себя.",
     appearance: "Внешний вид",
-    appearanceDesc: "Управляйте внешним видом EgeLove.",
+    appearanceDesc: "Управляйте внешним видом SENveBEN.",
     language: "Язык",
-    languageDesc: "Выберите язык EgeLove.",
+    languageDesc: "Выберите язык SENveBEN.",
     notifications: "Уведомления",
     notificationsDesc: "Выберите нужные уведомления.",
     newMessages: "Новые сообщения",
@@ -183,7 +183,7 @@ const copy = {
     logout: "Выйти",
     saved: "Настройки сохранены",
     secure: "Ваш аккаунт защищён",
-    secureDesc: "Аккаунт EgeLove защищён безопасным соединением.",
+    secureDesc: "Аккаунт SENveBEN защищён безопасным соединением.",
     premium: "Premium",
     premiumDesc: "Откройте Premium для дополнительных функций.",
     premiumCta: "Открыть Premium",
@@ -191,9 +191,9 @@ const copy = {
   },
   AR: {
     title: "الإعدادات",
-    subtitle: "خصّص تجربة EgeLove كما تريد.",
+    subtitle: "خصّص تجربة SENveBEN كما تريد.",
     appearance: "المظهر",
-    appearanceDesc: "تحكم في مظهر EgeLove.",
+    appearanceDesc: "تحكم في مظهر SENveBEN.",
     language: "اللغة",
     languageDesc: "اختر اللغة التي تريد استخدامها.",
     notifications: "الإشعارات",
@@ -223,7 +223,7 @@ const copy = {
     logout: "تسجيل الخروج",
     saved: "تم حفظ الإعدادات",
     secure: "حسابك آمن",
-    secureDesc: "حساب EgeLove محمي باتصال آمن.",
+    secureDesc: "حساب SENveBEN محمي باتصال آمن.",
     premium: "Premium",
     premiumDesc: "اكتشف Premium للمزيد من الميزات.",
     premiumCta: "استكشف Premium",
@@ -581,7 +581,7 @@ export default function SettingsPage() {
 
               <div className="mt-5 flex items-center justify-center gap-2 pb-5 text-xs text-slate-600">
                 <Lock className="h-3.5 w-3.5" />
-                EgeLove • Güvenli ve kişisel deneyim
+                SENveBEN • Güvenli ve kişisel deneyim
               </div>
             </div>
           </div>

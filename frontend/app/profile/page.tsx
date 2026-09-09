@@ -94,7 +94,7 @@ const TEXT: Record<LangKey, Record<string, string>> = {
     favorite: "Favori Yap",
     wink: "Göz Kırp",
     visitors: "Profil Ziyaretleri",
-    member: "Egelove Üyesi",
+    member: "SENveBEN Üyesi",
     visitedProfile: "Profilini ziyaret etti",
     premium: "Premium",
     premiumDescription:
@@ -132,7 +132,7 @@ const TEXT: Record<LangKey, Record<string, string>> = {
     favorite: "Add Favorite",
     wink: "Wink",
     visitors: "Profile Visitors",
-    member: "Egelove Member",
+    member: "SENveBEN Member",
     visitedProfile: "Visited your profile",
     premium: "Premium",
     premiumDescription: "Highlight profile visits, favorites and more.",
@@ -169,7 +169,7 @@ const TEXT: Record<LangKey, Record<string, string>> = {
     favorite: "В избранное",
     wink: "Подмигнуть",
     visitors: "Посетители профиля",
-    member: "Участник Egelove",
+    member: "Участник SENveBEN",
     visitedProfile: "Посетил ваш профиль",
     premium: "Премиум",
     premiumDescription:
@@ -207,7 +207,7 @@ const TEXT: Record<LangKey, Record<string, string>> = {
     favorite: "إضافة للمفضلة",
     wink: "غمزة",
     visitors: "زوار الملف",
-    member: "عضو Egelove",
+    member: "عضو SENveBEN",
     visitedProfile: "قام بزيارة ملفك الشخصي",
     premium: "بريميوم",
     premiumDescription: "قم بإبراز زيارات الملف الشخصي والمفضلة والمزيد.",
@@ -631,7 +631,7 @@ export default function ProfilePage() {
               <div>
                 <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[#F6BA48]/20 bg-pink-500/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-pink-200">
                   <Sparkles className="h-3.5 w-3.5" />
-                  EGELOVE PROFILE V2
+                  SENveBEN PROFILE V2
                 </div>
                 <h1 className="text-3xl font-black tracking-tight sm:text-4xl lg:text-5xl">
                   {tx.myProfile}
@@ -657,7 +657,7 @@ export default function ProfilePage() {
               >
                 <div className="text-center">
                   <Loader2 className="mx-auto h-11 w-11 animate-spin text-[#F6BA48]" />
-                  <p className="mt-4 text-base text-white/45">EGELOVE</p>
+                  <p className="mt-4 text-base text-white/45">SENveBEN</p>
                 </div>
               </div>
             ) : !user ? (
@@ -848,9 +848,9 @@ export default function ProfilePage() {
                           <Sparkles className="h-5 w-5" />
                         </div>
                         <div>
-                          <h3 className="font-bold">EgeMatch AI</h3>
+                          <h3 className="font-bold">SENveBEN AI</h3>
                           <p className="text-xs text-white/40">
-                            EGELOVE intelligent compatibility
+                            SENveBEN intelligent compatibility
                           </p>
                         </div>
                       </div>

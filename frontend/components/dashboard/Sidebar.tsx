@@ -1,4 +1,4 @@
-"use client";
+
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -260,15 +260,15 @@ export default function Sidebar() {
             <div className="min-w-0">
               <div className="flex items-center gap-1">
                 <span className="text-[20px] font-black tracking-[-0.04em] text-white">
-                  EGE
+                  SENve
                 </span>
                 <span className="bg-gradient-to-r from-[#F6BA48] via-rose-400 to-orange-300 bg-clip-text text-[20px] font-black tracking-[-0.04em] text-transparent">
-                  LOVE
+                  BEN
                 </span>
               </div>
 
               <p className="mt-0.5 truncate text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500">
-                ★ EGELOVE.TR KALİTESİNDE GÜVENLİ WEBRTC TÜNELİ
+                ★ SENveBEN KALİTESİNDE GÜVENLİ WEBRTC TÜNELİ
  PREMIUM
 
               </p>
@@ -318,7 +318,7 @@ export default function Sidebar() {
               </div>
 
               <h3 className="text-base font-extrabold tracking-tight text-white">
-                EGELOVE Premium
+                SENveBEN Premium
               </h3>
 
               <p className="mt-1.5 text-[11px] leading-5 text-slate-400">
@@ -370,7 +370,7 @@ export default function Sidebar() {
           </button>
 
           <p className="mt-3 text-center text-[9px] font-medium tracking-[0.08em] text-slate-700">
-            EGELOVE © 2026
+            SENveBEN © 2026
           </p>
         </div>
       </div>

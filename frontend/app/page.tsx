@@ -3,15 +3,15 @@
 import { useState } from "react";
 import {
   Users,
-  Shield,
-  Smartphone,
   Video,
   Languages,
   Star,
   Mail,
   Globe,
   Sparkles,
+  Shield,
 } from "lucide-react";
+
 import { useI18n } from "@/lib/i18n-context";
 
 import Header from "@/components/Header";
@@ -21,149 +21,167 @@ import AuthDialog from "@/components/AuthDialog";
 
 type LangKey = "TR" | "EN" | "RU" | "AR";
 
-// ============================================================
-// ÖZELLİKLER BÖLÜMÜ DİL PAKETLERİ
-// ============================================================
+type FeatureTranslations = {
+  sectionTitle: string;
+  sectionBrand: string;
+  mainSubtitle: string;
+  f1Title: string;
+  f1Desc: string;
+  f2Title: string;
+  f2Desc: string;
+  f3Title: string;
+  f3Desc: string;
+  f4Title: string;
+  f4Desc: string;
+  bottomNote: string;
+};
 
-const featuresTranslations = {
+type ContactTranslations = {
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  emailTitle: string;
+  webTitle: string;
+  techTitle: string;
+  techDesc: string;
+  secureNote: string;
+};
+
+const featuresTranslations: Record<LangKey, FeatureTranslations> = {
   TR: {
     sectionTitle: "Neden ",
+    sectionBrand: "SENveBEN?",
     mainSubtitle:
-      "Türkiye'nin 81 ilinden yeni insanlarla tanışın. Canlı görüntülü odalara katılın, 4 dilde iletişim kurun ve size uygun insanlarla güvenle bağlantı kurun.",
-
+      "Türkiye'nin 81 ilinden yeni insanlarla tanış. Canlı görüntülü görüş, 4 dilde iletişim kur ve sana uygun kişilerle güvenli bağlantılar oluştur.",
     f1Title: "81 İlden Yeni İnsanlar",
     f1Desc:
-      "Türkiye'nin 81 ilinden insanları keşfedin, size uygun profilleri bulun ve yeni arkadaşlıklar kurun.",
-
+      "Türkiye'nin dört bir yanından profilleri keşfet, sana uygun kişileri bul ve yeni bağlantılar kur.",
     f2Title: "Canlı Görüntülü Görüşme",
     f2Desc:
-      "Yeni tanıştığınız insanlarla canlı görüntülü odalara geçin ve gerçek zamanlı iletişim kurun.",
-
+      "Karşılıklı eşleştiğin kişilerle birebir canlı görüntülü konuş ve daha doğal iletişim kur.",
     f3Title: "4 Dilde İletişim",
     f3Desc:
-      "Türkçe, İngilizce, Rusça ve Arapça dil desteğiyle farklı ülkelerden insanlarla daha kolay iletişim kurun.",
-
+      "Türkçe, İngilizce, Rusça ve Arapça desteğiyle farklı diller konuşan kişilerle daha kolay iletişim kur.",
     f4Title: "Akıllı Eşleşme",
     f4Desc:
-      "EgeMatch AI ile ilgi alanlarınıza ve tercihlerinize uygun insanları keşfedin.",
+      "SENveBEN AI ile ilgi alanlarına ve tercihlerine daha uygun profilleri keşfet.",
+    bottomNote:
+      "Canlı görüntülü iletişim, akıllı eşleşme ve çok dilli bağlantı SENveBEN'da.",
   },
 
   EN: {
     sectionTitle: "Why ",
+    sectionBrand: "SENveBEN?",
     mainSubtitle:
-      "Meet new people from all 81 provinces of Türkiye. Join live video rooms, communicate in 4 languages, and build genuine connections safely.",
-
+      "Meet new people from all 81 provinces of Türkiye. Enjoy live video conversations, communicate in 4 languages and build safer connections.",
     f1Title: "People from 81 Provinces",
     f1Desc:
-      "Discover people from all 81 provinces of Türkiye, find profiles that match you, and build new friendships.",
-
-    f2Title: "Live Video Chat",
+      "Discover profiles from across Türkiye, find people who match you and build new connections.",
+    f2Title: "Live Video Conversations",
     f2Desc:
-      "Join live video rooms with people you meet and communicate in real time.",
-
-    f3Title: "4-Language Communication",
+      "Start one-to-one live video conversations with people you mutually match with.",
+    f3Title: "Communication in 4 Languages",
     f3Desc:
-      "Communicate more easily with people from different countries with Turkish, English, Russian, and Arabic language support.",
-
+      "Communicate more easily with Turkish, English, Russian and Arabic language support.",
     f4Title: "Smart Matching",
     f4Desc:
-      "Discover people who match your interests and preferences with EgeMatch AI.",
+      "Discover profiles that better match your interests and preferences with SENveBEN AI.",
+    bottomNote:
+      "Live video, smart matching and multilingual communication come together on SENveBEN.",
   },
 
   RU: {
     sectionTitle: "Почему ",
+    sectionBrand: "SENveBEN?",
     mainSubtitle:
-      "Знакомьтесь с людьми из всех 81 провинции Турции. Присоединяйтесь к видеокомнатам, общайтесь на 4 языках и безопасно находите новые связи.",
-
+      "Знакомьтесь с людьми из всех 81 провинций Турции. Общайтесь по видеосвязи, используйте 4 языка и создавайте безопасные знакомства.",
     f1Title: "Люди из 81 провинции",
     f1Desc:
-      "Открывайте для себя людей из всех 81 провинции Турции, находите подходящие профили и заводите новые знакомства.",
-
-    f2Title: "Видеочат в реальном времени",
+      "Открывайте профили со всей Турции, находите подходящих людей и заводите новые знакомства.",
+    f2Title: "Видеосвязь",
     f2Desc:
-      "Переходите в видеокомнаты с новыми знакомыми и общайтесь в реальном времени.",
-
+      "Общайтесь один на один по видеосвязи с людьми, с которыми у вас взаимная симпатия.",
     f3Title: "Общение на 4 языках",
     f3Desc:
-      "Общайтесь с людьми из разных стран благодаря поддержке турецкого, английского, русского и арабского языков.",
-
+      "Общайтесь проще благодаря поддержке турецкого, английского, русского и арабского языков.",
     f4Title: "Умный подбор",
     f4Desc:
-      "Находите людей, соответствующих вашим интересам и предпочтениям, с помощью EgeMatch AI.",
+      "SENveBEN AI помогает находить профили, которые лучше соответствуют вашим интересам и предпочтениям.",
+    bottomNote:
+      "Видеосвязь, умный подбор и многоязычное общение объединены в SENveBEN.",
   },
 
   AR: {
     sectionTitle: "لماذا ",
+    sectionBrand: "SENveBEN؟",
     mainSubtitle:
-      "تعرّف على أشخاص جدد من جميع الولايات الـ81 في تركيا. انضم إلى غرف الفيديو المباشرة وتواصل بـ4 لغات وابنِ علاقات جديدة بأمان.",
-
-    f1Title: "أشخاص من 81 ولاية",
+      "تعرّف على أشخاص من جميع المحافظات الـ81 في تركيا. تواصل بالفيديو واستخدم 4 لغات وأنشئ علاقات أكثر أمانًا.",
+    f1Title: "أشخاص من 81 محافظة",
     f1Desc:
-      "اكتشف أشخاصاً من جميع الولايات الـ81 في تركيا، واعثر على الملفات الشخصية المناسبة لك وابنِ صداقات جديدة.",
-
-    f2Title: "محادثة فيديو مباشرة",
+      "اكتشف ملفات شخصية من جميع أنحاء تركيا واعثر على الأشخاص المناسبين لك وابدأ علاقات جديدة.",
+    f2Title: "محادثات فيديو مباشرة",
     f2Desc:
-      "انضم إلى غرف الفيديو المباشرة مع الأشخاص الذين تتعرف عليهم وتواصل معهم في الوقت الفعلي.",
-
+      "ابدأ محادثات فيديو مباشرة مع الأشخاص الذين تتبادلون الإعجاب.",
     f3Title: "التواصل بـ4 لغات",
     f3Desc:
-      "تواصل بسهولة أكبر مع أشخاص من دول مختلفة بفضل دعم التركية والإنجليزية والروسية والعربية.",
-
+      "تواصل بسهولة أكبر بفضل دعم التركية والإنجليزية والروسية والعربية.",
     f4Title: "مطابقة ذكية",
     f4Desc:
-      "اكتشف الأشخاص الذين يناسبون اهتماماتك وتفضيلاتك باستخدام EgeMatch AI.",
+      "يساعدك SENveBEN AI في اكتشاف ملفات أكثر توافقًا مع اهتماماتك وتفضيلاتك.",
+    bottomNote:
+      "الفيديو المباشر والمطابقة الذكية والتواصل متعدد اللغات تجتمع في SENveBEN.",
   },
 };
 
-// ============================================================
-// İLETİŞİM BÖLÜMÜ DİL PAKETLERİ
-// ============================================================
-
-const contactTranslations = {
+const contactTranslations: Record<LangKey, ContactTranslations> = {
   TR: {
+    eyebrow: "SENveBEN",
     title: "İletişim",
     subtitle:
       "Sorularınız, önerileriniz veya iş birlikleri için bizimle iletişime geçebilirsiniz.",
     emailTitle: "E-Posta",
     webTitle: "Web Sitesi",
     techTitle: "Teknoloji",
-    techDesc: "EgeMatch AI Destekli",
+    techDesc: "SENveBEN AI Destekli",
+    secureNote: "Güvenli ve samimi iletişim için buradayız.",
   },
 
   EN: {
+    eyebrow: "SENveBEN",
     title: "Contact",
     subtitle:
-      "You can contact us for your questions, suggestions, or collaborations.",
+      "Contact us for questions, suggestions or collaboration opportunities.",
     emailTitle: "Email",
     webTitle: "Website",
     techTitle: "Technology",
-    techDesc: "EgeMatch AI Powered",
+    techDesc: "Powered by SENveBEN AI",
+    secureNote: "We're here for safer and more genuine connections.",
   },
 
   RU: {
+    eyebrow: "SENveBEN",
     title: "Контакты",
     subtitle:
-      "Вы можете связаться с нами по вопросам, предложениям или сотрудничеству.",
+      "Свяжитесь с нами по вопросам, предложениям или сотрудничеству.",
     emailTitle: "Эл. почта",
     webTitle: "Веб-сайт",
     techTitle: "Технологии",
-    techDesc: "На базе EgeMatch AI",
+    techDesc: "На базе SENveBEN AI",
+    secureNote: "Мы создаём пространство для безопасного и искреннего общения.",
   },
 
   AR: {
-    title: "اتصل بنا",
+    eyebrow: "SENveBEN",
+    title: "التواصل",
     subtitle:
-      "يمكنك الاتصال بنا لطرح أسئلتك أو مقترحاتك أو لفرص التعاون.",
+      "تواصل معنا للأسئلة أو الاقتراحات أو فرص التعاون.",
     emailTitle: "البريد الإلكتروني",
     webTitle: "الموقع الإلكتروني",
     techTitle: "التكنولوجيا",
-    techDesc: "مدعوم بـ EgeMatch AI",
+    techDesc: "مدعوم بتقنية SENveBEN AI",
+    secureNote: "نحن هنا من أجل تواصل أكثر أمانًا وصدقًا.",
   },
 };
-
-// ============================================================
-// ÖZELLİKLER BÖLÜMÜ
-// ============================================================
 
 function FeaturesSection({ langKey }: { langKey: LangKey }) {
   const t = featuresTranslations[langKey];
@@ -194,30 +212,32 @@ function FeaturesSection({ langKey }: { langKey: LangKey }) {
   return (
     <section
       id="features"
-      className="relative overflow-hidden bg-[#310D0C] py-20 md:py-24"
+      className="relative overflow-hidden border-t border-[#F6BA48]/20 bg-[linear-gradient(180deg,#310D0C_0%,#43180F_48%,#512510_100%)] py-20 md:py-24"
     >
       {/* Arka plan ışıkları */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute left-1/4 top-0 h-72 w-72 rounded-full bg-pink-600/10 blur-3xl" />
-        <div className="absolute right-1/4 bottom-0 h-72 w-72 rounded-full bg-purple-600/10 blur-3xl" />
+        <div className="absolute -left-24 top-10 h-80 w-80 rounded-full bg-[#F6BA48]/6 blur-[120px]" />
+        <div className="absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-[#EF912C]/6 blur-[120px]" />
       </div>
 
       <div className="relative mx-auto max-w-7xl px-6 md:px-12">
-        {/* BAŞLIK */}
+        {/* Başlık */}
         <div className="mx-auto mb-14 max-w-4xl text-center">
-          <div className="mb-4 text-3xl">❤️</div>
+          <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-[#F6BA48]/35 bg-[#F6BA48]/10">
+            <Sparkles className="h-6 w-6 text-[#F6BA48]" />
+          </div>
 
-          <h2 className="text-3xl font-extrabold tracking-tight text-white md:text-5xl">
+          <h2 className="text-3xl font-black tracking-tight text-[#FFF7E8] md:text-5xl">
             {t.sectionTitle}
-            <span className="text-[#FFC000]">EgeLove?</span>
+            <span className="text-[#F6BA48]">{t.sectionBrand}</span>
           </h2>
 
-          <p className="mx-auto mt-5 max-w-3xl text-base leading-7 text-white/70 md:text-lg">
+          <p className="mx-auto mt-5 max-w-3xl text-base leading-7 text-[#F8D290]/75 md:text-lg">
             {t.mainSubtitle}
           </p>
         </div>
 
-        {/* ÖZELLİK KARTLARI */}
+        {/* Kartlar */}
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
           {features.map((feature) => {
             const Icon = feature.icon;
@@ -225,50 +245,39 @@ function FeaturesSection({ langKey }: { langKey: LangKey }) {
             return (
               <div
                 key={feature.title}
-                className="group rounded-2xl border border-white/10 bg-white/[0.035] p-7 text-center backdrop-blur-sm transition-all duration-300 hover:-translate-y-2 hover:border-[#FFC000]/40 hover:bg-white/[0.07]"
+                className="group relative overflow-hidden rounded-[24px] border border-[#F6BA48]/24 bg-[#512510]/55 p-7 text-center shadow-[0_18px_50px_rgba(0,0,0,0.16)] backdrop-blur-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-[#F6BA48]/55 hover:bg-[#683312]/65"
               >
-                {/* İKON */}
-                <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-[#FFC000]/20 bg-[#FFC000]/10 transition-all duration-300 group-hover:scale-110 group-hover:bg-[#FFC000]/15">
-                  <Icon className="h-8 w-8 text-[#FFC000]" />
+                <div className="pointer-events-none absolute -right-16 -top-16 h-36 w-36 rounded-full bg-[#F6BA48]/6 blur-3xl transition group-hover:bg-[#F6BA48]/10" />
+
+                <div className="relative">
+                  <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-[#F6BA48]/35 bg-[#7E4114]/45 transition-all duration-300 group-hover:scale-105 group-hover:bg-[#7E4114]/70">
+                    <Icon className="h-8 w-8 text-[#F6BA48]" />
+                  </div>
+
+                  <h3 className="mb-3 text-xl font-black text-[#FFF7E8]">
+                    {feature.title}
+                  </h3>
+
+                  <p className="text-sm leading-6 text-[#F8D290]/68">
+                    {feature.description}
+                  </p>
                 </div>
-
-                {/* BAŞLIK */}
-                <h3 className="mb-3 text-xl font-extrabold text-white">
-                  {feature.title}
-                </h3>
-
-                {/* AÇIKLAMA */}
-                <p className="text-sm leading-6 text-white/65">
-                  {feature.description}
-                </p>
               </div>
             );
           })}
         </div>
 
-        {/* ALT VURGU */}
-        <div className="mx-auto mt-10 max-w-3xl text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-[#FFC000]/20 bg-[#FFC000]/5 px-5 py-3 text-sm text-white/70">
-            <Video className="h-4 w-4 text-[#FFC000]" />
-            <span>
-              {langKey === "TR"
-                ? "Görüntülü iletişim ve çok dilli bağlantı EgeLove'da."
-                : langKey === "EN"
-                ? "Live video communication and multilingual connections on EgeLove."
-                : langKey === "RU"
-                ? "Видеосвязь и многоязычное общение на EgeLove."
-                : "التواصل عبر الفيديو والاتصال متعدد اللغات على EgeLove."}
-            </span>
+        {/* Alt vurgu */}
+        <div className="mx-auto mt-10 max-w-4xl text-center">
+          <div className="inline-flex items-center gap-2 rounded-full border border-[#F6BA48]/30 bg-[#310D0C]/45 px-5 py-3 text-sm text-[#F8D290]/78">
+            <Video className="h-4 w-4 shrink-0 text-[#F6BA48]" />
+            <span>{t.bottomNote}</span>
           </div>
         </div>
       </div>
     </section>
   );
 }
-
-// ============================================================
-// İLETİŞİM BÖLÜMÜ
-// ============================================================
 
 function LocalContactSection({ langKey }: { langKey: LangKey }) {
   const t = contactTranslations[langKey];
@@ -276,70 +285,82 @@ function LocalContactSection({ langKey }: { langKey: LangKey }) {
   return (
     <section
       id="contact"
-      className="relative overflow-hidden bg-[#512510] py-20 md:py-24"
+      className="relative overflow-hidden border-t border-[#F6BA48]/20 bg-[linear-gradient(135deg,#512510_0%,#683312_52%,#512510_100%)] py-20 md:py-24"
     >
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute left-1/2 top-0 h-72 w-[560px] -translate-x-1/2 rounded-full bg-[#F6BA48]/7 blur-[120px]" />
+      </div>
+
       <div className="relative mx-auto max-w-7xl px-6 text-center md:px-12">
-        <h2 className="text-3xl font-extrabold tracking-tight text-white md:text-5xl">
+        <div className="mx-auto mb-4 inline-flex items-center gap-2 rounded-full border border-[#F6BA48]/30 bg-[#310D0C]/35 px-4 py-2 text-xs font-black tracking-[0.18em] text-[#F6BA48]">
+          <Sparkles className="h-4 w-4" />
+          {t.eyebrow}
+        </div>
+
+        <h2 className="text-3xl font-black tracking-tight text-[#FFF7E8] md:text-5xl">
           {t.title}
         </h2>
 
-        <p className="mx-auto mt-4 max-w-2xl text-base text-white/70 md:text-lg">
+        <p className="mx-auto mt-4 max-w-2xl text-base text-[#F8D290]/74 md:text-lg">
           {t.subtitle}
         </p>
 
         <div className="mx-auto mt-12 grid max-w-4xl grid-cols-1 gap-6 sm:grid-cols-3">
           {/* E-POSTA */}
-          <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 backdrop-blur-sm">
-            <Mail className="mx-auto mb-4 h-8 w-8 text-[#FFC000]" />
+          <div className="rounded-[24px] border border-[#F6BA48]/28 bg-[#310D0C]/35 p-7 backdrop-blur-sm transition hover:border-[#F6BA48]/55">
+            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-[#F6BA48]/30 bg-[#F6BA48]/8">
+              <Mail className="h-7 w-7 text-[#F6BA48]" />
+            </div>
 
-            <h3 className="mb-2 text-lg font-bold text-white">
+            <h3 className="mb-2 text-lg font-black text-[#FFF7E8]">
               {t.emailTitle}
             </h3>
 
-            <p className="text-sm text-white/60">
-              hello@egelove.tr
+            <p className="break-all text-sm text-[#F8D290]/68">
+              hello@senveben.com.tr
             </p>
           </div>
 
           {/* WEB */}
-          <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 backdrop-blur-sm">
-            <Globe className="mx-auto mb-4 h-8 w-8 text-[#FFC000]" />
+          <div className="rounded-[24px] border border-[#F6BA48]/28 bg-[#310D0C]/35 p-7 backdrop-blur-sm transition hover:border-[#F6BA48]/55">
+            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-[#F6BA48]/30 bg-[#F6BA48]/8">
+              <Globe className="h-7 w-7 text-[#F6BA48]" />
+            </div>
 
-            <h3 className="mb-2 text-lg font-bold text-white">
+            <h3 className="mb-2 text-lg font-black text-[#FFF7E8]">
               {t.webTitle}
             </h3>
 
-            <p className="text-sm text-white/60">
-              https://egelove.tr
+            <p className="break-all text-sm text-[#F8D290]/68">
+              https://senveben.com.tr
             </p>
           </div>
 
           {/* TEKNOLOJİ */}
-          <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 backdrop-blur-sm">
-            <Sparkles className="mx-auto mb-4 h-8 w-8 text-[#FFC000]" />
+          <div className="rounded-[24px] border border-[#F6BA48]/28 bg-[#310D0C]/35 p-7 backdrop-blur-sm transition hover:border-[#F6BA48]/55">
+            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-[#F6BA48]/30 bg-[#F6BA48]/8">
+              <Sparkles className="h-7 w-7 text-[#F6BA48]" />
+            </div>
 
-            <h3 className="mb-2 text-lg font-bold text-white">
+            <h3 className="mb-2 text-lg font-black text-[#FFF7E8]">
               {t.techTitle}
             </h3>
 
-            <p className="text-sm text-white/60">
-              {t.techDesc}
-            </p>
+            <p className="text-sm text-[#F8D290]/68">{t.techDesc}</p>
           </div>
+        </div>
+
+        <div className="mx-auto mt-10 inline-flex items-center gap-2 rounded-full border border-[#3FB36E]/25 bg-[#3FB36E]/5 px-5 py-3 text-sm font-bold text-[#F8D290]/75">
+          <Shield className="h-4 w-4 text-[#3FB36E]" />
+          {t.secureNote}
         </div>
       </div>
     </section>
   );
 }
 
-// ============================================================
-// ANA SAYFA
-// ============================================================
-
 export default function Home() {
-  const [authTab, setAuthTab] = useState<
-    "login" | "register" | null
-  >(null);
+  const [authTab, setAuthTab] = useState<"login" | "register" | null>(null);
 
   const { lang } = useI18n();
 
@@ -351,32 +372,23 @@ export default function Home() {
 
   return (
     <div
-      className="min-h-screen bg-[#512510] font-sans text-white"
+      className="min-h-screen bg-[#310D0C] font-sans text-[#FFF7E8]"
       dir={isRtl ? "rtl" : "ltr"}
     >
-      {/* HEADER */}
       <Header
         onOpenLogin={() => setAuthTab("login")}
         onOpenRegister={() => setAuthTab("register")}
       />
 
-      {/* HERO */}
-      <HeroSection
-        onCtaClick={() => setAuthTab("register")}
-      />
+      <HeroSection onCtaClick={() => setAuthTab("register")} />
 
       <main>
-        {/* NEDEN EGELOVE */}
         <FeaturesSection langKey={currentLang} />
-
-        {/* İLETİŞİM */}
         <LocalContactSection langKey={currentLang} />
       </main>
 
-      {/* FOOTER */}
       <Footer />
 
-      {/* GİRİŞ / KAYIT */}
       <AuthDialog
         activeTab={authTab}
         onClose={() => setAuthTab(null)}

@@ -45,7 +45,7 @@ const TEXT: Record<Lang, MatchText> = {
       "Premium üyeler detaylı AI aşk analizini görebilir.",
     profileFallback: "bu profil",
     summary: (name) =>
-      `EgeMatch AI, senin profil bilgilerinle ${name} arasındaki ilgi, yaşam tarzı ve ilişki beklentisi uyumunu analiz eder.`,
+      `SENveBEN AI, senin profil bilgilerinle ${name} arasındaki ilgi, yaşam tarzı ve ilişki beklentisi uyumunu analiz eder.`,
   },
 
   EN: {
@@ -62,7 +62,7 @@ const TEXT: Record<Lang, MatchText> = {
       "Premium members can view the detailed AI love analysis.",
     profileFallback: "this profile",
     summary: (name) =>
-      `EgeMatch AI analyzes the compatibility between your profile and ${name} based on interests, lifestyle and relationship expectations.`,
+      `SENveBEN AI analyzes the compatibility between your profile and ${name} based on interests, lifestyle and relationship expectations.`,
   },
 
   RU: {
@@ -79,7 +79,7 @@ const TEXT: Record<Lang, MatchText> = {
       "Премиум-участники могут просматривать подробный анализ совместимости.",
     profileFallback: "этим профилем",
     summary: (name) =>
-      `EgeMatch AI анализирует совместимость между вашим профилем и ${name}, учитывая интересы, образ жизни и ожидания от отношений.`,
+      `SENveBEN AI анализирует совместимость между вашим профилем и ${name}, учитывая интересы, образ жизни и ожидания от отношений.`,
   },
 
   AR: {
@@ -96,7 +96,7 @@ const TEXT: Record<Lang, MatchText> = {
       "يمكن لأعضاء بريميوم مشاهدة تحليل الحب المفصل بالذكاء الاصطناعي.",
     profileFallback: "هذا الملف الشخصي",
     summary: (name) =>
-      `يحلل EgeMatch AI التوافق بين ملفك الشخصي و${name} بناءً على الاهتمامات ونمط الحياة وتوقعات العلاقة.`,
+      `يحلل SENveBEN AI التوافق بين ملفك الشخصي و${name} بناءً على الاهتمامات ونمط الحياة وتوقعات العلاقة.`,
   },
 };
 
@@ -169,7 +169,7 @@ export default function EgeMatchAICard({
 
             <div>
               <h3 className="flex items-center gap-2 text-xl font-black text-white">
-                <span>❤️ EgeMatch AI</span>
+                <span>❤️ SENveBEN AI</span>
               </h3>
 
               <p className="text-xs font-medium text-pink-100/70">

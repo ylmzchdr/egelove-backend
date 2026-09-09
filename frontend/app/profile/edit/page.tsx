@@ -40,7 +40,7 @@ type Option = {
 const TEXT = {
   TR: {
     loading: "Profilin hazırlanıyor...",
-    badge: "EGELOVE PROFİL V2",
+    badge: "SENveBEN PROFİL V2",
     title: "Profilini Düzenle",
     subtitle:
       "Profil bilgilerini güncel tutarak daha güvenilir ve doğru eşleşmeler elde et.",
@@ -98,7 +98,7 @@ name: "İsim / Rumuz",
   },
   EN: {
     loading: "Preparing your profile...",
-    badge: "EGELOVE PROFILE V2",
+    badge: "SENveBEN PROFILE V2",
     title: "Edit Your Profile",
     subtitle:
       "Keep your profile up to date to receive more accurate and trustworthy matches.",
@@ -156,7 +156,7 @@ name: "İsim / Rumuz",
   },
   RU: {
     loading: "Подготовка профиля...",
-    badge: "ПРОФИЛЬ EGELOVE V2",
+    badge: "ПРОФИЛЬ SENveBEN V2",
     title: "Редактировать профиль",
     subtitle:
       "Поддерживайте профиль в актуальном состоянии для более точных и надёжных совпадений.",
@@ -214,7 +214,7 @@ name: "İsim / Rumuz",
   },
   AR: {
     loading: "جارٍ تجهيز ملفك الشخصي...",
-    badge: "ملف EGELOVE V2",
+    badge: "ملف SENveBEN V2",
     title: "تعديل الملف الشخصي",
     subtitle:
       "حافظ على تحديث ملفك للحصول على اقتراحات أكثر دقة وموثوقية.",

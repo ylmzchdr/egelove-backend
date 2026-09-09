@@ -415,35 +415,27 @@ setHasSearched(true);
       {/* ------------------------------------------------ */}
 
       <div className="mx-auto mb-8 mt-6 flex w-full max-w-xl flex-col items-center justify-center gap-3 text-center">
-
         <div className="flex select-none items-center gap-2">
-
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-purple-600 to-cyan-500 shadow-lg shadow-purple-500/20">
-            <span className="text-xl font-black tracking-tighter text-white">
-              E
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#F6BA48]/35 bg-[#7E4114] shadow-lg shadow-black/20">
+            <span className="text-xl font-black tracking-tighter text-[#F6BA48]">
+              S
             </span>
           </div>
 
-          <h1 className="bg-gradient-to-r from-white via-purple-200 to-cyan-300 bg-clip-text text-3xl font-black tracking-tight text-transparent">
-            EGELOVE
-            <span className="text-xl font-bold text-cyan-400">
-              .TR
-            </span>
+          <h1 className="text-3xl font-black tracking-tight text-[#FFF7E8]">
+            SEN<span className="text-[#F6BA48]">ve</span>BEN
           </h1>
-
         </div>
 
-        <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-4 py-1.5 backdrop-blur-md">
-
+        <div className="inline-flex items-center gap-2 rounded-full border border-[#F6BA48]/25 bg-[#310D0C]/35 px-4 py-1.5 backdrop-blur-md">
           <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-400 opacity-75" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan-500" />
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#3FB36E] opacity-75" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#3FB36E]" />
           </span>
 
-          <p className="text-xs font-bold tracking-wide text-cyan-400">
-            81 İLDEN CANLI VE GÜVENLİ BAĞLANTI MERKEZİ
+          <p className="text-xs font-bold tracking-wide text-[#F6BA48]">
+            81 İLDEN CANLI VE GÜVENLİ BAĞLANTI
           </p>
-
         </div>
       </div>
 
