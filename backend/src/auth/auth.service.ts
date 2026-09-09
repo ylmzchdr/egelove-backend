@@ -50,9 +50,11 @@ export class AuthService {
         );
       }
 
-      // Kayıtta kullanıcının seçtiği şehir ve ilçeyi doğrula.
+      // Kayıtta kullanıcının seçtiği ülke, şehir ve ilçeyi doğrula.
       const cityId = Number(dto.cityId);
       const districtId = Number(dto.districtId);
+      const requestedCountryId =
+        dto.countryId !== undefined ? Number(dto.countryId) : undefined;
 
       if (!Number.isInteger(cityId) || cityId <= 0) {
         throw new BadRequestException("Geçerli bir şehir seçin.");
@@ -62,6 +64,13 @@ export class AuthService {
         throw new BadRequestException("Geçerli bir ilçe seçin.");
       }
 
+      if (
+        requestedCountryId !== undefined &&
+        (!Number.isInteger(requestedCountryId) || requestedCountryId <= 0)
+      ) {
+        throw new BadRequestException("Geçerli bir ülke seçin.");
+      }
+
       const city = await this.prisma.city.findUnique({
         where: { id: cityId },
       });
@@ -69,6 +78,24 @@ export class AuthService {
       if (!city) {
         throw new BadRequestException("Seçilen şehir bulunamadı.");
       }
+
+      if (requestedCountryId !== undefined) {
+        const country = await this.prisma.country.findUnique({
+          where: { id: requestedCountryId },
+        });
+
+        if (!country) {
+          throw new BadRequestException("Seçilen ülke bulunamadı.");
+        }
+
+        if (city.countryId !== requestedCountryId) {
+          throw new BadRequestException(
+            "Seçilen şehir, seçilen ülkeye ait değil.",
+          );
+        }
+      }
+
+      const effectiveCountryId = requestedCountryId ?? city.countryId ?? undefined;
 
       const district = await this.prisma.district.findFirst({
         where: {
@@ -101,6 +128,8 @@ gender: dto.gender,
 
           cityId: city.id,
           districtId: district.id,
+          countryId: effectiveCountryId,
+          spokenLanguages: dto.spokenLanguages ?? [],
 
           emailVerifyToken,
           emailVerifySentAt: new Date(),

@@ -6,6 +6,7 @@ import {
   IsInt,
   IsDateString,
   IsIn,
+  IsArray,
 } from "class-validator";
 
 export class RegisterDto {
@@ -25,10 +26,19 @@ export class RegisterDto {
   password!: string;
 
   @IsInt()
+  @IsOptional()
+  countryId?: number;
+
+  @IsInt()
   cityId!: number;
 
   @IsInt()
   districtId!: number;
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  spokenLanguages?: string[];
 
   @IsDateString()
   birthDate!: string;
