@@ -232,7 +232,7 @@ export default function DashboardPage() {
 
                 <h1 className="text-3xl font-black tracking-tight bg-gradient-to-r from-white via-pink-200 to-pink-300 bg-clip-text text-transparent">
                  senveben
-                  <span className="text-xl font-bold text-pink-400">
+                  <span className="text-xl font-bold text-[#F6BA48]">
                     .TR
                   </span>
                 </h1>
@@ -240,11 +240,11 @@ export default function DashboardPage() {
 
               <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-4 py-1.5 backdrop-blur-md">
                 <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-pink-400 opacity-75" />
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#F6BA48] opacity-75" />
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-pink-500" />
                 </span>
 
-                <p className="text-xs font-bold tracking-wide text-pink-400">
+                <p className="text-xs font-bold tracking-wide text-[#F6BA48]">
                   {t.dashboard.connectionTitle}
                 </p>
               </div>
@@ -265,10 +265,10 @@ export default function DashboardPage() {
 
               {/* PROF─░L─░M */}
               <Link href="/profile/edit" className="group min-w-0">
-                <div className="h-full rounded-2xl border border-pink-500/40 bg-gradient-to-r from-pink-900/50 to-slate-900/70 p-5 transition-all hover:border-pink-400 hover:shadow-lg hover:shadow-pink-500/10">
+                <div className="h-full rounded-2xl border border-pink-500/40 bg-gradient-to-r from-pink-900/50 to-slate-900/70 p-5 transition-all hover:border-[#F6BA48] hover:shadow-lg hover:shadow-pink-500/10">
                   <div className="flex items-center gap-4">
 
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-pink-400/25 bg-pink-500/15">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[#F6BA48]/25 bg-pink-500/15">
                       <User className="h-6 w-6 text-pink-300" />
                     </div>
 
@@ -317,14 +317,14 @@ export default function DashboardPage() {
 
               {/* CANLI SOHBET */}
               <Link href="/messages" className="group block min-w-0">
-                <div className="relative h-full overflow-hidden rounded-3xl border border-pink-500/40 bg-gradient-to-br from-pink-900/40 to-slate-900/60 p-6 shadow-xl shadow-pink-500/5 backdrop-blur-xl transition-all duration-300 hover:border-pink-400/60">
+                <div className="relative h-full overflow-hidden rounded-3xl border border-pink-500/40 bg-gradient-to-br from-pink-900/40 to-slate-900/60 p-6 shadow-xl shadow-pink-500/5 backdrop-blur-xl transition-all duration-300 hover:border-[#F6BA48]/60">
 
                   <div className="absolute right-0 top-0 -mr-10 -mt-10 h-32 w-32 rounded-full bg-pink-500/10 blur-3xl transition-all duration-500 group-hover:bg-pink-500/20" />
 
                   <div className="relative mb-4 flex items-center gap-4">
 
                     <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-pink-500/30 bg-pink-500/20">
-                      <Camera className="h-5 w-5 animate-pulse text-pink-400" />
+                      <Camera className="h-5 w-5 animate-pulse text-[#F6BA48]" />
                     </div>
 
                     <div className="min-w-0">
@@ -357,7 +357,7 @@ export default function DashboardPage() {
                   <div className="mb-4 flex items-center gap-4">
 
                     <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-pink-500/30 bg-pink-500/10">
-                      <Smartphone className="h-5 w-5 text-pink-400" />
+                      <Smartphone className="h-5 w-5 text-[#F6BA48]" />
                     </div>
 
                     <div className="min-w-0">
@@ -369,7 +369,7 @@ export default function DashboardPage() {
                         className={`mt-1 inline-block rounded-md border px-2 py-1 text-[9px] font-bold tracking-wider ${
                           isStandalone
                             ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                            : "border-pink-500/20 bg-pink-500/10 text-pink-400"
+                            : "border-pink-500/20 bg-pink-500/10 text-[#F6BA48]"
                         }`}
                       >
                         {isStandalone ? "TELEFONUNDA Y├£KL├£" : "├£CRETS─░Z"}
@@ -387,7 +387,7 @@ export default function DashboardPage() {
                     <button
                       type="button"
                       onClick={handleInstallClick}
-                      className="relative mt-auto flex w-full items-center justify-center gap-2 rounded-xl border border-pink-400/30 bg-gradient-to-r from-pink-500/20 to-pink-500/20 px-4 py-3 text-sm font-black text-white transition-all hover:border-pink-300/60 hover:from-pink-500/30 hover:to-pink-500/30 active:scale-[0.99]"
+                      className="relative mt-auto flex w-full items-center justify-center gap-2 rounded-xl border border-[#F6BA48]/30 bg-gradient-to-r from-pink-500/20 to-pink-500/20 px-4 py-3 text-sm font-black text-white transition-all hover:border-pink-300/60 hover:from-pink-500/30 hover:to-pink-500/30 active:scale-[0.99]"
                     >
                       <Download className="h-4 w-4" />
                       Telefona Y├╝kle
@@ -421,7 +421,7 @@ export default function DashboardPage() {
                   <div className="flex min-w-0 gap-3">
 
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-pink-500/20 bg-pink-500/10">
-                      <Share2 className="h-5 w-5 text-pink-400" />
+                      <Share2 className="h-5 w-5 text-[#F6BA48]" />
                     </div>
 
                     <div className="min-w-0">
@@ -506,7 +506,7 @@ export default function DashboardPage() {
                 href="/messages"
                 className="flex h-28 min-w-0 flex-col justify-between rounded-2xl border border-white/10 bg-slate-900/40 p-4 transition-all hover:border-pink-500/40"
               >
-                <MessageCircle className="h-4 w-4 text-pink-400" />
+                <MessageCircle className="h-4 w-4 text-[#F6BA48]" />
 
                 <div>
                   <span className="block text-xs font-bold text-slate-200">

@@ -1721,7 +1721,7 @@ function MessagesContent() {
             <button type="button" onClick={goDashboard} className="font-semibold text-white/90 hover:text-white">{t.home}</button>
             <button type="button" onClick={() => (window.location.href = "/profile")} className="font-semibold text-white/90 hover:text-white">{t.myPage}</button>
             <button type="button" onClick={() => (window.location.href = "/likes")} className="font-semibold text-white/90 hover:text-white">{t.likes}</button>
-            <button type="button" className="relative font-semibold text-pink-400 after:absolute after:-bottom-6 after:left-0 after:right-0 after:h-0.5 after:bg-pink-500">{t.messages}</button>
+            <button type="button" className="relative font-semibold text-[#F6BA48] after:absolute after:-bottom-6 after:left-0 after:right-0 after:h-0.5 after:bg-pink-500">{t.messages}</button>
             <button type="button" onClick={goPremium} className="font-semibold text-white/90 hover:text-white">{t.premium} 👑</button>
           </nav>
 
@@ -1779,7 +1779,7 @@ function MessagesContent() {
               <div className="relative flex h-44 w-44 items-center justify-center rounded-full bg-gradient-to-br from-fuchsia-500 via-purple-500 to-blue-600 shadow-[0_0_70px_rgba(168,85,247,.65)]">
                 <div className="absolute inset-4 rounded-full border border-white/30" />
                 <span className="relative text-7xl text-white drop-shadow-lg">▣</span>
-                <span className="absolute -left-10 top-6 text-2xl text-pink-400">♥</span>
+                <span className="absolute -left-10 top-6 text-2xl text-[#F6BA48]">♥</span>
                 <span className="absolute -right-9 top-16 text-2xl text-purple-400">♥</span>
                 <span className="absolute -left-4 bottom-2 text-lg text-fuchsia-300">✦</span>
               </div>
@@ -1800,7 +1800,7 @@ function MessagesContent() {
                   ["♙", t.safe, t.safeSub, "text-emerald-400"],
                   ["♣", t.real, t.realSub, "text-purple-400"],
                   ["ϟ", t.instant, t.instantSub, "text-yellow-400"],
-                  ["♥", t.closer, t.closerSub, "text-pink-400"],
+                  ["♥", t.closer, t.closerSub, "text-[#F6BA48]"],
                 ].map(([icon, title, sub, color]) => (
                   <div key={title} className="px-2 py-2 sm:px-4">
                     <div className={`mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full border border-current text-xl ${color}`}>{icon}</div>
@@ -1923,7 +1923,7 @@ function MessagesContent() {
                     <p className="text-sm text-white/65">{activeUser?.city ? `24 • ${activeCity}` : activeCity}</p>
                   </div>
                   <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-sm font-bold text-emerald-400">● {t.onlineStatus}</span>
-                  <button type="button" className="hidden h-11 w-11 items-center justify-center rounded-full border border-white/10 text-2xl text-pink-400 hover:bg-white/10 sm:flex">♡</button>
+                  <button type="button" className="hidden h-11 w-11 items-center justify-center rounded-full border border-white/10 text-2xl text-[#F6BA48] hover:bg-white/10 sm:flex">♡</button>
                   <button type="button" className="px-1 text-xl text-white/60">⋮</button>
                   <button type="button" onClick={openVideo} className="rounded-full bg-gradient-to-r from-fuchsia-500 to-purple-600 px-5 py-3 text-sm font-black shadow-lg shadow-purple-600/30 transition hover:scale-[1.01] sm:text-base">👑 {t.premiumVideo}</button>
                 </div>

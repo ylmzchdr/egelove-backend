@@ -257,11 +257,11 @@ export default function Topbar({
   return (
     <div
       ref={topbarRef}
-      className="relative z-50 mb-7 rounded-[26px] border border-white/[0.07] bg-[#0b0e18]/80 px-3 py-3 shadow-[0_20px_70px_rgba(0,0,0,0.24)] backdrop-blur-2xl sm:px-4"
+      className="relative z-50 mb-7 rounded-[26px] border border-[#F6BA48]/70 bg-[#310D0C]/90 px-3 py-3 shadow-[0_20px_70px_rgba(0,0,0,0.24)] backdrop-blur-2xl sm:px-4"
     >
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-16 top-0 h-px bg-gradient-to-r from-transparent via-pink-400/50 to-transparent"
+        className="pointer-events-none absolute inset-x-16 top-0 h-px bg-gradient-to-r from-transparent via-[#F6BA48]/60 to-transparent"
       />
 
       <div className="flex items-center gap-2.5">
@@ -270,7 +270,7 @@ export default function Topbar({
           type="button"
           onClick={onOpenMobileMenu}
           aria-label="MenÃ¼yÃ¼ aÃ§"
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/[0.07] bg-white text-[#6B4454] transition-all duration-300 hover:border-pink-400/20 hover:bg-pink-400/[0.07] hover:text-pink-300 lg:hidden"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/[0.07] bg-white text-[#6B4454] transition-all duration-300 hover:border-[#F6BA48]/20 hover:bg-[#F6BA48]/[0.07] hover:text-pink-300 lg:hidden"
         >
           <Menu
             className="h-5 w-5"
@@ -298,7 +298,7 @@ export default function Topbar({
             }
             placeholder="Ä°sim, ÅŸehir veya kullanÄ±cÄ± adÄ± ara..."
             aria-label="Ãœye ara"
-            className="h-11 w-full rounded-2xl border border-white/[0.07] bg-white pl-11 pr-20 text-base font-medium text-[#2D1721] outline-none transition-all duration-300 placeholder:text-slate-600 hover:border-pink-200 focus:border-pink-400/25 focus:bg-white focus:shadow-[0_0_0_4px_rgba(244,114,182,0.05)]"
+            className="h-11 w-full rounded-2xl border border-white/[0.07] bg-white pl-11 pr-20 text-base font-medium text-[#2D1721] outline-none transition-all duration-300 placeholder:text-slate-600 hover:border-pink-200 focus:border-[#F6BA48]/25 focus:bg-white focus:shadow-[0_0_0_4px_rgba(244,114,182,0.05)]"
           />
 
           <span className="pointer-events-none absolute right-3 top-1/2 hidden -translate-y-1/2 rounded-lg border border-white/[0.07] bg-white px-2 py-1 text-[9px] font-bold text-slate-600 xl:block">
@@ -310,7 +310,7 @@ export default function Topbar({
         <Link
           href="/search"
           aria-label="Ãœye ara"
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/[0.07] bg-white text-[#7A5363] transition-all duration-300 hover:border-pink-400/20 hover:bg-pink-400/[0.07] hover:text-pink-300 md:hidden"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/[0.07] bg-white text-[#7A5363] transition-all duration-300 hover:border-[#F6BA48]/20 hover:bg-[#F6BA48]/[0.07] hover:text-pink-300 md:hidden"
         >
           <Search
             className="h-[19px] w-[19px]"
@@ -338,7 +338,7 @@ export default function Topbar({
           "flex h-9 min-w-[38px] items-center justify-center rounded-xl px-2",
           "text-[11px] font-extrabold transition-all duration-200",
           isSelected
-            ? "border border-pink-400/30 bg-pink-400/[0.12] text-pink-300"
+            ? "border border-[#F6BA48]/30 bg-[#F6BA48]/[0.12] text-pink-300"
             : "border border-transparent text-[#8A6372] hover:border-white/[0.08] hover:bg-white/[0.05] hover:text-[#2D1721]",
         ].join(" ")}
       >
@@ -375,7 +375,7 @@ export default function Topbar({
               </span>
 
               {unreadMessages > 0 && (
-                <span className="absolute -right-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full border-2 border-[#0b0e18] bg-blue-500 px-1 text-[9px] font-black text-[#2D1721]">
+                <span className="absolute -right-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full border-2 border-[#310D0C] bg-blue-500 px-1 text-[9px] font-black text-[#2D1721]">
                   {unreadMessages > 99
                     ? "99+"
                     : unreadMessages}
@@ -456,8 +456,8 @@ export default function Topbar({
                 "relative flex h-11 shrink-0 items-center justify-center gap-2 rounded-2xl border px-3 transition-all duration-300",
                 activePanel ===
                 "notifications"
-                  ? "border-pink-400/25 bg-pink-400/[0.08] text-pink-300"
-                  : "border-white/[0.07] bg-white text-[#7A5363] hover:border-pink-400/20 hover:bg-pink-400/[0.07] hover:text-pink-300",
+                  ? "border-[#F6BA48]/25 bg-[#F6BA48]/[0.08] text-pink-300"
+                  : "border-white/[0.07] bg-white text-[#7A5363] hover:border-[#F6BA48]/20 hover:bg-[#F6BA48]/[0.07] hover:text-pink-300",
               ].join(" ")}
             >
               <Bell
@@ -470,7 +470,7 @@ export default function Topbar({
               </span>
 
               {unreadNotifications > 0 && (
-                <span className="absolute -right-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full border-2 border-[#0b0e18] bg-pink-500 px-1 text-[9px] font-black text-[#2D1721]">
+                <span className="absolute -right-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full border-2 border-[#310D0C] bg-pink-500 px-1 text-[9px] font-black text-[#2D1721]">
                   {unreadNotifications >
                   99
                     ? "99+"
@@ -506,7 +506,7 @@ export default function Topbar({
                 </div>
 
                 <div className="px-5 py-8 text-center">
-                  <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-pink-400/[0.08] text-pink-300">
+                  <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F6BA48]/[0.08] text-pink-300">
                     <Bell
                       className="h-5 w-5"
                       strokeWidth={1.8}
@@ -530,7 +530,7 @@ export default function Topbar({
                   onClick={() =>
                     setActivePanel(null)
                   }
-                  className="flex min-h-11 items-center justify-center border-t border-white/[0.065] text-xs font-bold text-pink-300 transition hover:bg-pink-400/[0.05]"
+                  className="flex min-h-11 items-center justify-center border-t border-white/[0.065] text-xs font-bold text-pink-300 transition hover:bg-[#F6BA48]/[0.05]"
                 >
                   Bildirim merkezini aÃ§
                 </Link>
@@ -551,7 +551,7 @@ export default function Topbar({
               className={[
                 "flex h-11 shrink-0 items-center gap-2 rounded-2xl border p-1.5 pr-2.5 transition-all duration-300",
                 activePanel === "profile"
-                  ? "border-pink-400/25 bg-pink-400/[0.08]"
+                  ? "border-[#F6BA48]/25 bg-[#F6BA48]/[0.08]"
                   : "border-white/[0.07] bg-white hover:border-pink-200 hover:bg-white",
               ].join(" ")}
             >
@@ -594,7 +594,7 @@ export default function Topbar({
 
             {activePanel === "profile" && (
               <div className="absolute right-0 top-[calc(100%+12px)] w-72 overflow-hidden rounded-[24px] border border-white/[0.09] bg-[#0d101b]/95 p-2 shadow-[0_28px_90px_rgba(0,0,0,0.5)] backdrop-blur-2xl">
-                <div className="relative overflow-hidden rounded-[19px] border border-pink-100 bg-gradient-to-br from-pink-500/[0.12] via-pink-400/[0.07] to-transparent p-4">
+                <div className="relative overflow-hidden rounded-[19px] border border-pink-100 bg-gradient-to-br from-pink-500/[0.12] via-[#F6BA48]/[0.07] to-transparent p-4">
                   <div className="flex items-center gap-3">
                     <span className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-pink-500 via-rose-500 to-pink-600 shadow-[0_10px_30px_rgba(236,72,153,0.2)]">
                       {profilePhoto ? (

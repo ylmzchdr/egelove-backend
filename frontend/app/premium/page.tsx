@@ -276,7 +276,7 @@ export default function PremiumPage() {
                   className={`relative p-6 cursor-pointer transition-all duration-300 ${
                     selected === plan.id
                       ? "border-pink-500 bg-pink-900/60 scale-105"
-                      : "border-white/10 bg-white/5 hover:border-pink-400/30"
+                      : "border-white/10 bg-white/5 hover:border-[#F6BA48]/30"
                   }`}
                   onClick={() => setSelected(plan.id)}
                 >
@@ -307,7 +307,7 @@ export default function PremiumPage() {
                   <ul className="text-left text-base space-y-2 mb-6">
                     {plan.features.map((feature, index) => (
                       <li key={index} className="flex items-center gap-2 text-white/70">
-                        <Check className="w-4 h-4 text-pink-400" />
+                        <Check className="w-4 h-4 text-[#F6BA48]" />
                         {feature}
                       </li>
                     ))}

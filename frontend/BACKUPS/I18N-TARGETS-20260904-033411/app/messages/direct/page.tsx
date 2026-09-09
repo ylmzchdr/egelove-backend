@@ -142,7 +142,7 @@ function DirectMessageContent() {
         </p>
 
         <textarea
-          className="w-full h-32 bg-[#EFA3C0] border border-pink-300/70 rounded-lg p-3 text-[#2D1721] placeholder-slate-500 focus:outline-none focus:border-pink-400 resize-none text-sm mb-4"
+          className="w-full h-32 bg-[#EFA3C0] border border-pink-300/70 rounded-lg p-3 text-[#2D1721] placeholder-slate-500 focus:outline-none focus:border-[#F6BA48] resize-none text-sm mb-4"
           placeholder="Mesajınızı buraya yazın..."
           value={messageText}
           onChange={(e) => setMessageText(e.target.value)}
@@ -163,7 +163,7 @@ function DirectMessageContent() {
         <button
   type="button"
   onClick={() => router.push("/messages")}
-  className="w-full mt-3 border border-pink-300/70 hover:border-pink-400 text-[#6B4454] hover:text-[#2D1721] font-medium py-2.5 px-4 rounded-lg transition duration-200 text-sm"
+  className="w-full mt-3 border border-pink-300/70 hover:border-[#F6BA48] text-[#6B4454] hover:text-[#2D1721] font-medium py-2.5 px-4 rounded-lg transition duration-200 text-sm"
 >
   ← Geri Dön
 </button>

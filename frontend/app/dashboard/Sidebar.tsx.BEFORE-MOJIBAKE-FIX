@@ -222,7 +222,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose
         className={[
           "group relative flex min-h-12 items-center gap-3 rounded-2xl px-3.5 py-3",
           "transition-all duration-300 ease-out",
-          "focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-400/80",
+          "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#F6BA48]/80",
           active
             ? "bg-gradient-to-r from-pink-500/20 via-rose-500/15 to-orange-400/10 text-white shadow-[0_12px_35px_rgba(236,72,153,0.12)]"
             : "text-slate-300 hover:bg-white/[0.055] hover:text-white",
@@ -231,7 +231,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose
         {active && (
           <span
             aria-hidden="true"
-            className="absolute bottom-2 left-0 top-2 w-1 rounded-r-full bg-gradient-to-b from-pink-400 via-rose-400 to-orange-300 shadow-[0_0_18px_rgba(244,114,182,0.85)]"
+            className="absolute bottom-2 left-0 top-2 w-1 rounded-r-full bg-gradient-to-b from-[#F6BA48] via-rose-400 to-orange-300 shadow-[0_0_18px_rgba(244,114,182,0.85)]"
           />
         )}
 
@@ -240,7 +240,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose
             "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border",
             "transition-all duration-300",
             active
-              ? "border-pink-400/25 bg-pink-400/10 text-pink-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]"
+              ? "border-[#F6BA48]/25 bg-[#F6BA48]/10 text-pink-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]"
               : "border-white/[0.06] bg-white/[0.025] text-slate-500 group-hover:border-white/10 group-hover:bg-white/[0.06] group-hover:text-pink-300",
           ].join(" ")}
         >
@@ -255,7 +255,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose
         </span>
 
         {item.badge && (
-          <span className="rounded-full border border-pink-400/20 bg-pink-400/10 px-2 py-0.5 text-[10px] font-bold text-pink-300">
+          <span className="rounded-full border border-[#F6BA48]/20 bg-[#F6BA48]/10 px-2 py-0.5 text-[10px] font-bold text-pink-300">
             {item.badge}
           </span>
         )}
@@ -297,7 +297,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose
         <div className="border-b border-white/[0.065] px-5 pb-5 pt-6">
           <Link
             href="/dashboard"
-            className="group flex items-center gap-3 rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-400/80"
+            className="group flex items-center gap-3 rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[#F6BA48]/80"
           >
             <div className="relative flex h-12 w-12 shrink-0 items-center justify-center">
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-pink-500 via-rose-500 to-orange-400 opacity-90 shadow-[0_12px_35px_rgba(236,72,153,0.28)] transition-transform duration-300 group-hover:scale-105" />
@@ -318,7 +318,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose
                   SEN
                 </span>
 
-                <span className="bg-gradient-to-r from-pink-400 via-rose-400 to-orange-300 bg-clip-text text-[20px] font-black tracking-[-0.04em] text-transparent">
+                <span className="bg-gradient-to-r from-[#F6BA48] via-rose-400 to-orange-300 bg-clip-text text-[20px] font-black tracking-[-0.04em] text-transparent">
                   VEBEN
                 </span>
               </div>
@@ -357,10 +357,10 @@ export default function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose
           </nav>
 
           {/* PREMIUM */}
-          <div className="relative mt-6 overflow-hidden rounded-[24px] border border-pink-400/[0.14] bg-gradient-to-br from-pink-500/[0.13] via-violet-500/[0.07] to-orange-400/[0.08] p-4 shadow-[0_18px_50px_rgba(0,0,0,0.22)]">
+          <div className="relative mt-6 overflow-hidden rounded-[24px] border border-[#F6BA48]/[0.14] bg-gradient-to-br from-pink-500/[0.13] via-violet-500/[0.07] to-orange-400/[0.08] p-4 shadow-[0_18px_50px_rgba(0,0,0,0.22)]">
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute -right-7 -top-9 h-24 w-24 rounded-full bg-pink-400/20 blur-3xl"
+              className="pointer-events-none absolute -right-7 -top-9 h-24 w-24 rounded-full bg-[#F6BA48]/20 blur-3xl"
             />
 
             <div className="relative">

@@ -344,7 +344,7 @@ export default function DashboardPage() {
                 href="/likes"
                 className="rounded-2xl border border-white/10 bg-[#0d1220]/80 p-5 transition-all hover:border-pink-500/30"
               >
-                <Heart className="mb-8 h-5 w-5 text-pink-400" />
+                <Heart className="mb-8 h-5 w-5 text-[#F6BA48]" />
 
                 <span className="block text-sm font-bold text-white">
                   Yeni Beğeni

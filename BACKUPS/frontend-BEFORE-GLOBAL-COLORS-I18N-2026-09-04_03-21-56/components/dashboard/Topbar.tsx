@@ -262,7 +262,7 @@ export default function Topbar({
     >
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-16 top-0 h-px bg-gradient-to-r from-transparent via-pink-400/50 to-transparent"
+        className="pointer-events-none absolute inset-x-16 top-0 h-px bg-gradient-to-r from-transparent via-[#F6BA48]/60 to-transparent"
       />
 
       <div className="flex items-center gap-2.5">
@@ -314,7 +314,7 @@ export default function Topbar({
         <Link
           href="/search"
           aria-label={t.dashboard.searchMember}
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/[0.07] bg-white text-[#7A5363] transition-all duration-300 hover:border-pink-400/20 hover:bg-pink-400/[0.07] hover:text-pink-300 md:hidden"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/[0.07] bg-white text-[#7A5363] transition-all duration-300 hover:border-[#F6BA48]/20 hover:bg-[#F6BA48]/[0.07] hover:text-pink-300 md:hidden"
         >
           <Search
             className="h-[19px] w-[19px]"
@@ -414,7 +414,7 @@ export default function Topbar({
                 </div>
 
                 <div className="px-5 py-8 text-center">
-                  <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-pink-400/[0.08] text-pink-300">
+                  <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F6BA48]/[0.08] text-pink-300">
                     <MessageCircle
                       className="h-5 w-5"
                       strokeWidth={1.8}
@@ -438,7 +438,7 @@ export default function Topbar({
                   onClick={() =>
                     setActivePanel(null)
                   }
-                  className="flex min-h-11 items-center justify-center border-t border-white/[0.065] text-xs font-bold text-pink-300 transition hover:bg-pink-400/[0.05]"
+                  className="flex min-h-11 items-center justify-center border-t border-white/[0.065] text-xs font-bold text-pink-300 transition hover:bg-[#F6BA48]/[0.05]"
                 >
                   {t.dashboard.openAllMessages}
                 </Link>
@@ -477,7 +477,7 @@ export default function Topbar({
               </span>
 
               {unreadNotifications > 0 && (
-                <span className="absolute -right-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full border-2 border-[#0b0e18] bg-pink-500 px-1 text-[9px] font-black text-[#2D1721]">
+                <span className="absolute -right-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full border-2 border-[#310D0C] bg-pink-500 px-1 text-[9px] font-black text-[#2D1721]">
                   {unreadNotifications >
                   99
                     ? "99+"
@@ -513,7 +513,7 @@ export default function Topbar({
                 </div>
 
                 <div className="px-5 py-8 text-center">
-                  <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-pink-400/[0.08] text-pink-300">
+                  <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F6BA48]/[0.08] text-pink-300">
                     <Bell
                       className="h-5 w-5"
                       strokeWidth={1.8}
@@ -537,7 +537,7 @@ export default function Topbar({
                   onClick={() =>
                     setActivePanel(null)
                   }
-                  className="flex min-h-11 items-center justify-center border-t border-white/[0.065] text-xs font-bold text-pink-300 transition hover:bg-pink-400/[0.05]"
+                  className="flex min-h-11 items-center justify-center border-t border-white/[0.065] text-xs font-bold text-pink-300 transition hover:bg-[#F6BA48]/[0.05]"
                 >
                   Bildirim merkezini aç
                 </Link>
@@ -586,7 +586,7 @@ export default function Topbar({
                   {userName}
                 </span>
 
-                <span className="block max-w-28 truncate text-[10px] font-medium text-pink-400">
+                <span className="block max-w-28 truncate text-[10px] font-medium text-[#F6BA48]">
                   {userCity}
                 </span>
               </div>
@@ -603,7 +603,7 @@ export default function Topbar({
 
             {activePanel === "profile" && (
               <div className="absolute right-0 top-[calc(100%+12px)] w-72 overflow-hidden rounded-[24px] border border-white/[0.09] bg-[#0d101b]/95 p-2 shadow-[0_28px_90px_rgba(0,0,0,0.5)] backdrop-blur-2xl">
-                <div className="relative overflow-hidden rounded-[19px] border border-pink-100 bg-gradient-to-br from-pink-500/[0.12] via-pink-400/[0.07] to-transparent p-4">
+                <div className="relative overflow-hidden rounded-[19px] border border-pink-100 bg-gradient-to-br from-pink-500/[0.12] via-[#F6BA48]/[0.07] to-transparent p-4">
                   <div className="flex items-center gap-3">
                     <span className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-pink-500 via-rose-500 to-pink-600 shadow-[0_10px_30px_rgba(236,72,153,0.2)]">
                       {profilePhoto ? (

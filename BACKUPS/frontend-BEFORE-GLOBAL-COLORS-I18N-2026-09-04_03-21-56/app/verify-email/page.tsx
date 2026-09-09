@@ -33,7 +33,7 @@ function VerifyContent() {
       <Card className="bg-white/5 border-white/10 p-10 text-center max-w-md">
         {status === "loading" && (
           <div className="space-y-4">
-            <Loader2 className="w-12 h-12 text-pink-400 mx-auto animate-spin" />
+            <Loader2 className="w-12 h-12 text-[#F6BA48] mx-auto animate-spin" />
             <p>E-posta doğrulanıyor...</p>
           </div>
         )}
@@ -81,7 +81,7 @@ export default function VerifyEmailPage() {
     <Suspense
       fallback={
         <div className="min-h-screen bg-pink-950 text-white flex items-center justify-center">
-          <Loader2 className="w-8 h-8 text-pink-400 animate-spin" />
+          <Loader2 className="w-8 h-8 text-[#F6BA48] animate-spin" />
         </div>
       }
     >

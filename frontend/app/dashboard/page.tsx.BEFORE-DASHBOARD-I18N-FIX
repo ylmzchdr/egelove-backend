@@ -238,7 +238,7 @@ export default function DashboardPage() {
                 </h1>
               </div>
 
-              <div className="inline-flex items-center gap-2 rounded-full border border-pink-400/70 bg-[#EFA3C0] px-4 py-1.5 backdrop-blur-md">
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#F6BA48]/70 bg-[#EFA3C0] px-4 py-1.5 backdrop-blur-md">
                 <span className="relative flex h-2 w-2">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-400 opacity-75" />
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan-500" />
@@ -265,10 +265,10 @@ export default function DashboardPage() {
 
               {/* PROFİLİM */}
               <Link href="/profile/edit" className="group min-w-0">
-                <div className="h-full rounded-2xl border border-pink-400/70 bg-gradient-to-r from-[#EFA3C0] to-[#EFA3C0] p-5 transition-all hover:border-pink-400 hover:shadow-lg hover:shadow-pink-500/10">
+                <div className="h-full rounded-2xl border border-[#F6BA48]/70 bg-gradient-to-r from-[#EFA3C0] to-[#EFA3C0] p-5 transition-all hover:border-[#F6BA48] hover:shadow-lg hover:shadow-pink-500/10">
                   <div className="flex items-center gap-4">
 
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-pink-400/70 bg-[#512510]">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[#F6BA48]/70 bg-[#512510]">
                       <User className="h-6 w-6 text-[#F6BA48]" />
                     </div>
 
@@ -289,10 +289,10 @@ export default function DashboardPage() {
 
               {/* BİRİNİ BUL */}
               <Link href="/search" className="group min-w-0">
-                <div className="h-full rounded-2xl border border-pink-400/70 bg-[#EFA3C0] p-5 transition-all hover:bg-[#EFA3C0]">
+                <div className="h-full rounded-2xl border border-[#F6BA48]/70 bg-[#EFA3C0] p-5 transition-all hover:bg-[#EFA3C0]">
                   <div className="flex items-center gap-4">
 
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-pink-400/70 bg-[#EFA3C0]">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[#F6BA48]/70 bg-[#EFA3C0]">
                       <Search className="h-6 w-6 text-[#F6BA48]" />
                     </div>
 
@@ -317,7 +317,7 @@ export default function DashboardPage() {
 
               {/* CANLI SOHBET */}
               <Link href="/messages" className="group block min-w-0">
-                <div className="relative h-full overflow-hidden rounded-3xl border border-pink-400/70 bg-gradient-to-br from-[#EFA3C0] to-[#EFA3C0] p-6 shadow-xl shadow-pink-500/10 backdrop-blur-xl transition-all duration-300 hover:border-pink-400/60">
+                <div className="relative h-full overflow-hidden rounded-3xl border border-[#F6BA48]/70 bg-gradient-to-br from-[#EFA3C0] to-[#EFA3C0] p-6 shadow-xl shadow-pink-500/10 backdrop-blur-xl transition-all duration-300 hover:border-[#F6BA48]/60">
 
                   <div className="absolute right-0 top-0 -mr-10 -mt-10 h-32 w-32 rounded-full bg-[#EFA3C0] blur-3xl transition-all duration-500 group-hover:bg-[#512510]" />
 
@@ -348,7 +348,7 @@ export default function DashboardPage() {
               </Link>
 
               {/* TELEFONA YÜKLE */}
-              <div className="relative h-full min-w-0 overflow-hidden rounded-3xl border border-pink-400/70 bg-gradient-to-br from-[#EFA3C0] via-[#EFA3C0] to-[#EFA3C0] p-6 shadow-xl shadow-pink-500/10 backdrop-blur-xl">
+              <div className="relative h-full min-w-0 overflow-hidden rounded-3xl border border-[#F6BA48]/70 bg-gradient-to-br from-[#EFA3C0] via-[#EFA3C0] to-[#EFA3C0] p-6 shadow-xl shadow-pink-500/10 backdrop-blur-xl">
 
                 <div className="absolute right-0 top-0 -mr-10 -mt-10 h-32 w-32 rounded-full bg-[#EFA3C0] blur-3xl" />
 
@@ -356,7 +356,7 @@ export default function DashboardPage() {
 
                   <div className="mb-4 flex items-center gap-4">
 
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-pink-400/70 bg-[#EFA3C0]">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#F6BA48]/70 bg-[#EFA3C0]">
                       <Smartphone className="h-5 w-5 text-[#EC4899]" />
                     </div>
 
@@ -369,7 +369,7 @@ export default function DashboardPage() {
                         className={`mt-1 inline-block rounded-md border px-2 py-1 text-[9px] font-bold tracking-wider ${
                           isStandalone
                             ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                            : "border-pink-400/70 bg-[#EFA3C0] text-[#EC4899]"
+                            : "border-[#F6BA48]/70 bg-[#EFA3C0] text-[#EC4899]"
                         }`}
                       >
                         {isStandalone ? "TELEFONUNDA YÜKLÜ" : "ÜCRETSİZ"}
@@ -387,7 +387,7 @@ export default function DashboardPage() {
                     <button
                       type="button"
                       onClick={handleInstallClick}
-                      className="relative mt-auto flex w-full items-center justify-center gap-2 rounded-xl border border-pink-400 bg-gradient-to-r from-pink-500/20 to-rose-500/20 px-4 py-3 text-sm font-black text-white transition-all hover:border-pink-400 hover:from-cyan-500/30 hover:to-purple-500/30 active:scale-[0.99]"
+                      className="relative mt-auto flex w-full items-center justify-center gap-2 rounded-xl border border-[#F6BA48] bg-gradient-to-r from-pink-500/20 to-rose-500/20 px-4 py-3 text-sm font-black text-white transition-all hover:border-[#F6BA48] hover:from-cyan-500/30 hover:to-purple-500/30 active:scale-[0.99]"
                     >
                       <Download className="h-4 w-4" />
                       Telefona Yükle
@@ -414,13 +414,13 @@ export default function DashboardPage() {
 
             {/* PWA KURULUM YARDIMI */}
             {showInstallHelp && !isStandalone && (
-              <div className="mt-4 overflow-hidden rounded-2xl border border-pink-400/70 bg-[#EFA3C0] shadow-xl shadow-pink-500/10">
+              <div className="mt-4 overflow-hidden rounded-2xl border border-[#F6BA48]/70 bg-[#EFA3C0] shadow-xl shadow-pink-500/10">
 
                 <div className="flex items-start justify-between gap-4 p-5">
 
                   <div className="flex min-w-0 gap-3">
 
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-pink-400/70 bg-[#EFA3C0]">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#F6BA48]/70 bg-[#EFA3C0]">
                       <Share2 className="h-5 w-5 text-[#EC4899]" />
                     </div>
 
@@ -469,7 +469,7 @@ export default function DashboardPage() {
                     type="button"
                     aria-label="Kurulum yardımını kapat"
                     onClick={() => setShowInstallHelp(false)}
-                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-pink-400/70 bg-[#EFA3C0] text-[#6A3048] transition hover:bg-[#EFA3C0]/[0.08] hover:text-white"
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[#F6BA48]/70 bg-[#EFA3C0] text-[#6A3048] transition hover:bg-[#EFA3C0]/[0.08] hover:text-white"
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -486,7 +486,7 @@ export default function DashboardPage() {
               {/* YENİ BEĞENİ */}
               <Link
                 href="/likes"
-                className="flex h-28 min-w-0 flex-col justify-between rounded-2xl border border-pink-400/70 bg-[#EFA3C0] p-4 transition-all hover:border-pink-500/40"
+                className="flex h-28 min-w-0 flex-col justify-between rounded-2xl border border-[#F6BA48]/70 bg-[#EFA3C0] p-4 transition-all hover:border-pink-500/40"
               >
                 <Heart className="h-4 w-4 text-[#EC4899]" />
 
@@ -504,7 +504,7 @@ export default function DashboardPage() {
               {/* MESAJLAR */}
               <Link
                 href="/messages"
-                className="flex h-28 min-w-0 flex-col justify-between rounded-2xl border border-pink-400/70 bg-[#EFA3C0] p-4 transition-all hover:border-pink-400"
+                className="flex h-28 min-w-0 flex-col justify-between rounded-2xl border border-[#F6BA48]/70 bg-[#EFA3C0] p-4 transition-all hover:border-[#F6BA48]"
               >
                 <MessageCircle className="h-4 w-4 text-[#EC4899]" />
 

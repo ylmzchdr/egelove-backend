@@ -390,7 +390,7 @@ setIsPremium(premiumStatus);
 
                 <div>
                   <div className="font-black text-lg">
-                    EGE<span className="text-pink-400">LOVE</span>
+                    EGE<span className="text-[#F6BA48]">LOVE</span>
                   </div>
 
                   <div className="text-[8px] tracking-[3px] text-[#2D1721]/30">
@@ -428,7 +428,7 @@ setIsPremium(premiumStatus);
 
               <div>
                 <div className="text-xl font-black tracking-tight">
-                  EGE<span className="text-pink-400">LOVE</span>
+                  EGE<span className="text-[#F6BA48]">LOVE</span>
                 </div>
 
                 <div className="text-[9px] tracking-[3px] text-[#2D1721]/25 mt-1">
@@ -507,7 +507,7 @@ setIsPremium(premiumStatus);
                     onClick={() => setLang("TR")}
                     className={`h-10 px-3 rounded-xl border text-xs font-bold transition ${
                       lang === "TR"
-                        ? "border-pink-400/40 bg-pink-500/15 text-pink-300"
+                        ? "border-[#F6BA48]/40 bg-pink-500/15 text-pink-300"
                         : "border-pink-200 bg-white/[0.02] text-[#7A5363] hover:text-[#2D1721] hover:bg-pink-50"
                     }`}
                   >
@@ -519,7 +519,7 @@ setIsPremium(premiumStatus);
                     onClick={() => setLang("EN")}
                     className={`h-10 px-3 rounded-xl border text-xs font-bold transition ${
                       lang === "EN"
-                        ? "border-pink-400/40 bg-pink-500/15 text-pink-300"
+                        ? "border-[#F6BA48]/40 bg-pink-500/15 text-pink-300"
                         : "border-pink-200 bg-white/[0.02] text-[#7A5363] hover:text-[#2D1721] hover:bg-pink-50"
                     }`}
                   >
@@ -531,7 +531,7 @@ setIsPremium(premiumStatus);
                     onClick={() => setLang("RU")}
                     className={`h-10 px-3 rounded-xl border text-xs font-bold transition ${
                       lang === "RU"
-                        ? "border-pink-400/40 bg-pink-500/15 text-pink-300"
+                        ? "border-[#F6BA48]/40 bg-pink-500/15 text-pink-300"
                         : "border-pink-200 bg-white/[0.02] text-[#7A5363] hover:text-[#2D1721] hover:bg-pink-50"
                     }`}
                   >
@@ -543,7 +543,7 @@ setIsPremium(premiumStatus);
                     onClick={() => setLang("AR")}
                     className={`h-10 px-3 rounded-xl border text-xs font-bold transition ${
                       lang === "AR"
-                        ? "border-pink-400/40 bg-pink-500/15 text-pink-300"
+                        ? "border-[#F6BA48]/40 bg-pink-500/15 text-pink-300"
                         : "border-pink-200 bg-white/[0.02] text-[#7A5363] hover:text-[#2D1721] hover:bg-pink-50"
                     }`}
                   >
@@ -558,7 +558,7 @@ setIsPremium(premiumStatus);
                 >
                   <Bell className="w-5 h-5" />
 
-                  <span className="absolute right-2 top-2 w-2 h-2 rounded-full bg-pink-400" />
+                  <span className="absolute right-2 top-2 w-2 h-2 rounded-full bg-[#F6BA48]" />
                 </button>
 
                 {/* PROFILE */}
@@ -589,8 +589,8 @@ setIsPremium(premiumStatus);
               {/* PAGE TITLE */}
               <div className="mb-8">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-11 h-11 rounded-xl bg-pink-500/10 border border-pink-400/20 flex items-center justify-center">
-                    <Heart className="w-5 h-5 text-pink-400" />
+                  <div className="w-11 h-11 rounded-xl bg-pink-500/10 border border-[#F6BA48]/20 flex items-center justify-center">
+                    <Heart className="w-5 h-5 text-[#F6BA48]" />
                   </div>
 
                   <div>
@@ -610,7 +610,7 @@ setIsPremium(premiumStatus);
 
                 <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-6">
                   <div>
-                    <div className="inline-flex items-center gap-2 rounded-full border border-pink-400/20 bg-pink-400/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-pink-300">
+                    <div className="inline-flex items-center gap-2 rounded-full border border-[#F6BA48]/20 bg-[#F6BA48]/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-pink-300">
                       <Sparkles className="w-3.5 h-3.5" />
                       SenVeBen
                     </div>
@@ -677,7 +677,7 @@ setIsPremium(premiumStatus);
                   >
                     <Heart
                       className={`w-4 h-4 ${
-                        tab === "received" ? "text-pink-400" : ""
+                        tab === "received" ? "text-[#F6BA48]" : ""
                       }`}
                     />
 
@@ -734,8 +734,8 @@ setIsPremium(premiumStatus);
               {/* LOADING */}
               {loading && (
                 <div className="py-24 flex flex-col items-center justify-center">
-                  <div className="w-14 h-14 rounded-2xl bg-pink-500/10 border border-pink-400/20 flex items-center justify-center mb-4">
-                    <Loader2 className="w-7 h-7 text-pink-400 animate-spin" />
+                  <div className="w-14 h-14 rounded-2xl bg-pink-500/10 border border-[#F6BA48]/20 flex items-center justify-center mb-4">
+                    <Loader2 className="w-7 h-7 text-[#F6BA48] animate-spin" />
                   </div>
 
                   <p className="text-sm text-[#2D1721]/30">
@@ -753,7 +753,7 @@ setIsPremium(premiumStatus);
               {/* NOT LOGGED IN */}
               {!loading && !myId && (
                 <EmptyState
-                  icon={<Heart className="w-10 h-10 text-pink-400" />}
+                  icon={<Heart className="w-10 h-10 text-[#F6BA48]" />}
                   title={
                     lang === "TR"
                       ? "Giriş yapmalısın"
@@ -783,7 +783,7 @@ setIsPremium(premiumStatus);
                 tab === "received" &&
                 received.length === 0 && (
                   <EmptyState
-                    icon={<Heart className="w-10 h-10 text-pink-400" />}
+                    icon={<Heart className="w-10 h-10 text-[#F6BA48]" />}
                     title={t.noOneLiked}
                     description={t.noOneLikedDesc}
                     buttonText={t.editProfile}
@@ -830,7 +830,7 @@ setIsPremium(premiumStatus);
                     return (
                       <article
                         key={match.id}
-                        className="group relative overflow-hidden rounded-3xl border border-pink-200 bg-[#0d1422] hover:border-pink-400/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-pink-500/10"
+                        className="group relative overflow-hidden rounded-3xl border border-pink-200 bg-[#0d1422] hover:border-[#F6BA48]/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-pink-500/10"
                       >
                         {/* IMAGE */}
                        <button
@@ -853,7 +853,7 @@ setIsPremium(premiumStatus);
 }`}
                             />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-pink-500/20 via-pink-400/10 to-cyan-500/10">
+                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-pink-500/20 via-[#F6BA48]/10 to-cyan-500/10">
                               <div className="w-24 h-24 rounded-full bg-gradient-to-br from-pink-500 to-pink-600 flex items-center justify-center text-3xl font-black shadow-xl">
                                 {getInitials(other)}
                               </div>
@@ -940,7 +940,7 @@ setIsPremium(premiumStatus);
                               <button
                                 disabled={likingId === String(other.id)}
                                 onClick={() => handleLike(String(other.id))}
-                                className="flex-1 h-10 rounded-xl bg-gradient-to-r from-pink-500 to-fuchsia-500 hover:from-pink-400 hover:to-fuchsia-400 text-xs font-bold transition shadow-lg shadow-pink-500/10 disabled:opacity-50 flex items-center justify-center gap-1.5"
+                                className="flex-1 h-10 rounded-xl bg-gradient-to-r from-pink-500 to-fuchsia-500 hover:from-[#F6BA48] hover:to-fuchsia-400 text-xs font-bold transition shadow-lg shadow-pink-500/10 disabled:opacity-50 flex items-center justify-center gap-1.5"
                               >
                                 {likingId === String(other.id) ? (
                                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -1047,20 +1047,20 @@ function SidebarLinks({
             onClick={() => navigate(item.url)}
             className={`relative w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all ${
               isActive
-                ? "bg-gradient-to-r from-pink-500/15 via-pink-400/10 to-transparent text-[#2D1721]"
+                ? "bg-gradient-to-r from-pink-500/15 via-[#F6BA48]/10 to-transparent text-[#2D1721]"
                 : "text-[#7A5363] hover:text-[#2D1721] hover:bg-pink-50"
             }`}
           >
             {isActive && (
-              <span className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-gradient-to-b from-pink-400 to-purple-500" />
+              <span className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-gradient-to-b from-[#F6BA48] to-purple-500" />
             )}
 
-            <Icon className={`w-5 h-5 ${isActive ? "text-pink-400" : ""}`} />
+            <Icon className={`w-5 h-5 ${isActive ? "text-[#F6BA48]" : ""}`} />
 
             <span className="text-sm font-semibold">{item.label}</span>
 
             {isActive && (
-              <ChevronRight className="w-4 h-4 ml-auto text-pink-400" />
+              <ChevronRight className="w-4 h-4 ml-auto text-[#F6BA48]" />
             )}
           </button>
         );

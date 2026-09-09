@@ -222,7 +222,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose
         className={[
           "group relative flex min-h-12 items-center gap-3 rounded-2xl px-3.5 py-3",
           "transition-all duration-300 ease-out",
-          "focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-400/80",
+          "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#F6BA48]/80",
           active
             ? "bg-gradient-to-r from-[#A62A61]/80 via-[#8E2859]/75 to-[#711D46]/70 text-white shadow-[0_12px_35px_rgba(236,72,153,0.12)]"
             : "text-[#F7DCE7] hover:bg-pink-300/15 hover:text-white",
@@ -255,7 +255,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose
         </span>
 
         {item.badge && (
-          <span className="rounded-full border border-pink-400/20 bg-pink-400/10 px-2 py-0.5 text-[10px] font-bold text-pink-300">
+          <span className="rounded-full border border-[#F6BA48]/20 bg-[#F6BA48]/10 px-2 py-0.5 text-[10px] font-bold text-pink-300">
             {item.badge}
           </span>
         )}
@@ -284,7 +284,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose
 
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -bottom-28 -right-28 h-72 w-72 rounded-full bg-pink-400/[0.12] blur-[100px]"
+        className="pointer-events-none absolute -bottom-28 -right-28 h-72 w-72 rounded-full bg-[#F6BA48]/[0.12] blur-[100px]"
       />
 
       <div
@@ -297,7 +297,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose
         <div className="border-b border-pink-200/25 px-5 pb-5 pt-6">
           <Link
             href="/dashboard"
-            className="group flex items-center gap-3 rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-400/80"
+            className="group flex items-center gap-3 rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[#F6BA48]/80"
           >
             <div className="relative flex h-12 w-12 shrink-0 items-center justify-center">
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-pink-500 via-rose-500 to-pink-600 opacity-90 shadow-[0_12px_35px_rgba(236,72,153,0.28)] transition-transform duration-300 group-hover:scale-105" />
@@ -357,10 +357,10 @@ export default function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose
           </nav>
 
           {/* PREMIUM */}
-          <div className="relative mt-6 overflow-hidden rounded-[24px] border border-pink-400/[0.14] bg-gradient-to-br from-pink-400/[0.18] via-rose-400/[0.12] to-pink-300/[0.10] p-4 shadow-[0_18px_50px_rgba(0,0,0,0.22)]">
+          <div className="relative mt-6 overflow-hidden rounded-[24px] border border-[#F6BA48]/[0.14] bg-gradient-to-br from-[#F6BA48]/[0.18] via-rose-400/[0.12] to-pink-300/[0.10] p-4 shadow-[0_18px_50px_rgba(0,0,0,0.22)]">
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute -right-7 -top-9 h-24 w-24 rounded-full bg-pink-400/20 blur-3xl"
+              className="pointer-events-none absolute -right-7 -top-9 h-24 w-24 rounded-full bg-[#F6BA48]/20 blur-3xl"
             />
 
             <div className="relative">

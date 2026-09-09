@@ -18,7 +18,7 @@ type ProfileCardProps = {
 };
 
 const avatarColors = [
-  "from-pink-400 to-purple-500",
+  "from-[#F6BA48] to-purple-500",
   "from-blue-400 to-cyan-500",
   "from-amber-400 to-orange-500",
   "from-emerald-400 to-teal-500",
@@ -84,7 +84,7 @@ const avatarUrl =
     overflow-hidden
     rounded-3xl
     border
-    border-pink-400/15
+    border-[#F6BA48]/15
     bg-gradient-to-b
     from-[#13283f]/95
     via-[#102235]/95
@@ -113,7 +113,7 @@ const avatarUrl =
           </div>
         )}
 
-        <div className="absolute -bottom-11 left-1/2 h-24 w-24 -translate-x-1/2 overflow-hidden rounded-full border-4 border-pink-400 bg-white shadow-[0_0_30px_rgba(0,255,255,.35)]">
+        <div className="absolute -bottom-11 left-1/2 h-24 w-24 -translate-x-1/2 overflow-hidden rounded-full border-4 border-[#F6BA48] bg-white shadow-[0_0_30px_rgba(0,255,255,.35)]">
           {avatarUrl ? (
             <img src={avatarUrl} alt={name} className="w-full h-full object-cover" />
           ) : (
@@ -165,7 +165,7 @@ const avatarUrl =
             type="button"
             onClick={handleViewProfile}
             variant="outline"
-            className="flex-1 h-10 rounded-xl border border-pink-400/30 bg-pink-500/5 text-pink-600 transition-all hover:border-pink-300 hover:bg-pink-500/10"
+            className="flex-1 h-10 rounded-xl border border-[#F6BA48]/30 bg-pink-500/5 text-pink-600 transition-all hover:border-pink-300 hover:bg-pink-500/10"
           >
             {t.profile.viewProfile}
           </Button>

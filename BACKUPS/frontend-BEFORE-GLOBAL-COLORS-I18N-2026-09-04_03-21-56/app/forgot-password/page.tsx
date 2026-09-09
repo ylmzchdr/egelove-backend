@@ -62,7 +62,7 @@ const handleReset = async (e: React.FormEvent) => {
         <Card className="bg-white/5 border-white/10 p-8">
           {step === "email" && (
             <form onSubmit={handleSendCode} className="space-y-4">
-              <Mail className="w-10 h-10 text-pink-400 mx-auto mb-2" />
+              <Mail className="w-10 h-10 text-[#F6BA48] mx-auto mb-2" />
               <h1 className="text-2xl font-bold text-center">Şifremi Unuttum</h1>
               <p className="text-base text-white/50 text-center">E-posta adresine şifre sıfırlama kodu gönderelim.</p>
               <Input

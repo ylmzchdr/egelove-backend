@@ -629,7 +629,7 @@ export default function ProfilePage() {
           <div className="mx-auto max-w-[1480px] px-3 sm:px-5 lg:px-8">
             <div className="mb-7 flex flex-col gap-4 sm:mb-9 md:flex-row md:items-end md:justify-between">
               <div>
-                <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-pink-400/20 bg-pink-500/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-pink-200">
+                <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[#F6BA48]/20 bg-pink-500/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-pink-200">
                   <Sparkles className="h-3.5 w-3.5" />
                   SENVEBEN PROFILE V2
                 </div>
@@ -656,7 +656,7 @@ export default function ProfilePage() {
                 className={`${glassCard} flex min-h-[420px] items-center justify-center`}
               >
                 <div className="text-center">
-                  <Loader2 className="mx-auto h-11 w-11 animate-spin text-pink-400" />
+                  <Loader2 className="mx-auto h-11 w-11 animate-spin text-[#F6BA48]" />
                   <p className="mt-4 text-base text-[#7A5363]">SENVEBEN</p>
                 </div>
               </div>
@@ -678,7 +678,7 @@ export default function ProfilePage() {
                 <div
                   className={`${glassCard} relative overflow-hidden p-4 sm:p-6 lg:p-8`}
                 >
-                  <div className="absolute inset-x-0 top-0 h-36 bg-gradient-to-r from-pink-600/25 via-pink-400/15 to-pink-600/20" />
+                  <div className="absolute inset-x-0 top-0 h-36 bg-gradient-to-r from-pink-600/25 via-[#F6BA48]/15 to-pink-600/20" />
                   <div className="absolute right-[-70px] top-[-90px] h-64 w-64 rounded-full bg-pink-500/20 blur-3xl" />
 
                   <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end">
@@ -740,7 +740,7 @@ export default function ProfilePage() {
                         </Button>
                       </Link>
                       <Link href="/premium" className="flex-1">
-                        <Button className="h-12 w-full rounded-2xl border border-amber-300/25 bg-pink-400/10 font-bold text-pink-600 hover:bg-pink-400/20">
+                        <Button className="h-12 w-full rounded-2xl border border-amber-300/25 bg-[#F6BA48]/10 font-bold text-pink-600 hover:bg-[#F6BA48]/20">
                           <Crown className="mr-2 h-4 w-4" />
                           {tx.premium}
                         </Button>
@@ -762,7 +762,7 @@ export default function ProfilePage() {
 ].map(({ icon: Icon, label, value }) => (
                     <div
                       key={label}
-                      className={`${glassCard} group p-4 transition duration-300 hover:-translate-y-1 hover:border-pink-400/25 sm:p-5`}
+                      className={`${glassCard} group p-4 transition duration-300 hover:-translate-y-1 hover:border-[#F6BA48]/25 sm:p-5`}
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-pink-300/15 bg-pink-500/10 text-pink-300">
@@ -830,7 +830,7 @@ export default function ProfilePage() {
                     </div>
 
                     <div className={`${glassCard} grid grid-cols-2 gap-3 p-4`}>
-                      <button className="flex items-center justify-center gap-2 rounded-2xl border border-pink-400/25 bg-pink-500/10 py-3 text-base font-bold text-pink-200 transition hover:bg-pink-500/20">
+                      <button className="flex items-center justify-center gap-2 rounded-2xl border border-[#F6BA48]/25 bg-pink-500/10 py-3 text-base font-bold text-pink-200 transition hover:bg-pink-500/20">
                         <Heart className="h-4 w-4" />
                         {tx.wink}
                       </button>

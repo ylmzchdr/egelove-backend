@@ -128,7 +128,7 @@ function FilterCheckbox({
     <label
       className={`flex cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 transition select-none ${
         checked
-          ? "border-pink-300/50 bg-pink-400/10 text-[#2D1721]"
+          ? "border-pink-300/50 bg-[#F6BA48]/10 text-[#2D1721]"
           : "border-pink-200 bg-white/[0.04] text-[#6B4454] hover:bg-white/[0.07] hover:text-[#2D1721]"
       }`}
     >
@@ -165,7 +165,7 @@ function UserCard({ user }: { user: SearchUser }) {
   return (
     <Link
       href={`/profile/${user.id}`}
-      className="group block cursor-pointer rounded-2xl border border-pink-200 bg-white/[0.04] p-4 transition hover:border-pink-400/40 hover:bg-white/[0.07]"
+      className="group block cursor-pointer rounded-2xl border border-pink-200 bg-white/[0.04] p-4 transition hover:border-[#F6BA48]/40 hover:bg-white/[0.07]"
     >
       <div className="flex items-center gap-4">
 
@@ -465,13 +465,13 @@ setHasSearched(true);
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={handleKeyDown}
-              className="h-12 w-full rounded-xl border border-white/12 bg-white/[0.05] pl-11 pr-4 text-base text-[#2D1721] outline-none transition focus:border-pink-400/50 focus:ring-2 focus:ring-cyan-400/20"
+              className="h-12 w-full rounded-xl border border-white/12 bg-white/[0.05] pl-11 pr-4 text-base text-[#2D1721] outline-none transition focus:border-[#F6BA48]/50 focus:ring-2 focus:ring-cyan-400/20"
             />
 
           </div>
                 <Link
         href="/dashboard"
-        className="mx-auto mt-3 inline-flex items-center gap-2 rounded-xl border border-pink-200 bg-white/[0.03] px-4 py-2 text-sm font-semibold text-[#6B4454] transition-all duration-200 hover:border-pink-400/30 hover:bg-pink-500/[0.06] hover:text-pink-500"
+        className="mx-auto mt-3 inline-flex items-center gap-2 rounded-xl border border-pink-200 bg-white/[0.03] px-4 py-2 text-sm font-semibold text-[#6B4454] transition-all duration-200 hover:border-[#F6BA48]/30 hover:bg-pink-500/[0.06] hover:text-pink-500"
       >
         â† Anasayfaya DÃ¶n
       </Link>
@@ -482,7 +482,7 @@ setHasSearched(true);
             type="button"
             onClick={performSearch}
             disabled={loading}
-            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-pink-400/40 bg-pink-500/10 text-pink-500 transition hover:bg-pink-500/20 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-[#F6BA48]/40 bg-pink-500/10 text-pink-500 transition hover:bg-pink-500/20 disabled:cursor-not-allowed disabled:opacity-50"
             title="Ara"
           >
             {loading ? (
@@ -499,7 +499,7 @@ setHasSearched(true);
             onClick={() => setShowFilters(!showFilters)}
             className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border transition ${
               showFilters
-                ? "border-pink-400 bg-pink-500/10 text-pink-500"
+                ? "border-[#F6BA48] bg-pink-500/10 text-pink-500"
                 : "border-white/12 bg-white/[0.05] text-[#6B4454] hover:bg-white/[0.08]"
             }`}
             title="Filtreler"

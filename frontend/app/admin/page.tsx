@@ -92,7 +92,7 @@ export default function AdminPage() {
       <section className="py-12">
         <div className="mx-auto max-w-7xl px-4">
           <div className="flex items-center gap-3 mb-8">
-            <Shield className="w-8 h-8 text-pink-400" />
+            <Shield className="w-8 h-8 text-[#F6BA48]" />
             <h1 className="text-3xl font-bold">Admin Paneli</h1>
           </div>
 
@@ -143,7 +143,7 @@ export default function AdminPage() {
                 pendingPhotos.map((photo) => (
                   <Card key={photo.id} className="bg-white/5 border-white/10 p-4 flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                      <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center text-xl font-bold">
+                      <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#F6BA48] to-purple-500 flex items-center justify-center text-xl font-bold">
                         {photo.user.name.charAt(0)}
                       </div>
                       <div>

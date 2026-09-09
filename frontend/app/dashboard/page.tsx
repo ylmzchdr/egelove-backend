@@ -192,19 +192,19 @@ export default function DashboardPage() {
 
   if (!isClient) {
     return (
-      <div className="min-h-screen bg-[#310D0C] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-purple-500 animate-spin" />
+      <div className="flex min-h-screen items-center justify-center bg-[#310D0C]">
+        <Loader2 className="h-8 w-8 animate-spin text-[#F6BA48]" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen w-full overflow-x-hidden bg-[#310D0C] text-white">
+    <div className="min-h-screen w-full overflow-x-hidden bg-[#F8D290] text-[#F8D290]">
       <div className="flex min-h-screen w-full">
 
         {/* SOL SIDEBAR */}
         <aside
-          className={`fixed inset-y-0 left-0 z-50 w-[286px] shrink-0 bg-[#310D0C] transition-transform duration-300 lg:sticky lg:top-0 lg:block lg:translate-x-0 ${
+          className={`fixed inset-y-0 left-0 z-50 w-[286px] shrink-0 bg-gradient-to-b from-[#310D0C] to-[#512510] transition-transform duration-300 lg:sticky lg:top-0 lg:block lg:translate-x-0 ${
             isSidebarOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
@@ -215,30 +215,24 @@ export default function DashboardPage() {
         </aside>
 
         {/* SAĞ ANA İÇERİK */}
-        <main className="min-h-screen min-w-0 flex-1 overflow-x-hidden">
+        <main className="min-h-screen min-w-0 flex-1 overflow-x-hidden bg-gradient-to-br from-[#F8D290] via-[#F6BA48] to-[#CF7526]">
           <div className="w-full pl-0 pr-4 pb-10 pt-4 sm:pr-5 md:pr-6 lg:pr-7 xl:pr-8">
 
-            {/* =====================================================
-                senveben LOGO + SLOGAN
-            ===================================================== */}
-            <div className="mb-2 flex w-full flex-col items-center justify-center gap-3 text-center">
+           {/* =====================================================
+    SENveBEN HERO BANNER
+===================================================== */}
+<div className="mb-4 w-full overflow-hidden rounded-3xl border border-[#F6BA48]/70 shadow-[0_18px_45px_rgba(49,13,12,0.28)]">
+  <div
+    className="relative min-h-[150px] w-full bg-cover bg-center bg-no-repeat sm:min-h-[180px] md:min-h-[210px] lg:min-h-[230px]"
+    style={{
+      backgroundImage: "url('/senveben-hero-banner.png')",
+    }}
+  >
+    <div className="absolute inset-0 bg-gradient-to-r from-[#310D0C]/15 via-transparent to-[#310D0C]/10" />
 
-              <h1 className="text-3xl font-black tracking-tight text-[#EC4B99]">
-  senveben.com.tr
-</h1>
-
-
-              <div className="inline-flex items-center gap-2 rounded-full border border-pink-400/70 bg-[#EFA3C0] px-4 py-1.5 backdrop-blur-md">
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-400 opacity-75" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan-500" />
-                </span>
-
-                <p className="text-xs font-bold tracking-wide text-[#EC4899]">
-                  {t.dashboard.connectionTitle}
-                </p>
-              </div>
-            </div>
+   
+  </div>
+</div>
 
             <div className="mb-6 w-full">
               <Topbar
@@ -255,19 +249,19 @@ export default function DashboardPage() {
 
               {/* PROFİLİM */}
               <Link href="/profile/edit" className="group min-w-0">
-                <div className="h-full rounded-2xl border border-pink-400/70 bg-gradient-to-r from-[#EFA3C0] to-[#EFA3C0] p-5 transition-all hover:border-pink-400 hover:shadow-lg hover:shadow-pink-500/10">
+                <div className="h-full rounded-2xl border border-[#F6BA48]/70 bg-gradient-to-br from-[#683312] to-[#7E4114] p-5 shadow-lg shadow-[#310D0C]/20 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#F8D290] hover:shadow-xl hover:shadow-[#310D0C]/30">
                   <div className="flex items-center gap-4">
 
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-pink-400/70 bg-[#512510]">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[#F6BA48]/70 bg-[#512510] shadow-inner">
                       <User className="h-6 w-6 text-[#F6BA48]" />
                     </div>
 
                     <div className="min-w-0 flex-1">
-                      <h2 className="text-base font-black md:text-lg">
+                      <h2 className="text-base font-black text-[#F8D290] md:text-lg">
                         {t.dashboard.profileTitle}
                       </h2>
 
-                      <p className="mt-1 text-xs text-[#6A3048] md:text-sm">
+                      <p className="mt-1 text-xs text-[#F8D290]/75 md:text-sm">
                         {t.dashboard.profileDesc}
                       </p>
                     </div>
@@ -279,19 +273,19 @@ export default function DashboardPage() {
 
               {/* BİRİNİ BUL */}
               <Link href="/search" className="group min-w-0">
-                <div className="h-full rounded-2xl border border-pink-400/70 bg-[#EFA3C0] p-5 transition-all hover:bg-[#EFA3C0]">
+                <div className="h-full rounded-2xl border border-[#F6BA48]/70 bg-gradient-to-br from-[#7E4114] to-[#964F1C] p-5 shadow-lg shadow-[#310D0C]/20 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#F8D290] hover:shadow-xl hover:shadow-[#310D0C]/30">
                   <div className="flex items-center gap-4">
 
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-pink-400/70 bg-[#EFA3C0]">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[#F6BA48]/70 bg-[#512510]">
                       <Search className="h-6 w-6 text-[#F6BA48]" />
                     </div>
 
                     <div className="min-w-0 flex-1">
-                      <h2 className="text-base font-black text-white md:text-lg">
+                      <h2 className="text-base font-black text-[#F8D290] md:text-lg">
                         {t.dashboard.find}
                       </h2>
 
-                      <p className="mt-1 truncate text-xs text-[#6A3048] md:text-sm">
+                      <p className="mt-1 truncate text-xs text-[#F8D290]/75 md:text-sm">
                         {t.dashboard.findProfileDesc}
                       </p>
                     </div>
@@ -307,30 +301,30 @@ export default function DashboardPage() {
 
               {/* CANLI SOHBET */}
               <Link href="/messages" className="group block min-w-0">
-                <div className="relative h-full overflow-hidden rounded-3xl border border-pink-400/70 bg-gradient-to-br from-[#EFA3C0] to-[#EFA3C0] p-6 shadow-xl shadow-pink-500/10 backdrop-blur-xl transition-all duration-300 hover:border-pink-400/60">
+                <div className="relative h-full overflow-hidden rounded-3xl border border-[#F6BA48]/70 bg-gradient-to-br from-[#683312] via-[#7E4114] to-[#512510] p-6 shadow-xl shadow-[#310D0C]/25 backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-[#F8D290]">
 
-                  <div className="absolute right-0 top-0 -mr-10 -mt-10 h-32 w-32 rounded-full bg-[#EFA3C0] blur-3xl transition-all duration-500 group-hover:bg-[#512510]" />
+                  <div className="absolute right-0 top-0 -mr-10 -mt-10 h-32 w-32 rounded-full bg-[#EF912C]/20 blur-3xl transition-all duration-500 group-hover:bg-[#F6BA48]/25" />
 
                   <div className="relative mb-4 flex items-center gap-4">
 
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-2 border-[#880e4f]/30 bg-[#512510]">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border-2 border-[#F6BA48]/60 bg-[#310D0C]">
                       <Camera className="h-5 w-5 animate-pulse text-[#F6BA48]" />
                     </div>
 
                     <div className="min-w-0">
-                      <h3 className="text-sm font-bold tracking-wide text-white md:text-base">
+                      <h3 className="text-sm font-bold tracking-wide text-[#F8D290] md:text-base">
                         {t.dashboard.liveChatTitle}
                       </h3>
 
-                      <span className="mt-1 inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-[10px] font-semibold tracking-wider text-emerald-400">
-                        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
+                      <span className="mt-1 inline-flex items-center gap-1.5 rounded-full border border-[#F6BA48]/50 bg-[#F6BA48]/10 px-2.5 py-1 text-[10px] font-semibold tracking-wider text-[#F6BA48]">
+                        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#3FB36E]" />
                         {t.dashboard.liveChatStatus}
                       </span>
                     </div>
 
                   </div>
 
-                  <p className="relative text-xs leading-relaxed tracking-wide text-[#572438] md:text-sm">
+                  <p className="relative text-xs leading-relaxed tracking-wide text-[#F8D290]/75 md:text-sm">
                     {t.dashboard.liveChatDesc}
                   </p>
 
@@ -338,28 +332,28 @@ export default function DashboardPage() {
               </Link>
 
               {/* TELEFONA YÜKLE */}
-              <div className="relative h-full min-w-0 overflow-hidden rounded-3xl border border-pink-400/70 bg-gradient-to-br from-[#EFA3C0] via-[#EFA3C0] to-[#EFA3C0] p-6 shadow-xl shadow-pink-500/10 backdrop-blur-xl">
+              <div className="relative h-full min-w-0 overflow-hidden rounded-3xl border border-[#F6BA48]/70 bg-gradient-to-br from-[#7E4114] via-[#683312] to-[#512510] p-6 shadow-xl shadow-[#310D0C]/25 backdrop-blur-xl">
 
-                <div className="absolute right-0 top-0 -mr-10 -mt-10 h-32 w-32 rounded-full bg-[#EFA3C0] blur-3xl" />
+                <div className="absolute right-0 top-0 -mr-10 -mt-10 h-32 w-32 rounded-full bg-[#F6BA48]/20 blur-3xl" />
 
                 <div className="relative flex h-full flex-col">
 
                   <div className="mb-4 flex items-center gap-4">
 
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-pink-400/70 bg-[#EFA3C0]">
-                      <Smartphone className="h-5 w-5 text-[#EC4899]" />
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#F6BA48]/70 bg-[#310D0C]">
+                      <Smartphone className="h-5 w-5 text-[#F6BA48]" />
                     </div>
 
                     <div className="min-w-0">
-                      <h3 className="text-sm font-bold tracking-wide text-white md:text-base">
+                      <h3 className="text-sm font-bold tracking-wide text-[#F8D290] md:text-base">
                         {t.dashboard.installPhoneTitle}
                       </h3>
 
                       <span
                         className={`mt-1 inline-block rounded-md border px-2 py-1 text-[9px] font-bold tracking-wider ${
                           isStandalone
-                            ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                            : "border-pink-400/70 bg-[#EFA3C0] text-[#EC4899]"
+                            ? "border-[#3FB36E]/50 bg-[#3FB36E]/10 text-[#3FB36E]"
+                            : "border-[#F6BA48] bg-[#F6BA48] text-[#310D0C]"
                         }`}
                       >
                         {isStandalone ? "TELEFONUNDA YÜKLÜ" : t.dashboard.free}
@@ -368,7 +362,7 @@ export default function DashboardPage() {
 
                   </div>
 
-                  <p className="relative mb-4 text-xs leading-relaxed tracking-wide text-[#6A3048] md:text-sm">
+                  <p className="relative mb-4 text-xs leading-relaxed tracking-wide text-[#F8D290]/75 md:text-sm">
                     {t.dashboard.installPhoneDesc}
                   </p>
 
@@ -376,7 +370,7 @@ export default function DashboardPage() {
                     <button
                       type="button"
                       onClick={handleInstallClick}
-                      className="relative mt-auto flex w-full items-center justify-center gap-2 rounded-xl border border-pink-400 bg-gradient-to-r from-pink-500/20 to-rose-500/20 px-4 py-3 text-sm font-black text-white transition-all hover:border-pink-400 hover:from-cyan-500/30 hover:to-purple-500/30 active:scale-[0.99]"
+                      className="relative mt-auto flex w-full items-center justify-center gap-2 rounded-xl border border-[#F6BA48] bg-gradient-to-r from-[#F6BA48] to-[#EF912C] px-4 py-3 text-sm font-black text-[#310D0C] shadow-md shadow-[#310D0C]/20 transition-all hover:from-[#F8D290] hover:to-[#F6BA48] active:scale-[0.99]"
                     >
                       <Download className="h-4 w-4" />
                       {t.dashboard.installPhoneButton}
@@ -384,7 +378,7 @@ export default function DashboardPage() {
                   )}
 
                   {isStandalone && (
-                    <div className="relative mt-auto flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm font-bold text-emerald-400">
+                    <div className="relative mt-auto flex w-full items-center justify-center gap-2 rounded-xl border border-[#3FB36E]/50 bg-[#3FB36E]/10 px-4 py-3 text-sm font-bold text-[#3FB36E]">
                       <Smartphone className="h-4 w-4" />
                       senveben Telefonunda
                     </div>
@@ -403,31 +397,31 @@ export default function DashboardPage() {
 
             {/* PWA KURULUM YARDIMI */}
             {showInstallHelp && !isStandalone && (
-              <div className="mt-4 overflow-hidden rounded-2xl border border-pink-400/70 bg-[#EFA3C0] shadow-xl shadow-pink-500/10">
+              <div className="mt-4 overflow-hidden rounded-2xl border border-[#F6BA48]/70 bg-gradient-to-br from-[#683312] to-[#512510] shadow-xl shadow-[#310D0C]/25">
 
                 <div className="flex items-start justify-between gap-4 p-5">
 
                   <div className="flex min-w-0 gap-3">
 
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-pink-400/70 bg-[#EFA3C0]">
-                      <Share2 className="h-5 w-5 text-[#EC4899]" />
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#F6BA48]/70 bg-[#310D0C]">
+                      <Share2 className="h-5 w-5 text-[#F6BA48]" />
                     </div>
 
                     <div className="min-w-0">
-                      <h3 className="text-sm font-black text-white">
+                      <h3 className="text-sm font-black text-[#F8D290]">
                         {isIOS
                           ? "iPhone'a senveben Nasıl Eklenir?"
                           : "senveben'ı Ana Ekrana Ekle"}
                       </h3>
 
                       {isIOS ? (
-                        <p className="mt-2 text-xs leading-6 text-[#572438] md:text-sm">
+                        <p className="mt-2 text-xs leading-6 text-[#F8D290]/75 md:text-sm">
                           Safari&apos;de alttaki
                           <span className="font-bold text-[#F6BA48]">
                             {" "}Paylaş{" "}
                           </span>
                           simgesine dokun. Açılan menüden
-                          <span className="font-bold text-white">
+                          <span className="font-bold text-[#F8D290]">
                             {" "}Ana Ekrana Ekle{" "}
                           </span>
                           seçeneğini seç ve ardından
@@ -437,13 +431,13 @@ export default function DashboardPage() {
                           butonuna dokun.
                         </p>
                       ) : (
-                        <p className="mt-2 text-xs leading-6 text-[#572438] md:text-sm">
+                        <p className="mt-2 text-xs leading-6 text-[#F8D290]/75 md:text-sm">
                           Tarayıcının menüsünü aç ve
-                          <span className="font-bold text-white">
+                          <span className="font-bold text-[#F8D290]">
                             {" "}Uygulamayı yükle{" "}
                           </span>
                           veya
-                          <span className="font-bold text-white">
+                          <span className="font-bold text-[#F8D290]">
                             {" "}Ana ekrana ekle{" "}
                           </span>
                           seçeneğini kullan. Kurulum seçeneği görünmüyorsa
@@ -458,7 +452,7 @@ export default function DashboardPage() {
                     type="button"
                     aria-label="Kurulum yardımını kapat"
                     onClick={() => setShowInstallHelp(false)}
-                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-pink-400/70 bg-[#EFA3C0] text-[#6A3048] transition hover:bg-[#EFA3C0]/[0.08] hover:text-white"
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[#F6BA48]/60 bg-[#310D0C] text-[#F6BA48] transition hover:bg-[#512510] hover:text-[#F8D290]"
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -475,17 +469,18 @@ export default function DashboardPage() {
               {/* YENİ BEĞENİ */}
               <Link
                 href="/likes"
-                className="flex h-28 min-w-0 flex-col justify-between rounded-2xl border border-pink-400/70 bg-[#EFA3C0] p-4 transition-all hover:border-pink-500/40"
+                className="flex h-28 min-w-0 flex-col justify-between rounded-2xl border border-[#F6BA48]/70 bg-gradient-to-br from-[#683312] to-[#7E4114] p-4 shadow-lg shadow-[#310D0C]/20 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#F8D290]"
               >
-                <Heart className="h-4 w-4 text-[#EC4899]" />
+                <Heart className="h-4 w-4 text-[#F6BA48]" />
 
                 <div>
-                  <span className="block text-xs font-bold text-[#2D1721]">
+                  <span className="block text-xs font-bold text-[#F8D290]">
                     {t.dashboard.newLike}
                   </span>
 
-                  <span className="mt-0.5 block text-[10px] font-semibold text-emerald-400">
-                    ● {t.dashboard.active}
+                  <span className="mt-0.5 block text-[10px] font-semibold text-[#F6BA48]">
+                    <span className="text-[#3FB36E]">●</span>{" "}
+                    {t.dashboard.active}
                   </span>
                 </div>
               </Link>
@@ -493,16 +488,16 @@ export default function DashboardPage() {
               {/* MESAJLAR */}
               <Link
                 href="/messages"
-                className="flex h-28 min-w-0 flex-col justify-between rounded-2xl border border-pink-400/70 bg-[#EFA3C0] p-4 transition-all hover:border-pink-400"
+                className="flex h-28 min-w-0 flex-col justify-between rounded-2xl border border-[#F6BA48]/70 bg-gradient-to-br from-[#7E4114] to-[#964F1C] p-4 shadow-lg shadow-[#310D0C]/20 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#F8D290]"
               >
-                <MessageCircle className="h-4 w-4 text-[#EC4899]" />
+                <MessageCircle className="h-4 w-4 text-[#F6BA48]" />
 
                 <div>
-                  <span className="block text-xs font-bold text-[#2D1721]">
+                  <span className="block text-xs font-bold text-[#F8D290]">
                     {t.dashboard.messages}
                   </span>
 
-                  <span className="mt-0.5 block text-[10px] font-medium text-slate-500">
+                  <span className="mt-0.5 block text-[10px] font-medium text-[#F8D290]/65">
                     {t.dashboard.openChats}
                   </span>
                 </div>

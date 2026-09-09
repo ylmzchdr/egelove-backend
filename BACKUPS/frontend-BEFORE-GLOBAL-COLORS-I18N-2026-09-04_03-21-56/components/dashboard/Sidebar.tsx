@@ -176,7 +176,7 @@ export default function Sidebar() {
         className={[
           "group relative flex min-h-12 items-center gap-3 rounded-2xl px-3.5 py-3",
           "transition-all duration-300 ease-out",
-          "focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-400/80",
+          "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#F6BA48]/80",
           active
             ? "bg-gradient-to-r from-pink-500/20 via-rose-500/15 to-pink-600/10 text-[#2D1721] shadow-[0_12px_35px_rgba(236,72,153,0.12)]"
             : "text-[#6B4454] hover:bg-white hover:text-[#2D1721]",
@@ -185,7 +185,7 @@ export default function Sidebar() {
         {active && (
           <span
             aria-hidden="true"
-            className="absolute bottom-2 left-0 top-2 w-1 rounded-r-full bg-gradient-to-b from-pink-400 via-rose-400 to-pink-500 shadow-[0_0_18px_rgba(244,114,182,0.85)]"
+            className="absolute bottom-2 left-0 top-2 w-1 rounded-r-full bg-gradient-to-b from-[#F6BA48] via-rose-400 to-pink-500 shadow-[0_0_18px_rgba(244,114,182,0.85)]"
           />
         )}
 
@@ -194,7 +194,7 @@ export default function Sidebar() {
             "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border",
             "transition-all duration-300",
             active
-              ? "border-pink-400/25 bg-pink-400/10 text-pink-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]"
+              ? "border-[#F6BA48]/25 bg-[#F6BA48]/10 text-pink-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]"
               : "border-pink-100 bg-white text-[#8A6372] group-hover:border-pink-200 group-hover:bg-white group-hover:text-pink-300",
           ].join(" ")}
         >
@@ -228,7 +228,7 @@ export default function Sidebar() {
     <aside className="relative flex h-full min-h-screen w-full flex-col overflow-hidden border-r border-zinc-100 bg-white text-zinc-800 lg:w-[286px]">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -left-24 -top-28 h-72 w-72 rounded-full bg-pink-400/[0.08] blur-[90px]"
+        className="pointer-events-none absolute -left-24 -top-28 h-72 w-72 rounded-full bg-[#F6BA48]/[0.08] blur-[90px]"
       />
 
       <div
@@ -244,7 +244,7 @@ export default function Sidebar() {
         <div className="border-b border-white/[0.065] px-5 pb-5 pt-6">
           <Link
             href="/dashboard"
-            className="group flex items-center gap-3 rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-400/80"
+            className="group flex items-center gap-3 rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[#F6BA48]/80"
           >
             <div className="relative flex h-12 w-12 shrink-0 items-center justify-center">
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-pink-500 via-rose-500 to-pink-600 opacity-90 shadow-[0_12px_35px_rgba(236,72,153,0.28)] transition-transform duration-300 group-hover:scale-105" />
@@ -263,7 +263,7 @@ export default function Sidebar() {
                 <span className="text-[20px] font-black tracking-[-0.04em] text-[#2D1721]">
                   EGE
                 </span>
-                <span className="bg-gradient-to-r from-pink-400 via-rose-400 to-pink-500 bg-clip-text text-[20px] font-black tracking-[-0.04em] text-transparent">
+                <span className="bg-gradient-to-r from-[#F6BA48] via-rose-400 to-pink-500 bg-clip-text text-[20px] font-black tracking-[-0.04em] text-transparent">
                   LOVE
                 </span>
               </div>
@@ -300,10 +300,10 @@ export default function Sidebar() {
             </div>
           </nav>
 
-          <div className="relative mt-6 overflow-hidden rounded-[24px] border border-pink-400/[0.14] bg-gradient-to-br from-pink-500/[0.13] via-pink-400/[0.07] to-pink-600/[0.08] p-4 shadow-[0_18px_50px_rgba(0,0,0,0.22)]">
+          <div className="relative mt-6 overflow-hidden rounded-[24px] border border-[#F6BA48]/[0.14] bg-gradient-to-br from-pink-500/[0.13] via-[#F6BA48]/[0.07] to-pink-600/[0.08] p-4 shadow-[0_18px_50px_rgba(0,0,0,0.22)]">
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute -right-7 -top-9 h-24 w-24 rounded-full bg-pink-400/20 blur-3xl"
+              className="pointer-events-none absolute -right-7 -top-9 h-24 w-24 rounded-full bg-[#F6BA48]/20 blur-3xl"
             />
 
             <div className="relative">

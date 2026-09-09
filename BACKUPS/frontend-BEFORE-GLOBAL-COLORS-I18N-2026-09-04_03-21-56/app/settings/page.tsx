@@ -42,7 +42,7 @@ function Toggle({ checked, onChange, label }: ToggleProps) {
       className={[
         "relative h-7 w-12 shrink-0 rounded-full border transition-all duration-300",
         checked
-          ? "border-pink-400/40 bg-gradient-to-r from-fuchsia-500 to-blue-500 shadow-[0_0_24px_rgba(217,70,239,0.22)]"
+          ? "border-[#F6BA48]/40 bg-gradient-to-r from-fuchsia-500 to-blue-500 shadow-[0_0_24px_rgba(217,70,239,0.22)]"
           : "border-pink-200 bg-white",
       ].join(" ")}
     >
@@ -358,7 +358,7 @@ export default function SettingsPage() {
             <div className="mx-auto w-full max-w-[1180px] px-4 py-6 sm:px-6 sm:py-8 xl:px-8">
               <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                  <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-pink-400/20 bg-pink-500/[0.08] px-3 py-1.5 text-xs font-bold text-pink-300">
+                  <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[#F6BA48]/20 bg-pink-500/[0.08] px-3 py-1.5 text-xs font-bold text-pink-300">
                     <SettingsIcon />
                     {t.title}
                   </div>
@@ -398,7 +398,7 @@ export default function SettingsPage() {
                           className={[
                             "rounded-xl border px-3 py-2 text-xs font-black transition-all",
                             lang === item.code
-                              ? "border-pink-400/30 bg-gradient-to-r from-fuchsia-500/20 to-blue-500/20 text-[#2D1721] shadow-[0_0_22px_rgba(217,70,239,0.15)]"
+                              ? "border-[#F6BA48]/30 bg-gradient-to-r from-fuchsia-500/20 to-blue-500/20 text-[#2D1721] shadow-[0_0_22px_rgba(217,70,239,0.15)]"
                               : "border-white/[0.08] bg-white text-[#8A6372] hover:border-pink-200 hover:text-[#2D1721]",
                           ].join(" ")}
                         >
@@ -534,7 +534,7 @@ export default function SettingsPage() {
                   >
                     <Link
                       href="/profile/edit"
-                      className="inline-flex items-center gap-2 rounded-xl border border-pink-400/20 bg-pink-500/[0.08] px-4 py-2.5 text-xs font-black text-pink-200 transition hover:bg-pink-500/[0.14]"
+                      className="inline-flex items-center gap-2 rounded-xl border border-[#F6BA48]/20 bg-pink-500/[0.08] px-4 py-2.5 text-xs font-black text-pink-200 transition hover:bg-pink-500/[0.14]"
                     >
                       {t.editProfile}
                       <ChevronRight className="h-4 w-4" />

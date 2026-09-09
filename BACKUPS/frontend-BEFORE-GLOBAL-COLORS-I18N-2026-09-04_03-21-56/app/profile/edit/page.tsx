@@ -649,7 +649,7 @@ const currentLang: LangKey = (
         dir={isRtl ? "rtl" : "ltr"}
       >
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-10 w-10 animate-spin text-pink-400" />
+          <Loader2 className="h-10 w-10 animate-spin text-[#F6BA48]" />
           <p className="text-base text-[#6B4454]">{tx.loading}</p>
         </div>
       </div>
@@ -661,7 +661,7 @@ const currentLang: LangKey = (
   const fieldClass =
     "h-12 rounded-2xl border-pink-200 bg-pink-50 text-[#2D1721] placeholder:text-[#9B7483] focus-visible:ring-pink-500";
   const textareaClass =
-    "min-h-[130px] w-full resize-y rounded-2xl border border-pink-200 bg-pink-50 p-4 text-base text-[#2D1721] outline-none placeholder:text-[#9B7483] focus:border-pink-400/50 focus:ring-2 focus:ring-pink-500/20";
+    "min-h-[130px] w-full resize-y rounded-2xl border border-pink-200 bg-pink-50 p-4 text-base text-[#2D1721] outline-none placeholder:text-[#9B7483] focus:border-[#F6BA48]/50 focus:ring-2 focus:ring-pink-500/20";
 
   return (
     <div
@@ -689,7 +689,7 @@ const currentLang: LangKey = (
 
               <div className="relative flex flex-col gap-7 xl:flex-row xl:items-center xl:justify-between">
                 <div className="max-w-3xl">
-                  <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-pink-400/20 bg-pink-500/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-pink-200">
+                  <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#F6BA48]/20 bg-pink-500/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-pink-200">
                     <Sparkles className="h-3.5 w-3.5" />
                     {tx.badge}
                   </div>
@@ -738,7 +738,7 @@ const currentLang: LangKey = (
 
                   <div className="mt-5 h-2.5 overflow-hidden rounded-full bg-pink-50">
                     <div
-                      className="h-full rounded-full bg-gradient-to-r from-pink-500 via-pink-400 to-violet-500 transition-all duration-500"
+                      className="h-full rounded-full bg-gradient-to-r from-pink-500 via-[#F6BA48] to-violet-500 transition-all duration-500"
                       style={{ width: `${completion}%` }}
                     />
                   </div>

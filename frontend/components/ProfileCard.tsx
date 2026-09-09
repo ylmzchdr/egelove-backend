@@ -18,7 +18,7 @@ type ProfileCardProps = {
 };
 
 const avatarColors = [
-  "from-pink-400 to-purple-500",
+  "from-[#F6BA48] to-purple-500",
   "from-blue-400 to-cyan-500",
   "from-amber-400 to-orange-500",
   "from-emerald-400 to-teal-500",

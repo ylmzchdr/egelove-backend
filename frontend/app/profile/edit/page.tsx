@@ -649,7 +649,7 @@ const currentLang: LangKey = (
         dir={isRtl ? "rtl" : "ltr"}
       >
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-10 w-10 animate-spin text-pink-400" />
+          <Loader2 className="h-10 w-10 animate-spin text-[#F6BA48]" />
           <p className="text-base text-white/60">{tx.loading}</p>
         </div>
       </div>
@@ -661,7 +661,7 @@ const currentLang: LangKey = (
   const fieldClass =
     "h-12 rounded-2xl border-white/10 bg-black/20 text-white placeholder:text-white/30 focus-visible:ring-pink-500";
   const textareaClass =
-    "min-h-[130px] w-full resize-y rounded-2xl border border-white/10 bg-black/20 p-4 text-base text-white outline-none placeholder:text-white/30 focus:border-pink-400/50 focus:ring-2 focus:ring-pink-500/20";
+    "min-h-[130px] w-full resize-y rounded-2xl border border-white/10 bg-black/20 p-4 text-base text-white outline-none placeholder:text-white/30 focus:border-[#F6BA48]/50 focus:ring-2 focus:ring-pink-500/20";
 
   return (
     <div
@@ -689,7 +689,7 @@ const currentLang: LangKey = (
 
               <div className="relative flex flex-col gap-7 xl:flex-row xl:items-center xl:justify-between">
                 <div className="max-w-3xl">
-                  <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-pink-400/20 bg-pink-500/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-pink-200">
+                  <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#F6BA48]/20 bg-pink-500/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-pink-200">
                     <Sparkles className="h-3.5 w-3.5" />
                     {tx.badge}
                   </div>

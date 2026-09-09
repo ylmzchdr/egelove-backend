@@ -113,7 +113,7 @@ export default function DashboardPage() {
           <div className="mb-2 flex w-full flex-col items-center justify-center gap-3 text-center">
 
             <div className="flex select-none items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-pink-500 to-pink-400 shadow-lg shadow-pink-500/20">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-pink-500 to-[#F6BA48] shadow-lg shadow-pink-500/20">
                 <span className="text-xl font-black tracking-tighter text-[#2D1721]">
                   E
                 </span>
@@ -157,10 +157,10 @@ export default function DashboardPage() {
 
             {/* PROFÄ°LÄ°M */}
             <Link href="/profile/edit" className="group min-w-0">
-              <div className="h-full rounded-2xl border border-pink-200 bg-gradient-to-r from-white to-pink-50 p-5 transition-all hover:border-pink-400 hover:shadow-lg hover:shadow-pink-500/10">
+              <div className="h-full rounded-2xl border border-pink-200 bg-gradient-to-r from-white to-pink-50 p-5 transition-all hover:border-[#F6BA48] hover:shadow-lg hover:shadow-pink-500/10">
                 <div className="flex items-center gap-4">
 
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-pink-400/25 bg-pink-100">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[#F6BA48]/25 bg-pink-100">
                     <User className="h-6 w-6 text-pink-500" />
                   </div>
 
@@ -181,7 +181,7 @@ export default function DashboardPage() {
 
             {/* BÄ°RÄ°NÄ° BUL */}
             <Link href="/search" className="group min-w-0">
-              <div className="h-full rounded-2xl border border-pink-200 bg-white/60 p-5 transition-all hover:border-pink-400/50 hover:bg-pink-50">
+              <div className="h-full rounded-2xl border border-pink-200 bg-white/60 p-5 transition-all hover:border-[#F6BA48]/50 hover:bg-pink-50">
                 <div className="flex items-center gap-4">
 
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-pink-200 bg-pink-50">
@@ -213,7 +213,7 @@ export default function DashboardPage() {
 
             {/* CANLI SOHBET */}
             <Link href="/messages" className="group block min-w-0">
-              <div className="relative h-full overflow-hidden rounded-3xl border border-pink-200 bg-gradient-to-br from-white to-pink-50 p-6 shadow-xl shadow-pink-500/5 backdrop-blur-xl transition-all duration-300 hover:border-pink-400/60">
+              <div className="relative h-full overflow-hidden rounded-3xl border border-pink-200 bg-gradient-to-br from-white to-pink-50 p-6 shadow-xl shadow-pink-500/5 backdrop-blur-xl transition-all duration-300 hover:border-[#F6BA48]/60">
 
                 <div className="absolute right-0 top-0 -mr-10 -mt-10 h-32 w-32 rounded-full bg-pink-100 blur-3xl transition-all duration-500 group-hover:bg-pink-200" />
 
@@ -337,7 +337,7 @@ export default function DashboardPage() {
             <Link
              href="/search?online=true"
 
-              className="flex h-28 min-w-0 flex-col justify-between rounded-2xl border border-pink-200 bg-white/40 p-4 transition-all hover:border-pink-400/40"
+              className="flex h-28 min-w-0 flex-col justify-between rounded-2xl border border-pink-200 bg-white/40 p-4 transition-all hover:border-[#F6BA48]/40"
             >
               <MapPin className="h-4 w-4 text-pink-500" />
 

@@ -152,7 +152,7 @@ export default function EgeMatchAICard({
   return (
     <div className="group relative overflow-hidden rounded-3xl border border-pink-300/40 bg-gradient-to-br from-[#3b001f] via-[#760052] to-[#05051f] p-5 shadow-2xl shadow-pink-950/50">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.18),transparent_35%)]" />
-      <div className="absolute -right-16 -top-16 h-44 w-44 rounded-full bg-pink-400/30 blur-3xl" />
+      <div className="absolute -right-16 -top-16 h-44 w-44 rounded-full bg-[#F6BA48]/30 blur-3xl" />
       <div className="absolute -bottom-20 -left-20 h-52 w-52 rounded-full bg-purple-500/30 blur-3xl" />
       <div className="absolute left-[-40%] top-0 h-full w-1/3 skew-x-[-20deg] bg-pink-50 blur-xl transition-all duration-1000 group-hover:left-[120%]" />
 
@@ -160,7 +160,7 @@ export default function EgeMatchAICard({
         <div className="mb-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-pink-500/20 shadow-lg shadow-pink-500/20">
-              <div className="absolute inset-0 animate-ping rounded-2xl bg-pink-400/20" />
+              <div className="absolute inset-0 animate-ping rounded-2xl bg-[#F6BA48]/20" />
               <Heart
                 className="relative h-6 w-6 text-pink-300"
                 fill="currentColor"
@@ -195,7 +195,7 @@ export default function EgeMatchAICard({
 
         <div className="mb-5 h-3 overflow-hidden rounded-full bg-pink-50">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-sky-400 via-fuchsia-400 to-yellow-300 shadow-lg shadow-pink-400/40 transition-all duration-700"
+            className="h-full rounded-full bg-gradient-to-r from-sky-400 via-fuchsia-400 to-yellow-300 shadow-lg shadow-[#F6BA48]/40 transition-all duration-700"
             style={{ width: `${animatedScore}%` }}
           />
         </div>

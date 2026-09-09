@@ -564,7 +564,7 @@ useEffect(() => {
                 </Button>
               </div>
             </section>
-            <section className="lg:col-span-1 rounded-3xl border border-pink-400/40 p-5 bg-gradient-to-br from-pink-950 via-purple-950 to-black shadow-2xl shadow-pink-900/30">
+            <section className="lg:col-span-1 rounded-3xl border border-[#F6BA48]/40 p-5 bg-gradient-to-br from-pink-950 via-purple-950 to-black shadow-2xl shadow-pink-900/30">
   <div className="flex items-center justify-between mb-4">
     <div>
       <h2 className="text-2xl font-black text-pink-200">
@@ -582,7 +582,7 @@ useEffect(() => {
 
   {compatLoading && (
     <div className="py-8 text-center">
-      <div className="mx-auto mb-4 w-16 h-16 rounded-full border-4 border-pink-400/30 border-t-pink-400 animate-spin" />
+      <div className="mx-auto mb-4 w-16 h-16 rounded-full border-4 border-[#F6BA48]/30 border-t-[#F6BA48] animate-spin" />
       <p className="text-pink-100 font-semibold">{tx.aiAnalyzing}</p>
       <p className="text-white/50 text-base mt-1">{tx.compatCalculating}</p>
     </div>
@@ -598,7 +598,7 @@ useEffect(() => {
 
       <div className="w-full h-4 bg-white/10 rounded-full overflow-hidden mb-4">
         <div
-          className="h-full bg-gradient-to-r from-pink-400 via-fuchsia-400 to-purple-400 rounded-full transition-all duration-1000"
+          className="h-full bg-gradient-to-r from-[#F6BA48] via-fuchsia-400 to-purple-400 rounded-full transition-all duration-1000"
           style={{ width: `${compatibility.score}%` }}
         />
       </div>
