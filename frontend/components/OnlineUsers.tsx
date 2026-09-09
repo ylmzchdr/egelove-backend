@@ -81,7 +81,7 @@ export default function OnlineUsers() {
 
   if (loading) {
     return (
-      <div className="w-full bg-[#121420]/40 backdrop-blur-md border border-white/5 rounded-2xl p-6 mb-6 text-center text-xs text-slate-400">
+      <div className="mb-6 w-full rounded-2xl border border-[#F6BA48]/10 bg-[#310D0C]/40 p-6 text-center text-xs text-[#B5A093] backdrop-blur-md">
         Yükleniyor...
       </div>
     );
@@ -96,15 +96,15 @@ export default function OnlineUsers() {
   }
 
   return (
-    <div className="w-full bg-[#121420]/40 backdrop-blur-md border border-white/5 rounded-2xl p-4 mb-6">
-      <div className="flex items-center justify-between mb-4 px-1">
+    <div className="mb-6 w-full rounded-2xl border border-[#F6BA48]/10 bg-gradient-to-r from-[#310D0C]/70 via-[#512510]/55 to-[#310D0C]/70 p-4 shadow-[0_12px_35px_rgba(49,13,12,0.22)] backdrop-blur-md">
+      <div className="mb-4 flex items-center justify-between px-1">
         <div className="flex items-center gap-2">
           <span className="relative flex h-2.5 w-2.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500" />
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#3FB36E] opacity-75" />
+            <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#3FB36E]" />
           </span>
 
-          <h3 className="text-white font-medium text-xs md:text-sm tracking-wide">
+          <h3 className="text-xs font-medium tracking-wide text-[#F8D290] md:text-sm">
             {t.dashboard.onlineUsersTitle}
           </h3>
         </div>
@@ -114,7 +114,7 @@ export default function OnlineUsers() {
             localStorage.setItem('forceOnlineFilter', 'true');
             router.push('/search');
           }}
-          className="text-[11px] text-purple-400 hover:text-purple-300 font-medium cursor-pointer transition-colors duration-200"
+          className="cursor-pointer text-[11px] font-semibold text-[#F6BA48] transition-colors duration-200 hover:text-[#F8D290]"
         >
           Tümünü Gör
         </span>
@@ -147,25 +147,25 @@ export default function OnlineUsers() {
             <div
               key={user.id}
               onClick={() => router.push(`/profile/${user.id}`)}
-              className="flex flex-col items-center gap-1 min-w-[65px] cursor-pointer group"
+              className="group flex min-w-[65px] cursor-pointer flex-col items-center gap-1"
             >
               <div className="relative">
-                <div className="w-14 h-14 rounded-full p-[2px] bg-gradient-to-tr from-purple-600 via-pink-500 to-blue-500 group-hover:scale-105 transition-transform duration-300">
+                <div className="h-14 w-14 rounded-full bg-gradient-to-tr from-[#7E4114] via-[#EF912C] to-[#F6BA48] p-[2px] transition-transform duration-300 group-hover:scale-105">
                   <img
                     src={avatarUrl}
                     alt={userName}
-                    className="w-full h-full object-cover rounded-full border-2 border-[#121420]"
+                    className="h-full w-full rounded-full border-2 border-[#310D0C] object-cover"
                   />
                 </div>
 
-                <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-[#121420] rounded-full" />
+                <div className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-[#310D0C] bg-[#3FB36E]" />
               </div>
 
-              <span className="text-xs text-slate-200 font-medium max-w-[65px] truncate text-center mt-1 group-hover:text-white capitalize">
+              <span className="mt-1 max-w-[65px] truncate text-center text-xs font-medium capitalize text-[#F8D290] transition-colors group-hover:text-white">
                 {userName}
               </span>
 
-              <span className="text-[10px] text-slate-500 truncate max-w-[65px] group-hover:text-purple-400 transition-colors">
+              <span className="max-w-[65px] truncate text-[10px] text-[#9F7C61] transition-colors group-hover:text-[#F6BA48]">
                 {city}
               </span>
             </div>

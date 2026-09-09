@@ -1,5 +1,5 @@
-"use client";
 
+"use client";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -371,7 +371,7 @@ setIsPremium(premiumStatus);
   };
 
   return (
-    <div className="min-h-screen bg-[#310D0C] text-[#2D1721]">
+    <div className="min-h-screen bg-[#310D0C] text-[#F8D290]">
       {/* MOBILE MENU OVERLAY */}
       {mobileMenuOpen && (
         <div
@@ -379,29 +379,29 @@ setIsPremium(premiumStatus);
           onClick={() => setMobileMenuOpen(false)}
         >
           <aside
-            className="h-full w-[280px] bg-[#5A1233] border-r border-white/20 p-5"
+            className="h-full w-[280px] bg-[#310D0C] border-r border-white/20 p-5"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-pink-600 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#B16323] to-[#F6BA48] flex items-center justify-center">
                   <Heart className="w-5 h-5 fill-white" />
                 </div>
 
                 <div>
                   <div className="font-black text-lg">
-                    EGE<span className="text-[#F6BA48]">LOVE</span>
+                    SEN<span className="text-[#F6BA48]">veBEN</span>
                   </div>
 
-                  <div className="text-[8px] tracking-[3px] text-[#2D1721]/30">
-                    EGE & AKDENİZ
+                  <div className="text-[8px] tracking-[3px] text-[#F8D290]/30">
+                    TÜRKİYE • 81 İL
                   </div>
                 </div>
               </div>
 
               <button
                 onClick={() => setMobileMenuOpen(false)}
-                className="text-[#7A5363] hover:text-[#2D1721]"
+                className="text-[#B5A093] hover:text-[#F8D290]"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -414,25 +414,25 @@ setIsPremium(premiumStatus);
 
       <div className="flex min-h-screen">
         {/* DESKTOP SIDEBAR */}
-        <aside className="hidden md:flex fixed left-0 top-0 bottom-0 z-50 w-[282px] flex-col bg-[#5A1233] border-r border-white/20">
+        <aside className="hidden md:flex fixed left-0 top-0 bottom-0 z-50 w-[282px] flex-col bg-[#310D0C] border-r border-white/20">
           {/* LOGO */}
           <div className="h-[134px] flex items-center px-7 border-b border-white/20">
             <div className="flex items-center gap-3">
               <div className="relative">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-500 via-rose-500 to-pink-600 flex items-center justify-center shadow-lg shadow-pink-500/20">
-                  <Heart className="w-6 h-6 fill-white text-[#2D1721]" />
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#B16323] via-[#EF912C] to-[#F6BA48] flex items-center justify-center shadow-lg shadow-black/20">
+                  <Heart className="w-6 h-6 fill-white text-[#F8D290]" />
                 </div>
 
-                <span className="absolute -right-1 -top-1 w-3 h-3 rounded-full bg-emerald-400 border-2 border-pink-300/60" />
+                <span className="absolute -right-1 -top-1 w-3 h-3 rounded-full bg-emerald-400 border-2 border-[#F6BA48]/40" />
               </div>
 
               <div>
                 <div className="text-xl font-black tracking-tight">
-                  EGE<span className="text-[#F6BA48]">LOVE</span>
+                  SEN<span className="text-[#F6BA48]">veBEN</span>
                 </div>
 
-                <div className="text-[9px] tracking-[3px] text-[#E7B8CB]/70 mt-1">
-                  EGE & AKDENİZ
+                <div className="text-[9px] tracking-[3px] text-[#B5A093]/70 mt-1">
+                  TÜRKİYE • 81 İL
                 </div>
               </div>
             </div>
@@ -440,19 +440,19 @@ setIsPremium(premiumStatus);
 
           {/* MENU */}
           <div className="flex-1 px-4 py-7 overflow-y-auto">
-            <div className="px-4 mb-4 text-[11px] tracking-[3px] text-[#F3D5E2]/90 uppercase">
+            <div className="px-4 mb-4 text-[11px] tracking-[3px] text-[#F8D290]/90 uppercase">
               Menü
             </div>
 
             <SidebarLinks t={t} active="likes" navigate={navigate} />
 
-            <div className="px-4 mt-9 mb-4 text-[11px] tracking-[3px] text-[#F3D5E2]/90 uppercase">
+            <div className="px-4 mt-9 mb-4 text-[11px] tracking-[3px] text-[#F8D290]/90 uppercase">
               Hesabım
             </div>
 
             <button
               onClick={() => navigate("/profile")}
-              className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-[#F3D5E2] hover:text-white hover:bg-white/10 transition"
+              className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-[#F8D290] hover:text-white hover:bg-white/10 transition"
             >
               <User className="w-5 h-5" />
               <span className="text-sm font-medium">{t.myProfile}</span>
@@ -460,7 +460,7 @@ setIsPremium(premiumStatus);
 
             <button
               onClick={() => navigate("/settings")}
-              className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-[#F3D5E2] hover:text-white hover:bg-white/10 transition"
+              className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-[#F8D290] hover:text-white hover:bg-white/10 transition"
             >
               <Settings className="w-5 h-5" />
               <span className="text-sm font-medium">{t.settings}</span>
@@ -474,13 +474,13 @@ setIsPremium(premiumStatus);
                 localStorage.removeItem("accessToken");
                 navigate("/");
               }}
-              className="w-full flex items-center justify-center gap-3 rounded-xl border border-pink-200 bg-[#310D0C]/[0.02] hover:bg-[#310D0C] py-3 text-sm text-[#6B4454] hover:text-[#2D1721] transition"
+              className="w-full flex items-center justify-center gap-3 rounded-xl border border-[#F6BA48]/20 bg-[#310D0C]/[0.02] hover:bg-[#310D0C] py-3 text-sm text-[#B5A093] hover:text-[#F8D290] transition"
             >
               <ChevronRight className="w-4 h-4 rotate-180" />
               {t.logout}
             </button>
 
-            <div className="text-center text-[9px] text-[#2D1721]/20 mt-4 tracking-widest">
+            <div className="text-center text-[9px] text-[#F8D290]/20 mt-4 tracking-widest">
               SENVEBEN © 2026
             </div>
           </div>
@@ -490,11 +490,11 @@ setIsPremium(premiumStatus);
         <main className="flex-1 md:ml-[282px] min-w-0">
           {/* TOP BAR */}
           <header className="sticky top-0 z-[100] px-4 md:px-8 pt-4 pointer-events-auto">
-            <div className="h-[70px] rounded-2xl border border-pink-300/70 bg-[#F6C8DA] backdrop-blur-xl flex items-center gap-3 px-3 md:px-5 shadow-xl shadow-pink-900/10">
+            <div className="h-[70px] rounded-2xl border border-[#F6BA48]/30 bg-[#512510]/95 backdrop-blur-xl flex items-center gap-3 px-3 md:px-5 shadow-xl shadow-black/20">
               {/* MOBILE MENU */}
               <button
                 onClick={() => setMobileMenuOpen(true)}
-                className="md:hidden shrink-0 w-10 h-10 rounded-xl border border-pink-200 flex items-center justify-center text-[#6B4454] hover:text-[#2D1721]"
+                className="md:hidden shrink-0 w-10 h-10 rounded-xl border border-[#F6BA48]/20 flex items-center justify-center text-[#B5A093] hover:text-[#F8D290]"
               >
                 <Users className="w-5 h-5" />
               </button>
@@ -507,8 +507,8 @@ setIsPremium(premiumStatus);
                     onClick={() => setLang("TR")}
                     className={`h-10 px-3 rounded-xl border text-xs font-bold transition ${
                       lang === "TR"
-                        ? "border-[#F6BA48] bg-[#EC4899] text-white"
-                        : "border-pink-300/70 bg-[#FDE8F0] text-[#6A3048] hover:text-[#2D1721] hover:bg-[#FFF3F7]"
+                        ? "border-[#F6BA48] bg-[#B16323] text-white"
+                        : "border-[#F6BA48]/30 bg-[#683312]/55 text-[#B5A093] hover:text-[#F8D290] hover:bg-[#7E4114]/65"
                     }`}
                   >
                     🇹🇷 TR
@@ -519,8 +519,8 @@ setIsPremium(premiumStatus);
                     onClick={() => setLang("EN")}
                     className={`h-10 px-3 rounded-xl border text-xs font-bold transition ${
                       lang === "EN"
-                        ? "border-[#F6BA48] bg-[#EC4899] text-white"
-                        : "border-pink-300/70 bg-[#FDE8F0] text-[#6A3048] hover:text-[#2D1721] hover:bg-[#FFF3F7]"
+                        ? "border-[#F6BA48] bg-[#B16323] text-white"
+                        : "border-[#F6BA48]/30 bg-[#683312]/55 text-[#B5A093] hover:text-[#F8D290] hover:bg-[#7E4114]/65"
                     }`}
                   >
                     🇬🇧 EN
@@ -531,8 +531,8 @@ setIsPremium(premiumStatus);
                     onClick={() => setLang("RU")}
                     className={`h-10 px-3 rounded-xl border text-xs font-bold transition ${
                       lang === "RU"
-                        ? "border-[#F6BA48] bg-[#EC4899] text-white"
-                        : "border-pink-300/70 bg-[#FDE8F0] text-[#6A3048] hover:text-[#2D1721] hover:bg-[#FFF3F7]"
+                        ? "border-[#F6BA48] bg-[#B16323] text-white"
+                        : "border-[#F6BA48]/30 bg-[#683312]/55 text-[#B5A093] hover:text-[#F8D290] hover:bg-[#7E4114]/65"
                     }`}
                   >
                     🇷🇺 RU
@@ -543,8 +543,8 @@ setIsPremium(premiumStatus);
                     onClick={() => setLang("AR")}
                     className={`h-10 px-3 rounded-xl border text-xs font-bold transition ${
                       lang === "AR"
-                        ? "border-[#F6BA48] bg-[#EC4899] text-white"
-                        : "border-pink-300/70 bg-[#FDE8F0] text-[#6A3048] hover:text-[#2D1721] hover:bg-[#FFF3F7]"
+                        ? "border-[#F6BA48] bg-[#B16323] text-white"
+                        : "border-[#F6BA48]/30 bg-[#683312]/55 text-[#B5A093] hover:text-[#F8D290] hover:bg-[#7E4114]/65"
                     }`}
                   >
                     🇸🇦 AR
@@ -554,7 +554,7 @@ setIsPremium(premiumStatus);
                 {/* NOTIFICATION */}
                 <button
                   onClick={() => navigate("/notifications")}
-                  className="relative w-11 h-11 rounded-xl border border-pink-300/70 bg-[#FDE8F0] flex items-center justify-center text-[#6A3048] hover:text-[#2D1721] hover:bg-[#FFF3F7] transition"
+                  className="relative w-11 h-11 rounded-xl border border-[#F6BA48]/30 bg-[#683312]/55 flex items-center justify-center text-[#B5A093] hover:text-[#F8D290] hover:bg-[#7E4114]/65 transition"
                 >
                   <Bell className="w-5 h-5" />
 
@@ -564,9 +564,9 @@ setIsPremium(premiumStatus);
                 {/* PROFILE */}
                 <button
                   onClick={() => navigate("/profile")}
-                  className="flex items-center gap-2 h-11 rounded-xl border border-pink-300/70 bg-[#FDE8F0] px-2 md:px-3 text-[#4A2835] hover:bg-[#FFF3F7] transition"
+                  className="flex items-center gap-2 h-11 rounded-xl border border-[#F6BA48]/30 bg-[#683312]/55 px-2 md:px-3 text-[#F8D290] hover:bg-[#7E4114]/65 transition"
                 >
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 to-pink-600 flex items-center justify-center text-xs font-bold">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#B16323] to-[#F6BA48] flex items-center justify-center text-xs font-bold">
                     {getInitials({
                       name: "y",
                       surname: "l",
@@ -577,7 +577,7 @@ setIsPremium(premiumStatus);
                     yılmaz
                   </span>
 
-                  <ChevronRight className="hidden md:block w-4 h-4 rotate-90 text-[#8A6372]" />
+                  <ChevronRight className="hidden md:block w-4 h-4 rotate-90 text-[#9F7C61]" />
                 </button>
               </div>
             </div>
@@ -589,7 +589,7 @@ setIsPremium(premiumStatus);
               {/* PAGE TITLE */}
               <div className="mb-8">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-11 h-11 rounded-xl bg-pink-500/10 border border-[#F6BA48]/20 flex items-center justify-center">
+                  <div className="w-11 h-11 rounded-xl bg-[#F6BA48]/10 border border-[#F6BA48]/20 flex items-center justify-center">
                     <Heart className="w-5 h-5 text-[#F6BA48]" />
                   </div>
 
@@ -598,19 +598,19 @@ setIsPremium(premiumStatus);
                       {t.likes}
                     </h1>
 
-                    <p className="text-[15px] font-medium text-[#6A3048] mt-1">{t.subtitle}</p>
+                    <p className="text-[15px] font-medium text-[#B5A093] mt-1">{t.subtitle}</p>
                   </div>
                 </div>
               </div>
 
               {/* STAT / INTRO CARD */}
-              <div className="relative overflow-hidden rounded-3xl border border-pink-200 bg-gradient-to-br from-[#EFA3C0] via-[#E99AB9] to-[#D987A8] p-6 md:p-7 mb-7">
-                <div className="absolute -right-20 -top-24 w-72 h-72 rounded-full bg-pink-500/10 blur-3xl" />
-                <div className="absolute -left-20 -bottom-28 w-72 h-72 rounded-full bg-[#EC4899]/10 blur-3xl" />
+              <div className="relative overflow-hidden rounded-3xl border border-[#F6BA48]/20 bg-gradient-to-br from-[#683312] via-[#7E4114] to-[#512510] p-6 md:p-7 mb-7">
+                <div className="absolute -right-20 -top-24 w-72 h-72 rounded-full bg-[#F6BA48]/10 blur-3xl" />
+                <div className="absolute -left-20 -bottom-28 w-72 h-72 rounded-full bg-[#B16323]/10 blur-3xl" />
 
                 <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-6">
                   <div>
-                    <div className="inline-flex items-center gap-2 rounded-full border border-[#F6BA48]/20 bg-[#F6BA48]/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-pink-300">
+                    <div className="inline-flex items-center gap-2 rounded-full border border-[#F6BA48]/20 bg-[#F6BA48]/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-[#F8D290]">
                       <Sparkles className="w-3.5 h-3.5" />
                       SenVeBen
                     </div>
@@ -619,7 +619,7 @@ setIsPremium(premiumStatus);
                       {tab === "received" ? t.likedYou : t.youLiked}
                     </h2>
 
-                    <p className="text-[15px] font-semibold text-[#6A3048] mt-1">
+                    <p className="text-[15px] font-semibold text-[#B5A093] mt-1">
                       {tab === "received"
                         ? `${received.length} ${t.members}`
                         : `${sent.length} ${t.members}`}
@@ -628,7 +628,7 @@ setIsPremium(premiumStatus);
 
                   <button
                     onClick={() => navigate("/search")}
-                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-pink-500 to-pink-500 px-5 py-3 text-sm font-bold shadow-lg shadow-pink-500/20 hover:scale-[1.02] transition"
+                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#B16323] to-[#F6BA48] px-5 py-3 text-sm font-bold shadow-lg shadow-black/20 hover:scale-[1.02] transition"
                   >
                     <Search className="w-4 h-4" />
                     {t.explore}
@@ -641,22 +641,22 @@ setIsPremium(premiumStatus);
                 <button
                   type="button"
                   onClick={() => navigate("/premium")}
-                  className="group relative w-full overflow-hidden rounded-3xl border border-[#F6BA48]/40 bg-gradient-to-r from-[#D987A8] via-[#EFA3C0] to-[#E99AB9] p-5 md:p-6 mb-8 text-left transition-all duration-300 hover:border-[#F6BA48]/70 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-pink-500/15"
+                  className="group relative w-full overflow-hidden rounded-3xl border border-[#F6BA48]/40 bg-gradient-to-r from-[#512510] via-[#683312] to-[#7E4114] p-5 md:p-6 mb-8 text-left transition-all duration-300 hover:border-[#F6BA48]/70 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-black/20"
                 >
-                  <div className="absolute -right-16 -top-20 h-52 w-52 rounded-full bg-pink-500/15 blur-3xl" />
+                  <div className="absolute -right-16 -top-20 h-52 w-52 rounded-full bg-[#F6BA48]/15 blur-3xl" />
                   <div className="relative flex flex-col md:flex-row md:items-center gap-4 md:gap-5">
-                    <div className="shrink-0 w-14 h-14 rounded-2xl bg-pink-500/15 border border-[#F6BA48]/40 flex items-center justify-center">
+                    <div className="shrink-0 w-14 h-14 rounded-2xl bg-[#F6BA48]/15 border border-[#F6BA48]/40 flex items-center justify-center">
                       <Crown className="w-7 h-7 text-[#F6BA48]" />
                     </div>
                     <div className="flex-1">
-                      <div className="text-base md:text-lg font-black text-[#2D1721]">
+                      <div className="text-base md:text-lg font-black text-[#F8D290]">
                         {t.premiumTitle}
                       </div>
-                      <div className="mt-1 text-[15px] font-medium leading-6 text-[#6A3048]">
+                      <div className="mt-1 text-[15px] font-medium leading-6 text-[#B5A093]">
                         {t.premiumDesc}
                       </div>
                     </div>
-                    <span className="shrink-0 inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#EC4899] to-[#DB2777] px-5 py-3 text-sm font-black text-white shadow-lg shadow-pink-500/20 group-hover:scale-[1.02] transition">
+                    <span className="shrink-0 inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#B16323] to-[#F6BA48] px-5 py-3 text-sm font-black text-white shadow-lg shadow-black/20 group-hover:scale-[1.02] transition">
                       <Crown className="w-4 h-4" />
                       {t.premiumButton}
                     </span>
@@ -671,8 +671,8 @@ setIsPremium(premiumStatus);
                     onClick={() => setTab("received")}
                     className={`relative flex items-center gap-2 pb-4 text-[15px] font-semibold transition ${
                       tab === "received"
-                        ? "text-[#2D1721]"
-                        : "text-[#6A3048] hover:text-[#572438]"
+                        ? "text-[#F8D290]"
+                        : "text-[#B5A093] hover:text-[#F8D290]"
                     }`}
                   >
                     <Heart
@@ -686,15 +686,15 @@ setIsPremium(premiumStatus);
                     <span
                       className={`rounded-full px-2 py-0.5 text-[10px] ${
                         tab === "received"
-                          ? "bg-pink-500/15 text-pink-300"
-                          : "bg-pink-100 text-[#6A3048] font-bold"
+                          ? "bg-[#F6BA48]/15 text-[#F8D290]"
+                          : "bg-[#F6BA48]/10 text-[#B5A093] font-bold"
                       }`}
                     >
                       {received.length}
                     </span>
 
                   {tab === "received" && !isPremium && (
-                      <span className="absolute bottom-0 left-0 right-0 h-[2px] rounded-full bg-gradient-to-r from-pink-500 to-rose-500" />
+                      <span className="absolute bottom-0 left-0 right-0 h-[2px] rounded-full bg-gradient-to-r from-[#B16323] to-[#F6BA48]" />
                     )}
                   </button>
 
@@ -702,13 +702,13 @@ setIsPremium(premiumStatus);
                     onClick={() => setTab("sent")}
                     className={`relative flex items-center gap-2 pb-4 text-[15px] font-semibold transition ${
                       tab === "sent"
-                        ? "text-[#2D1721]"
-                        : "text-[#6A3048] hover:text-[#572438]"
+                        ? "text-[#F8D290]"
+                        : "text-[#B5A093] hover:text-[#F8D290]"
                     }`}
                   >
                     <ThumbsUp
                       className={`w-4 h-4 ${
-                        tab === "sent" ? "text-pink-500" : ""
+                        tab === "sent" ? "text-[#F6BA48]" : ""
                       }`}
                     />
 
@@ -717,15 +717,15 @@ setIsPremium(premiumStatus);
                     <span
                       className={`rounded-full px-2 py-0.5 text-[10px] ${
                         tab === "sent"
-                          ? "bg-[#EC4899]/15 text-pink-500"
-                          : "bg-pink-100 text-[#6A3048] font-bold"
+                          ? "bg-[#B16323]/15 text-[#F6BA48]"
+                          : "bg-[#F6BA48]/10 text-[#B5A093] font-bold"
                       }`}
                     >
                       {sent.length}
                     </span>
 
                     {tab === "sent" && (
-                      <span className="absolute bottom-0 left-0 right-0 h-[2px] rounded-full bg-gradient-to-r from-pink-500 to-rose-500" />
+                      <span className="absolute bottom-0 left-0 right-0 h-[2px] rounded-full bg-gradient-to-r from-[#B16323] to-[#F6BA48]" />
                     )}
                   </button>
                 </div>
@@ -734,11 +734,11 @@ setIsPremium(premiumStatus);
               {/* LOADING */}
               {loading && (
                 <div className="py-24 flex flex-col items-center justify-center">
-                  <div className="w-14 h-14 rounded-2xl bg-pink-500/10 border border-[#F6BA48]/20 flex items-center justify-center mb-4">
+                  <div className="w-14 h-14 rounded-2xl bg-[#F6BA48]/10 border border-[#F6BA48]/20 flex items-center justify-center mb-4">
                     <Loader2 className="w-7 h-7 text-[#F6BA48] animate-spin" />
                   </div>
 
-                  <p className="text-sm text-[#2D1721]/30">
+                  <p className="text-sm text-[#F8D290]/30">
                     {lang === "TR"
                       ? "Beğeniler yükleniyor..."
                       : lang === "EN"
@@ -794,7 +794,7 @@ setIsPremium(premiumStatus);
               {/* EMPTY SENT */}
               {!loading && myId && tab === "sent" && sent.length === 0 && (
                 <EmptyState
-                  icon={<Search className="w-10 h-10 text-pink-500" />}
+                  icon={<Search className="w-10 h-10 text-[#F6BA48]" />}
                   title={t.youLikedNobody}
                   description={t.youLikedNobodyDesc}
                   buttonText={t.explore}
@@ -830,7 +830,7 @@ setIsPremium(premiumStatus);
                     return (
                       <article
                         key={match.id}
-                        className="group relative overflow-hidden rounded-3xl border border-pink-200 bg-[#310D0C] hover:border-[#F6BA48]/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-pink-500/10"
+                        className="group relative overflow-hidden rounded-3xl border border-[#F6BA48]/20 bg-[#310D0C] hover:border-[#F6BA48]/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/20"
                       >
                         {/* IMAGE */}
                        <button
@@ -842,7 +842,7 @@ setIsPremium(premiumStatus);
 
     navigate(`/profile/${other.id}`);
   }}
-  className="relative block w-full aspect-[4/4.2] overflow-hidden bg-gradient-to-br from-[#172035] to-[#101522]"
+  className="relative block w-full aspect-[4/4.2] overflow-hidden bg-gradient-to-br from-[#512510] to-[#310D0C]"
 >
                           {avatar ? (
                             <img
@@ -853,8 +853,8 @@ setIsPremium(premiumStatus);
 }`}
                             />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-pink-500/20 via-[#F6BA48]/10 to-rose-500/10">
-                              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-pink-500 to-pink-600 flex items-center justify-center text-3xl font-black shadow-xl">
+                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#B16323]/20 via-[#F6BA48]/10 to-[#F6BA48]/10">
+                              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#B16323] to-[#F6BA48] flex items-center justify-center text-3xl font-black shadow-xl">
                                 {getInitials(other)}
                               </div>
                             </div>
@@ -864,7 +864,7 @@ setIsPremium(premiumStatus);
                             <div className="absolute inset-0 flex items-center justify-center bg-black/15">
                               <div className="rounded-2xl border border-yellow-300/25 bg-black/55 backdrop-blur-md px-5 py-4 text-center shadow-2xl">
                                 <Crown className="w-7 h-7 text-[#F6BA48] mx-auto mb-2" />
-                                <div className="text-sm font-black text-[#2D1721]">{t.premiumPhoto}</div>
+                                <div className="text-sm font-black text-[#F8D290]">{t.premiumPhoto}</div>
                                 <div className="text-[10px] text-yellow-200/70 mt-1">{t.premiumButton}</div>
                               </div>
                             </div>
@@ -875,17 +875,17 @@ setIsPremium(premiumStatus);
 
                           {/* VERIFIED */}
                           {other?.isVerified && (
-                            <div className="absolute top-4 left-4 w-8 h-8 rounded-full bg-[#EC4899] flex items-center justify-center border-2 border-white/30 shadow-lg">
-                              <Check className="w-4 h-4 text-[#2D1721]" />
+                            <div className="absolute top-4 left-4 w-8 h-8 rounded-full bg-[#B16323] flex items-center justify-center border-2 border-white/30 shadow-lg">
+                              <Check className="w-4 h-4 text-[#F8D290]" />
                             </div>
                           )}
 
                           {/* ONLINE */}
                           {other?.isOnline && (
-                            <div className="absolute top-4 right-4 flex items-center gap-1.5 rounded-full bg-pink-50 backdrop-blur-md px-2.5 py-1.5 border border-pink-200">
+                            <div className="absolute top-4 right-4 flex items-center gap-1.5 rounded-full bg-[#F8D290]/90 backdrop-blur-md px-2.5 py-1.5 border border-[#F6BA48]/20">
                               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
 
-                              <span className="text-[9px] font-semibold text-[#4A2835]">
+                              <span className="text-[9px] font-semibold text-[#F8D290]">
                                 {t.online}
                               </span>
                             </div>
@@ -899,15 +899,15 @@ setIsPremium(premiumStatus);
                               <h3 className="text-lg font-bold truncate">
                                 {name}
                                 {age !== undefined && (
-                                  <span className="text-pink-500 ml-1">
+                                  <span className="text-[#F6BA48] ml-1">
                                     {age}
                                   </span>
                                 )}
                               </h3>
 
                               {location && (
-                                <div className="flex items-center gap-1.5 mt-1.5 text-xs text-[#8A6372]">
-                                  <MapPin className="w-3.5 h-3.5 text-pink-500" />
+                                <div className="flex items-center gap-1.5 mt-1.5 text-xs text-[#9F7C61]">
+                                  <MapPin className="w-3.5 h-3.5 text-[#F6BA48]" />
                                   <span className="truncate">{location}</span>
                                 </div>
                               )}
@@ -915,7 +915,7 @@ setIsPremium(premiumStatus);
                           </div>
 
                           {other?.bio && (
-                            <p className="text-xs text-[#8A6372] line-clamp-2 mt-3 min-h-[32px]">
+                            <p className="text-xs text-[#9F7C61] line-clamp-2 mt-3 min-h-[32px]">
                               {other.bio}
                             </p>
                           )}
@@ -931,7 +931,7 @@ setIsPremium(premiumStatus);
 
     navigate(`/profile/${other.id}`);
   }}
-  className="flex-1 h-10 rounded-xl border border-pink-200 bg-[#310D0C]/[0.03] hover:bg-[#310D0C]/[0.07] text-xs font-semibold text-[#6B4454] hover:text-[#2D1721] transition"
+  className="flex-1 h-10 rounded-xl border border-[#F6BA48]/20 bg-[#310D0C]/[0.03] hover:bg-[#310D0C]/[0.07] text-xs font-semibold text-[#B5A093] hover:text-[#F8D290] transition"
 >
   {t.profile}
 </button>
@@ -940,7 +940,7 @@ setIsPremium(premiumStatus);
                               <button
                                 disabled={likingId === String(other.id)}
                                 onClick={() => handleLike(String(other.id))}
-                                className="flex-1 h-10 rounded-xl bg-gradient-to-r from-pink-500 to-rose-500 hover:from-[#F6BA48] hover:to-rose-400 text-xs font-bold transition shadow-lg shadow-pink-500/10 disabled:opacity-50 flex items-center justify-center gap-1.5"
+                                className="flex-1 h-10 rounded-xl bg-gradient-to-r from-[#B16323] to-[#F6BA48] hover:from-[#F6BA48] hover:to-[#F8D290] text-xs font-bold transition shadow-lg shadow-black/20 disabled:opacity-50 flex items-center justify-center gap-1.5"
                               >
                                 {likingId === String(other.id) ? (
                                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -958,7 +958,7 @@ setIsPremium(premiumStatus);
                                 navigate(`/messages/direct?userId=${other.id}`)
 
                                 }
-                                className="flex-1 h-10 rounded-xl bg-gradient-to-r from-emerald-500 to-rose-500 hover:from-emerald-400 hover:to-pink-500 text-xs font-bold transition shadow-lg shadow-emerald-500/10 flex items-center justify-center gap-1.5"
+                                className="flex-1 h-10 rounded-xl bg-gradient-to-r from-[#3FB36E] to-[#B16323] hover:from-[#3FB36E] hover:to-[#F6BA48] text-xs font-bold transition shadow-lg shadow-emerald-500/10 flex items-center justify-center gap-1.5"
                               >
                                 <MessageCircle className="w-3.5 h-3.5" />
                                 {t.sendMessage}
@@ -1047,12 +1047,12 @@ function SidebarLinks({
             onClick={() => navigate(item.url)}
             className={`relative w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all ${
               isActive
-                ? "bg-gradient-to-r from-pink-500/15 via-[#F6BA48]/10 to-transparent text-[#2D1721]"
-                : "text-[#F3D5E2]/90 hover:text-white hover:bg-white/10"
+                ? "bg-gradient-to-r from-[#B16323]/15 via-[#F6BA48]/10 to-transparent text-[#F8D290]"
+                : "text-[#F8D290]/90 hover:text-white hover:bg-white/10"
             }`}
           >
             {isActive && (
-              <span className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-gradient-to-b from-[#F6BA48] to-rose-500" />
+              <span className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-gradient-to-b from-[#F6BA48] to-[#F6BA48]" />
             )}
 
             <Icon className={`w-5 h-5 ${isActive ? "text-[#F6BA48]" : ""}`} />
@@ -1087,11 +1087,11 @@ function EmptyState({
   onClick: () => void;
 }) {
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-pink-200 bg-gradient-to-br from-[#EFA3C0] to-[#D987A8] min-h-[360px] flex items-center justify-center px-6">
-      <div className="absolute w-80 h-80 rounded-full bg-pink-500/5 blur-3xl -top-40 left-1/2 -translate-x-1/2" />
+    <div className="relative overflow-hidden rounded-3xl border border-[#F6BA48]/20 bg-gradient-to-br from-[#683312] to-[#512510] min-h-[360px] flex items-center justify-center px-6">
+      <div className="absolute w-80 h-80 rounded-full bg-[#F6BA48]/5 blur-3xl -top-40 left-1/2 -translate-x-1/2" />
 
       <div className="relative text-center max-w-md">
-        <div className="w-20 h-20 rounded-3xl bg-[#310D0C]/[0.03] border border-pink-200 flex items-center justify-center mx-auto mb-6">
+        <div className="w-20 h-20 rounded-3xl bg-[#310D0C]/[0.03] border border-[#F6BA48]/20 flex items-center justify-center mx-auto mb-6">
           {icon}
         </div>
 
@@ -1101,7 +1101,7 @@ function EmptyState({
 
         <button
           onClick={onClick}
-          className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-pink-500 to-rose-500 px-5 py-3 text-sm font-bold shadow-lg shadow-pink-500/15 hover:scale-[1.02] transition"
+          className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#B16323] to-[#F6BA48] px-5 py-3 text-sm font-bold shadow-lg shadow-[#F6BA48]/15 hover:scale-[1.02] transition"
         >
           {buttonText}
           <ChevronRight className="w-4 h-4" />

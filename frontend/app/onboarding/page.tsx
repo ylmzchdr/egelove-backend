@@ -189,40 +189,40 @@ export default function OnboardingPage() {
   const progress = ((step + 1) / STEPS.length) * 100;
 
   return (
-    <div className="min-h-screen bg-pink-950 text-white">
+    <div className="min-h-screen bg-[#310D0C] text-white">
       <Header />
       <section className="py-12">
         <div className="mx-auto max-w-2xl px-4">
-          <div className="bg-white/5 border border-white/10 rounded-xl p-8">
+          <div className="rounded-2xl border border-[#F6BA48]/15 bg-[#512510]/45 p-8 shadow-[0_24px_70px_rgba(0,0,0,0.22)]">
             <div className="flex justify-between mb-2">
               <h1 className="text-2xl font-bold">Profilini Oluştur</h1>
               <span className="text-white/40 text-base">{step + 1}/{STEPS.length}</span>
             </div>
 
-            <div className="w-full bg-white/10 rounded-full h-2 mb-8">
-              <div className="bg-pink-500 h-2 rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
+            <div className="mb-8 h-2 w-full rounded-full bg-[#683312]/80">
+              <div className="h-2 rounded-full bg-gradient-to-r from-[#7E4114] via-[#EF912C] to-[#F6BA48] transition-all duration-300" style={{ width: `${progress}%` }} />
             </div>
 
             {step === 0 && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="md:col-span-2"><Label className="text-lg">Adın soyadın nedir?</Label></div>
-                <div><Label>Ad</Label><Input className="bg-pink-950/50 border-white/10 text-white" value={form.name} onChange={(e) => update("name", e.target.value)} /></div>
-                <div><Label>Soyad</Label><Input className="bg-pink-950/50 border-white/10 text-white" value={form.surname} onChange={(e) => update("surname", e.target.value)} /></div>
-                <div><Label>Doğum Tarihi</Label><Input type="date" className="bg-pink-950/50 border-white/10 text-white" value={form.birthDate} onChange={(e) => update("birthDate", e.target.value)} /></div>
+                <div><Label>Ad</Label><Input className="bg-[#310D0C]/50 border-white/10 text-white" value={form.name} onChange={(e) => update("name", e.target.value)} /></div>
+                <div><Label>Soyad</Label><Input className="bg-[#310D0C]/50 border-white/10 text-white" value={form.surname} onChange={(e) => update("surname", e.target.value)} /></div>
+                <div><Label>Doğum Tarihi</Label><Input type="date" className="bg-[#310D0C]/50 border-white/10 text-white" value={form.birthDate} onChange={(e) => update("birthDate", e.target.value)} /></div>
                 <div>
                   <Label>Cinsiyet</Label>
                   <Select value={form.gender} onValueChange={(v) => update("gender", v)}>
-                    <SelectTrigger className="bg-pink-950/50 border-white/10 text-white"><SelectValue placeholder="Seçin" /></SelectTrigger>
+                    <SelectTrigger className="bg-[#310D0C]/50 border-white/10 text-white"><SelectValue placeholder="Seçin" /></SelectTrigger>
                     <SelectContent>
                       {GENDER_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
                     </SelectContent>
                   </Select>
                 </div>
-                <div><Label>Telefon (isteğe bağlı)</Label><Input className="bg-pink-950/50 border-white/10 text-white" value={form.phone} onChange={(e) => update("phone", e.target.value)} /></div>
+                <div><Label>Telefon (isteğe bağlı)</Label><Input className="bg-[#310D0C]/50 border-white/10 text-white" value={form.phone} onChange={(e) => update("phone", e.target.value)} /></div>
                 <div>
                   <Label>İl</Label>
                   <Select value={form.cityId ? String(form.cityId) : ""} onValueChange={(v) => loadDistricts(parseInt(v))}>
-                    <SelectTrigger className="bg-pink-950/50 border-white/10 text-white"><SelectValue placeholder="Seçin" /></SelectTrigger>
+                    <SelectTrigger className="bg-[#310D0C]/50 border-white/10 text-white"><SelectValue placeholder="Seçin" /></SelectTrigger>
                     <SelectContent>
                       {cities.map((c) => <SelectItem key={c.id} value={String(c.id)}>{c.name}</SelectItem>)}
                     </SelectContent>
@@ -231,7 +231,7 @@ export default function OnboardingPage() {
                 <div>
                   <Label>İlçe</Label>
                   <Select value={form.districtId ? String(form.districtId) : ""} onValueChange={(v) => update("districtId", parseInt(v))}>
-                    <SelectTrigger className="bg-pink-950/50 border-white/10 text-white"><SelectValue placeholder="Önce il seçin" /></SelectTrigger>
+                    <SelectTrigger className="bg-[#310D0C]/50 border-white/10 text-white"><SelectValue placeholder="Önce il seçin" /></SelectTrigger>
                     <SelectContent>
                       {districts.map((d) => <SelectItem key={d.id} value={String(d.id)}>{d.name}</SelectItem>)}
                     </SelectContent>
@@ -243,29 +243,29 @@ export default function OnboardingPage() {
             {step === 1 && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="md:col-span-2"><Label className="text-lg">Fiziksel özelliklerin neler?</Label></div>
-                <div><Label>Boy (cm)</Label><Input type="number" className="bg-pink-950/50 border-white/10 text-white" value={form.height || ""} onChange={(e) => update("height", e.target.value ? parseInt(e.target.value) : 0)} /></div>
-                <div><Label>Kilo (kg)</Label><Input type="number" className="bg-pink-950/50 border-white/10 text-white" value={form.weight || ""} onChange={(e) => update("weight", e.target.value ? parseInt(e.target.value) : 0)} /></div>
+                <div><Label>Boy (cm)</Label><Input type="number" className="bg-[#310D0C]/50 border-white/10 text-white" value={form.height || ""} onChange={(e) => update("height", e.target.value ? parseInt(e.target.value) : 0)} /></div>
+                <div><Label>Kilo (kg)</Label><Input type="number" className="bg-[#310D0C]/50 border-white/10 text-white" value={form.weight || ""} onChange={(e) => update("weight", e.target.value ? parseInt(e.target.value) : 0)} /></div>
                 <div><Label>Vücut Tipi</Label>
                   <Select value={form.bodyType} onValueChange={(v) => update("bodyType", v)}>
-                    <SelectTrigger className="bg-pink-950/50 border-white/10 text-white"><SelectValue placeholder="Seçin" /></SelectTrigger>
+                    <SelectTrigger className="bg-[#310D0C]/50 border-white/10 text-white"><SelectValue placeholder="Seçin" /></SelectTrigger>
                     <SelectContent>{BODY_TYPE_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
                   </Select>
                 </div>
                 <div><Label>Saç Rengi</Label>
                   <Select value={form.hairColor} onValueChange={(v) => update("hairColor", v)}>
-                    <SelectTrigger className="bg-pink-950/50 border-white/10 text-white"><SelectValue placeholder="Seçin" /></SelectTrigger>
+                    <SelectTrigger className="bg-[#310D0C]/50 border-white/10 text-white"><SelectValue placeholder="Seçin" /></SelectTrigger>
                     <SelectContent>{HAIR_COLOR_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
                   </Select>
                 </div>
                 <div><Label>Göz Rengi</Label>
                   <Select value={form.eyeColor} onValueChange={(v) => update("eyeColor", v)}>
-                    <SelectTrigger className="bg-pink-950/50 border-white/10 text-white"><SelectValue placeholder="Seçin" /></SelectTrigger>
+                    <SelectTrigger className="bg-[#310D0C]/50 border-white/10 text-white"><SelectValue placeholder="Seçin" /></SelectTrigger>
                     <SelectContent>{EYE_COLOR_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
                   </Select>
                 </div>
                 <div><Label>Kan Grubu</Label>
                   <Select value={form.bloodType} onValueChange={(v) => update("bloodType", v)}>
-                    <SelectTrigger className="bg-pink-950/50 border-white/10 text-white"><SelectValue placeholder="Seçin" /></SelectTrigger>
+                    <SelectTrigger className="bg-[#310D0C]/50 border-white/10 text-white"><SelectValue placeholder="Seçin" /></SelectTrigger>
                     <SelectContent>{BLOOD_TYPE_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
                   </Select>
                 </div>
@@ -277,44 +277,44 @@ export default function OnboardingPage() {
                 <div className="md:col-span-2"><Label className="text-lg">Yaşam tarzın nasıl?</Label></div>
                 <div><Label>Eğitim</Label>
                   <Select value={form.education} onValueChange={(v) => update("education", v)}>
-                    <SelectTrigger className="bg-pink-950/50 border-white/10 text-white"><SelectValue placeholder="Seçin" /></SelectTrigger>
+                    <SelectTrigger className="bg-[#310D0C]/50 border-white/10 text-white"><SelectValue placeholder="Seçin" /></SelectTrigger>
                     <SelectContent>{EDUCATION_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
                   </Select>
                 </div>
-                <div><Label>Meslek</Label><Input className="bg-pink-950/50 border-white/10 text-white" value={form.occupation} onChange={(e) => update("occupation", e.target.value)} /></div>
+                <div><Label>Meslek</Label><Input className="bg-[#310D0C]/50 border-white/10 text-white" value={form.occupation} onChange={(e) => update("occupation", e.target.value)} /></div>
                 <div><Label>Gelir</Label>
                   <Select value={form.income} onValueChange={(v) => update("income", v)}>
-                    <SelectTrigger className="bg-pink-950/50 border-white/10 text-white"><SelectValue placeholder="Seçin" /></SelectTrigger>
+                    <SelectTrigger className="bg-[#310D0C]/50 border-white/10 text-white"><SelectValue placeholder="Seçin" /></SelectTrigger>
                     <SelectContent>{INCOME_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
                   </Select>
                 </div>
                 <div><Label>Medeni Durum</Label>
                   <Select value={form.maritalStatus} onValueChange={(v) => update("maritalStatus", v)}>
-                    <SelectTrigger className="bg-pink-950/50 border-white/10 text-white"><SelectValue placeholder="Seçin" /></SelectTrigger>
+                    <SelectTrigger className="bg-[#310D0C]/50 border-white/10 text-white"><SelectValue placeholder="Seçin" /></SelectTrigger>
                     <SelectContent>{MARITAL_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
                   </Select>
                 </div>
                 <div><Label>Çocuk</Label>
                   <Select value={form.children} onValueChange={(v) => update("children", v)}>
-                    <SelectTrigger className="bg-pink-950/50 border-white/10 text-white"><SelectValue placeholder="Seçin" /></SelectTrigger>
+                    <SelectTrigger className="bg-[#310D0C]/50 border-white/10 text-white"><SelectValue placeholder="Seçin" /></SelectTrigger>
                     <SelectContent>{CHILDREN_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
                   </Select>
                 </div>
                 <div><Label>Sigara</Label>
                   <Select value={form.smoking} onValueChange={(v) => update("smoking", v)}>
-                    <SelectTrigger className="bg-pink-950/50 border-white/10 text-white"><SelectValue placeholder="Seçin" /></SelectTrigger>
+                    <SelectTrigger className="bg-[#310D0C]/50 border-white/10 text-white"><SelectValue placeholder="Seçin" /></SelectTrigger>
                     <SelectContent>{SMOKING_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
                   </Select>
                 </div>
                 <div><Label>Alkol</Label>
                   <Select value={form.alcohol} onValueChange={(v) => update("alcohol", v)}>
-                    <SelectTrigger className="bg-pink-950/50 border-white/10 text-white"><SelectValue placeholder="Seçin" /></SelectTrigger>
+                    <SelectTrigger className="bg-[#310D0C]/50 border-white/10 text-white"><SelectValue placeholder="Seçin" /></SelectTrigger>
                     <SelectContent>{ALCOHOL_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
                   </Select>
                 </div>
                 <div><Label>Din</Label>
                   <Select value={form.religion} onValueChange={(v) => update("religion", v)}>
-                    <SelectTrigger className="bg-pink-950/50 border-white/10 text-white"><SelectValue placeholder="Seçin" /></SelectTrigger>
+                    <SelectTrigger className="bg-[#310D0C]/50 border-white/10 text-white"><SelectValue placeholder="Seçin" /></SelectTrigger>
                     <SelectContent>{RELIGION_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
                   </Select>
                 </div>
@@ -324,11 +324,11 @@ export default function OnboardingPage() {
             {step === 3 && (
               <div className="space-y-4">
                 <Label className="text-lg">Kendinden bahset</Label>
-                <textarea className="w-full bg-pink-950/50 border border-white/10 rounded-lg p-3 text-white min-h-[120px] resize-y" placeholder="Hobilerin, ilgi alanların, hayallerin..." value={form.aboutMe} onChange={(e) => update("aboutMe", e.target.value)} />
+                <textarea className="w-full bg-[#310D0C]/50 border border-white/10 rounded-lg p-3 text-white min-h-[120px] resize-y" placeholder="Hobilerin, ilgi alanların, hayallerin..." value={form.aboutMe} onChange={(e) => update("aboutMe", e.target.value)} />
                 <Label className="text-lg">Partnerinde aradığın özellikler</Label>
-                <textarea className="w-full bg-pink-950/50 border border-white/10 rounded-lg p-3 text-white min-h-[80px] resize-y" placeholder="Nasıl birini arıyorsun?" value={form.lookingFor} onChange={(e) => update("lookingFor", e.target.value)} />
+                <textarea className="w-full bg-[#310D0C]/50 border border-white/10 rounded-lg p-3 text-white min-h-[80px] resize-y" placeholder="Nasıl birini arıyorsun?" value={form.lookingFor} onChange={(e) => update("lookingFor", e.target.value)} />
                 <Label>Hobiler (virgülle ayırın)</Label>
-                <Input className="bg-pink-950/50 border-white/10 text-white" placeholder="Yüzme, kitap okuma, seyahat" value={form.hobbies} onChange={(e) => update("hobbies", e.target.value)} />
+                <Input className="bg-[#310D0C]/50 border-white/10 text-white" placeholder="Yüzme, kitap okuma, seyahat" value={form.hobbies} onChange={(e) => update("hobbies", e.target.value)} />
               </div>
             )}
 
@@ -342,12 +342,12 @@ export default function OnboardingPage() {
 
             <div className="flex gap-3 mt-8">
               {step > 0 && (
-                <Button variant="outline" className="border-white/20 text-white flex-1" onClick={() => setStep(step - 1)}>
+                <Button variant="outline" className="flex-1 border-[#F6BA48]/25 bg-transparent text-[#F8D290] hover:bg-[#683312]/45 hover:text-white" onClick={() => setStep(step - 1)}>
                   Geri
                 </Button>
               )}
               <Button
-                className="bg-pink-600 hover:bg-pink-700 text-white flex-1 disabled:opacity-50"
+                className="flex-1 bg-[#F6BA48] font-bold text-[#310D0C] hover:bg-[#EF912C] disabled:opacity-50"
                 onClick={saveAndNext}
                 disabled={!canProceed() || saving}
               >

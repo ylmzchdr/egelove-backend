@@ -178,14 +178,14 @@ export default function Sidebar() {
           "transition-all duration-300 ease-out",
           "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#F6BA48]/80",
           active
-            ? "bg-gradient-to-r from-pink-500/20 via-rose-500/15 to-orange-400/10 text-white shadow-[0_12px_35px_rgba(236,72,153,0.12)]"
+            ? "bg-gradient-to-r from-[#F6BA48]/20 via-[#B16323]/15 to-[#7E4114]/10 text-white shadow-[0_12px_35px_rgba(246,186,72,0.12)]"
             : "text-slate-300 hover:bg-white/[0.055] hover:text-white",
         ].join(" ")}
       >
         {active && (
           <span
             aria-hidden="true"
-            className="absolute bottom-2 left-0 top-2 w-1 rounded-r-full bg-gradient-to-b from-[#F6BA48] via-rose-400 to-orange-300 shadow-[0_0_18px_rgba(244,114,182,0.85)]"
+            className="absolute bottom-2 left-0 top-2 w-1 rounded-r-full bg-gradient-to-b from-[#F6BA48] via-[#EF912C] to-[#B16323] shadow-[0_0_18px_rgba(246,186,72,0.70)]"
           />
         )}
 
@@ -194,8 +194,8 @@ export default function Sidebar() {
             "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border",
             "transition-all duration-300",
             active
-              ? "border-[#F6BA48]/25 bg-[#F6BA48]/10 text-pink-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]"
-              : "border-white/[0.06] bg-white/[0.025] text-slate-500 group-hover:border-white/10 group-hover:bg-white/[0.06] group-hover:text-pink-300",
+              ? "border-[#F6BA48]/25 bg-[#F6BA48]/10 text-[#F6BA48] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]"
+              : "border-white/[0.06] bg-white/[0.025] text-slate-500 group-hover:border-white/10 group-hover:bg-white/[0.06] group-hover:text-[#F6BA48]",
           ].join(" ")}
         >
           <Icon className="h-[19px] w-[19px]" strokeWidth={1.9} />
@@ -206,7 +206,7 @@ export default function Sidebar() {
         </span>
 
         {item.badge && (
-          <span className="rounded-full border border-[#F6BA48]/20 bg-[#F6BA48]/10 px-2 py-0.5 text-[10px] font-bold text-pink-300">
+          <span className="rounded-full border border-[#F6BA48]/20 bg-[#F6BA48]/10 px-2 py-0.5 text-[10px] font-bold text-[#F6BA48]">
             {item.badge}
           </span>
         )}
@@ -215,7 +215,7 @@ export default function Sidebar() {
           className={[
             "h-4 w-4 shrink-0 transition-all duration-300",
             active
-              ? "translate-x-0 text-pink-300 opacity-100"
+              ? "translate-x-0 text-[#F6BA48] opacity-100"
               : "-translate-x-1 text-slate-600 opacity-0 group-hover:translate-x-0 group-hover:opacity-100",
           ].join(" ")}
           strokeWidth={2}
@@ -225,14 +225,14 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="relative flex h-full min-h-screen w-full flex-col overflow-hidden border-r border-white/[0.07] bg-[#080b14]/95 text-white backdrop-blur-2xl lg:w-[286px]">
+    <aside className="relative flex h-full min-h-screen w-full flex-col overflow-hidden border-r border-[#F6BA48]/10 bg-gradient-to-b from-[#310D0C] via-[#310D0C] to-[#512510] text-white backdrop-blur-2xl lg:w-[286px]">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -left-24 -top-28 h-72 w-72 rounded-full bg-pink-500/[0.13] blur-[90px]"
+        className="pointer-events-none absolute -left-24 -top-28 h-72 w-72 rounded-full bg-[#F6BA48]/[0.13] blur-[90px]"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -bottom-28 -right-28 h-72 w-72 rounded-full bg-violet-500/[0.09] blur-[100px]"
+        className="pointer-events-none absolute -bottom-28 -right-28 h-72 w-72 rounded-full bg-[#B16323]/[0.09] blur-[100px]"
       />
       <div
         aria-hidden="true"
@@ -246,7 +246,7 @@ export default function Sidebar() {
             className="group flex items-center gap-3 rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[#F6BA48]/80"
           >
             <div className="relative flex h-12 w-12 shrink-0 items-center justify-center">
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-pink-500 via-rose-500 to-orange-400 opacity-90 shadow-[0_12px_35px_rgba(236,72,153,0.28)] transition-transform duration-300 group-hover:scale-105" />
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#7E4114] via-[#B16323] to-[#F6BA48] opacity-90 shadow-[0_12px_35px_rgba(246,186,72,0.24)] transition-transform duration-300 group-hover:scale-105" />
               <div className="absolute inset-[1px] rounded-[15px] bg-gradient-to-br from-white/20 to-transparent" />
 
               <Heart
@@ -254,7 +254,7 @@ export default function Sidebar() {
                 strokeWidth={1.8}
               />
 
-              <span className="absolute -right-1 -top-1 h-3.5 w-3.5 rounded-full border-2 border-[#090c15] bg-emerald-400 shadow-[0_0_14px_rgba(52,211,153,0.7)]" />
+              <span className="absolute -right-1 -top-1 h-3.5 w-3.5 rounded-full border-2 border-[#310D0C] bg-emerald-400 shadow-[0_0_14px_rgba(52,211,153,0.7)]" />
             </div>
 
             <div className="min-w-0">
@@ -262,7 +262,7 @@ export default function Sidebar() {
                 <span className="text-[20px] font-black tracking-[-0.04em] text-white">
                   SENve
                 </span>
-                <span className="bg-gradient-to-r from-[#F6BA48] via-rose-400 to-orange-300 bg-clip-text text-[20px] font-black tracking-[-0.04em] text-transparent">
+                <span className="bg-gradient-to-r from-[#F6BA48] via-[#EF912C] to-[#B16323] bg-clip-text text-[20px] font-black tracking-[-0.04em] text-transparent">
                   BEN
                 </span>
               </div>
@@ -299,7 +299,7 @@ export default function Sidebar() {
             </div>
           </nav>
 
-          <div className="relative mt-6 overflow-hidden rounded-[24px] border border-[#F6BA48]/[0.14] bg-gradient-to-br from-pink-500/[0.13] via-violet-500/[0.07] to-orange-400/[0.08] p-4 shadow-[0_18px_50px_rgba(0,0,0,0.22)]">
+          <div className="relative mt-6 overflow-hidden rounded-[24px] border border-[#F6BA48]/[0.14] bg-gradient-to-br from-[#F6BA48]/[0.13] via-[#B16323]/[0.07] to-[#7E4114]/[0.08] p-4 shadow-[0_18px_50px_rgba(0,0,0,0.22)]">
             <div
               aria-hidden="true"
               className="pointer-events-none absolute -right-7 -top-9 h-24 w-24 rounded-full bg-[#F6BA48]/20 blur-3xl"
@@ -327,7 +327,7 @@ export default function Sidebar() {
 
               <Link
                 href="/premium"
-                className="mt-4 flex min-h-10 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-pink-500 via-rose-500 to-orange-400 px-3 text-xs font-extrabold text-white shadow-[0_10px_30px_rgba(236,72,153,0.22)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_34px_rgba(236,72,153,0.32)] focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-300"
+                className="mt-4 flex min-h-10 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#7E4114] via-[#B16323] to-[#F6BA48] px-3 text-xs font-extrabold text-white shadow-[0_10px_30px_rgba(246,186,72,0.20)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_34px_rgba(246,186,72,0.30)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#F6BA48]"
               >
                 {copy.premiumCta}
                 <ChevronRight className="h-4 w-4" strokeWidth={2.2} />

@@ -42,7 +42,7 @@ function Toggle({ checked, onChange, label }: ToggleProps) {
       className={[
         "relative h-7 w-12 shrink-0 rounded-full border transition-all duration-300",
         checked
-          ? "border-[#F6BA48]/40 bg-gradient-to-r from-fuchsia-500 to-blue-500 shadow-[0_0_24px_rgba(217,70,239,0.22)]"
+          ? "border-[#F6BA48]/40 bg-gradient-to-r from-[#7E4114] to-[#F6BA48] shadow-[0_0_24px_rgba(246,186,72,0.18)]"
           : "border-white/10 bg-white/[0.06]",
       ].join(" ")}
     >
@@ -281,13 +281,13 @@ export default function SettingsPage() {
     description: string;
     children?: React.ReactNode;
   }) => (
-    <div className="flex items-center gap-4 border-b border-white/[0.06] py-5 last:border-b-0">
-      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/[0.07] bg-white/[0.035] text-pink-300">
+    <div className="flex items-center gap-4 border-b border-[#F6BA48]/[0.10] py-5 last:border-b-0">
+      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[#F6BA48]/[0.12] bg-[#683312]/35 text-[#F6BA48]">
         <Icon className="h-5 w-5" strokeWidth={1.8} />
       </div>
       <div className="min-w-0 flex-1">
         <p className="font-bold text-white">{title}</p>
-        <p className="mt-1 text-sm leading-6 text-slate-500">{description}</p>
+        <p className="mt-1 text-sm leading-6 text-[#B5A093]/70">{description}</p>
       </div>
       {children}
     </div>
@@ -304,15 +304,15 @@ export default function SettingsPage() {
     description: string;
     children: React.ReactNode;
   }) => (
-    <section className="overflow-hidden rounded-[28px] border border-white/[0.08] bg-white/[0.035] shadow-[0_25px_80px_rgba(0,0,0,0.18)] backdrop-blur-2xl">
-      <div className="border-b border-white/[0.06] px-6 py-5 sm:px-7">
+    <section className="overflow-hidden rounded-[28px] border border-[#F6BA48]/[0.12] bg-[#512510]/45 shadow-[0_25px_80px_rgba(0,0,0,0.18)] backdrop-blur-2xl">
+      <div className="border-b border-[#F6BA48]/[0.10] px-6 py-5 sm:px-7">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-fuchsia-500/20 to-blue-500/20 text-pink-300">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#7E4114]/40 to-[#F6BA48]/20 text-[#F6BA48]">
             <Icon className="h-5 w-5" strokeWidth={1.8} />
           </div>
           <div>
             <h2 className="text-lg font-black text-white">{title}</h2>
-            <p className="mt-0.5 text-sm text-slate-500">{description}</p>
+            <p className="mt-0.5 text-sm text-[#B5A093]/70">{description}</p>
           </div>
         </div>
       </div>
@@ -322,7 +322,7 @@ export default function SettingsPage() {
 
   return (
     <div
-      className="min-h-screen bg-[#080b14] text-white"
+      className="min-h-screen bg-[#310D0C] text-white"
       dir={lang === "AR" ? "rtl" : "ltr"}
     >
       <div className="lg:hidden">
@@ -336,18 +336,18 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        <main className="relative min-w-0 flex-1 overflow-hidden bg-[radial-gradient(circle_at_10%_5%,rgba(56,189,248,0.09),transparent_28%),radial-gradient(circle_at_92%_14%,rgba(217,70,239,0.09),transparent_30%),linear-gradient(135deg,#070a12_0%,#0d101a_52%,#090c15_100%)]">
+        <main className="relative min-w-0 flex-1 overflow-hidden bg-[radial-gradient(circle_at_10%_5%,rgba(246,186,72,0.10),transparent_28%),radial-gradient(circle_at_92%_14%,rgba(177,99,35,0.12),transparent_30%),linear-gradient(135deg,#310D0C_0%,#512510_52%,#310D0C_100%)]">
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -left-40 -top-48 h-[500px] w-[500px] rounded-full bg-pink-500/[0.13] blur-[130px]"
+            className="pointer-events-none absolute -left-40 -top-48 h-[500px] w-[500px] rounded-full bg-[#F6BA48]/[0.10] blur-[130px]"
           />
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -right-48 top-40 h-[520px] w-[520px] rounded-full bg-violet-500/[0.11] blur-[140px]"
+            className="pointer-events-none absolute -right-48 top-40 h-[520px] w-[520px] rounded-full bg-[#B16323]/[0.12] blur-[140px]"
           />
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute bottom-0 left-1/3 h-[400px] w-[400px] rounded-full bg-cyan-500/[0.07] blur-[130px]"
+            className="pointer-events-none absolute bottom-0 left-1/3 h-[400px] w-[400px] rounded-full bg-[#EF912C]/[0.08] blur-[130px]"
           />
 
           <div className="relative z-10">
@@ -358,14 +358,14 @@ export default function SettingsPage() {
             <div className="mx-auto w-full max-w-[1180px] px-4 py-6 sm:px-6 sm:py-8 xl:px-8">
               <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                  <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[#F6BA48]/20 bg-pink-500/[0.08] px-3 py-1.5 text-xs font-bold text-pink-300">
+                  <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[#F6BA48]/20 bg-[#F6BA48]/[0.08] px-3 py-1.5 text-xs font-bold text-[#F6BA48]">
                     <SettingsIcon />
                     {t.title}
                   </div>
-                  <h1 className="text-3xl font-black tracking-tight text-slate-950 dark:text-white sm:text-4xl">
+                  <h1 className="text-3xl font-black tracking-tight text-[#FFF7E8] sm:text-4xl">
                     {t.title}
                   </h1>
-                  <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500 dark:text-slate-400 sm:text-base">
+                  <p className="mt-2 max-w-2xl text-sm leading-6 text-[#B5A093]/70 dark:text-[#B5A093]/80 sm:text-base">
                     {t.subtitle}
                   </p>
                 </div>
@@ -398,8 +398,8 @@ export default function SettingsPage() {
                           className={[
                             "rounded-xl border px-3 py-2 text-xs font-black transition-all",
                             lang === item.code
-                              ? "border-[#F6BA48]/30 bg-gradient-to-r from-fuchsia-500/20 to-blue-500/20 text-white shadow-[0_0_22px_rgba(217,70,239,0.15)]"
-                              : "border-white/[0.08] bg-white/[0.025] text-slate-500 hover:border-white/15 hover:text-white",
+                              ? "border-[#F6BA48]/30 bg-gradient-to-r from-[#7E4114]/40 to-[#F6BA48]/20 text-white shadow-[0_0_22px_rgba(217,70,239,0.15)]"
+                              : "border-white/[0.08] bg-white/[0.025] text-[#B5A093]/70 hover:border-white/15 hover:text-white",
                           ].join(" ")}
                         >
                           {item.flag} {item.code}
@@ -534,7 +534,7 @@ export default function SettingsPage() {
                   >
                     <Link
                       href="/profile/edit"
-                      className="inline-flex items-center gap-2 rounded-xl border border-[#F6BA48]/20 bg-pink-500/[0.08] px-4 py-2.5 text-xs font-black text-pink-200 transition hover:bg-pink-500/[0.14]"
+                      className="inline-flex items-center gap-2 rounded-xl border border-[#F6BA48]/20 bg-[#F6BA48]/[0.08] px-4 py-2.5 text-xs font-black text-[#F8D290] transition hover:bg-[#F6BA48]/[0.14]"
                     >
                       {t.editProfile}
                       <ChevronRight className="h-4 w-4" />
@@ -558,7 +558,7 @@ export default function SettingsPage() {
                   >
                     <Link
                       href="/premium"
-                      className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-fuchsia-500 to-blue-500 px-4 py-2.5 text-xs font-black text-white shadow-[0_12px_30px_rgba(168,85,247,0.2)] transition hover:-translate-y-0.5"
+                      className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#7E4114] to-[#F6BA48] px-4 py-2.5 text-xs font-black text-white shadow-[0_12px_30px_rgba(246,186,72,0.18)] transition hover:-translate-y-0.5"
                     >
                       {t.premiumCta}
                       <ChevronRight className="h-4 w-4" />
@@ -570,16 +570,16 @@ export default function SettingsPage() {
                       href="/help"
                       className="group flex items-center justify-between rounded-2xl border border-white/[0.07] bg-white/[0.025] px-4 py-3.5 transition hover:border-white/15 hover:bg-white/[0.05]"
                     >
-                      <span className="text-sm font-bold text-slate-300 group-hover:text-white">
+                      <span className="text-sm font-bold text-[#F8D290]/80 group-hover:text-white">
                         {t.help}
                       </span>
-                      <ChevronRight className="h-4 w-4 text-slate-600 transition group-hover:translate-x-0.5 group-hover:text-pink-300" />
+                      <ChevronRight className="h-4 w-4 text-[#9F7C61]/75 transition group-hover:translate-x-0.5 group-hover:text-[#F6BA48]" />
                     </Link>
                   </div>
                 </Section>
               </div>
 
-              <div className="mt-5 flex items-center justify-center gap-2 pb-5 text-xs text-slate-600">
+              <div className="mt-5 flex items-center justify-center gap-2 pb-5 text-xs text-[#9F7C61]/75">
                 <Lock className="h-3.5 w-3.5" />
                 SENveBEN • Güvenli ve kişisel deneyim
               </div>

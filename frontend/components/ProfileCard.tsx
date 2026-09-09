@@ -18,12 +18,12 @@ type ProfileCardProps = {
 };
 
 const avatarColors = [
-  "from-[#F6BA48] to-purple-500",
-  "from-blue-400 to-cyan-500",
-  "from-amber-400 to-orange-500",
-  "from-emerald-400 to-teal-500",
-  "from-rose-400 to-red-500",
-  "from-violet-400 to-indigo-500",
+  "from-[#F6BA48] to-[#B16323]",
+  "from-[#EF912C] to-[#7E4114]",
+  "from-[#F8D290] to-[#CF7526]",
+  "from-[#B16323] to-[#683312]",
+  "from-[#F6BA48] to-[#964F1C]",
+  "from-[#CF7526] to-[#512510]",
 ];
 
 export default function ProfileCard({
@@ -41,23 +41,24 @@ export default function ProfileCard({
 
   const profileId = id || avatar?.id;
   const gradient = avatarColors[name.length % avatarColors.length];
- const backendUrl =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
- const databasePhoto =
-  avatar?.photos?.find((p: any) => p.isMain)?.url ||
-  avatar?.photos?.[0]?.url;
+  const backendUrl =
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
-const avatarUrl =
-  databasePhoto
-    ? databasePhoto.startsWith("http")
-      ? databasePhoto
-      : `${backendUrl}${databasePhoto.startsWith("/") ? "" : "/"}${databasePhoto}`
-    : typeof avatar === "string"
-      ? avatar.startsWith("http")
-        ? avatar
-        : `${backendUrl}${avatar.startsWith("/") ? "" : "/"}${avatar}`
-      : null;
+  const databasePhoto =
+    avatar?.photos?.find((p: any) => p.isMain)?.url ||
+    avatar?.photos?.[0]?.url;
+
+  const avatarUrl =
+    databasePhoto
+      ? databasePhoto.startsWith("http")
+        ? databasePhoto
+        : `${backendUrl}${databasePhoto.startsWith("/") ? "" : "/"}${databasePhoto}`
+      : typeof avatar === "string"
+        ? avatar.startsWith("http")
+          ? avatar
+          : `${backendUrl}${avatar.startsWith("/") ? "" : "/"}${avatar}`
+        : null;
 
   const handleViewProfile = () => {
     if (!profileId) {
@@ -70,6 +71,7 @@ const avatarUrl =
 
   const handleLike = () => {
     console.log("PROFILE ID =", profileId);
+
     if (!profileId) {
       alert("Kullanıcı ID bulunamadı");
       return;
@@ -79,26 +81,28 @@ const avatarUrl =
   };
 
   return (
-   <Card
-  className="
-    overflow-hidden
-    rounded-3xl
-    border
-    border-cyan-400/15
-    bg-gradient-to-b
-    from-[#13283f]/95
-    via-[#102235]/95
-    to-[#0b1b2d]/95
-    backdrop-blur-2xl
-    transition-all
-    duration-500
-    shadow-xl
-    hover:-translate-y-2
-    hover:border-cyan-300/50
-    hover:shadow-[0_0_45px_rgba(0,255,255,.22)]
-"
->
-     <div className={`relative h-56 overflow-hidden bg-gradient-to-br ${gradient}`}>
+    <Card
+      className="
+        overflow-hidden
+        rounded-3xl
+        border
+        border-[#F6BA48]/20
+        bg-gradient-to-b
+        from-[#512510]/95
+        via-[#310D0C]/95
+        to-[#310D0C]/95
+        backdrop-blur-2xl
+        transition-all
+        duration-500
+        shadow-xl
+        hover:-translate-y-2
+        hover:border-[#F6BA48]/55
+        hover:shadow-[0_0_45px_rgba(246,186,72,.18)]
+      "
+    >
+      <div
+        className={`relative h-56 overflow-hidden bg-gradient-to-br ${gradient}`}
+      >
         {avatarUrl && (
           <img
             src={avatarUrl}
@@ -108,28 +112,32 @@ const avatarUrl =
         )}
 
         {verified && (
-         <div className="absolute top-4 right-4 rounded-full bg-gradient-to-r from-cyan-400 to-fuchsia-500 p-2 shadow-lg">
-            <Star className="w-3.5 h-3.5 text-white fill-white" />
+          <div className="absolute right-4 top-4 rounded-full bg-gradient-to-r from-[#B16323] via-[#EF912C] to-[#F6BA48] p-2 shadow-lg">
+            <Star className="h-3.5 w-3.5 fill-[#310D0C] text-[#310D0C]" />
           </div>
         )}
 
-        <div className="absolute -bottom-11 left-1/2 h-24 w-24 -translate-x-1/2 overflow-hidden rounded-full border-4 border-cyan-400 bg-slate-900 shadow-[0_0_30px_rgba(0,255,255,.35)]">
+        <div className="absolute -bottom-11 left-1/2 h-24 w-24 -translate-x-1/2 overflow-hidden rounded-full border-4 border-[#F6BA48] bg-[#310D0C] shadow-[0_0_30px_rgba(246,186,72,.28)]">
           {avatarUrl ? (
-            <img src={avatarUrl} alt={name} className="w-full h-full object-cover" />
+            <img
+              src={avatarUrl}
+              alt={name}
+              className="h-full w-full object-cover"
+            />
           ) : (
-            <span className="text-2xl font-bold text-white">
+            <span className="flex h-full w-full items-center justify-center text-2xl font-bold text-[#F8D290]">
               {name.charAt(0).toUpperCase()}
             </span>
           )}
         </div>
       </div>
 
-      <div className="pt-12 pb-5 px-5 text-center">
-        <h3 className="text-2xl font-black tracking-wide text-white">
+      <div className="px-5 pb-5 pt-12 text-center">
+        <h3 className="text-2xl font-black tracking-wide text-[#F8D290]">
           {name}
           {age !== undefined ? (
             <>
-              , <span className="text-pink-300">{age}</span>
+              , <span className="text-[#F6BA48]">{age}</span>
             </>
           ) : (
             ""
@@ -137,8 +145,8 @@ const avatarUrl =
         </h3>
 
         {(city || district) && (
-          <div className="flex items-center justify-center gap-1 mt-1.5 text-white/60 text-base">
-           <MapPin className="h-4 w-4 text-cyan-300" />
+          <div className="mt-1.5 flex items-center justify-center gap-1 text-base text-[#B5A093]">
+            <MapPin className="h-4 w-4 text-[#F6BA48]" />
             <span>
               {city || ""}
               {city && district ? " • " : ""}
@@ -147,17 +155,17 @@ const avatarUrl =
           </div>
         )}
 
-        <p className="text-white/50 text-base mt-3 line-clamp-2 min-h-[2.5rem]">
+        <p className="mt-3 min-h-[2.5rem] line-clamp-2 text-base text-[#9F7C61]">
           {bio || ""}
         </p>
 
-        <div className="flex gap-2 mt-4">
+        <div className="mt-4 flex gap-2">
           <Button
             type="button"
             onClick={handleLike}
-          className="flex-1 h-10 rounded-xl bg-gradient-to-r from-fuchsia-600 to-pink-500 text-xs font-bold shadow-lg transition-all hover:scale-105"
+            className="h-10 flex-1 rounded-xl bg-gradient-to-r from-[#7E4114] via-[#B16323] to-[#F6BA48] text-xs font-bold text-[#310D0C] shadow-lg transition-all hover:scale-105 hover:from-[#964F1C] hover:via-[#CF7526] hover:to-[#F8D290]"
           >
-            <Heart className="w-4 h-4" />
+            <Heart className="h-4 w-4" />
             {t.profile.like}
           </Button>
 
@@ -165,7 +173,7 @@ const avatarUrl =
             type="button"
             onClick={handleViewProfile}
             variant="outline"
-            className="flex-1 h-10 rounded-xl border border-cyan-400/30 bg-cyan-400/5 text-cyan-200 transition-all hover:border-cyan-300 hover:bg-cyan-400/10"
+            className="h-10 flex-1 rounded-xl border border-[#F6BA48]/30 bg-[#F6BA48]/5 text-[#F8D290] transition-all hover:border-[#F6BA48] hover:bg-[#F6BA48]/10 hover:text-white"
           >
             {t.profile.viewProfile}
           </Button>

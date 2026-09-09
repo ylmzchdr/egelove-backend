@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { Upload, X, Check, Loader2 } from "lucide-react";
 
 const API_URL = "https://egelove-backend.onrender.com";
+
 type PhotoItem = {
   id: string;
   url: string;
@@ -55,13 +56,14 @@ export default function ProfilePhotoUpload({
       const formData = new FormData();
       formData.append("file", file);
 
-     const res = await fetch(`/api/photos/upload`, {
-  method: "POST",
-  headers: {
-    Authorization: `Bearer ${token}`,
-  },
-  body: formData,
-});
+      const res = await fetch(`/api/photos/upload`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
       const data = await res.json();
       if (!res.ok) throw new Error();
 
@@ -100,15 +102,15 @@ export default function ProfilePhotoUpload({
   return (
     <div>
       {/* GRID */}
-      <div className="grid grid-cols-3 gap-4 mb-4">
+      <div className="mb-4 grid grid-cols-3 gap-4">
         {photos.map((photo, i) => (
           <div
             key={photo.id || i}
-            className="relative aspect-square rounded-xl overflow-hidden bg-white/10"
+            className="relative aspect-square overflow-hidden rounded-xl border border-[#F6BA48]/10 bg-[#310D0C]/35"
           >
             <img
               src={getImageUrl(photo.url)}
-              className="w-full h-full object-cover cursor-pointer"
+              className="h-full w-full cursor-pointer object-cover"
               alt="photo"
               onClick={() => {
                 setLightboxIndex(i);
@@ -120,20 +122,21 @@ export default function ProfilePhotoUpload({
               <button
                 onClick={() => removePhoto(photo)}
                 disabled={removingId === photo.id}
-                className="absolute top-2 right-2 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-red-600 text-white shadow-lg"
+                className="absolute right-2 top-2 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-red-600 text-white shadow-lg transition hover:bg-red-500"
               >
                 {removingId === photo.id ? (
-                  <Loader2 className="w-4 h-4 text-white animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin text-white" />
                 ) : (
-                  <X className="w-4 h-4 text-white" />
+                  <X className="h-4 w-4 text-white" />
                 )}
               </button>
             )}
 
             {/* MAIN */}
             {i === 0 && (
-              <div className="absolute bottom-2 left-2 bg-pink-600 text-white text-xs px-2 py-0.5 rounded-full flex items-center gap-1">
-                <Check className="w-3 h-3" /> Ana
+              <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded-full border border-[#F6BA48]/30 bg-gradient-to-r from-[#7E4114] via-[#B16323] to-[#F6BA48] px-2 py-0.5 text-xs font-bold text-[#310D0C] shadow-md">
+                <Check className="h-3 w-3" />
+                Ana
               </div>
             )}
           </div>
@@ -144,7 +147,7 @@ export default function ProfilePhotoUpload({
           <button
             onClick={() => inputRef.current?.click()}
             disabled={uploading}
-            className="aspect-square border border-dashed border-white/30 rounded-xl flex items-center justify-center bg-white/5"
+            className="flex aspect-square items-center justify-center rounded-xl border border-dashed border-[#F6BA48]/35 bg-[#F6BA48]/5 text-[#F6BA48] transition-all hover:border-[#F6BA48]/70 hover:bg-[#F6BA48]/10 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {uploading ? (
               <Loader2 className="animate-spin" />

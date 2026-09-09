@@ -434,7 +434,7 @@ useEffect(() => {
       <>
         <Header />
         <main
-          className="min-h-screen bg-[#210014] text-white pt-28 px-6"
+          className="min-h-screen bg-[#310D0C] text-white pt-28 px-6"
           dir={isRtl ? "rtl" : "ltr"}
         >
           <div className="max-w-5xl mx-auto">{tx.loading}</div>
@@ -449,7 +449,7 @@ useEffect(() => {
       <>
         <Header />
         <main
-          className="min-h-screen bg-[#210014] text-white pt-28 px-6"
+          className="min-h-screen bg-[#310D0C] text-white pt-28 px-6"
           dir={isRtl ? "rtl" : "ltr"}
         >
           <div className="max-w-5xl mx-auto">
@@ -470,7 +470,7 @@ useEffect(() => {
       <Header />
 
       <main
-        className="min-h-screen bg-[#210014] text-white pt-28 pb-16 px-6"
+        className="min-h-screen bg-[#310D0C] text-white pt-28 pb-16 px-6"
         dir={isRtl ? "rtl" : "ltr"}
       >
         <div className="max-w-6xl mx-auto">
@@ -548,7 +548,7 @@ useEffect(() => {
                       alert(tx.serverError);
                     }
                   }}
-                  className="flex-1 bg-pink-600 hover:bg-pink-700"
+                  className="flex-1 bg-[#B16323] hover:bg-[#964F1C]"
                 >
                   <Heart className="w-4 h-4 mr-2" />
                   {tx.like}
@@ -564,10 +564,10 @@ useEffect(() => {
                 </Button>
               </div>
             </section>
-            <section className="lg:col-span-1 rounded-3xl border border-[#F6BA48]/40 p-5 bg-gradient-to-br from-pink-950 via-purple-950 to-black shadow-2xl shadow-pink-900/30">
+            <section className="lg:col-span-1 rounded-3xl border border-[#F6BA48]/40 p-5 bg-gradient-to-br from-[#310D0C] via-[#512510] to-black shadow-2xl shadow-[#310D0C]/30">
   <div className="flex items-center justify-between mb-4">
     <div>
-      <h2 className="text-2xl font-black text-pink-200">
+      <h2 className="text-2xl font-black text-[#F8D290]">
         ❤️ SENveBEN AI™
       </h2>
       <p className="text-xs text-white/60 mt-1">
@@ -575,7 +575,7 @@ useEffect(() => {
       </p>
     </div>
 
-    <div className="text-xs px-3 py-1 rounded-full bg-pink-500/20 border border-pink-300/30 text-pink-100">
+    <div className="text-xs px-3 py-1 rounded-full bg-[#B16323]/20 border border-[#F6BA48]/30 text-[#F8D290]">
       BETA
     </div>
   </div>
@@ -583,7 +583,7 @@ useEffect(() => {
   {compatLoading && (
     <div className="py-8 text-center">
       <div className="mx-auto mb-4 w-16 h-16 rounded-full border-4 border-[#F6BA48]/30 border-t-[#F6BA48] animate-spin" />
-      <p className="text-pink-100 font-semibold">{tx.aiAnalyzing}</p>
+      <p className="text-[#F8D290] font-semibold">{tx.aiAnalyzing}</p>
       <p className="text-white/50 text-base mt-1">{tx.compatCalculating}</p>
     </div>
   )}
@@ -598,13 +598,13 @@ useEffect(() => {
 
       <div className="w-full h-4 bg-white/10 rounded-full overflow-hidden mb-4">
         <div
-          className="h-full bg-gradient-to-r from-[#F6BA48] via-fuchsia-400 to-purple-400 rounded-full transition-all duration-1000"
+          className="h-full bg-gradient-to-r from-[#F6BA48] via-[#EF912C] to-[#F6BA48] rounded-full transition-all duration-1000"
           style={{ width: `${compatibility.score}%` }}
         />
       </div>
 
       <div className="text-center mb-5">
-        <div className="inline-flex px-4 py-2 rounded-full bg-white/10 border border-white/20 text-pink-100 font-bold">
+        <div className="inline-flex px-4 py-2 rounded-full bg-white/10 border border-white/20 text-[#F8D290] font-bold">
           {compatibility.summary}
         </div>
       </div>
@@ -615,7 +615,7 @@ useEffect(() => {
             key={i}
             className="flex items-start gap-2 text-base text-white/85 bg-white/5 rounded-xl p-3 border border-white/10"
           >
-            <span className="text-pink-300">✔</span>
+            <span className="text-[#F6BA48]">✔</span>
             <span>{reason}</span>
           </div>
         ))}
@@ -668,8 +668,8 @@ useEffect(() => {
   )}
 
   {compatibility.commonHobbies?.length > 0 && (
-    <div className="rounded-2xl bg-pink-500/10 border border-pink-300/20 p-4">
-      <p className="mb-2 text-base font-bold text-pink-200">
+    <div className="rounded-2xl bg-[#B16323]/10 border border-[#F6BA48]/20 p-4">
+      <p className="mb-2 text-base font-bold text-[#F8D290]">
         🎯 {tx.commonHobbies}
       </p>
       <div className="flex flex-wrap gap-2">
@@ -687,7 +687,7 @@ useEffect(() => {
 </div>
       <Button
         onClick={() => router.push(`/messages?userId=${profile.id}`)}
-        className="w-full mt-5 bg-pink-600 hover:bg-pink-700"
+        className="w-full mt-5 bg-[#B16323] hover:bg-[#964F1C]"
       >
         💬 {tx.startCompatibleChat}
       </Button>
@@ -722,7 +722,7 @@ useEffect(() => {
                     </span>
                   )}
 
-                  <span className="text-green-400">● {tx.online}</span>
+                  <span className="text-[#3FB36E]">● {tx.online}</span>
                 </div>
               </div>
 

@@ -451,7 +451,7 @@ export default function AuthDialog({
       open={tab !== null}
       onOpenChange={handleDialogChange}
     >
-      <DialogContent className="max-w-md bg-pink-900 text-white border-white/10">
+      <DialogContent className="max-w-md border-[#F6BA48]/20 bg-gradient-to-b from-[#512510] to-[#310D0C] text-white shadow-[0_30px_90px_rgba(0,0,0,0.45)]">
         {/* =========================
             LOGIN
         ========================== */}
@@ -474,7 +474,7 @@ export default function AuthDialog({
 
                 <Input
                   placeholder={t.auth.emailOrPhone}
-                  className="bg-pink-950/50 border-white/10 text-white placeholder:text-white/40"
+                  className="bg-[#310D0C]/65 border-[#F6BA48]/15 text-white placeholder:text-[#B5A093]/60 focus-visible:ring-[#F6BA48]/35"
                   value={loginData.emailOrPhone}
                   onChange={(e) =>
                     setLoginData((prev) => ({
@@ -494,7 +494,7 @@ export default function AuthDialog({
                   <Input
                     type={showPassword ? "text" : "password"}
                     placeholder={t.auth.password}
-                    className="bg-pink-950/50 border-white/10 text-white placeholder:text-white/40 pr-12"
+                    className="bg-[#310D0C]/65 border-[#F6BA48]/15 text-white placeholder:text-[#B5A093]/60 focus-visible:ring-[#F6BA48]/35 pr-12"
                     value={loginData.password}
                     onChange={(e) =>
                       setLoginData((prev) => ({
@@ -533,7 +533,7 @@ export default function AuthDialog({
                     window.location.href =
                       "/forgot-password";
                   }}
-                  className="text-base text-pink-300 hover:text-pink-200 hover:underline transition-colors"
+                  className="text-base text-[#F6BA48] hover:text-[#F8D290] hover:underline transition-colors"
                 >
                   Şifremi Unuttum?
                 </button>
@@ -542,7 +542,7 @@ export default function AuthDialog({
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-white text-pink-600 hover:bg-gray-100 font-bold"
+                className="w-full bg-[#F6BA48] text-[#310D0C] hover:bg-[#EF912C] font-bold shadow-[0_10px_28px_rgba(246,186,72,0.18)]"
               >
                 {loading ? "..." : t.auth.login}
               </Button>
@@ -552,7 +552,7 @@ export default function AuthDialog({
                   <div className="w-full border-t border-white/20" />
                 </div>
 
-                <span className="relative bg-pink-900 px-2 text-xs text-white/60">
+                <span className="relative bg-[#512510] px-2 text-xs text-[#B5A093]/80">
                   veya
                 </span>
               </div>
@@ -591,7 +591,7 @@ export default function AuthDialog({
                 {t.auth.noAccount}{" "}
                 <button
                   type="button"
-                  className="text-pink-300 underline"
+                  className="text-[#F6BA48] underline"
                   onClick={() => setTab("register")}
                 >
                   {t.auth.register}
@@ -633,7 +633,7 @@ export default function AuthDialog({
 
                   <Input
                     placeholder={t.auth.name}
-                    className="bg-pink-950/50 border-white/10 text-white placeholder:text-white/40"
+                    className="bg-[#310D0C]/65 border-[#F6BA48]/15 text-white placeholder:text-[#B5A093]/60 focus-visible:ring-[#F6BA48]/35"
                     value={registerData.name}
                     onChange={(e) =>
                       setRegisterData((prev) => ({
@@ -651,7 +651,7 @@ export default function AuthDialog({
 
                   <Input
                     placeholder="Kullanıcı Adı"
-                    className="bg-pink-950/50 border-white/10 text-white placeholder:text-white/40"
+                    className="bg-[#310D0C]/65 border-[#F6BA48]/15 text-white placeholder:text-[#B5A093]/60 focus-visible:ring-[#F6BA48]/35"
                     value={registerData.username}
                     onChange={(e) =>
                       setRegisterData((prev) => ({
@@ -667,7 +667,7 @@ export default function AuthDialog({
               <Input
                 type="email"
                 placeholder={t.auth.email}
-                className="bg-pink-950/50 border-white/10 text-white placeholder:text-white/40"
+                className="bg-[#310D0C]/65 border-[#F6BA48]/15 text-white placeholder:text-[#B5A093]/60 focus-visible:ring-[#F6BA48]/35"
                 value={registerData.email}
                 onChange={(e) =>
                   setRegisterData((prev) => ({
@@ -682,7 +682,7 @@ export default function AuthDialog({
                 <Input
                   type={showPassword ? "text" : "password"}
                   placeholder={t.auth.password}
-                  className="bg-pink-950/50 border-white/10 text-white placeholder:text-white/40 pr-12"
+                  className="bg-[#310D0C]/65 border-[#F6BA48]/15 text-white placeholder:text-[#B5A093]/60 focus-visible:ring-[#F6BA48]/35 pr-12"
                   value={registerData.password}
                   onChange={(e) =>
                     setRegisterData((prev) => ({
@@ -721,7 +721,7 @@ export default function AuthDialog({
 
                   <Input
                     type="date"
-                    className="bg-pink-950/50 border-white/10 text-white"
+                    className="bg-[#310D0C]/65 border-[#F6BA48]/15 text-white focus-visible:ring-[#F6BA48]/35"
                     value={registerData.birthDate}
                     onChange={(e) =>
                       setRegisterData((prev) => ({
@@ -746,7 +746,7 @@ export default function AuthDialog({
                       }))
                     }
                   >
-                    <SelectTrigger className="bg-pink-950/50 border-white/10 text-white">
+                    <SelectTrigger className="bg-[#310D0C]/65 border-[#F6BA48]/15 text-white focus-visible:ring-[#F6BA48]/35">
                       <SelectValue
                         placeholder={t.auth.gender}
                       />
@@ -789,7 +789,7 @@ export default function AuthDialog({
                       citiesLoading || cities.length === 0
                     }
                   >
-                    <SelectTrigger className="bg-pink-950/50 border-white/10 text-white">
+                    <SelectTrigger className="bg-[#310D0C]/65 border-[#F6BA48]/15 text-white focus-visible:ring-[#F6BA48]/35">
                       <SelectValue
                         placeholder={
                           citiesLoading
@@ -831,7 +831,7 @@ export default function AuthDialog({
                       districts.length === 0
                     }
                   >
-                    <SelectTrigger className="bg-pink-950/50 border-white/10 text-white">
+                    <SelectTrigger className="bg-[#310D0C]/65 border-[#F6BA48]/15 text-white focus-visible:ring-[#F6BA48]/35">
                       <SelectValue
                         placeholder={
                           !registerData.cityId
@@ -873,7 +873,7 @@ export default function AuthDialog({
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-white text-pink-600 hover:bg-gray-100 font-bold"
+                className="w-full bg-[#F6BA48] text-[#310D0C] hover:bg-[#EF912C] font-bold shadow-[0_10px_28px_rgba(246,186,72,0.18)]"
               >
                 {loading ? "..." : t.auth.register}
               </Button>
@@ -882,7 +882,7 @@ export default function AuthDialog({
                 {t.auth.hasAccount}{" "}
                 <button
                   type="button"
-                  className="text-pink-300 underline"
+                  className="text-[#F6BA48] underline"
                   onClick={() => setTab("login")}
                 >
                   {t.auth.login}

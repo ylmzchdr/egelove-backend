@@ -57,7 +57,7 @@ function StyledInput({
 }: StyledInputProps) {
   return (
     <input
-      className={`h-11 w-full rounded-xl border border-white/12 bg-white/[0.05] px-3 text-base text-white outline-none transition focus:ring-2 focus:ring-cyan-400 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+      className={`h-11 w-full rounded-xl border border-white/12 bg-white/[0.05] px-3 text-base text-white outline-none transition focus:ring-2 focus:ring-[#F6BA48] disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
       {...props}
     />
   );
@@ -128,7 +128,7 @@ function FilterCheckbox({
     <label
       className={`flex cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 transition select-none ${
         checked
-          ? "border-cyan-300/50 bg-cyan-300/10 text-white"
+          ? "border-[#F6BA48]/50 bg-[#F6BA48]/10 text-white"
           : "border-white/10 bg-white/[0.04] text-white/60 hover:bg-white/[0.07] hover:text-white"
       }`}
     >
@@ -136,10 +136,10 @@ function FilterCheckbox({
         type="checkbox"
         checked={checked}
         onChange={(e) => onCheckedChange(e.target.checked)}
-        className="h-4 w-4 rounded border-white/30 bg-transparent text-cyan-400 focus:ring-0 accent-cyan-400"
+        className="h-4 w-4 rounded border-white/30 bg-transparent text-[#F6BA48] focus:ring-0 accent-[#F6BA48]"
       />
 
-      <span className="relative text-cyan-300">
+      <span className="relative text-[#F8D290]">
         {icon}
 
         {pulse && checked && (
@@ -165,13 +165,13 @@ function UserCard({ user }: { user: SearchUser }) {
   return (
     <Link
       href={`/profile/${user.id}`}
-      className="group block cursor-pointer rounded-2xl border border-white/10 bg-white/[0.04] p-4 transition hover:border-cyan-400/40 hover:bg-white/[0.07]"
+      className="group block cursor-pointer rounded-2xl border border-white/10 bg-white/[0.04] p-4 transition hover:border-[#F6BA48]/40 hover:bg-white/[0.07]"
     >
       <div className="flex items-center gap-4">
 
         {/* FOTOĞRAF */}
         <div className="relative shrink-0">
-          <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border border-white/15 bg-slate-800">
+          <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border border-white/15 bg-[#512510]">
             {image ? (
               <img
                 src={image}
@@ -185,7 +185,7 @@ function UserCard({ user }: { user: SearchUser }) {
 
           {/* ONLINE */}
           {user.online && (
-            <span className="absolute bottom-0 right-0 h-4 w-4 rounded-full border-2 border-[#121420] bg-emerald-400" />
+            <span className="absolute bottom-0 right-0 h-4 w-4 rounded-full border-2 border-[#310D0C] bg-emerald-400" />
           )}
         </div>
 
@@ -198,13 +198,13 @@ function UserCard({ user }: { user: SearchUser }) {
             </h3>
 
             {user.verified && (
-              <span className="rounded-full bg-cyan-400/10 px-2 py-0.5 text-xs font-semibold text-cyan-300">
+              <span className="rounded-full bg-[#F6BA48]/10 px-2 py-0.5 text-xs font-semibold text-[#F8D290]">
                 ✓
               </span>
             )}
 
             {user.premium && (
-              <span className="rounded-full bg-purple-400/10 px-2 py-0.5 text-xs font-semibold text-purple-300">
+              <span className="rounded-full bg-[#B16323]/15 px-2 py-0.5 text-xs font-semibold text-[#F6BA48]">
                 VIP
               </span>
             )}
@@ -408,7 +408,7 @@ setHasSearched(true);
   }
 
   return (
-    <div className="min-h-screen bg-[#121420] px-4 py-6 text-white sm:px-6">
+    <div className="min-h-screen bg-[#310D0C] px-4 py-6 text-white sm:px-6">
 
       {/* ------------------------------------------------ */}
       {/* LOGO */}
@@ -457,13 +457,13 @@ setHasSearched(true);
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={handleKeyDown}
-              className="h-12 w-full rounded-xl border border-white/12 bg-white/[0.05] pl-11 pr-4 text-base text-white outline-none transition focus:border-cyan-400/50 focus:ring-2 focus:ring-cyan-400/20"
+              className="h-12 w-full rounded-xl border border-white/12 bg-white/[0.05] pl-11 pr-4 text-base text-white outline-none transition focus:border-[#F6BA48]/50 focus:ring-2 focus:ring-[#F6BA48]/20"
             />
 
           </div>
                 <Link
         href="/dashboard"
-        className="mx-auto mt-3 inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2 text-sm font-semibold text-white/70 transition-all duration-200 hover:border-cyan-400/30 hover:bg-cyan-400/[0.06] hover:text-cyan-300"
+        className="mx-auto mt-3 inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2 text-sm font-semibold text-white/70 transition-all duration-200 hover:border-[#F6BA48]/30 hover:bg-[#F6BA48]/[0.06] hover:text-[#F8D290]"
       >
         ← Anasayfaya Dön
       </Link>
@@ -474,7 +474,7 @@ setHasSearched(true);
             type="button"
             onClick={performSearch}
             disabled={loading}
-            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-cyan-400/40 bg-cyan-400/10 text-cyan-300 transition hover:bg-cyan-400/20 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-[#F6BA48]/40 bg-[#F6BA48]/10 text-[#F8D290] transition hover:bg-[#F6BA48]/20 disabled:cursor-not-allowed disabled:opacity-50"
             title="Ara"
           >
             {loading ? (
@@ -491,7 +491,7 @@ setHasSearched(true);
             onClick={() => setShowFilters(!showFilters)}
             className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border transition ${
               showFilters
-                ? "border-cyan-400 bg-cyan-400/10 text-cyan-400"
+                ? "border-[#F6BA48] bg-[#F6BA48]/10 text-[#F6BA48]"
                 : "border-white/12 bg-white/[0.05] text-white/60 hover:bg-white/[0.08]"
             }`}
             title="Filtreler"
@@ -506,12 +506,12 @@ setHasSearched(true);
         {/* ------------------------------------------------ */}
 
         {showFilters && (
-          <div className="space-y-5 rounded-2xl border border-white/10 bg-slate-900/40 p-5 backdrop-blur-xl">
+          <div className="space-y-5 rounded-2xl border border-white/10 bg-[#512510]/40 p-5 backdrop-blur-xl">
 
             <div className="space-y-2">
 
               <label className="flex items-center gap-2 text-sm font-semibold text-white/60">
-                <Users className="h-4 w-4 text-cyan-400" />
+                <Users className="h-4 w-4 text-[#F6BA48]" />
                 Yaş Aralığı
               </label>
 
@@ -570,7 +570,7 @@ setHasSearched(true);
             </span>
 
             {searchQuery.trim() && (
-              <span className="text-sm font-semibold text-cyan-400">
+              <span className="text-sm font-semibold text-[#F6BA48]">
                 "{searchQuery.trim()}"
               </span>
             )}
@@ -585,7 +585,7 @@ setHasSearched(true);
         {loading && (
           <div className="flex flex-col items-center justify-center py-12 text-center">
 
-            <Loader2 className="mb-3 h-8 w-8 animate-spin text-cyan-400" />
+            <Loader2 className="mb-3 h-8 w-8 animate-spin text-[#F6BA48]" />
 
             <p className="text-sm text-white/50">
               Kullanıcılar aranıyor...

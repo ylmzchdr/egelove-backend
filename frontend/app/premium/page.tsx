@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+
+
 import { Check, Crown, Star, Zap, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -255,16 +257,16 @@ export default function PremiumPage() {
   };
 
   return (
-    <div className="min-h-screen bg-pink-950 text-white">
+    <div className="min-h-screen bg-[#310D0C] text-white">
       <Header onOpenLogin={() => setAuthTab("login")} onOpenRegister={() => setAuthTab("register")} />
 
       <section className="py-20">
         <div className="mx-auto max-w-7xl px-4 text-center">
-          <Crown className="w-12 h-12 text-yellow-400 mx-auto mb-4" />
+          <Crown className="w-12 h-12 text-[#F6BA48] mx-auto mb-4" />
 
           <h1 className="text-4xl md:text-5xl font-bold mb-4">{title}</h1>
 
-          <p className="text-white/60 max-w-xl mx-auto mb-12">{subtitle}</p>
+          <p className="text-[#F8D290]/70 max-w-xl mx-auto mb-12">{subtitle}</p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
             {plans.map((plan) => {
@@ -275,30 +277,30 @@ export default function PremiumPage() {
                   key={plan.id}
                   className={`relative p-6 cursor-pointer transition-all duration-300 ${
                     selected === plan.id
-                      ? "border-pink-500 bg-pink-900/60 scale-105"
-                      : "border-white/10 bg-white/5 hover:border-[#F6BA48]/30"
+                      ? "border-[#F6BA48] bg-[#683312]/80 scale-105 shadow-[0_18px_50px_rgba(246,186,72,0.14)]"
+                      : "border-[#F6BA48]/20 bg-[#512510]/55 hover:border-[#F6BA48]/45 hover:bg-[#683312]/65"
                   }`}
                   onClick={() => setSelected(plan.id)}
                 >
                   {plan.popular && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-pink-600 text-white text-xs font-bold px-4 py-1 rounded-full">
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#F6BA48] text-[#310D0C] text-xs font-black px-4 py-1 rounded-full">
                       {popularText}
                     </div>
                   )}
 
-                  <Icon className={`w-8 h-8 mx-auto mb-3 ${selected === plan.id ? "text-pink-300" : "text-white/50"}`} />
+                  <Icon className={`w-8 h-8 mx-auto mb-3 ${selected === plan.id ? "text-[#F6BA48]" : "text-[#F8D290]/55"}`} />
 
-                  <h3 className="text-xl font-bold mb-1">{plan.name}</h3>
+                  <h3 className="text-xl font-bold mb-1 text-[#FFF7E8]">{plan.name}</h3>
 
                   <div className="mb-4">
-                    <span className="text-3xl font-bold text-pink-300">
+                    <span className="text-3xl font-bold text-[#F6BA48]">
                       {formatPrice(plan.price)}
                     </span>
 
-                    <span className="text-white/40 text-base"> {plan.currency}</span>
+                    <span className="text-[#F8D290]/55 text-base"> {plan.currency}</span>
 
                     {plan.originalPrice && (
-                      <span className="block text-white/30 text-xs line-through">
+                      <span className="block text-[#B5A093]/60 text-xs line-through">
                         {formatPrice(plan.originalPrice)} {plan.currency}
                       </span>
                     )}
@@ -306,7 +308,7 @@ export default function PremiumPage() {
 
                   <ul className="text-left text-base space-y-2 mb-6">
                     {plan.features.map((feature, index) => (
-                      <li key={index} className="flex items-center gap-2 text-white/70">
+                      <li key={index} className="flex items-center gap-2 text-[#F8D290]/75">
                         <Check className="w-4 h-4 text-[#F6BA48]" />
                         {feature}
                       </li>
@@ -316,9 +318,9 @@ export default function PremiumPage() {
                   <Button
                     className={`w-full ${
                       selected === plan.id
-                        ? "bg-pink-600 hover:bg-pink-700"
-                        : "bg-white/10 hover:bg-white/20"
-                    } text-white`}
+                        ? "bg-[#F6BA48] hover:bg-[#EF912C] text-[#310D0C]"
+                        : "bg-[#7E4114]/70 hover:bg-[#964F1C] text-[#FFF7E8]"
+                    } font-bold`}
                     onClick={(e) => {
                       e.stopPropagation();
                       handleBuy(plan.id);

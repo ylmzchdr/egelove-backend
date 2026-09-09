@@ -1696,7 +1696,7 @@ function MessagesContent() {
 
     return (
       <div
-        className={`${size} shrink-0 rounded-full bg-gradient-to-br from-fuchsia-500 via-violet-500 to-blue-500 flex items-center justify-center font-black text-white ring-1 ring-white/20`}
+        className={`${size} shrink-0 rounded-full bg-gradient-to-br from-[#B16323] via-[#B16323] to-[#683312] flex items-center justify-center font-black text-white ring-1 ring-white/20`}
       >
         {name.slice(0, 1).toUpperCase()}
       </div>
@@ -1704,16 +1704,16 @@ function MessagesContent() {
   };
 
   return (
-    <div dir={lang === "AR" ? "rtl" : "ltr"} className="min-h-screen bg-[#020817] text-white overflow-x-hidden">
+    <div dir={lang === "AR" ? "rtl" : "ltr"} className="min-h-screen bg-[#310D0C] text-white overflow-x-hidden">
       {/* ÜST NAV */}
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-[#020817]/95 backdrop-blur-xl">
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-[#310D0C]/95 backdrop-blur-xl">
         <div className="mx-auto flex min-h-[72px] max-w-[1450px] items-center gap-6 px-4 sm:px-6 lg:px-8">
           <button
             type="button"
             onClick={goDashboard}
             className="mr-auto flex items-center gap-2 text-xl font-black tracking-tight sm:text-2xl"
           >
-            <span className="text-3xl text-pink-500">♥</span>
+            <span className="text-3xl text-[#F6BA48]">♥</span>
            <span>SENveBEN</span>
           </button>
 
@@ -1721,7 +1721,7 @@ function MessagesContent() {
             <button type="button" onClick={goDashboard} className="font-semibold text-white/90 hover:text-white">{t.home}</button>
             <button type="button" onClick={() => (window.location.href = "/profile")} className="font-semibold text-white/90 hover:text-white">{t.myPage}</button>
             <button type="button" onClick={() => (window.location.href = "/likes")} className="font-semibold text-white/90 hover:text-white">{t.likes}</button>
-            <button type="button" className="relative font-semibold text-[#F6BA48] after:absolute after:-bottom-6 after:left-0 after:right-0 after:h-0.5 after:bg-pink-500">{t.messages}</button>
+            <button type="button" className="relative font-semibold text-[#F6BA48] after:absolute after:-bottom-6 after:left-0 after:right-0 after:h-0.5 after:bg-[#F6BA48]">{t.messages}</button>
             <button type="button" onClick={goPremium} className="font-semibold text-white/90 hover:text-white">{t.premium} 👑</button>
           </nav>
 
@@ -1732,7 +1732,7 @@ function MessagesContent() {
                 type="button"
                 onClick={() => setLang(language)}
                 aria-pressed={lang === language}
-                className={`rounded-full border px-3 py-1.5 text-sm font-semibold transition ${lang === language ? "border-purple-500 bg-purple-600 text-white shadow-lg shadow-purple-500/30" : "border-white/10 bg-black/20 text-white/80 hover:bg-white/10"}`}
+                className={`rounded-full border px-3 py-1.5 text-sm font-semibold transition ${lang === language ? "border-[#F6BA48] bg-[#7E4114] text-white shadow-lg shadow-[#B16323]/30" : "border-white/10 bg-black/20 text-white/80 hover:bg-white/10"}`}
               >
                 {language}
               </button>
@@ -1741,7 +1741,7 @@ function MessagesContent() {
 
           <button
             type="button"
-            className="hidden rounded-xl border border-[#ffc000]/50 bg-[#ffc000] px-5 py-3 font-black text-black shadow-lg shadow-yellow-500/10 sm:block"
+            className="hidden rounded-xl border border-[#F6BA48]/50 bg-[#F6BA48] px-5 py-3 font-black text-black shadow-lg shadow-yellow-500/10 sm:block"
           >
             {t.welcome}
           </button>
@@ -1763,31 +1763,31 @@ function MessagesContent() {
         <button
           type="button"
           onClick={goDashboard}
-          className="mb-5 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-500 px-5 py-3 font-black shadow-lg shadow-purple-600/30 transition hover:scale-[1.01]"
+          className="mb-5 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#7E4114] to-[#F6BA48] px-5 py-3 font-black shadow-lg shadow-[#7E4114]/30 transition hover:scale-[1.01]"
         >
           <span className="text-xl">←</span>
           {t.backHome}
         </button>
 
         {/* PREMIUM VIDEO HERO */}
-        <section className="relative overflow-hidden rounded-[28px] border border-fuchsia-500/60 bg-[radial-gradient(circle_at_15%_55%,rgba(168,85,247,.30),transparent_30%),radial-gradient(circle_at_92%_55%,rgba(37,99,235,.28),transparent_34%),linear-gradient(110deg,#18052b,#080d2b_55%,#06164a)] p-4 shadow-2xl shadow-purple-950/40 sm:p-6 lg:p-7">
-          <div className="pointer-events-none absolute -left-20 top-10 h-48 w-48 rounded-full bg-fuchsia-500/20 blur-3xl" />
-          <div className="pointer-events-none absolute -right-20 bottom-0 h-56 w-56 rounded-full bg-blue-500/20 blur-3xl" />
+        <section className="relative overflow-hidden rounded-[28px] border border-[#F6BA48]/60 bg-[radial-gradient(circle_at_15%_55%,rgba(246,186,72,.20),transparent_30%),radial-gradient(circle_at_92%_55%,rgba(177,99,35,.24),transparent_34%),linear-gradient(110deg,#310D0C,#512510_55%,#683312)] p-4 shadow-2xl shadow-[#310D0C]/40 sm:p-6 lg:p-7">
+          <div className="pointer-events-none absolute -left-20 top-10 h-48 w-48 rounded-full bg-[#B16323]/20 blur-3xl" />
+          <div className="pointer-events-none absolute -right-20 bottom-0 h-56 w-56 rounded-full bg-[#683312]/20 blur-3xl" />
 
           <div className="relative grid items-center gap-7 lg:grid-cols-[330px_1fr_330px]">
             <div className="hidden min-h-[210px] items-center justify-center lg:flex">
-              <div className="relative flex h-44 w-44 items-center justify-center rounded-full bg-gradient-to-br from-fuchsia-500 via-purple-500 to-blue-600 shadow-[0_0_70px_rgba(168,85,247,.65)]">
+              <div className="relative flex h-44 w-44 items-center justify-center rounded-full bg-gradient-to-br from-[#B16323] via-[#EF912C] to-[#512510] shadow-[0_0_70px_rgba(246,186,72,.35)]">
                 <div className="absolute inset-4 rounded-full border border-white/30" />
                 <span className="relative text-7xl text-white drop-shadow-lg">▣</span>
                 <span className="absolute -left-10 top-6 text-2xl text-[#F6BA48]">♥</span>
-                <span className="absolute -right-9 top-16 text-2xl text-purple-400">♥</span>
-                <span className="absolute -left-4 bottom-2 text-lg text-fuchsia-300">✦</span>
+                <span className="absolute -right-9 top-16 text-2xl text-[#F6BA48]">♥</span>
+                <span className="absolute -left-4 bottom-2 text-lg text-[#F8D290]">✦</span>
               </div>
             </div>
 
             <div className="text-center">
               <h1 className="text-2xl font-black leading-tight sm:text-3xl lg:text-[34px]">
-                {t.heroTitle} <span className="bg-gradient-to-r from-fuchsia-400 to-pink-500 bg-clip-text text-transparent">{t.heroTitleAccent}</span>
+                {t.heroTitle} <span className="bg-gradient-to-r from-[#EF912C] to-[#F6BA48] bg-clip-text text-transparent">{t.heroTitleAccent}</span>
               </h1>
               <p className="mx-auto mt-3 max-w-2xl text-base leading-7 text-white/85 sm:text-lg">
                 {t.heroDesc1}
@@ -1798,7 +1798,7 @@ function MessagesContent() {
               <div className="mx-auto mt-7 grid max-w-2xl grid-cols-2 divide-x divide-white/10 sm:grid-cols-4">
                 {[
                   ["♙", t.safe, t.safeSub, "text-emerald-400"],
-                  ["♣", t.real, t.realSub, "text-purple-400"],
+                  ["♣", t.real, t.realSub, "text-[#F6BA48]"],
                   ["ϟ", t.instant, t.instantSub, "text-yellow-400"],
                   ["♥", t.closer, t.closerSub, "text-[#F6BA48]"],
                 ].map(([icon, title, sub, color]) => (
@@ -1811,8 +1811,8 @@ function MessagesContent() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-purple-500/40 bg-[#0a1233]/70 p-4 shadow-xl backdrop-blur-xl sm:p-5">
-              <div className="mx-auto -mt-8 mb-4 w-fit rounded-full border border-[#ffc000]/50 bg-[#130d28] px-4 py-2 text-sm font-black text-[#ffc000]">👑 {t.premiumFeature}</div>
+            <div className="rounded-2xl border border-[#F6BA48]/40 bg-[#512510]/70 p-4 shadow-xl backdrop-blur-xl sm:p-5">
+              <div className="mx-auto -mt-8 mb-4 w-fit rounded-full border border-[#F6BA48]/50 bg-[#310D0C] px-4 py-2 text-sm font-black text-[#F6BA48]">👑 {t.premiumFeature}</div>
               <ul className="space-y-3 text-sm sm:text-base">
                 {[
                   t.unlimitedVideo,
@@ -1823,7 +1823,7 @@ function MessagesContent() {
                   <li key={item} className="flex items-center gap-3"><span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-xs font-black">✓</span>{item}</li>
                 ))}
               </ul>
-              <button type="button" onClick={goPremium} className="mt-5 w-full rounded-full bg-gradient-to-r from-[#ffc000] to-[#ffb000] px-5 py-3 font-black text-black shadow-lg shadow-yellow-500/20 transition hover:scale-[1.01]">👑 {t.goPremium}</button>
+              <button type="button" onClick={goPremium} className="mt-5 w-full rounded-full bg-gradient-to-r from-[#F6BA48] to-[#EF912C] px-5 py-3 font-black text-black shadow-lg shadow-yellow-500/20 transition hover:scale-[1.01]">👑 {t.goPremium}</button>
               <p className="mt-2 text-center text-xs text-white/50">{t.premiumOnly}</p>
             </div>
           </div>
@@ -1832,11 +1832,11 @@ function MessagesContent() {
         {/* MESAJLAR + AKTİF SOHBET */}
         <section className="mt-5 grid gap-5 lg:grid-cols-[420px_1fr]">
           {/* SOL PANEL */}
-          <aside className="flex min-h-[650px] flex-col overflow-hidden rounded-[26px] border border-purple-500/30 bg-[#050c20]/85 shadow-2xl shadow-black/20">
+          <aside className="flex min-h-[650px] flex-col overflow-hidden rounded-[26px] border border-[#F6BA48]/30 bg-[#310D0C]/90 shadow-2xl shadow-black/20">
             <div className="border-b border-white/10 p-5 sm:p-6">
               <div className="flex items-center justify-between">
                 <h2 className="text-3xl font-black">{t.chatTitle}</h2>
-                <button type="button" className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-fuchsia-500 text-2xl font-light shadow-lg shadow-purple-500/30">+</button>
+                <button type="button" className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#B16323] to-[#F6BA48] text-2xl font-light shadow-lg shadow-[#B16323]/30">+</button>
               </div>
 
               <div className="mt-5 grid grid-cols-4 gap-2">
@@ -1850,9 +1850,9 @@ function MessagesContent() {
                     key={`${value}-${label}`}
                     type="button"
                     onClick={() => setMessageFilter(value as any)}
-                    className={`rounded-full border px-2 py-2.5 text-xs font-bold sm:text-sm ${index === 0 && messageFilter === "all" ? "border-purple-500 bg-gradient-to-r from-purple-600 to-fuchsia-500" : "border-white/10 bg-white/[0.02] text-white/75 hover:bg-white/10"}`}
+                    className={`rounded-full border px-2 py-2.5 text-xs font-bold sm:text-sm ${index === 0 && messageFilter === "all" ? "border-[#F6BA48] bg-gradient-to-r from-[#7E4114] to-[#F6BA48]" : "border-white/10 bg-white/[0.02] text-white/75 hover:bg-white/10"}`}
                   >
-                    {label}{label === t.new ? <span className="ml-1 text-pink-500">●</span> : label === t.online ? <span className="ml-1 text-emerald-400">●</span> : ""}
+                    {label}{label === t.new ? <span className="ml-1 text-[#F6BA48]">●</span> : label === t.online ? <span className="ml-1 text-emerald-400">●</span> : ""}
                   </button>
                 ))}
               </div>
@@ -1864,7 +1864,7 @@ function MessagesContent() {
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
                   placeholder={t.search}
-                  className="h-12 w-full rounded-2xl border border-white/15 bg-black/35 pl-11 pr-4 text-white outline-none transition focus:border-purple-500"
+                  className="h-12 w-full rounded-2xl border border-white/15 bg-black/35 pl-11 pr-4 text-white outline-none transition focus:border-[#F6BA48]"
                 />
               </div>
             </div>
@@ -1882,7 +1882,7 @@ function MessagesContent() {
                       key={conversation.id}
                       type="button"
                       onClick={() => openConversation(conversation)}
-                      className={`flex w-full items-center gap-3 border-b border-white/[0.06] px-4 py-3 text-left transition ${isActive ? "bg-gradient-to-r from-purple-700/70 via-fuchsia-700/40 to-transparent ring-1 ring-inset ring-fuchsia-500" : "hover:bg-white/[0.05]"}`}
+                      className={`flex w-full items-center gap-3 border-b border-white/[0.06] px-4 py-3 text-left transition ${isActive ? "bg-gradient-to-r from-[#683312]/70 via-[#B16323]/40 to-transparent ring-1 ring-inset ring-[#F6BA48]" : "hover:bg-white/[0.05]"}`}
                     >
                       {avatar(user, "h-12 w-12")}
                       <span className="min-w-0 flex-1">
@@ -1894,7 +1894,7 @@ function MessagesContent() {
                           <span className="text-yellow-400">▮</span>{last}
                         </span>
                       </span>
-                      {conversation.unreadCount ? <span className="rounded-full bg-pink-500 px-2 py-0.5 text-xs font-black">{conversation.unreadCount}</span> : null}
+                      {conversation.unreadCount ? <span className="rounded-full bg-[#F6BA48] px-2 py-0.5 text-xs font-black">{conversation.unreadCount}</span> : null}
                     </button>
                   );
                 })
@@ -1908,12 +1908,12 @@ function MessagesContent() {
             </div>
 
             <div className="border-t border-white/10 px-5 py-3 text-center text-sm text-white/60">
-              <span className="text-pink-500">♥</span> {t.total} {filteredConversations.length || conversations.length} {t.conversations}
+              <span className="text-[#F6BA48]">♥</span> {t.total} {filteredConversations.length || conversations.length} {t.conversations}
             </div>
           </aside>
 
           {/* SAĞ SOHBET */}
-          <section className="flex min-h-[650px] flex-col overflow-hidden rounded-[26px] border border-purple-500/30 bg-[#050b20]/85 shadow-2xl shadow-black/20">
+          <section className="flex min-h-[650px] flex-col overflow-hidden rounded-[26px] border border-[#F6BA48]/30 bg-[#050b20]/85 shadow-2xl shadow-black/20">
             {activeConversation ? (
               <>
                 <div className="flex flex-wrap items-center gap-3 border-b border-white/10 p-4 sm:p-5">
@@ -1925,7 +1925,7 @@ function MessagesContent() {
                   <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-sm font-bold text-emerald-400">● {t.onlineStatus}</span>
                   <button type="button" className="hidden h-11 w-11 items-center justify-center rounded-full border border-white/10 text-2xl text-[#F6BA48] hover:bg-white/10 sm:flex">♡</button>
                   <button type="button" className="px-1 text-xl text-white/60">⋮</button>
-                  <button type="button" onClick={openVideo} className="rounded-full bg-gradient-to-r from-fuchsia-500 to-purple-600 px-5 py-3 text-sm font-black shadow-lg shadow-purple-600/30 transition hover:scale-[1.01] sm:text-base">👑 {t.premiumVideo}</button>
+                  <button type="button" onClick={openVideo} className="rounded-full bg-gradient-to-r from-[#B16323] to-[#F6BA48] px-5 py-3 text-sm font-black shadow-lg shadow-[#7E4114]/30 transition hover:scale-[1.01] sm:text-base">👑 {t.premiumVideo}</button>
                 </div>
 
                 <div className="relative flex-1 overflow-y-auto bg-[radial-gradient(circle_at_60%_50%,rgba(79,70,229,.10),transparent_35%)] p-5 sm:p-8">
@@ -1939,7 +1939,7 @@ function MessagesContent() {
                         const mine = !!message.isMine;
                         return (
                           <div key={message.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
-                            <div className={`max-w-[78%] rounded-[20px] px-5 py-3 ${mine ? "bg-gradient-to-br from-purple-600 to-fuchsia-600 shadow-lg shadow-purple-900/20" : "bg-[#17254b]"}`}>
+                            <div className={`max-w-[78%] rounded-[20px] px-5 py-3 ${mine ? "bg-gradient-to-br from-[#7E4114] to-[#F6BA48] shadow-lg shadow-[#683312]/20" : "bg-[#17254b]"}`}>
                               <div className="text-base leading-6">{message.content}</div>
                               <div className="mt-1 text-right text-[11px] text-white/45">{message.createdAt ? formatTime(message.createdAt) : ""}{mine ? "  ✓✓" : ""}</div>
                             </div>
@@ -1969,9 +1969,9 @@ function MessagesContent() {
                       placeholder={t.messagePlaceholder}
                       rows={2}
                       disabled={sending}
-                      className="min-h-[58px] flex-1 resize-none rounded-2xl border border-white/15 bg-black/35 px-4 py-3 text-white outline-none transition focus:border-purple-500"
+                      className="min-h-[58px] flex-1 resize-none rounded-2xl border border-white/15 bg-black/35 px-4 py-3 text-white outline-none transition focus:border-[#F6BA48]"
                     />
-                    <button type="submit" disabled={sending || !draft.trim()} className="h-14 shrink-0 rounded-2xl bg-gradient-to-r from-purple-600 to-fuchsia-500 px-6 font-black shadow-lg shadow-purple-700/20 disabled:cursor-not-allowed disabled:opacity-40">{sending ? t.sending : `➤ ${t.send}`}</button>
+                    <button type="submit" disabled={sending || !draft.trim()} className="h-14 shrink-0 rounded-2xl bg-gradient-to-r from-[#7E4114] to-[#F6BA48] px-6 font-black shadow-lg shadow-[#683312]/20 disabled:cursor-not-allowed disabled:opacity-40">{sending ? t.sending : `➤ ${t.send}`}</button>
                   </div>
                   <p className="mt-2 pl-1 text-[10px] text-white/35">{t.enterHint}</p>
                 </form>
@@ -1989,26 +1989,26 @@ function MessagesContent() {
         </section>
 
         {/* ALT PREMIUM CTA */}
-        <section className="mt-5 overflow-hidden rounded-[26px] border border-purple-500/50 bg-[radial-gradient(circle_at_12%_50%,rgba(168,85,247,.32),transparent_30%),linear-gradient(100deg,#17062d,#081129_55%,#071b49)] p-5 shadow-2xl sm:p-7">
+        <section className="mt-5 overflow-hidden rounded-[26px] border border-[#F6BA48]/50 bg-[radial-gradient(circle_at_12%_50%,rgba(168,85,247,.32),transparent_30%),linear-gradient(100deg,#17062d,#081129_55%,#071b49)] p-5 shadow-2xl sm:p-7">
           <div className="grid items-center gap-6 lg:grid-cols-[260px_1fr_1fr_270px]">
             <div className="hidden items-center justify-center lg:flex">
-              <div className="relative flex h-40 w-48 items-end justify-center rounded-[30px] bg-gradient-to-t from-purple-950/80 to-transparent">
-                <div className="absolute bottom-2 h-16 w-40 rounded-full bg-gradient-to-r from-purple-700 to-blue-600 shadow-[0_0_45px_rgba(139,92,246,.65)]" />
+              <div className="relative flex h-40 w-48 items-end justify-center rounded-[30px] bg-gradient-to-t from-[#7E4114]/80 to-transparent">
+                <div className="absolute bottom-2 h-16 w-40 rounded-full bg-gradient-to-r from-[#683312] to-[#512510] shadow-[0_0_45px_rgba(139,92,246,.65)]" />
                 <div className="relative mb-10 text-7xl drop-shadow-[0_0_20px_rgba(255,192,0,.55)]">👑</div>
               </div>
             </div>
             <div>
               <h2 className="text-3xl font-black leading-tight">{t.moreFor}</h2>
-              <h3 className="mt-1 text-4xl font-black text-transparent bg-gradient-to-r from-fuchsia-400 to-pink-500 bg-clip-text">{t.premiumGo}</h3>
+              <h3 className="mt-1 text-4xl font-black text-transparent bg-gradient-to-r from-[#EF912C] to-[#F6BA48] bg-clip-text">{t.premiumGo}</h3>
               <p className="mt-4 max-w-xl text-base leading-7 text-white/65">{t.premiumDesc}</p>
             </div>
             <ul className="space-y-3 text-base text-white/85">
               {[t.unlimitedVideo, t.readReceipt, t.boostProfile, t.adFree, t.specialFilters].map((item) => (
-                <li key={item} className="flex items-center gap-3"><span className="flex h-5 w-5 items-center justify-center rounded-full bg-purple-600 text-xs font-black">✓</span>{item}</li>
+                <li key={item} className="flex items-center gap-3"><span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#7E4114] text-xs font-black">✓</span>{item}</li>
               ))}
             </ul>
             <div>
-              <button type="button" onClick={goPremium} className="w-full rounded-full bg-gradient-to-r from-[#ffc000] to-[#ffb000] px-5 py-4 text-lg font-black text-black shadow-xl shadow-yellow-500/20 transition hover:scale-[1.01]">👑 {t.goPremium}</button>
+              <button type="button" onClick={goPremium} className="w-full rounded-full bg-gradient-to-r from-[#F6BA48] to-[#EF912C] px-5 py-4 text-lg font-black text-black shadow-xl shadow-yellow-500/20 transition hover:scale-[1.01]">👑 {t.goPremium}</button>
               <p className="mt-4 text-center text-sm text-white/55">♡ {t.securePayment}</p>
             </div>
           </div>
@@ -2026,7 +2026,7 @@ export default function MessagesPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center bg-[#020817] text-white">
+        <div className="flex min-h-screen items-center justify-center bg-[#310D0C] text-white">
           <div className="font-semibold text-white/50">Mesajlar yükleniyor...</div>
         </div>
       }

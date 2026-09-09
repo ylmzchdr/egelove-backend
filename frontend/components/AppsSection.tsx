@@ -2,21 +2,25 @@ import { Smartphone } from "lucide-react";
 
 export default function AppsSection() {
   return (
-    <section id="apps" className="py-12 bg-gradient-to-b from-pink-950 to-pink-900 text-center border-t border-white/5">
+    <section
+      id="apps"
+      className="border-t border-[#F6BA48]/10 bg-gradient-to-b from-[#310D0C] via-[#512510] to-[#310D0C] py-12 text-center"
+    >
       <div className="mx-auto max-w-7xl px-4">
         <div className="flex flex-wrap justify-center gap-6">
           <a
             href="#"
-            className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 text-white px-6 py-3 rounded-xl hover:bg-white/20 transition"
+            className="inline-flex items-center gap-2 rounded-xl border border-[#F6BA48]/20 bg-[#683312]/45 px-6 py-3 text-[#FFF7E8] backdrop-blur-md transition hover:border-[#F6BA48]/40 hover:bg-[#7E4114]/55"
           >
-            <Smartphone className="w-5 h-5 text-white" />
+            <Smartphone className="h-5 w-5 text-[#F6BA48]" />
             <span className="font-medium">App Store&apos;dan İndir</span>
           </a>
+
           <a
             href="#"
-            className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 text-white px-6 py-3 rounded-xl hover:bg-white/20 transition"
+            className="inline-flex items-center gap-2 rounded-xl border border-[#F6BA48]/20 bg-[#683312]/45 px-6 py-3 text-[#FFF7E8] backdrop-blur-md transition hover:border-[#F6BA48]/40 hover:bg-[#7E4114]/55"
           >
-            <Smartphone className="w-5 h-5 text-white" />
+            <Smartphone className="h-5 w-5 text-[#F6BA48]" />
             <span className="font-medium">Google Play&apos;den İndir</span>
           </a>
         </div>

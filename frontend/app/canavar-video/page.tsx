@@ -47,19 +47,19 @@ export default function CanavarVideoPage() {
   if (!isClient) return null;
 
   return (
-    <div className="min-h-screen bg-[#121420] text-white p-6 flex flex-col justify-between font-sans">
-      <div className="text-center border-b border-purple-500/20 pb-4">
-        <h1 className="text-sm font-black tracking-widest bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-[#F6BA48] to-amber-300">
+    <div className="min-h-screen bg-gradient-to-b from-[#310D0C] via-[#512510] to-[#310D0C] text-white p-6 flex flex-col justify-between font-sans">
+      <div className="text-center border-b border-[#F6BA48]/20 pb-4">
+        <h1 className="text-sm font-black tracking-widest bg-clip-text text-transparent bg-gradient-to-r from-[#B16323] via-[#F6BA48] to-[#F8D290]">
           SENveBEN VIP CANLI BAĞLANTI
         </h1>
 
-        <p className="text-[10px] text-slate-400 mt-0.5 tracking-wider uppercase">
+        <p className="text-[10px] text-[#B5A093] mt-0.5 tracking-wider uppercase">
           SENveBEN KALİTESİNDE GÜVENLİ WEBRTC TÜNELİ
         </p>
       </div>
 
       <div className="my-auto">
-        <div className="w-full aspect-video bg-black/80 rounded-3xl border-2 border-purple-500/40 overflow-hidden flex items-center justify-center relative shadow-2xl">
+        <div className="w-full aspect-video bg-black/80 rounded-3xl border-2 border-[#F6BA48]/40 overflow-hidden flex items-center justify-center relative shadow-2xl">
           <video
             ref={localVideoRef}
             autoPlay
@@ -69,7 +69,7 @@ export default function CanavarVideoPage() {
           />
 
           {!stream && !error && (
-            <p className="absolute text-[10px] text-purple-400 tracking-widest font-mono animate-pulse uppercase">
+            <p className="absolute text-[10px] text-[#F6BA48] tracking-widest font-mono animate-pulse uppercase">
               [ WEBRTC GÖRÜNTÜ AKIŞI BEKLENİYOR ]
             </p>
           )}
@@ -82,10 +82,10 @@ export default function CanavarVideoPage() {
         )}
       </div>
 
-      <div className="space-y-4 pt-4 border-t border-white/5">
+      <div className="space-y-4 pt-4 border-t border-[#F6BA48]/10">
         <button
           onClick={baglantiyiKapat}
-          className="w-full bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-bold py-3 px-6 rounded-2xl text-xs transition-all tracking-widest uppercase shadow-lg"
+          className="w-full bg-gradient-to-r from-red-700 to-red-600 hover:from-red-600 hover:to-red-500 text-white font-bold py-3 px-6 rounded-2xl text-xs transition-all tracking-widest uppercase shadow-lg"
         >
           🛑 SOHBETİ VE PENCEREYİ KAPAT
         </button>

@@ -34,21 +34,24 @@ export default function DiscoverMembers() {
   }, []);
 
   return (
-    <section id="discover" className="py-20 bg-gradient-to-b from-pink-950 to-pink-900">
+    <section
+      id="discover"
+      className="bg-gradient-to-b from-[#310D0C] via-[#512510] to-[#310D0C] py-20"
+    >
       <div className="mx-auto max-w-7xl px-4">
-        <div className="text-center mb-10">
-          <h2 className="text-4xl font-bold text-white mb-3">
+        <div className="mb-10 text-center">
+          <h2 className="mb-3 text-4xl font-bold text-[#FFF7E8]">
             {t.discover.title}
           </h2>
-          <p className="text-white/60">{t.discover.subtitle}</p>
+          <p className="text-[#B5A093]">{t.discover.subtitle}</p>
         </div>
 
-        <div className="max-w-xs mx-auto mb-10">
+        <div className="mx-auto mb-10 max-w-xs">
           <Select value={selectedCity} onValueChange={setSelectedCity}>
-            <SelectTrigger className="bg-pink-900/40 border-white/10 text-white">
+            <SelectTrigger className="border-[#F6BA48]/20 bg-[#683312]/45 text-[#FFF7E8] focus:ring-[#F6BA48]/35">
               <SelectValue placeholder={t.auth.selectCity} />
             </SelectTrigger>
-            <SelectContent className="bg-pink-950 text-white border-white/10 max-h-72">
+            <SelectContent className="max-h-72 border-[#F6BA48]/20 bg-[#512510] text-[#FFF7E8]">
               {allCities.map((city) => (
                 <SelectItem key={city} value={city}>
                   {city}
@@ -58,13 +61,13 @@ export default function DiscoverMembers() {
           </Select>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {loading ? (
-            <p className="text-white/50 col-span-full text-center">
+            <p className="col-span-full text-center text-[#B5A093]">
               Yükleniyor...
             </p>
           ) : members.length === 0 ? (
-            <p className="text-white/50 col-span-full text-center">
+            <p className="col-span-full text-center text-[#B5A093]">
               Henüz gösterilecek üye yok
             </p>
           ) : (
@@ -75,7 +78,8 @@ export default function DiscoverMembers() {
                 name={`${user.name || ""}${user.surname ? " " + user.surname : ""}`}
                 age={
                   user.birthDate
-                    ? new Date().getFullYear() - new Date(user.birthDate).getFullYear()
+                    ? new Date().getFullYear() -
+                      new Date(user.birthDate).getFullYear()
                     : undefined
                 }
                 city={user.city?.name}

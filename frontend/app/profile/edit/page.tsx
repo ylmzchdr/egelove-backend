@@ -645,7 +645,7 @@ const currentLang: LangKey = (
   if (loading) {
     return (
       <div
-        className="flex min-h-screen items-center justify-center bg-[#090914] text-white"
+        className="flex min-h-screen items-center justify-center bg-[#310D0C] text-white"
         dir={isRtl ? "rtl" : "ltr"}
       >
         <div className="flex flex-col items-center gap-4">
@@ -659,19 +659,19 @@ const currentLang: LangKey = (
   const glassCard =
     "rounded-[28px] border border-white/10 bg-white/[0.055] shadow-[0_24px_80px_rgba(0,0,0,0.28)] backdrop-blur-2xl";
   const fieldClass =
-    "h-12 rounded-2xl border-white/10 bg-black/20 text-white placeholder:text-white/30 focus-visible:ring-pink-500";
+    "h-12 rounded-2xl border-white/10 bg-black/20 text-white placeholder:text-white/30 focus-visible:ring-[#F6BA48]";
   const textareaClass =
-    "min-h-[130px] w-full resize-y rounded-2xl border border-white/10 bg-black/20 p-4 text-base text-white outline-none placeholder:text-white/30 focus:border-[#F6BA48]/50 focus:ring-2 focus:ring-pink-500/20";
+    "min-h-[130px] w-full resize-y rounded-2xl border border-white/10 bg-black/20 p-4 text-base text-white outline-none placeholder:text-white/30 focus:border-[#F6BA48]/50 focus:ring-2 focus:ring-[#F6BA48]/20";
 
   return (
     <div
-      className="relative min-h-screen overflow-hidden bg-[#090914] text-white"
+      className="relative min-h-screen overflow-hidden bg-[#310D0C] text-white"
       dir={isRtl ? "rtl" : "ltr"}
     >
       <div className="pointer-events-none fixed inset-0">
-        <div className="absolute -left-24 top-20 h-80 w-80 rounded-full bg-fuchsia-600/20 blur-[110px]" />
-        <div className="absolute right-[-120px] top-[28%] h-96 w-96 rounded-full bg-violet-600/15 blur-[130px]" />
-        <div className="absolute bottom-[-160px] left-[35%] h-[420px] w-[420px] rounded-full bg-pink-500/10 blur-[150px]" />
+        <div className="absolute -left-24 top-20 h-80 w-80 rounded-full bg-[#B16323]/20 blur-[110px]" />
+        <div className="absolute right-[-120px] top-[28%] h-96 w-96 rounded-full bg-[#683312]/15 blur-[130px]" />
+        <div className="absolute bottom-[-160px] left-[35%] h-[420px] w-[420px] rounded-full bg-[#F6BA48]/10 blur-[150px]" />
       </div>
 
       <div className="relative z-10">
@@ -685,11 +685,11 @@ const currentLang: LangKey = (
             <section
               className={`${glassCard} relative overflow-hidden p-5 sm:p-7 lg:p-9`}
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-pink-600/20 via-transparent to-violet-600/15" />
+              <div className="absolute inset-0 bg-gradient-to-br from-[#B16323]/20 via-transparent to-[#683312]/15" />
 
               <div className="relative flex flex-col gap-7 xl:flex-row xl:items-center xl:justify-between">
                 <div className="max-w-3xl">
-                  <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#F6BA48]/20 bg-pink-500/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-pink-200">
+                  <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#F6BA48]/20 bg-[#F6BA48]/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-[#F8D290]">
                     <Sparkles className="h-3.5 w-3.5" />
                     {tx.badge}
                   </div>
@@ -715,7 +715,7 @@ const currentLang: LangKey = (
 
                     <Link
                       href="/profile"
-                      className="inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl bg-white px-5 text-base font-black text-fuchsia-700 transition hover:bg-pink-50"
+                      className="inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl bg-white px-5 text-base font-black text-[#7E4114] transition hover:bg-[#F8D290]"
                     >
                       <Eye className="h-4 w-4" />
                       {tx.viewProfile}
@@ -731,14 +731,14 @@ const currentLang: LangKey = (
                         {tx.completionDesc}
                       </p>
                     </div>
-                    <span className="text-3xl font-black text-pink-300">
+                    <span className="text-3xl font-black text-[#F6BA48]">
                       %{completion}
                     </span>
                   </div>
 
                   <div className="mt-5 h-2.5 overflow-hidden rounded-full bg-white/10">
                     <div
-                      className="h-full rounded-full bg-gradient-to-r from-pink-500 via-fuchsia-500 to-violet-500 transition-all duration-500"
+                      className="h-full rounded-full bg-gradient-to-r from-[#B16323] via-[#EF912C] to-[#F6BA48] transition-all duration-500"
                       style={{ width: `${completion}%` }}
                     />
                   </div>
@@ -1089,7 +1089,7 @@ const currentLang: LangKey = (
 
               <aside className="space-y-5 xl:sticky xl:top-24 xl:self-start">
                 <div className={`${glassCard} p-6`}>
-                  <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-pink-500/10 text-pink-300">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F6BA48]/10 text-[#F6BA48]">
                     <UserRound className="h-5 w-5" />
                   </span>
 
@@ -1109,7 +1109,7 @@ const currentLang: LangKey = (
 
                 <Button
                   type="button"
-                  className="h-14 w-full rounded-2xl bg-gradient-to-r from-pink-600 via-fuchsia-600 to-violet-600 text-base font-black text-white shadow-[0_18px_45px_rgba(219,39,119,0.28)] transition hover:scale-[1.01]"
+                  className="h-14 w-full rounded-2xl bg-gradient-to-r from-[#7E4114] via-[#B16323] to-[#EF912C] text-base font-black text-white shadow-[0_18px_45px_rgba(177,99,35,0.28)] transition hover:scale-[1.01]"
                   onClick={handleSubmit}
                   disabled={saving}
                 >
@@ -1130,11 +1130,11 @@ const currentLang: LangKey = (
           </div>
         </main>
 
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#090914]/90 p-3 backdrop-blur-2xl xl:hidden">
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#310D0C]/90 p-3 backdrop-blur-2xl xl:hidden">
           <div className="mx-auto max-w-[1380px]">
             <Button
               type="button"
-              className="h-13 w-full rounded-2xl bg-gradient-to-r from-pink-600 via-fuchsia-600 to-violet-600 font-black text-white"
+              className="h-13 w-full rounded-2xl bg-gradient-to-r from-[#7E4114] via-[#B16323] to-[#EF912C] font-black text-white"
               onClick={handleSubmit}
               disabled={saving}
             >

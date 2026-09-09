@@ -609,13 +609,13 @@ export default function ProfilePage() {
 
   return (
     <div
-      className="relative min-h-screen overflow-hidden bg-[#090914] text-white"
+      className="relative min-h-screen overflow-hidden bg-[#310D0C] text-white"
       dir={isRtl ? "rtl" : "ltr"}
     >
       <div className="pointer-events-none fixed inset-0">
-        <div className="absolute -left-24 top-20 h-80 w-80 rounded-full bg-fuchsia-600/20 blur-[110px]" />
-        <div className="absolute right-[-120px] top-[28%] h-96 w-96 rounded-full bg-violet-600/15 blur-[130px]" />
-        <div className="absolute bottom-[-160px] left-[35%] h-[420px] w-[420px] rounded-full bg-pink-500/10 blur-[150px]" />
+        <div className="absolute -left-24 top-20 h-80 w-80 rounded-full bg-[#7E4114]/20 blur-[110px]" />
+        <div className="absolute right-[-120px] top-[28%] h-96 w-96 rounded-full bg-[#683312]/15 blur-[130px]" />
+        <div className="absolute bottom-[-160px] left-[35%] h-[420px] w-[420px] rounded-full bg-[#F6BA48]/10 blur-[150px]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.045),transparent_34%)]" />
       </div>
 
@@ -629,7 +629,7 @@ export default function ProfilePage() {
           <div className="mx-auto max-w-[1480px] px-3 sm:px-5 lg:px-8">
             <div className="mb-7 flex flex-col gap-4 sm:mb-9 md:flex-row md:items-end md:justify-between">
               <div>
-                <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[#F6BA48]/20 bg-pink-500/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-pink-200">
+                <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[#F6BA48]/20 bg-[#F6BA48]/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-[#F8D290]">
                   <Sparkles className="h-3.5 w-3.5" />
                   SENveBEN PROFILE V2
                 </div>
@@ -643,7 +643,7 @@ export default function ProfilePage() {
 
               {user && (
                 <Link href="/profile/edit" className="w-full sm:w-auto">
-                  <Button className="h-12 w-full rounded-2xl border border-pink-300/20 bg-gradient-to-r from-pink-600 to-fuchsia-600 px-6 font-bold shadow-[0_14px_35px_rgba(219,39,119,0.28)] transition hover:scale-[1.02] hover:from-pink-500 hover:to-fuchsia-500 sm:w-auto">
+                  <Button className="h-12 w-full rounded-2xl border border-[#F6BA48]/20 bg-gradient-to-r from-[#7E4114] to-[#EF912C] px-6 font-bold shadow-[0_14px_35px_rgba(177,99,35,0.28)] transition hover:scale-[1.02] hover:from-[#B16323] hover:to-[#F6BA48] sm:w-auto">
                     <Pencil className="mr-2 h-4 w-4" />
                     {tx.editProfile}
                   </Button>
@@ -668,7 +668,7 @@ export default function ProfilePage() {
                 <p className="mb-6 text-white/60">{tx.mustLogin}</p>
                 <Button
                   onClick={() => setAuthTab("login")}
-                  className="h-12 rounded-2xl bg-gradient-to-r from-pink-600 to-fuchsia-600 px-8 font-bold"
+                  className="h-12 rounded-2xl bg-gradient-to-r from-[#7E4114] to-[#EF912C] px-8 font-bold"
                 >
                   {tx.login}
                 </Button>
@@ -678,8 +678,8 @@ export default function ProfilePage() {
                 <div
                   className={`${glassCard} relative overflow-hidden p-4 sm:p-6 lg:p-8`}
                 >
-                  <div className="absolute inset-x-0 top-0 h-36 bg-gradient-to-r from-pink-600/25 via-fuchsia-500/15 to-violet-600/20" />
-                  <div className="absolute right-[-70px] top-[-90px] h-64 w-64 rounded-full bg-pink-500/20 blur-3xl" />
+                  <div className="absolute inset-x-0 top-0 h-36 bg-gradient-to-r from-[#7E4114]/25 via-[#EF912C]/15 to-[#683312]/20" />
+                  <div className="absolute right-[-70px] top-[-90px] h-64 w-64 rounded-full bg-[#F6BA48]/20 blur-3xl" />
 
                   <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end">
                     <button
@@ -712,11 +712,11 @@ export default function ProfilePage() {
 
                       <div className="mt-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-base text-white/60 lg:justify-start rtl:lg:justify-end">
                         <span className="inline-flex items-center gap-2">
-                          <Calendar className="h-4 w-4 text-pink-300" />
+                          <Calendar className="h-4 w-4 text-[#F6BA48]" />
                           {age ?? "-"}
                         </span>
                         <span className="inline-flex items-center gap-2">
-                          <MapPin className="h-4 w-4 text-pink-300" />
+                          <MapPin className="h-4 w-4 text-[#F6BA48]" />
                           {[districtName, cityName]
                             .filter(Boolean)
                             .join(", ") || "-"}
@@ -765,10 +765,10 @@ export default function ProfilePage() {
                       className={`${glassCard} group p-4 transition duration-300 hover:-translate-y-1 hover:border-[#F6BA48]/25 sm:p-5`}
                     >
                       <div className="flex items-center justify-between">
-                        <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-pink-300/15 bg-pink-500/10 text-pink-300">
+                        <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-[#F6BA48]/15 bg-[#F6BA48]/10 text-[#F6BA48]">
                           <Icon className="h-5 w-5" />
                         </div>
-                       <span className="text-2xl font-black text-white transition duration-300 group-hover:scale-110 group-hover:text-pink-200">
+                       <span className="text-2xl font-black text-white transition duration-300 group-hover:scale-110 group-hover:text-[#F8D290]">
   {value}
 </span>
                       </div>
@@ -784,7 +784,7 @@ export default function ProfilePage() {
                     <div className={`${glassCard} p-4`}>
                       <div className="mb-4 flex items-center justify-between px-1">
                         <h3 className="flex items-center gap-2 font-bold">
-                          <Images className="h-5 w-5 text-pink-300" />
+                          <Images className="h-5 w-5 text-[#F6BA48]" />
                           {tx.photos}
                         </h3>
                         <span className="rounded-full bg-white/5 px-2.5 py-1 text-xs text-white/45">
@@ -830,7 +830,7 @@ export default function ProfilePage() {
                     </div>
 
                     <div className={`${glassCard} grid grid-cols-2 gap-3 p-4`}>
-                      <button className="flex items-center justify-center gap-2 rounded-2xl border border-[#F6BA48]/25 bg-pink-500/10 py-3 text-base font-bold text-pink-200 transition hover:bg-pink-500/20">
+                      <button className="flex items-center justify-center gap-2 rounded-2xl border border-[#F6BA48]/25 bg-[#F6BA48]/10 py-3 text-base font-bold text-[#F8D290] transition hover:bg-[#F6BA48]/20">
                         <Heart className="h-4 w-4" />
                         {tx.wink}
                       </button>
@@ -844,7 +844,7 @@ export default function ProfilePage() {
                   <main className="min-w-0 space-y-6">
                     <div className={`${glassCard} overflow-hidden p-4 sm:p-6`}>
                       <div className="mb-5 flex items-center gap-3">
-                        <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-pink-500/25 to-violet-500/20 text-pink-200">
+                        <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#B16323]/25 to-[#B16323]/20 text-[#F8D290]">
                           <Sparkles className="h-5 w-5" />
                         </div>
                         <div>
@@ -945,7 +945,7 @@ export default function ProfilePage() {
                   <aside className="space-y-6">
                     <div className={`${glassCard} p-5`}>
                       <h3 className="mb-4 flex items-center gap-2 text-lg font-black">
-                        <Eye className="h-5 w-5 text-pink-300" />
+                        <Eye className="h-5 w-5 text-[#F6BA48]" />
                         {tx.visitors}
                       </h3>
                       <div className="space-y-3">
@@ -954,7 +954,7 @@ export default function ProfilePage() {
                             key={item}
                             className="flex items-center gap-3 rounded-2xl border border-white/[0.06] bg-white/[0.035] p-3 transition hover:bg-white/[0.07]"
                           >
-                            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-pink-500/30 to-violet-500/20">
+                            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#B16323]/30 to-[#B16323]/20">
                               <UserCircle className="h-6 w-6 text-white/55" />
                             </div>
                             <div className="min-w-0">
@@ -970,7 +970,7 @@ export default function ProfilePage() {
                       </div>
                     </div>
 
-                    <div className="relative overflow-hidden rounded-[28px] border border-amber-300/20 bg-gradient-to-br from-amber-400/15 via-orange-400/8 to-pink-500/10 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.28)] backdrop-blur-2xl">
+                    <div className="relative overflow-hidden rounded-[28px] border border-amber-300/20 bg-gradient-to-br from-amber-400/15 via-orange-400/8 to-[#F6BA48]/10 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.28)] backdrop-blur-2xl">
                       <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-amber-300/20 blur-3xl" />
                       <div className="relative">
                         <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-amber-200/20 bg-amber-300/15 text-amber-200">
