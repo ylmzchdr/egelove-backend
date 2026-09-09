@@ -322,7 +322,7 @@ export default function SettingsPage() {
 
   return (
     <div
-      className="min-h-screen bg-[#F8D6E3] text-[#2D1721]"
+      className="min-h-screen bg-[#310D0C] text-[#2D1721]"
       dir={lang === "AR" ? "rtl" : "ltr"}
     >
       <div className="lg:hidden">

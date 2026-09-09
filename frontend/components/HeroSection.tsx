@@ -1,7 +1,7 @@
 "use client";
 
 import { useI18n } from "@/lib/i18n-context";
-import { Sparkles, UserPlus, Compass } from "lucide-react";
+import { Sparkles, UserPlus, Video, ShieldCheck } from "lucide-react";
 
 type LangKey = "TR" | "EN" | "RU" | "AR";
 
@@ -10,13 +10,13 @@ interface HeroSectionProps {
 }
 
 export default function HeroSection({ onCtaClick }: HeroSectionProps) {
-  // Sitenin kendi büyük dil butonlarını dinleyen o meşhur antenimiz
   const { lang } = useI18n();
 
-  // Reklam Stratejimize Uygun Dönüşüm Odaklı Yeni Dil Paketleri (Büyük Harf Uyumlu)
   const translations: Record<
     LangKey,
     {
+      eyebrow: string;
+      brandLine: string;
       titlePrefix: string;
       titleHighlight: string;
       titleSuffix: string;
@@ -28,49 +28,63 @@ export default function HeroSection({ onCtaClick }: HeroSectionProps) {
     }
   > = {
     TR: {
-      titlePrefix: "❤️ Aradığın kişi belki de sadece ",
+      eyebrow: "CANLI GÖRÜŞ • ANINDA MESAJLAŞ • 4 DİLDE İLETİŞİM",
+      brandLine: "DAHA FAZLA AŞK",
+      titlePrefix: "Aradığın kişi belki de sadece ",
       titleHighlight: "birkaç kilometre",
       titleSuffix: " uzakta.",
-         subtitle: "Türkiye'nin 81 ilinde ve ilçelerinde yeni insanları keşfet. Sana uygun profilleri bul, beğen, eşleş ve tanış.\n\nBirebir, karşılıklı eşleştiğin ve beğendiğin gerçek kişilerle anında görüntülü konuş.",
-
+      subtitle:
+        "Türkiye'nin 81 ilinde ve ilçelerinde yeni insanları keşfet. Sana uygun profilleri bul, beğen, eşleş ve tanış. Birebir, karşılıklı eşleştiğin ve beğendiğin gerçek kişilerle anında görüntülü konuş.",
       ctaRegister: "Ücretsiz Üye Ol",
-      ctaExplore: "Üyeleri Keşfet",
-      aiTitle: "EgeLove AI ile Sınırları Kaldırın",
-      aiDescription: "Farklı diller konuşan insanlarla anında ve doğal iletişim kurun. Siz kendi dilinizde yazın, EgeLove AI mesajlarınızı anında çevirsin. Dil bariyeri olmadan, dünyanın ve Türkiye'nin dört bir yanından üyelerle akıcı sohbetin keyfini çıkarın!"
+      ctaExplore: "Birebir Canlı Görüntülü Konuş",
+      aiTitle: "SENveBEN AI ile Sınırları Kaldırın",
+      aiDescription:
+        "Farklı diller konuşan insanlarla anında ve doğal iletişim kurun. Siz kendi dilinizde yazın, SENveBEN AI mesajlarınızı anında çevirsin.",
     },
     EN: {
-      titlePrefix: "❤️ The person you are looking for might be just ",
+      eyebrow: "LIVE VIDEO • INSTANT MESSAGES • 4 LANGUAGES",
+      brandLine: "MORE LOVE",
+      titlePrefix: "The person you are looking for might be just ",
       titleHighlight: "a few kilometers",
       titleSuffix: " away.",
-      subtitle: "Discover new people across 81 provinces and districts. Find profiles that match you, like, match, and meet.",
+      subtitle:
+        "Discover new people across Türkiye. Find profiles that match you, like, connect and meet. Start one-to-one video conversations with real people you mutually like.",
       ctaRegister: "Sign Up for Free",
-      ctaExplore: "Explore Members",
-      aiTitle: "Break Barriers with EgeLove AI",
-      aiDescription: "Communicate instantly and naturally with people speaking different languages. You write in your own language, and EgeLove AI translates your messages instantly. Enjoy fluent conversations without language barriers!"
+      ctaExplore: "Start Live Video Chat",
+      aiTitle: "Break Barriers with SENveBEN AI",
+      aiDescription:
+        "Write in your own language and let SENveBEN AI translate your messages instantly for natural conversations.",
     },
     RU: {
-      titlePrefix: "❤️ Человек, которого вы ищете, возможно, всего в ",
+      eyebrow: "ВИДЕО • МГНОВЕННЫЕ СООБЩЕНИЯ • 4 ЯЗЫКА",
+      brandLine: "БОЛЬШЕ ЛЮБВИ",
+      titlePrefix: "Человек, которого вы ищете, возможно, всего в ",
       titleHighlight: "нескольких километрах",
       titleSuffix: " от вас.",
-      subtitle: "Знакомьтесь с новыми людьми в 81 провинциях и районах. Находите подходящие профили, лайкайте, общайтесь и встречайтесь.",
+      subtitle:
+        "Знакомьтесь с новыми людьми по всей Турции. Находите подходящие профили, общайтесь и переходите к видеосвязи с теми, кто понравился вам взаимно.",
       ctaRegister: "Зарегистрироваться бесплатно",
-      ctaExplore: "Посмотреть участников",
-      aiTitle: "Стирайте границы с EgeLove AI",
-    	aiDescription: "Общайтесь мгновенно и естественно с людьми, говорящими на разных языках. Вы пишите на своем языке, а EgeLove AI мгновенно переводит сообщения. Наслаждайтесь свободным общением без языковых барьеров!"
+      ctaExplore: "Начать видеочат",
+      aiTitle: "Стирайте границы с SENveBEN AI",
+      aiDescription:
+        "Пишите на своем языке — SENveBEN AI мгновенно переведет сообщения для естественного общения.",
     },
     AR: {
-      titlePrefix: "❤️ الشخص الذي تبحث عنه قد يكون على بعد ",
+      eyebrow: "فيديو مباشر • رسائل فورية • 4 لغات",
+      brandLine: "المزيد من الحب",
+      titlePrefix: "قد يكون الشخص الذي تبحث عنه على بعد ",
       titleHighlight: "بضعة كيلومترات",
       titleSuffix: " فقط.",
-      subtitle: "اكتشف أشخاصاً جدد في 81 ولاية ومنطقة. اعثر على الملفات الشخصية التي تناسبك، أعجب بها، تطابق وتعرف عليهم.",
+      subtitle:
+        "اكتشف أشخاصاً جدداً في جميع أنحاء تركيا. اعثر على الملفات المناسبة وتواصل مع الأشخاص الذين يعجبون بك أيضاً وابدأ محادثة فيديو مباشرة.",
       ctaRegister: "سجل مجاناً",
-      ctaExplore: "استكشف الأعضاء",
-      aiTitle: "أزل الحدود مع EgeLove AI",
-      aiDescription: "تواصل فوراً وبشكل طبيعي مع أشخاص يتحدثون لغات مختلفة. اكتب بلغتك الخاصة، وسيقوم EgeLove AI بترجمة رسائلك على الفور. استمتع بمحادثات سلسة دون أي عوائق لغوية!"
-    }
+      ctaExplore: "ابدأ محادثة فيديو",
+      aiTitle: "أزل الحدود مع SENveBEN AI",
+      aiDescription:
+        "اكتب بلغتك وسيترجم SENveBEN AI رسائلك فوراً لتستمتع بمحادثات طبيعية وسلسة.",
+    },
   };
 
-  // Üstten gelen dili doğrula, yoksa TR'ye pasla
   const currentLang: LangKey = ["TR", "EN", "RU", "AR"].includes(lang)
     ? (lang as LangKey)
     : "TR";
@@ -79,64 +93,134 @@ export default function HeroSection({ onCtaClick }: HeroSectionProps) {
   const isRtl = currentLang === "AR";
 
   return (
-    <section 
-      className="relative overflow-hidden bg-[#0d1527] pt-32 pb-16 md:pt-40 md:pb-24"
+    <section
+      className="relative isolate overflow-hidden bg-[#310D0C] text-[#F8D290]"
       dir={isRtl ? "rtl" : "ltr"}
     >
-      {/* Arka Plan Glow Işıkları */}
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute top-12 left-1/2 h-[400px] w-[500px] -translate-x-1/2 rounded-full bg-purple-600/15 blur-[120px]" />
-        <div className="absolute top-20 left-1/3 h-[250px] w-[250px] rounded-full bg-pink-600/10 blur-[80px]" />
+      {/* SENveBEN GERÇEK GÜN BATIMI ATMOSFERİ */}
+      <div className="absolute inset-0 -z-20 bg-[url('/senveben-hero-banner.png')] bg-cover bg-center bg-no-repeat" />
+      <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(49,13,12,0.92)_0%,rgba(81,37,16,0.76)_38%,rgba(126,65,20,0.36)_68%,rgba(49,13,12,0.18)_100%)]" />
+      <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(49,13,12,0.08)_0%,rgba(49,13,12,0.12)_52%,rgba(49,13,12,0.90)_100%)]" />
+
+      {/* FOTOĞRAF ÜZERİNDE HAFİF ALTIN IŞIK */}
+      <div className="pointer-events-none absolute inset-x-0 top-[30%] -z-10 h-44 opacity-60">
+        <div className="absolute left-[6%] bottom-0 h-24 w-[38%] rounded-full bg-[#F6BA48]/10 blur-3xl" />
+        <div className="absolute right-[8%] bottom-0 h-24 w-[34%] rounded-full bg-[#F8D290]/10 blur-3xl" />
       </div>
 
-      <div className="relative mx-auto max-w-5xl px-6 text-center md:px-12">
-        {/* 1. BÖLÜM: ANA KANCA VE MANŞET */}
-        <div className="mx-auto max-w-3xl">
-          <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl md:text-6xl md:leading-[1.15]">
-            {t.titlePrefix}<span className="text-[#FFC000]">{t.titleHighlight}</span>{t.titleSuffix}
+      {/* FOTOĞRAFIN GÜNEŞİ KULLANILIYOR */}
+      <div className="pointer-events-none absolute right-[24%] top-16 -z-10 h-20 w-20 rounded-full bg-[#F6BA48]/8 blur-3xl md:h-24 md:w-24" />
+
+      {/* PREMIUM ÜST BANT */}
+      <div className="border-b border-[#F6BA48]/40 bg-[#310D0C]/55 backdrop-blur-sm">
+        <div className="mx-auto flex max-w-7xl items-center justify-center px-4 py-3">
+          <div className="inline-flex items-center gap-2 rounded-full border border-[#F6BA48]/55 bg-[#F8D290]/90 px-4 py-1.5 text-[11px] font-black tracking-wide text-[#310D0C] shadow-[0_5px_22px_rgba(49,13,12,0.25)] sm:text-xs">
+            <span className="h-2.5 w-2.5 rounded-full bg-[#3FB36E] shadow-[0_0_10px_rgba(63,179,110,0.9)]" />
+            {t.eyebrow}
+          </div>
+        </div>
+      </div>
+
+      <div className="mx-auto grid min-h-[690px] max-w-7xl grid-cols-1 items-center gap-10 px-6 py-16 md:px-12 lg:grid-cols-[1.05fr_.95fr] lg:py-20">
+        {/* SOL: MARKA + MESAJ */}
+        <div className="relative">
+          <div className="mb-7 inline-flex items-center gap-4">
+            <div className="relative flex h-20 w-20 items-center justify-center rounded-[28px] border border-[#F6BA48]/65 bg-[#310D0C]/70 shadow-[0_0_32px_rgba(246,186,72,0.24)] backdrop-blur-md">
+              <span className="text-4xl">❤</span>
+              <span className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-[#512510] bg-[#3FB36E]" />
+            </div>
+
+            <div>
+              <div className="text-4xl font-black tracking-tight text-[#F8D290] sm:text-5xl">
+                SENveBEN
+              </div>
+              <div className="mt-1 text-xs font-black tracking-[0.38em] text-[#F6BA48]">
+                {t.brandLine}
+              </div>
+            </div>
+          </div>
+
+          <h1 className="max-w-3xl text-4xl font-black leading-[1.05] tracking-tight text-[#FFF7E8] sm:text-5xl md:text-6xl">
+            {t.titlePrefix}
+            <span className="text-[#F6BA48] drop-shadow-[0_2px_16px_rgba(246,186,72,0.25)]">
+              {t.titleHighlight}
+            </span>
+            {t.titleSuffix}
           </h1>
-          
-          <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-white/80 md:text-xl">
+
+          <p className="mt-6 max-w-2xl text-base leading-8 text-[#F8D290]/88 md:text-lg">
             {t.subtitle}
           </p>
-        </div>
 
-        {/* 2. BÖLÜM: AKSİYON BUTONLARI (CTA) */}
-        <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <button
-            onClick={onCtaClick}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#FFC000] px-8 py-4 text-base font-bold text-black shadow-lg shadow-[#FFC000]/20 transition-all duration-300 hover:scale-[1.03] hover:bg-[#ffe066] sm:w-auto"
-          >
-            <UserPlus className="h-5 w-5" />
-            {t.ctaRegister}
-          </button>
-          
-                   {/* 🛰️ 81 İL VİZYONU CANLI GÖRÜNTÜLÜ SOHBET ODALARI BUTONU */}
-          <button
-            onClick={onCtaClick}
-            className="flex w-full items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 px-8 py-4 text-base font-black text-white shadow-lg shadow-purple-600/30 transition-all duration-300 hover:scale-[1.03] hover:brightness-110 sm:w-auto select-none"
-          >
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
-            </span>
-          <span>🛰️ BİREBİR CANLI GÖRÜNTÜLÜ KONUŞ</span>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <button
+              onClick={onCtaClick}
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#F6BA48] bg-[#F6BA48] px-7 py-4 text-sm font-black text-[#310D0C] shadow-[0_10px_30px_rgba(246,186,72,0.22)] transition hover:-translate-y-0.5 hover:bg-[#EF912C]"
+            >
+              <UserPlus className="h-5 w-5" />
+              {t.ctaRegister}
+            </button>
 
-          </button>
-
-        </div>
-
-        {/* 3. BÖLÜM: EGELOVE AI (HERO'NUN HEMEN ALTI) */}
-        <div className="mx-auto mt-20 max-w-3xl rounded-2xl border border-purple-500/20 bg-gradient-to-b from-purple-950/20 to-transparent p-6 backdrop-blur-md md:p-8">
-          <div className="flex items-center justify-center gap-2 text-[#FFC000]">
-            <Sparkles className="h-5 w-5 animate-pulse" />
-            <h2 className="text-lg font-bold tracking-wide uppercase text-white sm:text-xl">
-              {t.aiTitle}
-            </h2>
+            <button
+              onClick={onCtaClick}
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#F6BA48]/55 bg-[#310D0C]/65 px-7 py-4 text-sm font-black text-[#F8D290] backdrop-blur-md transition hover:-translate-y-0.5 hover:bg-[#512510]/85"
+            >
+              <Video className="h-5 w-5 text-[#F6BA48]" />
+              {t.ctaExplore}
+            </button>
           </div>
-          
-          <p className="mt-4 text-sm leading-relaxed text-white/70 md:text-base">
-            {t.aiDescription}
+
+          <div className="mt-6 flex flex-wrap gap-3 text-xs font-bold text-[#F8D290]/80">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-[#F6BA48]/30 bg-[#310D0C]/45 px-3 py-1.5">
+              <ShieldCheck className="h-4 w-4 text-[#3FB36E]" />
+              Güvenli bağlantı
+            </span>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-[#F6BA48]/30 bg-[#310D0C]/45 px-3 py-1.5">
+              <span className="h-2 w-2 rounded-full bg-[#3FB36E]" />
+              81 ilden canlı üyeler
+            </span>
+          </div>
+        </div>
+
+        {/* SAĞ: ROMANTİK PREMIUM PANEL */}
+        <div className="relative mx-auto w-full max-w-xl">
+          <div className="absolute -inset-5 rounded-[40px] bg-[#F6BA48]/10 blur-3xl" />
+
+          <div className="relative overflow-hidden rounded-[32px] border border-[#F6BA48]/55 bg-gradient-to-br from-[#310D0C]/84 via-[#683312]/76 to-[#512510]/90 p-6 shadow-[0_30px_80px_rgba(49,13,12,0.48)] backdrop-blur-xl md:p-8">
+            <div className="pointer-events-none absolute -right-12 -top-10 h-44 w-44 rounded-full bg-[#F6BA48]/16 blur-3xl" />
+
+            <div className="relative">
+              <div className="mb-5 flex items-center gap-2 text-[#F6BA48]">
+                <Sparkles className="h-5 w-5 animate-pulse" />
+                <h2 className="text-lg font-black tracking-wide text-[#FFF7E8] sm:text-xl">
+                  {t.aiTitle}
+                </h2>
+              </div>
+
+              <p className="text-sm leading-7 text-[#F8D290]/80 md:text-base">
+                {t.aiDescription}
+              </p>
+
+              <div className="mt-7 grid grid-cols-2 gap-3">
+                <div className="rounded-2xl border border-[#F6BA48]/30 bg-[#310D0C]/40 p-4">
+                  <div className="text-2xl font-black text-[#F6BA48]">4</div>
+                  <div className="mt-1 text-xs font-bold text-[#F8D290]/70">
+                    Dil desteği
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-[#F6BA48]/30 bg-[#310D0C]/40 p-4">
+                  <div className="text-2xl font-black text-[#F6BA48]">81</div>
+                  <div className="mt-1 text-xs font-bold text-[#F8D290]/70">
+                    İl kapsamı
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p className="mt-5 text-center text-lg font-semibold italic text-[#F8D290]/85">
+            “Aşkın her yaşta güzel...”
           </p>
         </div>
       </div>

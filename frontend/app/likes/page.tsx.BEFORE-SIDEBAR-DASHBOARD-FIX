@@ -371,7 +371,7 @@ setIsPremium(premiumStatus);
   };
 
   return (
-    <div className="min-h-screen bg-[#F8D6E3] text-[#2D1721]">
+    <div className="min-h-screen bg-[#310D0C] text-[#2D1721]">
       {/* MOBILE MENU OVERLAY */}
       {mobileMenuOpen && (
         <div
@@ -379,7 +379,7 @@ setIsPremium(premiumStatus);
           onClick={() => setMobileMenuOpen(false)}
         >
           <aside
-            className="h-full w-[280px] bg-[#F8D6E3] border-r border-pink-200 p-5"
+            className="h-full w-[280px] bg-[#310D0C] border-r border-pink-200 p-5"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-8">
@@ -414,7 +414,7 @@ setIsPremium(premiumStatus);
 
       <div className="flex min-h-screen">
         {/* DESKTOP SIDEBAR */}
-        <aside className="hidden md:flex fixed left-0 top-0 bottom-0 z-50 w-[282px] flex-col bg-[#F8D6E3] border-r border-pink-200">
+        <aside className="hidden md:flex fixed left-0 top-0 bottom-0 z-50 w-[282px] flex-col bg-[#310D0C] border-r border-pink-200">
           {/* LOGO */}
           <div className="h-[134px] flex items-center px-7 border-b border-pink-200">
             <div className="flex items-center gap-3">
@@ -490,7 +490,7 @@ setIsPremium(premiumStatus);
         <main className="flex-1 md:ml-[282px] min-w-0">
           {/* TOP BAR */}
           <header className="sticky top-0 z-[100] px-4 md:px-8 pt-4 pointer-events-auto">
-            <div className="h-[70px] rounded-2xl border border-pink-200 bg-[#F8D6E3]/90 backdrop-blur-xl flex items-center gap-3 px-3 md:px-5 shadow-2xl shadow-black/20">
+            <div className="h-[70px] rounded-2xl border border-pink-200 bg-[#310D0C]/90 backdrop-blur-xl flex items-center gap-3 px-3 md:px-5 shadow-2xl shadow-black/20">
               {/* MOBILE MENU */}
               <button
                 onClick={() => setMobileMenuOpen(true)}
@@ -830,7 +830,7 @@ setIsPremium(premiumStatus);
                     return (
                       <article
                         key={match.id}
-                        className="group relative overflow-hidden rounded-3xl border border-pink-200 bg-[#F8D6E3] hover:border-pink-400/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-pink-500/10"
+                        className="group relative overflow-hidden rounded-3xl border border-pink-200 bg-[#310D0C] hover:border-pink-400/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-pink-500/10"
                       >
                         {/* IMAGE */}
                        <button

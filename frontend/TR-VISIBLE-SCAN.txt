@@ -26,7 +26,7 @@ app\canavar-video\page.tsx:52: </div>
 app\canavar-video\page.tsx:54: <div className="my-auto">
 app\canavar-video\page.tsx:55: <div className="w-full aspect-video bg-black/80 rounded-3xl border-2 border-pink-400/40 overflow-hidden flex items-center justify-center relative shadow-2xl">
 app\canavar-video\page.tsx:56: <video ref={localVideoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
-app\canavar-video\page.tsx:58: <p className="absolute text-[10px] text-[#C9186B] tracking-widest font-mono animate-pulse uppercase">[ WEB RTC GÖRÜNTÜ AKIŞI BEKLENİYOR ]</p>
+app\canavar-video\page.tsx:58: <p className="absolute text-[10px] text-[#F6BA48] tracking-widest font-mono animate-pulse uppercase">[ WEB RTC GÖRÜNTÜ AKIŞI BEKLENİYOR ]</p>
 app\canavar-video\page.tsx:60: </div>
 app\canavar-video\page.tsx:62: </div>
 app\canavar-video\page.tsx:64: <div className="space-y-4 pt-4 border-t border-white/5">
@@ -99,14 +99,14 @@ app\dashboard\page.tsx:183: setInstallMessage("");
 app\dashboard\page.tsx:189: setShowInstallHelp(true);
 app\dashboard\page.tsx:190: setInstallMessage("");
 app\dashboard\page.tsx:193: if (!isClient) {
-app\dashboard\page.tsx:195: <div className="min-h-screen bg-[#F8D6E3] flex items-center justify-center">
+app\dashboard\page.tsx:195: <div className="min-h-screen bg-[#310D0C] flex items-center justify-center">
 app\dashboard\page.tsx:196: <Loader2 className="w-8 h-8 text-purple-500 animate-spin" />
 app\dashboard\page.tsx:197: </div>
-app\dashboard\page.tsx:202: <div className="min-h-screen w-full overflow-x-hidden bg-[#F8D6E3] text-white">
+app\dashboard\page.tsx:202: <div className="min-h-screen w-full overflow-x-hidden bg-[#310D0C] text-white">
 app\dashboard\page.tsx:203: <div className="flex min-h-screen w-full">
 app\dashboard\page.tsx:205: {/* SOL SIDEBAR */}
 app\dashboard\page.tsx:206: <aside
-app\dashboard\page.tsx:207: className={`fixed inset-y-0 left-0 z-50 w-[286px] shrink-0 bg-[#F8D6E3] transition-transform duration-300 lg:sticky lg:top-0 lg:block lg:translate-x-0 ${
+app\dashboard\page.tsx:207: className={`fixed inset-y-0 left-0 z-50 w-[286px] shrink-0 bg-[#310D0C] transition-transform duration-300 lg:sticky lg:top-0 lg:block lg:translate-x-0 ${
 app\dashboard\page.tsx:208: isSidebarOpen ? "translate-x-0" : "-translate-x-full"
 app\dashboard\page.tsx:211: <Sidebar
 app\dashboard\page.tsx:212: isOpen={isSidebarOpen}
@@ -140,11 +140,11 @@ app\dashboard\page.tsx:266: {/* PROFİLİM */}
 app\dashboard\page.tsx:267: <Link href="/profile/edit" className="group min-w-0">
 app\dashboard\page.tsx:268: <div className="h-full rounded-2xl border border-pink-400/70 bg-gradient-to-r from-[#EFA3C0] to-[#EFA3C0] p-5 transition-all hover:border-pink-400 hover:shadow-lg hover:shadow-pink-500/10">
 app\dashboard\page.tsx:269: <div className="flex items-center gap-4">
-app\dashboard\page.tsx:271: <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-pink-400/70 bg-[#F2B4CD]">
+app\dashboard\page.tsx:271: <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-pink-400/70 bg-[#512510]">
 app\dashboard\page.tsx:273: </div>
 app\dashboard\page.tsx:275: <div className="min-w-0 flex-1">
 app\dashboard\page.tsx:283: </div>
-app\dashboard\page.tsx:285: <ChevronRight className="h-5 w-5 shrink-0 text-[#C9186B] transition-transform group-hover:translate-x-1" />
+app\dashboard\page.tsx:285: <ChevronRight className="h-5 w-5 shrink-0 text-[#F6BA48] transition-transform group-hover:translate-x-1" />
 app\dashboard\page.tsx:286: </div>
 app\dashboard\page.tsx:287: </div>
 app\dashboard\page.tsx:288: </Link>
@@ -157,7 +157,7 @@ app\dashboard\page.tsx:297: </div>
 app\dashboard\page.tsx:299: <div className="min-w-0 flex-1">
 app\dashboard\page.tsx:300: <h2 className="text-base font-black text-white md:text-lg">
 app\dashboard\page.tsx:307: </div>
-app\dashboard\page.tsx:309: <ChevronRight className="h-5 w-5 shrink-0 text-[#C9186B] transition-transform group-hover:translate-x-1" />
+app\dashboard\page.tsx:309: <ChevronRight className="h-5 w-5 shrink-0 text-[#F6BA48] transition-transform group-hover:translate-x-1" />
 app\dashboard\page.tsx:310: </div>
 app\dashboard\page.tsx:311: </div>
 app\dashboard\page.tsx:312: </Link>
@@ -166,10 +166,10 @@ app\dashboard\page.tsx:316: <section className="mt-6 grid w-full grid-cols-1 gap
 app\dashboard\page.tsx:318: {/* CANLI SOHBET */}
 app\dashboard\page.tsx:319: <Link href="/messages" className="group block min-w-0">
 app\dashboard\page.tsx:320: <div className="relative h-full overflow-hidden rounded-3xl border border-pink-400/70 bg-gradient-to-br from-[#EFA3C0] to-[#EFA3C0] p-6 shadow-xl shadow-pink-500/10 backdrop-blur-xl transition-all duration-300 hover:border-pink-400/60">
-app\dashboard\page.tsx:322: <div className="absolute right-0 top-0 -mr-10 -mt-10 h-32 w-32 rounded-full bg-[#EFA3C0] blur-3xl transition-all duration-500 group-hover:bg-[#F2B4CD]" />
+app\dashboard\page.tsx:322: <div className="absolute right-0 top-0 -mr-10 -mt-10 h-32 w-32 rounded-full bg-[#EFA3C0] blur-3xl transition-all duration-500 group-hover:bg-[#512510]" />
 app\dashboard\page.tsx:324: <div className="relative mb-4 flex items-center gap-4">
-app\dashboard\page.tsx:326: <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-2 border-[#880e4f]/30 bg-[#F2B4CD]">
-app\dashboard\page.tsx:327: <Camera className="h-5 w-5 animate-pulse text-[#C9186B]" />
+app\dashboard\page.tsx:326: <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-2 border-[#880e4f]/30 bg-[#512510]">
+app\dashboard\page.tsx:327: <Camera className="h-5 w-5 animate-pulse text-[#F6BA48]" />
 app\dashboard\page.tsx:328: </div>
 app\dashboard\page.tsx:330: <div className="min-w-0">
 app\dashboard\page.tsx:331: <h3 className="text-sm font-bold tracking-wide text-white md:text-base">
@@ -202,7 +202,7 @@ app\dashboard\page.tsx:396: {isStandalone && (
 app\dashboard\page.tsx:397: <div className="relative mt-auto flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm font-bold text-emerald-400">
 app\dashboard\page.tsx:400: </div>
 app\dashboard\page.tsx:403: {installMessage && (
-app\dashboard\page.tsx:404: <p className="mt-3 text-xs leading-relaxed text-[#C9186B]">
+app\dashboard\page.tsx:404: <p className="mt-3 text-xs leading-relaxed text-[#F6BA48]">
 app\dashboard\page.tsx:405: {installMessage}
 app\dashboard\page.tsx:409: </div>
 app\dashboard\page.tsx:410: </div>
@@ -572,14 +572,14 @@ app\likes\page.tsx:364: (match) => String(match?.senderId ?? "") === String(myId
 app\likes\page.tsx:367: const visibleMatches = tab === "received" ? received : sent;
 app\likes\page.tsx:369: const navigate = (url: string) => {
 app\likes\page.tsx:370: window.location.href = url;
-app\likes\page.tsx:374: <div className="min-h-screen bg-[#F8D6E3] text-[#2D1721]">
+app\likes\page.tsx:374: <div className="min-h-screen bg-[#310D0C] text-[#2D1721]">
 app\likes\page.tsx:375: {/* MOBILE MENU OVERLAY */}
 app\likes\page.tsx:376: {mobileMenuOpen && (
 app\likes\page.tsx:377: <div
 app\likes\page.tsx:378: className="fixed inset-0 z-[100] bg-white backdrop-blur-sm md:hidden"
 app\likes\page.tsx:379: onClick={() => setMobileMenuOpen(false)}
 app\likes\page.tsx:381: <aside
-app\likes\page.tsx:382: className="h-full w-[280px] bg-[#F8D6E3] border-r border-pink-200 p-5"
+app\likes\page.tsx:382: className="h-full w-[280px] bg-[#310D0C] border-r border-pink-200 p-5"
 app\likes\page.tsx:383: onClick={(e) => e.stopPropagation()}
 app\likes\page.tsx:385: <div className="flex items-center justify-between mb-8">
 app\likes\page.tsx:386: <div className="flex items-center gap-3">
@@ -602,7 +602,7 @@ app\likes\page.tsx:411: </aside>
 app\likes\page.tsx:412: </div>
 app\likes\page.tsx:415: <div className="flex min-h-screen">
 app\likes\page.tsx:416: {/* DESKTOP SIDEBAR */}
-app\likes\page.tsx:417: <aside className="hidden md:flex fixed left-0 top-0 bottom-0 z-50 w-[282px] flex-col bg-[#F8D6E3] border-r border-pink-200">
+app\likes\page.tsx:417: <aside className="hidden md:flex fixed left-0 top-0 bottom-0 z-50 w-[282px] flex-col bg-[#310D0C] border-r border-pink-200">
 app\likes\page.tsx:419: <div className="h-[134px] flex items-center px-7 border-b border-pink-200">
 app\likes\page.tsx:420: <div className="flex items-center gap-3">
 app\likes\page.tsx:421: <div className="relative">
@@ -648,7 +648,7 @@ app\likes\page.tsx:487: </aside>
 app\likes\page.tsx:489: {/* MAIN */}
 app\likes\page.tsx:490: <main className="flex-1 md:ml-[282px] min-w-0">
 app\likes\page.tsx:492: <header className="sticky top-0 z-[100] px-4 md:px-8 pt-4 pointer-events-auto">
-app\likes\page.tsx:493: <div className="h-[70px] rounded-2xl border border-pink-200 bg-[#F8D6E3]/90 backdrop-blur-xl flex items-center gap-3 px-3 md:px-5 shadow-2xl shadow-black/20">
+app\likes\page.tsx:493: <div className="h-[70px] rounded-2xl border border-pink-200 bg-[#310D0C]/90 backdrop-blur-xl flex items-center gap-3 px-3 md:px-5 shadow-2xl shadow-black/20">
 app\likes\page.tsx:494: {/* MOBILE MENU */}
 app\likes\page.tsx:496: onClick={() => setMobileMenuOpen(true)}
 app\likes\page.tsx:497: className="md:hidden shrink-0 w-10 h-10 rounded-xl border border-pink-200 flex items-center justify-center text-[#6B4454] hover:text-[#2D1721]"
@@ -797,7 +797,7 @@ app\likes\page.tsx:827: const isMutual =
 app\likes\page.tsx:828: match?.isMutual === true || match?.mutual === true;
 app\likes\page.tsx:831: <article
 app\likes\page.tsx:832: key={match.id}
-app\likes\page.tsx:833: className="group relative overflow-hidden rounded-3xl border border-pink-200 bg-[#F8D6E3] hover:border-pink-400/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-pink-500/10"
+app\likes\page.tsx:833: className="group relative overflow-hidden rounded-3xl border border-pink-200 bg-[#310D0C] hover:border-pink-400/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-pink-500/10"
 app\likes\page.tsx:835: {/* IMAGE */}
 app\likes\page.tsx:837: onClick={() => {
 app\likes\page.tsx:838: if (tab === "received" && !isPremium) {
@@ -1619,9 +1619,9 @@ app\messages\page.tsx:1698: <div
 app\messages\page.tsx:1699: className={`${size} shrink-0 rounded-full bg-gradient-to-br from-pink-500 via-pink-400 to-rose-500 flex items-center justify-center font-black text-[#2D1721] ring-1 ring-white/20`}
 app\messages\page.tsx:1701: {name.slice(0, 1).toUpperCase()}
 app\messages\page.tsx:1702: </div>
-app\messages\page.tsx:1707: <div dir={lang === "AR" ? "rtl" : "ltr"} className="min-h-screen bg-[#F8D6E3] text-[#2D1721] overflow-x-hidden">
+app\messages\page.tsx:1707: <div dir={lang === "AR" ? "rtl" : "ltr"} className="min-h-screen bg-[#310D0C] text-[#2D1721] overflow-x-hidden">
 app\messages\page.tsx:1708: {/* ÜST NAV */}
-app\messages\page.tsx:1709: <header className="sticky top-0 z-50 border-b border-pink-200 bg-[#F8D6E3]/95 backdrop-blur-xl">
+app\messages\page.tsx:1709: <header className="sticky top-0 z-50 border-b border-pink-200 bg-[#310D0C]/95 backdrop-blur-xl">
 app\messages\page.tsx:1710: <div className="mx-auto flex min-h-[72px] max-w-[1450px] items-center gap-6 px-4 sm:px-6 lg:px-8">
 app\messages\page.tsx:1713: onClick={goDashboard}
 app\messages\page.tsx:1714: className="mr-auto flex items-center gap-2 text-xl font-black tracking-tight sm:text-2xl"
@@ -1652,7 +1652,7 @@ app\messages\page.tsx:1779: <div className="relative flex h-44 w-44 items-center
 app\messages\page.tsx:1780: <div className="absolute inset-4 rounded-full border border-white/30" />
 app\messages\page.tsx:1781: <span className="relative text-7xl text-[#2D1721] drop-shadow-lg">▣</span>
 app\messages\page.tsx:1782: <span className="absolute -left-10 top-6 text-2xl text-pink-400">♥</span>
-app\messages\page.tsx:1783: <span className="absolute -right-9 top-16 text-2xl text-[#C9186B]">♥</span>
+app\messages\page.tsx:1783: <span className="absolute -right-9 top-16 text-2xl text-[#F6BA48]">♥</span>
 app\messages\page.tsx:1784: <span className="absolute -left-4 bottom-2 text-lg text-pink-500">✦</span>
 app\messages\page.tsx:1785: </div>
 app\messages\page.tsx:1786: </div>
@@ -1714,7 +1714,7 @@ app\messages\page.tsx:1911: <div className="border-t border-pink-200 px-5 py-3 t
 app\messages\page.tsx:1913: </div>
 app\messages\page.tsx:1914: </aside>
 app\messages\page.tsx:1916: {/* SAĞ SOHBET */}
-app\messages\page.tsx:1917: <section className="flex min-h-[650px] flex-col overflow-hidden rounded-[26px] border border-pink-400/30 bg-[#F8D6E3]/85 shadow-2xl shadow-black/20">
+app\messages\page.tsx:1917: <section className="flex min-h-[650px] flex-col overflow-hidden rounded-[26px] border border-pink-400/30 bg-[#310D0C]/85 shadow-2xl shadow-black/20">
 app\messages\page.tsx:1918: {activeConversation ? (
 app\messages\page.tsx:1920: <div className="flex flex-wrap items-center gap-3 border-b border-pink-200 p-4 sm:p-5">
 app\messages\page.tsx:1921: {avatar(activeUser, "h-14 w-14")}
@@ -1737,7 +1737,7 @@ app\messages\page.tsx:1947: </div>
 app\messages\page.tsx:1950: </div>
 app\messages\page.tsx:1954: </div>
 app\messages\page.tsx:1956: {error && <div className="border-t border-red-500/20 bg-red-500/10 px-5 py-3 text-sm text-red-300">{error}</div>}
-app\messages\page.tsx:1958: <form onSubmit={handleSend} className="border-t border-pink-200 bg-[#F8D6E3] p-4 sm:p-5">
+app\messages\page.tsx:1958: <form onSubmit={handleSend} className="border-t border-pink-200 bg-[#310D0C] p-4 sm:p-5">
 app\messages\page.tsx:1959: <div className="flex items-end gap-3">
 app\messages\page.tsx:1960: <button type="button" className="hidden h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-pink-200 bg-pink-50 text-2xl sm:flex">☺</button>
 app\messages\page.tsx:1965: if (event.key === "Enter" && !event.shiftKey) {
@@ -1770,7 +1770,7 @@ app\messages\page.tsx:2015: </div>
 app\messages\page.tsx:2016: </section>
 app\messages\page.tsx:2017: </main>
 app\messages\page.tsx:2018: </div>
-app\messages\page.tsx:2030: <div className="flex min-h-screen items-center justify-center bg-[#F8D6E3] text-[#2D1721]">
+app\messages\page.tsx:2030: <div className="flex min-h-screen items-center justify-center bg-[#310D0C] text-[#2D1721]">
 app\messages\page.tsx:2031: <div className="font-semibold text-[#6A3048]">Mesajlar yükleniyor...</div>
 app\messages\page.tsx:2032: </div>
 app\notifications\page.tsx:1: 'use client';
@@ -1807,7 +1807,7 @@ app\notifications\page.tsx:75: loadNotifications();
 app\notifications\page.tsx:79: const unreadCount = notifications.filter((item) => !item.isRead).length;
 app\notifications\page.tsx:81: if (!isClient) {
 app\notifications\page.tsx:83: <div className="min-h-screen bg-[#EFA3C0] flex items-center justify-center">
-app\notifications\page.tsx:84: <Loader2 className="w-8 h-8 text-[#C9186B] animate-spin" />
+app\notifications\page.tsx:84: <Loader2 className="w-8 h-8 text-[#F6BA48] animate-spin" />
 app\notifications\page.tsx:85: </div>
 app\notifications\page.tsx:90: <div className="min-h-screen bg-[#EFA3C0] text-[#2D1721] flex flex-col font-sans">
 app\notifications\page.tsx:92: {/* 🧭 ÜST NAVİGASYON BARI - SAF HTML GERİ DÖNÜŞ KAPISI ÇAKILDI */}
@@ -1821,10 +1821,10 @@ app\notifications\page.tsx:107: {/* Üst Başlık ve Toplu Okundu Butonu */}
 app\notifications\page.tsx:108: <div className="flex items-center justify-between border-b border-white/5 pb-4 mb-2">
 app\notifications\page.tsx:109: <div className="flex items-center gap-3">
 app\notifications\page.tsx:110: <div className="w-11 h-11 rounded-xl bg-[#EC4899]/15 border border-pink-400/20 flex items-center justify-center">
-app\notifications\page.tsx:111: <Bell className="w-5 h-5 text-[#C9186B] animate-pulse" />
+app\notifications\page.tsx:111: <Bell className="w-5 h-5 text-[#F6BA48] animate-pulse" />
 app\notifications\page.tsx:112: </div>
 app\notifications\page.tsx:113: <div>
-app\notifications\page.tsx:114: <h2 className="text-lg font-black tracking-wider text-[#C9186B] uppercase">Son Aktivite Bildirimleri</h2>
+app\notifications\page.tsx:114: <h2 className="text-lg font-black tracking-wider text-[#F6BA48] uppercase">Son Aktivite Bildirimleri</h2>
 app\notifications\page.tsx:115: <p className="text-[10px] text-[#7A5363] mt-0.5 tracking-wide">
 app\notifications\page.tsx:116: Platform genelindeki anlık etkileşimleriniz ve sistem raporları.
 app\notifications\page.tsx:118: </div>
@@ -1837,7 +1837,7 @@ app\notifications\page.tsx:130: </div>
 app\notifications\page.tsx:132: {/* Yüklenme veya Boş Durum Kontrolleri */}
 app\notifications\page.tsx:133: {loading ? (
 app\notifications\page.tsx:134: <div className="py-12 flex justify-center">
-app\notifications\page.tsx:135: <Loader2 className="w-6 h-6 text-[#C9186B] animate-spin" />
+app\notifications\page.tsx:135: <Loader2 className="w-6 h-6 text-[#F6BA48] animate-spin" />
 app\notifications\page.tsx:136: </div>
 app\notifications\page.tsx:138: <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-4 rounded-2xl text-center text-xs font-bold">
 app\notifications\page.tsx:140: </div>
@@ -2386,7 +2386,7 @@ app\profile\edit\page.tsx:711: className={`h-4 w-4 ${isRtl ? "rotate-180" : ""}`
 app\profile\edit\page.tsx:714: </Link>
 app\profile\edit\page.tsx:716: <Link
 app\profile\edit\page.tsx:717: href="/profile"
-app\profile\edit\page.tsx:718: className="inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl bg-white px-5 text-base font-black text-[#C9186B] transition hover:bg-pink-50"
+app\profile\edit\page.tsx:718: className="inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl bg-white px-5 text-base font-black text-[#F6BA48] transition hover:bg-pink-50"
 app\profile\edit\page.tsx:721: {tx.viewProfile}
 app\profile\edit\page.tsx:722: </Link>
 app\profile\edit\page.tsx:723: </div>
@@ -3742,7 +3742,7 @@ app\settings\page.tsx:318: </div>
 app\settings\page.tsx:319: <div className="px-6 sm:px-7">{children}</div>
 app\settings\page.tsx:320: </section>
 app\settings\page.tsx:324: <div
-app\settings\page.tsx:325: className="min-h-screen bg-[#F8D6E3] text-[#2D1721]"
+app\settings\page.tsx:325: className="min-h-screen bg-[#310D0C] text-[#2D1721]"
 app\settings\page.tsx:326: dir={lang === "AR" ? "rtl" : "ltr"}
 app\settings\page.tsx:328: <div className="lg:hidden">
 app\settings\page.tsx:330: </div>

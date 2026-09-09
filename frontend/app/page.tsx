@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import {
@@ -194,12 +194,12 @@ function FeaturesSection({ langKey }: { langKey: LangKey }) {
   return (
     <section
       id="features"
-      className="relative overflow-hidden bg-[#FFF7FA] py-20 md:py-24"
+      className="relative overflow-hidden bg-[#310D0C] py-20 md:py-24"
     >
       {/* Arka plan ışıkları */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute left-1/4 top-0 h-72 w-72 rounded-full bg-pink-600/10 blur-3xl" />
-        <div className="absolute right-1/4 bottom-0 h-72 w-72 rounded-full bg-pink-500/10 blur-3xl" />
+        <div className="absolute right-1/4 bottom-0 h-72 w-72 rounded-full bg-purple-600/10 blur-3xl" />
       </div>
 
       <div className="relative mx-auto max-w-7xl px-6 md:px-12">
@@ -207,12 +207,12 @@ function FeaturesSection({ langKey }: { langKey: LangKey }) {
         <div className="mx-auto mb-14 max-w-4xl text-center">
           <div className="mb-4 text-3xl">❤️</div>
 
-          <h2 className="text-3xl font-extrabold tracking-tight text-[#2D1721] md:text-5xl">
+          <h2 className="text-3xl font-extrabold tracking-tight text-white md:text-5xl">
             {t.sectionTitle}
-            <span className="text-pink-600">SenVeBen?</span>
+            <span className="text-[#FFC000]">EgeLove?</span>
           </h2>
 
-          <p className="mx-auto mt-5 max-w-3xl text-base leading-7 text-[#2D1721]/70 md:text-lg">
+          <p className="mx-auto mt-5 max-w-3xl text-base leading-7 text-white/70 md:text-lg">
             {t.mainSubtitle}
           </p>
         </div>
@@ -225,20 +225,20 @@ function FeaturesSection({ langKey }: { langKey: LangKey }) {
             return (
               <div
                 key={feature.title}
-                className="group rounded-2xl border border-pink-200/60 bg-white p-7 text-center backdrop-blur-sm transition-all duration-300 hover:-translate-y-2 hover:border-[#EC4899]/40 hover:bg-pink-50"
+                className="group rounded-2xl border border-white/10 bg-white/[0.035] p-7 text-center backdrop-blur-sm transition-all duration-300 hover:-translate-y-2 hover:border-[#FFC000]/40 hover:bg-white/[0.07]"
               >
                 {/* İKON */}
-                <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-[#EC4899]/20 bg-[#EC4899]/10 transition-all duration-300 group-hover:scale-110 group-hover:bg-[#EC4899]/15">
-                  <Icon className="h-8 w-8 text-pink-600" />
+                <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-[#FFC000]/20 bg-[#FFC000]/10 transition-all duration-300 group-hover:scale-110 group-hover:bg-[#FFC000]/15">
+                  <Icon className="h-8 w-8 text-[#FFC000]" />
                 </div>
 
                 {/* BAŞLIK */}
-                <h3 className="mb-3 text-xl font-extrabold text-[#2D1721]">
+                <h3 className="mb-3 text-xl font-extrabold text-white">
                   {feature.title}
                 </h3>
 
                 {/* AÇIKLAMA */}
-                <p className="text-sm leading-6 text-[#2D1721]/65">
+                <p className="text-sm leading-6 text-white/65">
                   {feature.description}
                 </p>
               </div>
@@ -248,16 +248,16 @@ function FeaturesSection({ langKey }: { langKey: LangKey }) {
 
         {/* ALT VURGU */}
         <div className="mx-auto mt-10 max-w-3xl text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-[#EC4899]/20 bg-[#EC4899]/5 px-5 py-3 text-sm text-[#2D1721]/70">
-            <Video className="h-4 w-4 text-pink-600" />
+          <div className="inline-flex items-center gap-2 rounded-full border border-[#FFC000]/20 bg-[#FFC000]/5 px-5 py-3 text-sm text-white/70">
+            <Video className="h-4 w-4 text-[#FFC000]" />
             <span>
               {langKey === "TR"
-                ? "Görüntülü iletişim ve çok dilli bağlantı SenVeBen'da."
+                ? "Görüntülü iletişim ve çok dilli bağlantı EgeLove'da."
                 : langKey === "EN"
-                ? "Live video communication and multilingual connections on SenVeBen."
+                ? "Live video communication and multilingual connections on EgeLove."
                 : langKey === "RU"
-                ? "Видеосвязь и многоязычное общение на SenVeBen."
-                : "التواصل عبر الفيديو والاتصال متعدد اللغات على SenVeBen."}
+                ? "Видеосвязь и многоязычное общение на EgeLove."
+                : "التواصل عبر الفيديو والاتصال متعدد اللغات على EgeLove."}
             </span>
           </div>
         </div>
@@ -276,53 +276,53 @@ function LocalContactSection({ langKey }: { langKey: LangKey }) {
   return (
     <section
       id="contact"
-      className="relative overflow-hidden bg-[#FFF7FA] py-20 md:py-24"
+      className="relative overflow-hidden bg-[#512510] py-20 md:py-24"
     >
       <div className="relative mx-auto max-w-7xl px-6 text-center md:px-12">
-        <h2 className="text-3xl font-extrabold tracking-tight text-[#2D1721] md:text-5xl">
+        <h2 className="text-3xl font-extrabold tracking-tight text-white md:text-5xl">
           {t.title}
         </h2>
 
-        <p className="mx-auto mt-4 max-w-2xl text-base text-[#2D1721]/70 md:text-lg">
+        <p className="mx-auto mt-4 max-w-2xl text-base text-white/70 md:text-lg">
           {t.subtitle}
         </p>
 
         <div className="mx-auto mt-12 grid max-w-4xl grid-cols-1 gap-6 sm:grid-cols-3">
           {/* E-POSTA */}
-          <div className="rounded-2xl border border-pink-200/60 bg-white/[0.02] p-6 backdrop-blur-sm">
-            <Mail className="mx-auto mb-4 h-8 w-8 text-pink-600" />
+          <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 backdrop-blur-sm">
+            <Mail className="mx-auto mb-4 h-8 w-8 text-[#FFC000]" />
 
-            <h3 className="mb-2 text-lg font-bold text-[#2D1721]">
+            <h3 className="mb-2 text-lg font-bold text-white">
               {t.emailTitle}
             </h3>
 
-            <p className="text-sm text-[#2D1721]/60">
-              hello@senveben.tr
+            <p className="text-sm text-white/60">
+              hello@egelove.tr
             </p>
           </div>
 
           {/* WEB */}
-          <div className="rounded-2xl border border-pink-200/60 bg-white/[0.02] p-6 backdrop-blur-sm">
-            <Globe className="mx-auto mb-4 h-8 w-8 text-pink-600" />
+          <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 backdrop-blur-sm">
+            <Globe className="mx-auto mb-4 h-8 w-8 text-[#FFC000]" />
 
-            <h3 className="mb-2 text-lg font-bold text-[#2D1721]">
+            <h3 className="mb-2 text-lg font-bold text-white">
               {t.webTitle}
             </h3>
 
-            <p className="text-sm text-[#2D1721]/60">
-              https://senveben.tr
+            <p className="text-sm text-white/60">
+              https://egelove.tr
             </p>
           </div>
 
           {/* TEKNOLOJİ */}
-          <div className="rounded-2xl border border-pink-200/60 bg-white/[0.02] p-6 backdrop-blur-sm">
-            <Sparkles className="mx-auto mb-4 h-8 w-8 text-pink-600" />
+          <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 backdrop-blur-sm">
+            <Sparkles className="mx-auto mb-4 h-8 w-8 text-[#FFC000]" />
 
-            <h3 className="mb-2 text-lg font-bold text-[#2D1721]">
+            <h3 className="mb-2 text-lg font-bold text-white">
               {t.techTitle}
             </h3>
 
-            <p className="text-sm text-[#2D1721]/60">
+            <p className="text-sm text-white/60">
               {t.techDesc}
             </p>
           </div>
@@ -351,7 +351,7 @@ export default function Home() {
 
   return (
     <div
-      className="min-h-screen bg-[#FFF7FA] font-sans text-[#2D1721]"
+      className="min-h-screen bg-[#512510] font-sans text-white"
       dir={isRtl ? "rtl" : "ltr"}
     >
       {/* HEADER */}
@@ -366,7 +366,7 @@ export default function Home() {
       />
 
       <main>
-        {/* NEDEN SENVEBEN */}
+        {/* NEDEN EGELOVE */}
         <FeaturesSection langKey={currentLang} />
 
         {/* İLETİŞİM */}
@@ -384,5 +384,3 @@ export default function Home() {
     </div>
   );
 }
-
-

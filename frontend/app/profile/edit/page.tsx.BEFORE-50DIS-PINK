@@ -715,7 +715,7 @@ const currentLang: LangKey = (
 
                     <Link
                       href="/profile"
-                      className="inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl bg-white px-5 text-base font-black text-[#C9186B] transition hover:bg-pink-50"
+                      className="inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl bg-white px-5 text-base font-black text-[#F6BA48] transition hover:bg-pink-50"
                     >
                       <Eye className="h-4 w-4" />
                       {tx.viewProfile}

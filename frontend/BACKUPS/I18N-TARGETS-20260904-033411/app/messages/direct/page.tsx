@@ -133,7 +133,7 @@ function DirectMessageContent() {
 
       <div className="w-full max-w-md bg-[#1a1d30] rounded-xl p-6 shadow-xl border border-pink-300/60">
 
-        <h2 className="text-xl font-bold mb-2 text-center text-[#C9186B]">
+        <h2 className="text-xl font-bold mb-2 text-center text-[#F6BA48]">
           Hızlı Mesaj Gönder
         </h2>
 

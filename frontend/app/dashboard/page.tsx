@@ -192,19 +192,19 @@ export default function DashboardPage() {
 
   if (!isClient) {
     return (
-      <div className="min-h-screen bg-[#F8D6E3] flex items-center justify-center">
+      <div className="min-h-screen bg-[#310D0C] flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-purple-500 animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen w-full overflow-x-hidden bg-[#F8D6E3] text-white">
+    <div className="min-h-screen w-full overflow-x-hidden bg-[#310D0C] text-white">
       <div className="flex min-h-screen w-full">
 
         {/* SOL SIDEBAR */}
         <aside
-          className={`fixed inset-y-0 left-0 z-50 w-[286px] shrink-0 bg-[#F8D6E3] transition-transform duration-300 lg:sticky lg:top-0 lg:block lg:translate-x-0 ${
+          className={`fixed inset-y-0 left-0 z-50 w-[286px] shrink-0 bg-[#310D0C] transition-transform duration-300 lg:sticky lg:top-0 lg:block lg:translate-x-0 ${
             isSidebarOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
@@ -258,8 +258,8 @@ export default function DashboardPage() {
                 <div className="h-full rounded-2xl border border-pink-400/70 bg-gradient-to-r from-[#EFA3C0] to-[#EFA3C0] p-5 transition-all hover:border-pink-400 hover:shadow-lg hover:shadow-pink-500/10">
                   <div className="flex items-center gap-4">
 
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-pink-400/70 bg-[#F2B4CD]">
-                      <User className="h-6 w-6 text-[#C9186B]" />
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-pink-400/70 bg-[#512510]">
+                      <User className="h-6 w-6 text-[#F6BA48]" />
                     </div>
 
                     <div className="min-w-0 flex-1">
@@ -272,7 +272,7 @@ export default function DashboardPage() {
                       </p>
                     </div>
 
-                    <ChevronRight className="h-5 w-5 shrink-0 text-[#C9186B] transition-transform group-hover:translate-x-1" />
+                    <ChevronRight className="h-5 w-5 shrink-0 text-[#F6BA48] transition-transform group-hover:translate-x-1" />
                   </div>
                 </div>
               </Link>
@@ -283,7 +283,7 @@ export default function DashboardPage() {
                   <div className="flex items-center gap-4">
 
                     <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-pink-400/70 bg-[#EFA3C0]">
-                      <Search className="h-6 w-6 text-[#C9186B]" />
+                      <Search className="h-6 w-6 text-[#F6BA48]" />
                     </div>
 
                     <div className="min-w-0 flex-1">
@@ -296,7 +296,7 @@ export default function DashboardPage() {
                       </p>
                     </div>
 
-                    <ChevronRight className="h-5 w-5 shrink-0 text-[#C9186B] transition-transform group-hover:translate-x-1" />
+                    <ChevronRight className="h-5 w-5 shrink-0 text-[#F6BA48] transition-transform group-hover:translate-x-1" />
                   </div>
                 </div>
               </Link>
@@ -309,12 +309,12 @@ export default function DashboardPage() {
               <Link href="/messages" className="group block min-w-0">
                 <div className="relative h-full overflow-hidden rounded-3xl border border-pink-400/70 bg-gradient-to-br from-[#EFA3C0] to-[#EFA3C0] p-6 shadow-xl shadow-pink-500/10 backdrop-blur-xl transition-all duration-300 hover:border-pink-400/60">
 
-                  <div className="absolute right-0 top-0 -mr-10 -mt-10 h-32 w-32 rounded-full bg-[#EFA3C0] blur-3xl transition-all duration-500 group-hover:bg-[#F2B4CD]" />
+                  <div className="absolute right-0 top-0 -mr-10 -mt-10 h-32 w-32 rounded-full bg-[#EFA3C0] blur-3xl transition-all duration-500 group-hover:bg-[#512510]" />
 
                   <div className="relative mb-4 flex items-center gap-4">
 
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-2 border-[#880e4f]/30 bg-[#F2B4CD]">
-                      <Camera className="h-5 w-5 animate-pulse text-[#C9186B]" />
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-2 border-[#880e4f]/30 bg-[#512510]">
+                      <Camera className="h-5 w-5 animate-pulse text-[#F6BA48]" />
                     </div>
 
                     <div className="min-w-0">
@@ -391,7 +391,7 @@ export default function DashboardPage() {
                   )}
 
                   {installMessage && (
-                    <p className="mt-3 text-xs leading-relaxed text-[#C9186B]">
+                    <p className="mt-3 text-xs leading-relaxed text-[#F6BA48]">
                       {installMessage}
                     </p>
                   )}
@@ -423,7 +423,7 @@ export default function DashboardPage() {
                       {isIOS ? (
                         <p className="mt-2 text-xs leading-6 text-[#572438] md:text-sm">
                           Safari&apos;de alttaki
-                          <span className="font-bold text-[#C9186B]">
+                          <span className="font-bold text-[#F6BA48]">
                             {" "}Paylaş{" "}
                           </span>
                           simgesine dokun. Açılan menüden
@@ -431,7 +431,7 @@ export default function DashboardPage() {
                             {" "}Ana Ekrana Ekle{" "}
                           </span>
                           seçeneğini seç ve ardından
-                          <span className="font-bold text-[#C9186B]">
+                          <span className="font-bold text-[#F6BA48]">
                             {" "}Ekle
                           </span>
                           butonuna dokun.

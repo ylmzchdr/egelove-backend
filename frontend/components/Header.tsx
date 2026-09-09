@@ -75,16 +75,16 @@ export default function Header({ onOpenLogin, onOpenRegister }: HeaderProps) {
         });
 
         if (!res.ok) {
-  setUserName(null);
-  return;
-}
+          setUserName(null);
+          return;
+        }
 
-const data = await res.json();
-const user = data.user || data.profile || data;
-setUserName(getFirstName(user));
+        const data = await res.json();
+        const user = data.user || data.profile || data;
+        setUserName(getFirstName(user));
       } catch {
-  setUserName(null);
-}
+        setUserName(null);
+      }
     };
 
     fetchMe();
@@ -99,51 +99,60 @@ setUserName(getFirstName(user));
   };
 
   const loggedInLabel = userName
-  ? `${welcomeByLang[lang]} ${userName}`
-  : `${welcomeByLang[lang]}`;
+    ? `${welcomeByLang[lang]} ${userName}`
+    : `${welcomeByLang[lang]}`;
 
   const navItems = [
-  { label: t.nav.home, href: "/" },
-  { label: t.nav.dashboard, href: "/dashboard" },
-  { label: t.nav.likes, href: "/likes" },
-  { label: t.nav.messages, href: "/messages" },
-  { label: t.nav.premium, href: "/premium" },
-];
+    { label: t.nav.home, href: "/" },
+    { label: t.nav.dashboard, href: "/dashboard" },
+    { label: t.nav.likes, href: "/likes" },
+    { label: t.nav.messages, href: "/messages" },
+    { label: t.nav.premium, href: "/premium" },
+  ];
 
   return (
-    <header className="sticky top-0 z-50 bg-[#FFC000] text-black shadow-md border-b border-black/10 font-sans">
-      <div className="mx-auto max-w-7xl px-4 py-3 flex justify-between items-center">
-        <Link href="/" className="flex items-center gap-2 no-underline">
-          <span className="text-xl font-black tracking-tighter text-black lowercase">
-         senveben.com.tr
+    <header className="sticky top-0 z-50 border-b border-[#F6BA48]/45 bg-gradient-to-r from-[#310D0C] via-[#512510] to-[#683312] text-[#F8D290] shadow-[0_10px_35px_rgba(49,13,12,0.28)] font-sans">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
+        <Link href="/" className="group flex items-center gap-2.5 no-underline">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#F6BA48]/55 bg-[#7E4114]/75 shadow-[0_0_18px_rgba(246,186,72,0.18)]">
+            <Heart className="h-5 w-5 fill-[#F6BA48] text-[#F6BA48]" />
           </span>
+
+          <div className="leading-none">
+            <span className="block text-xl font-black tracking-tight text-[#F8D290] transition-colors group-hover:text-[#F6BA48]">
+              SENveBEN
+            </span>
+            <span className="mt-1 block text-[9px] font-bold tracking-[0.24em] text-[#F6BA48]/80">
+              DAHA FAZLA AŞK
+            </span>
+          </div>
         </Link>
 
-        <nav className="hidden lg:flex gap-6" aria-label="Ana navigasyon">
+        <nav className="hidden lg:flex items-center gap-6" aria-label="Ana navigasyon">
           {navItems.map((item) => (
             <Link
               key={item.label}
               href={item.href}
-              className="text-black/80 hover:text-black transition font-bold text-base no-underline"
+              className="relative text-sm font-bold text-[#F8D290]/85 no-underline transition hover:text-[#F6BA48] after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-[#F6BA48] after:transition-all hover:after:w-full"
             >
               {item.label}
             </Link>
           ))}
         </nav>
 
-        <div className="hidden lg:flex gap-2 items-center">
-          <div className="flex items-center bg-white/30 rounded border border-black/10 p-0.5">
+        <div className="hidden lg:flex items-center gap-2">
+          <div className="flex items-center rounded-lg border border-[#F6BA48]/35 bg-[#310D0C]/45 p-0.5 backdrop-blur">
             {languages.map((l) => (
               <button
                 key={l.code}
-             onClick={() => {
-  console.log("LANG:", l.code);
-  setLang(l.code);
-}}
-                className={`px-2 py-1 rounded text-xs font-bold transition ${
+                onClick={() => {
+                  console.log("LANG:", l.code);
+                  setLang(l.code);
+                }}
+                className={`rounded-md px-2 py-1 text-xs font-bold transition ${
                   lang === l.code
-                    ? "bg-white text-black shadow-sm"
-                    : "text-black/70 hover:text-black hover:bg-white/20"
+                    ? "bg-[#F6BA48] text-[#310D0C] shadow-sm"
+                    : "text-[#F8D290]/75 hover:bg-[#964F1C]/70 hover:text-[#F8D290]"
                 }`}
               >
                 {l.code}
@@ -151,19 +160,19 @@ setUserName(getFirstName(user));
             ))}
           </div>
 
-          <div className="w-px h-6 bg-black/20 mx-2" />
+          <div className="mx-2 h-6 w-px bg-[#F6BA48]/30" />
 
           {isLoggedIn ? (
             <>
               <Link
                 href="/profile"
-                className="bg-black text-[#FFC000] font-bold text-xs h-8 px-4 rounded flex items-center no-underline max-w-[220px] truncate"
+                className="flex h-8 max-w-[220px] items-center truncate rounded-lg border border-[#F6BA48]/45 bg-[#7E4114]/80 px-4 text-xs font-bold text-[#F8D290] no-underline transition hover:bg-[#964F1C]"
               >
                 {loggedInLabel}
               </Link>
 
               <Button
-                className="bg-white text-black hover:bg-white/80 font-bold text-xs h-8 px-4 shadow-sm"
+                className="h-8 border border-[#F6BA48]/60 bg-[#F6BA48] px-4 text-xs font-bold text-[#310D0C] shadow-sm hover:bg-[#EF912C]"
                 onClick={handleLogout}
               >
                 Çıkış
@@ -173,7 +182,7 @@ setUserName(getFirstName(user));
             <>
               <Button
                 variant="outline"
-                className="text-black border-black/60 hover:bg-black/10 hover:text-black text-xs font-bold h-8 px-4 bg-transparent"
+                className="h-8 border-[#F6BA48]/65 bg-transparent px-4 text-xs font-bold text-[#F8D290] hover:bg-[#964F1C]/60 hover:text-[#F8D290]"
                 onClick={onOpenLogin}
               >
                 {t.auth.login}
@@ -181,7 +190,7 @@ setUserName(getFirstName(user));
 
               {onOpenRegister && (
                 <Button
-                  className="bg-black text-[#FFC000] hover:bg-black/80 font-bold text-xs h-8 px-4 shadow-sm"
+                  className="h-8 border border-[#F6BA48] bg-[#F6BA48] px-4 text-xs font-bold text-[#310D0C] shadow-sm hover:bg-[#EF912C]"
                   onClick={onOpenRegister}
                 >
                   {t.auth.register}
@@ -192,30 +201,30 @@ setUserName(getFirstName(user));
         </div>
 
         <button
-          className="lg:hidden text-black"
+          className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#F6BA48]/45 bg-[#7E4114]/65 text-[#F6BA48] lg:hidden"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label="Menüyü aç/kapat"
           aria-expanded={mobileMenuOpen}
         >
-          {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
 
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-[#FFC000] border-t border-black/10 p-4">
+        <div className="border-t border-[#F6BA48]/25 bg-[#310D0C] p-4 lg:hidden">
           <nav className="flex flex-col gap-3">
             {navItems.map((item) => (
               <Link
                 key={item.label}
                 href={item.href}
-                className="text-black font-bold text-left no-underline"
+                className="rounded-lg px-3 py-2 text-left font-bold text-[#F8D290] no-underline transition hover:bg-[#512510] hover:text-[#F6BA48]"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {item.label}
               </Link>
             ))}
 
-            <div className="flex gap-2 my-2 bg-white/20 p-1 rounded w-fit">
+            <div className="my-2 flex w-fit gap-2 rounded-lg border border-[#F6BA48]/30 bg-[#512510] p-1">
               {languages.map((l) => (
                 <button
                   key={l.code}
@@ -223,10 +232,10 @@ setUserName(getFirstName(user));
                     setLang(l.code);
                     setMobileMenuOpen(false);
                   }}
-                  className={`px-2 py-1 rounded text-xs font-bold ${
+                  className={`rounded-md px-2 py-1 text-xs font-bold ${
                     lang === l.code
-                      ? "bg-white text-black"
-                      : "text-black/70 hover:text-black"
+                      ? "bg-[#F6BA48] text-[#310D0C]"
+                      : "text-[#F8D290]/75 hover:text-[#F8D290]"
                   }`}
                 >
                   {l.code}
@@ -237,15 +246,15 @@ setUserName(getFirstName(user));
             {isLoggedIn ? (
               <>
                 <Link
-                 href="/profile"
-                  className="bg-black text-[#FFC000] w-full font-bold text-center rounded px-4 py-2 no-underline truncate"
+                  href="/profile"
+                  className="w-full truncate rounded-lg border border-[#F6BA48]/45 bg-[#7E4114] px-4 py-2 text-center font-bold text-[#F8D290] no-underline"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {loggedInLabel}
                 </Link>
 
                 <Button
-                  className="bg-white text-black w-full font-bold"
+                  className="w-full bg-[#F6BA48] font-bold text-[#310D0C] hover:bg-[#EF912C]"
                   onClick={() => {
                     setMobileMenuOpen(false);
                     handleLogout();
@@ -258,7 +267,7 @@ setUserName(getFirstName(user));
               <>
                 <Button
                   variant="outline"
-                  className="w-full text-black border-black/40 bg-transparent font-bold"
+                  className="w-full border-[#F6BA48]/55 bg-transparent font-bold text-[#F8D290] hover:bg-[#512510] hover:text-[#F8D290]"
                   onClick={() => {
                     if (onOpenLogin) onOpenLogin();
                     setMobileMenuOpen(false);
@@ -269,7 +278,7 @@ setUserName(getFirstName(user));
 
                 {onOpenRegister && (
                   <Button
-                    className="bg-black text-[#FFC000] w-full font-bold"
+                    className="w-full bg-[#F6BA48] font-bold text-[#310D0C] hover:bg-[#EF912C]"
                     onClick={() => {
                       onOpenRegister();
                       setMobileMenuOpen(false);

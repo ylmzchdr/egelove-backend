@@ -80,7 +80,7 @@ export default function HeroSection({ onCtaClick }: HeroSectionProps) {
 
   return (
     <section 
-      className="relative overflow-hidden bg-[#0d1527] pt-32 pb-16 md:pt-40 md:pb-24"
+      className="relative overflow-hidden bg-[#512510] pt-32 pb-16 md:pt-40 md:pb-24"
       dir={isRtl ? "rtl" : "ltr"}
     >
       {/* Arka Plan Glow Işıkları */}

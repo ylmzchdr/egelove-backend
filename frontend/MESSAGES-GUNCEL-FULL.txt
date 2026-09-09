@@ -1704,9 +1704,9 @@ function MessagesContent() {
   };
 
   return (
-    <div dir={lang === "AR" ? "rtl" : "ltr"} className="min-h-screen bg-[#F8D6E3] text-[#2D1721] overflow-x-hidden">
+    <div dir={lang === "AR" ? "rtl" : "ltr"} className="min-h-screen bg-[#310D0C] text-[#2D1721] overflow-x-hidden">
       {/* ÜST NAV */}
-      <header className="sticky top-0 z-50 border-b border-pink-200 bg-[#F8D6E3]/95 backdrop-blur-xl">
+      <header className="sticky top-0 z-50 border-b border-pink-200 bg-[#310D0C]/95 backdrop-blur-xl">
         <div className="mx-auto flex min-h-[72px] max-w-[1450px] items-center gap-6 px-4 sm:px-6 lg:px-8">
           <button
             type="button"
@@ -1780,7 +1780,7 @@ function MessagesContent() {
                 <div className="absolute inset-4 rounded-full border border-white/30" />
                 <span className="relative text-7xl text-[#2D1721] drop-shadow-lg">▣</span>
                 <span className="absolute -left-10 top-6 text-2xl text-pink-400">♥</span>
-                <span className="absolute -right-9 top-16 text-2xl text-[#C9186B]">♥</span>
+                <span className="absolute -right-9 top-16 text-2xl text-[#F6BA48]">♥</span>
                 <span className="absolute -left-4 bottom-2 text-lg text-pink-500">✦</span>
               </div>
             </div>
@@ -1798,7 +1798,7 @@ function MessagesContent() {
               <div className="mx-auto mt-7 grid max-w-2xl grid-cols-2 divide-x divide-white/10 sm:grid-cols-4">
                 {[
                   ["♙", t.safe, t.safeSub, "text-emerald-400"],
-                  ["♣", t.real, t.realSub, "text-[#C9186B]"],
+                  ["♣", t.real, t.realSub, "text-[#F6BA48]"],
                   ["ϟ", t.instant, t.instantSub, "text-yellow-400"],
                   ["♥", t.closer, t.closerSub, "text-pink-400"],
                 ].map(([icon, title, sub, color]) => (
@@ -1914,7 +1914,7 @@ function MessagesContent() {
           </aside>
 
           {/* SAĞ SOHBET */}
-          <section className="flex min-h-[650px] flex-col overflow-hidden rounded-[26px] border border-pink-400/30 bg-[#F8D6E3]/85 shadow-2xl shadow-black/20">
+          <section className="flex min-h-[650px] flex-col overflow-hidden rounded-[26px] border border-pink-400/30 bg-[#310D0C]/85 shadow-2xl shadow-black/20">
             {activeConversation ? (
               <>
                 <div className="flex flex-wrap items-center gap-3 border-b border-pink-200 p-4 sm:p-5">
@@ -1955,7 +1955,7 @@ function MessagesContent() {
 
                 {error && <div className="border-t border-red-500/20 bg-red-500/10 px-5 py-3 text-sm text-red-300">{error}</div>}
 
-                <form onSubmit={handleSend} className="border-t border-pink-200 bg-[#F8D6E3] p-4 sm:p-5">
+                <form onSubmit={handleSend} className="border-t border-pink-200 bg-[#310D0C] p-4 sm:p-5">
                   <div className="flex items-end gap-3">
                     <button type="button" className="hidden h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-pink-200 bg-pink-50 text-2xl sm:flex">☺</button>
                     <textarea
@@ -2027,7 +2027,7 @@ export default function MessagesPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center bg-[#F8D6E3] text-[#2D1721]">
+        <div className="flex min-h-screen items-center justify-center bg-[#310D0C] text-[#2D1721]">
           <div className="font-semibold text-[#6A3048]">Mesajlar yükleniyor...</div>
         </div>
       }
