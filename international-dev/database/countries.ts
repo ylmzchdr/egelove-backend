@@ -1,5 +1,13 @@
+export type CountryCode =
+  | "TR"
+  | "DE"
+  | "GB"
+  | "RU"
+  | "UA"
+  | "AZ";
+
 export type Country = {
-  code: string;
+  code: CountryCode;
   name: {
     TR: string;
     EN: string;
@@ -14,7 +22,7 @@ export const COUNTRIES: Country[] = [
     code: "TR",
     name: {
       TR: "Türkiye",
-      EN: "Türkiye",
+      EN: "Turkey",
       RU: "Турция",
       AR: "تركيا",
     },
@@ -41,66 +49,6 @@ export const COUNTRIES: Country[] = [
     flag: "🇬🇧",
   },
   {
-    code: "NL",
-    name: {
-      TR: "Hollanda",
-      EN: "Netherlands",
-      RU: "Нидерланды",
-      AR: "هولندا",
-    },
-    flag: "🇳🇱",
-  },
-  {
-    code: "FR",
-    name: {
-      TR: "Fransa",
-      EN: "France",
-      RU: "Франция",
-      AR: "فرنسا",
-    },
-    flag: "🇫🇷",
-  },
-  {
-    code: "BE",
-    name: {
-      TR: "Belçika",
-      EN: "Belgium",
-      RU: "Бельгия",
-      AR: "بلجيكا",
-    },
-    flag: "🇧🇪",
-  },
-  {
-    code: "AT",
-    name: {
-      TR: "Avusturya",
-      EN: "Austria",
-      RU: "Австрия",
-      AR: "النمسا",
-    },
-    flag: "🇦🇹",
-  },
-  {
-    code: "CH",
-    name: {
-      TR: "İsviçre",
-      EN: "Switzerland",
-      RU: "Швейцария",
-      AR: "سويسرا",
-    },
-    flag: "🇨🇭",
-  },
-  {
-    code: "AZ",
-    name: {
-      TR: "Azerbaycan",
-      EN: "Azerbaijan",
-      RU: "Азербайджан",
-      AR: "أذربيجان",
-    },
-    flag: "🇦🇿",
-  },
-  {
     code: "RU",
     name: {
       TR: "Rusya",
@@ -120,4 +68,23 @@ export const COUNTRIES: Country[] = [
     },
     flag: "🇺🇦",
   },
+  {
+    code: "AZ",
+    name: {
+      TR: "Azerbaycan",
+      EN: "Azerbaijan",
+      RU: "Азербайджан",
+      AR: "أذربيجان",
+    },
+    flag: "🇦🇿",
+  },
 ];
+
+export function getCountryByCode(
+  code: string,
+): Country | undefined {
+  return COUNTRIES.find(
+    (country) =>
+      country.code === code.toUpperCase(),
+  );
+}
