@@ -1913,7 +1913,7 @@ function MessagesContent() {
           </aside>
 
           {/* SAĞ SOHBET */}
-          <section className="flex min-h-[650px] flex-col overflow-hidden rounded-[26px] border border-[#F6BA48]/30 bg-[#050b20]/85 shadow-2xl shadow-black/20">
+          <section className="flex min-h-[650px] flex-col overflow-hidden rounded-[26px] border border-[#F6BA48]/30 bg-[#512510]/92 shadow-2xl shadow-black/20">
             {activeConversation ? (
               <>
                 <div className="flex flex-wrap items-center gap-3 border-b border-white/10 p-4 sm:p-5">
@@ -1928,7 +1928,7 @@ function MessagesContent() {
                   <button type="button" onClick={openVideo} className="rounded-full bg-gradient-to-r from-[#B16323] to-[#F6BA48] px-5 py-3 text-sm font-black shadow-lg shadow-[#7E4114]/30 transition hover:scale-[1.01] sm:text-base">👑 {t.premiumVideo}</button>
                 </div>
 
-                <div className="relative flex-1 overflow-y-auto bg-[radial-gradient(circle_at_60%_50%,rgba(79,70,229,.10),transparent_35%)] p-5 sm:p-8">
+                <div className="relative flex-1 overflow-y-auto bg-[radial-gradient(circle_at_60%_50%,rgba(246,186,72,.10),transparent_35%)] p-5 sm:p-8">
                   <div className="mb-7 flex items-center gap-4 text-xs text-white/35"><span className="h-px flex-1 bg-white/10" />{t.today}<span className="h-px flex-1 bg-white/10" /></div>
 
                   {loadingMessages ? (
@@ -1939,7 +1939,7 @@ function MessagesContent() {
                         const mine = !!message.isMine;
                         return (
                           <div key={message.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
-                            <div className={`max-w-[78%] rounded-[20px] px-5 py-3 ${mine ? "bg-gradient-to-br from-[#7E4114] to-[#F6BA48] shadow-lg shadow-[#683312]/20" : "bg-[#17254b]"}`}>
+                            <div className={`max-w-[78%] rounded-[20px] px-5 py-3 ${mine ? "bg-gradient-to-br from-[#7E4114] to-[#F6BA48] shadow-lg shadow-[#683312]/20" : "bg-[#683312]"}`}>
                               <div className="text-base leading-6">{message.content}</div>
                               <div className="mt-1 text-right text-[11px] text-white/45">{message.createdAt ? formatTime(message.createdAt) : ""}{mine ? "  ✓✓" : ""}</div>
                             </div>
@@ -1954,7 +1954,7 @@ function MessagesContent() {
 
                 {error && <div className="border-t border-red-500/20 bg-red-500/10 px-5 py-3 text-sm text-red-300">{error}</div>}
 
-                <form onSubmit={handleSend} className="border-t border-white/10 bg-[#080e25] p-4 sm:p-5">
+                <form onSubmit={handleSend} className="border-t border-white/10 bg-[#310D0C] p-4 sm:p-5">
                   <div className="flex items-end gap-3">
                     <button type="button" className="hidden h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-black/20 text-2xl sm:flex">☺</button>
                     <textarea
@@ -1989,11 +1989,11 @@ function MessagesContent() {
         </section>
 
         {/* ALT PREMIUM CTA */}
-        <section className="mt-5 overflow-hidden rounded-[26px] border border-[#F6BA48]/50 bg-[radial-gradient(circle_at_12%_50%,rgba(168,85,247,.32),transparent_30%),linear-gradient(100deg,#17062d,#081129_55%,#071b49)] p-5 shadow-2xl sm:p-7">
+        <section className="mt-5 overflow-hidden rounded-[26px] border border-[#F6BA48]/50 bg-[radial-gradient(circle_at_12%_50%,rgba(246,186,72,.20),transparent_30%),linear-gradient(100deg,#310D0C,#512510_55%,#683312)] p-5 shadow-2xl sm:p-7">
           <div className="grid items-center gap-6 lg:grid-cols-[260px_1fr_1fr_270px]">
             <div className="hidden items-center justify-center lg:flex">
               <div className="relative flex h-40 w-48 items-end justify-center rounded-[30px] bg-gradient-to-t from-[#7E4114]/80 to-transparent">
-                <div className="absolute bottom-2 h-16 w-40 rounded-full bg-gradient-to-r from-[#683312] to-[#512510] shadow-[0_0_45px_rgba(139,92,246,.65)]" />
+                <div className="absolute bottom-2 h-16 w-40 rounded-full bg-gradient-to-r from-[#683312] to-[#512510] shadow-[0_0_45px_rgba(246,186,72,.45)]" />
                 <div className="relative mb-10 text-7xl drop-shadow-[0_0_20px_rgba(255,192,0,.55)]">👑</div>
               </div>
             </div>
