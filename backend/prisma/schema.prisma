@@ -110,11 +110,25 @@ enum PhotoStatus {
   REJECTED
 }
 
+model Country {
+  id     Int    @id @default(autoincrement())
+  code   String @unique
+  name   String
+  cities City[]
+  users  User[]
+
+  @@index([code])
+}
+
 model City {
   id        Int        @id @default(autoincrement())
   name      String
+  countryId Int?
+  country   Country?   @relation(fields: [countryId], references: [id])
   districts District[]
   users     User[]
+
+  @@index([countryId])
 }
 
 model District {
@@ -134,10 +148,18 @@ model User {
   birthDate          DateTime?
   gender             Gender?
   seekingGender      Gender?
+
+  countryId          Int?
+  country            Country?  @relation(fields: [countryId], references: [id])
+
   cityId             Int
   city               City      @relation(fields: [cityId], references: [id])
+
   districtId         Int
   district           District  @relation(fields: [districtId], references: [id])
+
+  spokenLanguages    String[]  @default([])
+
   bio                String?
   avatar             String?
   isPremiumCandidate Boolean   @default(false)
@@ -191,6 +213,7 @@ model User {
   matchingPreferences Json           @default("{}")
   notifications       Notification[]
 
+  @@index([countryId])
   @@index([cityId])
   @@index([districtId])
   @@index([gender])
