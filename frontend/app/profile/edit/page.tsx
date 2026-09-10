@@ -29,7 +29,7 @@ import ProfilePhotoUpload from "@/components/ProfilePhotoUpload";
 import { api } from "@/lib/api";
 import { useI18n } from "@/lib/i18n-context";
 
-type LangKey = "TR" | "EN" | "RU" | "AR";
+type LangKey = "TR" | "AZ" | "EN" | "RU" | "AR";
 type AuthTab = "login" | "register" | null;
 
 type Option = {
@@ -270,92 +270,148 @@ name: "İsim / Rumuz",
       "إضافة الصور والنبذة والمعلومات الأساسية تزيد من ظهور ملفك.",
     secure: "يتم حفظ معلوماتك بأمان.",
   },
-} as const;
+
+  AZ: {
+    badge: "PROFİL PARAMETRLƏRİ",
+    title: "Profilini Redaktə Et",
+    subtitle:
+      "Profil məlumatlarını yenilə, özünü daha yaxşı tanıt və sənə uyğun insanlarla tanış olma şansını artır.",
+    back: "Profilə Qayıt",
+    viewProfile: "Profilimi Gör",
+    completion: "Profil Tamamlanması",
+    completionDesc: "Daha dolğun profil daha çox diqqət çəkir.",
+    photos: "Profil Şəkilləri",
+    photosDesc: "Səni ən yaxşı ifadə edən şəkilləri əlavə et.",
+    basicInfo: "Əsas Məlumatlar",
+    basicInfoDesc: "Profilinin əsas məlumatlarını yenilə.",
+    name: "Ad",
+    surname: "Soyad",
+    gender: "Cins",
+    birthDate: "Doğum Tarixi",
+    city: "Şəhər",
+    district: "Rayon",
+    height: "Boy",
+    weight: "Çəki",
+    details: "Ətraflı Məlumatlar",
+    detailsDesc: "Həyat tərzin və şəxsi seçimlərin haqqında məlumat ver.",
+    education: "Təhsil",
+    occupation: "Peşə",
+    income: "Gəlir",
+    maritalStatus: "Ailə Vəziyyəti",
+    children: "Uşaqlar",
+    smoking: "Siqaret",
+    alcohol: "Alkoqol",
+    religion: "Dini Baxış",
+    bodyType: "Bədən Quruluşu",
+    hairColor: "Saç Rəngi",
+    eyeColor: "Göz Rəngi",
+    bloodType: "Qan Qrupu",
+    hobbies: "Maraq Sahələri",
+    hobbiesHint: "Maraq sahələrini vergüllə ayıraraq yaza bilərsən.",
+    hobbiesPlaceholder: "Məsələn: səyahət, musiqi, kino, kitab",
+    about: "Haqqımda",
+    aboutDesc: "Özünü və axtardığın insanı daha yaxşı təsvir et.",
+    aboutPlaceholder: "Özündən bir az danış...",
+    lookingFor: "Axtardığım İnsan",
+    lookingForPlaceholder: "Necə bir insanla tanış olmaq istədiyini yaz...",
+    select: "Seç",
+    selectCityFirst: "Əvvəlcə şəhər seç",
+    save: "Dəyişiklikləri Yadda Saxla",
+    saving: "Yadda saxlanılır...",
+    loading: "Profil yüklənir...",
+    saved: "Profilin uğurla yeniləndi!",
+    loadError: "Profil yüklənə bilmədi.",
+    saveError: "Yadda saxlanarkən xəta baş verdi.",
+    recommendation: "Profilini Gücləndir",
+    recommendationDesc:
+      "Şəkillər, özün haqqında məlumat və əsas məlumatları əlavə etmək profilinin görünürlüğünü artırır.",
+    secure: "Məlumatların təhlükəsiz şəkildə saxlanılır.",
+  },} as const;
 
 const OPTIONS = {
   education: [
-    option("PRIMARY", "İlkokul", "Primary School", "Начальная школа", "الابتدائية"),
-    option("HIGH_SCHOOL", "Lise", "High School", "Средняя школа", "الثانوية"),
-    option("ASSOCIATE", "Ön Lisans", "Associate Degree", "Колледж", "دبلوم"),
-    option("BACHELOR", "Lisans", "Bachelor's Degree", "Бакалавриат", "بكالوريوس"),
-    option("MASTER", "Yüksek Lisans", "Master's Degree", "Магистратура", "ماجستير"),
-    option("DOCTORATE", "Doktora", "Doctorate", "Докторантура", "دكتوراه"),
+    option("PRIMARY", "İlkokul", "Primary School", "Начальная школа", "الابتدائية", "İbtidai məktəb"),
+    option("HIGH_SCHOOL", "Lise", "High School", "Средняя школа", "الثانوية", "Lisey"),
+    option("ASSOCIATE", "Ön Lisans", "Associate Degree", "Колледж", "دبلوم", "Subbakalavr"),
+    option("BACHELOR", "Lisans", "Bachelor's Degree", "Бакалавриат", "بكالوريوس", "Bakalavr"),
+    option("MASTER", "Yüksek Lisans", "Master's Degree", "Магистратура", "ماجستير", "Magistr"),
+    option("DOCTORATE", "Doktora", "Doctorate", "Докторантура", "دكتوراه", "Doktorantura"),
   ],
   income: [
-    option("VERY_LOW", "Düşük", "Low", "Низкий", "منخفض"),
-    option("LOW", "Orta-alt", "Lower middle", "Ниже среднего", "أقل من المتوسط"),
-    option("MEDIUM", "Orta", "Middle", "Средний", "متوسط"),
-    option("HIGH", "Yüksek", "High", "Высокий", "مرتفع"),
-    option("VERY_HIGH", "Çok yüksek", "Very high", "Очень высокий", "مرتفع جداً"),
+    option("VERY_LOW", "Düşük", "Low", "Низкий", "منخفض", "Aşağı"),
+    option("LOW", "Orta-alt", "Lower middle", "Ниже среднего", "أقل من المتوسط", "Orta-aşağı"),
+    option("MEDIUM", "Orta", "Middle", "Средний", "متوسط", "Orta"),
+    option("HIGH", "Yüksek", "High", "Высокий", "مرتفع", "Yüksək"),
+    option("VERY_HIGH", "Çok yüksek", "Very high", "Очень высокий", "مرتفع جداً", "Çox yüksək"),
   ],
   marital: [
-    option("NEVER_MARRIED", "Bekar", "Never married", "Не состоял(а) в браке", "أعزب"),
-    option("DIVORCED", "Boşanmış", "Divorced", "В разводе", "مطلق"),
-    option("WIDOWED", "Eşi vefat etmiş", "Widowed", "Вдовец / вдова", "أرمل"),
-    option("SEPARATED", "Ayrı yaşıyor", "Separated", "Живёт отдельно", "منفصل"),
+    option("NEVER_MARRIED", "Bekar", "Never married", "Не состоял(а) в браке", "أعزب", "Subay"),
+    option("DIVORCED", "Boşanmış", "Divorced", "В разводе", "مطلق", "Boşanıb"),
+    option("WIDOWED", "Eşi vefat etmiş", "Widowed", "Вдовец / вдова", "أرمل", "Dul"),
+    option("SEPARATED", "Ayrı yaşıyor", "Separated", "Живёт отдельно", "منفصل", "Ayrı yaşayır"),
   ],
   children: [
-    option("NONE", "Yok", "None", "Нет", "لا يوجد"),
-    option("HAS_LIVING_WITH", "Var, benimle yaşıyor", "Yes, living with me", "Есть, живут со мной", "يوجد ويعيشون معي"),
-    option("HAS_NOT_LIVING", "Var, benimle yaşamıyor", "Yes, not living with me", "Есть, живут отдельно", "يوجد ولا يعيشون معي"),
+    option("NONE", "Yok", "None", "Нет", "لا يوجد", "Yoxdur"),
+    option("HAS_LIVING_WITH", "Var, benimle yaşıyor", "Yes, living with me", "Есть, живут со мной", "يوجد ويعيشون معي", "Var, mənimlə yaşayır"),
+    option("HAS_NOT_LIVING", "Var, benimle yaşamıyor", "Yes, not living with me", "Есть, живут отдельно", "يوجد ولا يعيشون معي", "Var, mənimlə yaşamır"),
   ],
   smoking: [
-    option("NEVER", "İçmiyorum", "Never", "Не курю", "لا أدخن"),
-    option("QUIT", "Bıraktım", "Quit", "Бросил(а)", "أقلعت"),
-    option("OCCASIONAL", "Ara sıra", "Occasionally", "Иногда", "أحياناً"),
-    option("REGULAR", "Düzenli", "Regularly", "Регулярно", "بانتظام"),
+    option("NEVER", "İçmiyorum", "Never", "Не курю", "لا أدخن", "Heç vaxt"),
+    option("QUIT", "Bıraktım", "Quit", "Бросил(а)", "أقلعت", "Tərgitmişəm"),
+    option("OCCASIONAL", "Ara sıra", "Occasionally", "Иногда", "أحياناً", "Ara-sıra"),
+    option("REGULAR", "Düzenli", "Regularly", "Регулярно", "بانتظام", "Müntəzəm"),
   ],
   alcohol: [
-    option("NEVER", "Kullanmıyorum", "Never", "Не употребляю", "لا أستخدم"),
-    option("QUIT", "Bıraktım", "Quit", "Перестал(а)", "أقلعت"),
-    option("OCCASIONAL", "Sosyal", "Socially", "Иногда", "اجتماعياً"),
-    option("REGULAR", "Düzenli", "Regularly", "Регулярно", "بانتظام"),
+    option("NEVER", "Kullanmıyorum", "Never", "Не употребляю", "لا أستخدم", "Heç vaxt"),
+    option("QUIT", "Bıraktım", "Quit", "Перестал(а)", "أقلعت", "Tərgitmişəm"),
+    option("OCCASIONAL", "Sosyal", "Socially", "Иногда", "اجتماعياً", "Ara-sıra"),
+    option("REGULAR", "Düzenli", "Regularly", "Регулярно", "بانتظام", "Müntəzəm"),
   ],
   religion: [
-    option("VERY_RELIGIOUS", "Çok dindar", "Very religious", "Очень религиозный", "متدين جداً"),
-    option("RELIGIOUS", "Dindar", "Religious", "Религиозный", "متدين"),
-    option("MODERATE", "Orta", "Moderate", "Умеренный", "معتدل"),
-    option("NOT_RELIGIOUS", "Dindar değil", "Not religious", "Нерелигиозный", "غير متدين"),
-    option("ATHEIST", "Ateist", "Atheist", "Атеист", "ملحد"),
+    option("VERY_RELIGIOUS", "Çok dindar", "Very religious", "Очень религиозный", "متدين جداً", "Çox dindar"),
+    option("RELIGIOUS", "Dindar", "Religious", "Религиозный", "متدين", "Dindar"),
+    option("MODERATE", "Orta", "Moderate", "Умеренный", "معتدل", "Orta"),
+    option("NOT_RELIGIOUS", "Dindar değil", "Not religious", "Нерелигиозный", "غير متدين", "Dindar deyil"),
+    option("ATHEIST", "Ateist", "Atheist", "Атеист", "ملحد", "Ateist"),
   ],
   bodyType: [
-    option("SLIM", "Zayıf", "Slim", "Стройное", "نحيف"),
-    option("ATHLETIC", "Atletik", "Athletic", "Спортивное", "رياضي"),
-    option("NORMAL", "Normal", "Average", "Среднее", "عادي"),
-    option("CURVY", "Dolgun", "Curvy", "Пышное", "ممتلئ"),
-    option("PLUS", "Kilolu", "Plus size", "Полное", "وزن زائد"),
+    option("SLIM", "Zayıf", "Slim", "Стройное", "نحيف", "Arıq"),
+    option("ATHLETIC", "Atletik", "Athletic", "Спортивное", "رياضي", "Atletik"),
+    option("NORMAL", "Normal", "Average", "Среднее", "عادي", "Normal"),
+    option("CURVY", "Dolgun", "Curvy", "Пышное", "ممتلئ", "Dolğun"),
+    option("PLUS", "Kilolu", "Plus size", "Полное", "وزن زائد", "Kilolu"),
   ],
   hairColor: [
-    option("BLACK", "Siyah", "Black", "Чёрный", "أسود"),
-    option("BROWN", "Kahverengi", "Brown", "Каштановый", "بني"),
-    option("BLOND", "Sarı", "Blond", "Светлый", "أشقر"),
-    option("RED", "Kızıl", "Red", "Рыжий", "أحمر"),
-    option("WHITE", "Beyaz", "White / Grey", "Седой", "أبيض"),
-    option("BALD", "Kel", "Bald", "Лысый", "أصلع"),
-    option("OTHER", "Diğer", "Other", "Другой", "آخر"),
+    option("BLACK", "Siyah", "Black", "Чёрный", "أسود", "Qara"),
+    option("BROWN", "Kahverengi", "Brown", "Каштановый", "بني", "Qəhvəyi"),
+    option("BLOND", "Sarı", "Blond", "Светлый", "أشقر", "Sarışın"),
+    option("RED", "Kızıl", "Red", "Рыжий", "أحمر", "Qızılı-qırmızı"),
+    option("WHITE", "Beyaz", "White / Grey", "Седой", "أبيض", "Ağ"),
+    option("BALD", "Kel", "Bald", "Лысый", "أصلع", "Keçəl"),
+    option("OTHER", "Diğer", "Other", "Другой", "آخر", "Digər"),
   ],
   eyeColor: [
-    option("BROWN", "Kahverengi", "Brown", "Карие", "بني"),
-    option("BLUE", "Mavi", "Blue", "Голубые", "أزرق"),
-    option("GREEN", "Yeşil", "Green", "Зелёные", "أخضر"),
-    option("HAZEL", "Ela", "Hazel", "Ореховые", "عسلي"),
-    option("BLACK", "Siyah", "Black", "Чёрные", "أسود"),
-    option("OTHER", "Diğer", "Other", "Другие", "آخر"),
+    option("BROWN", "Kahverengi", "Brown", "Карие", "بني", "Qəhvəyi"),
+    option("BLUE", "Mavi", "Blue", "Голубые", "أزرق", "Mavi"),
+    option("GREEN", "Yeşil", "Green", "Зелёные", "أخضر", "Yaşıl"),
+    option("HAZEL", "Ela", "Hazel", "Ореховые", "عسلي", "Fındıq rəngi"),
+    option("BLACK", "Siyah", "Black", "Чёрные", "أسود", "Qara"),
+    option("OTHER", "Diğer", "Other", "Другие", "آخر", "Digər"),
   ],
   bloodType: [
-    option("A_POSITIVE", "A+", "A+", "A+", "A+"),
-    option("A_NEGATIVE", "A-", "A-", "A-", "A-"),
-    option("B_POSITIVE", "B+", "B+", "B+", "B+"),
-    option("B_NEGATIVE", "B-", "B-", "B-", "B-"),
-    option("AB_POSITIVE", "AB+", "AB+", "AB+", "AB+"),
-    option("AB_NEGATIVE", "AB-", "AB-", "AB-", "AB-"),
-    option("ZERO_POSITIVE", "0+", "O+", "O+", "O+"),
-    option("ZERO_NEGATIVE", "0-", "O-", "O-", "O-"),
+    option("A_POSITIVE", "A+", "A+", "A+", "A+", "A+"),
+    option("A_NEGATIVE", "A-", "A-", "A-", "A-", "A-"),
+    option("B_POSITIVE", "B+", "B+", "B+", "B+", "B+"),
+    option("B_NEGATIVE", "B-", "B-", "B-", "B-", "B-"),
+    option("AB_POSITIVE", "AB+", "AB+", "AB+", "AB+", "AB+"),
+    option("AB_NEGATIVE", "AB-", "AB-", "AB-", "AB-", "AB-"),
+    option("ZERO_POSITIVE", "0+", "O+", "O+", "O+", "O+"),
+    option("ZERO_NEGATIVE", "0-", "O-", "O-", "O-", "O-"),
   ],
   gender: [
-    option("MALE", "Erkek", "Man", "Мужчина", "رجل"),
-    option("FEMALE", "Kadın", "Woman", "Женщина", "امرأة"),
-    option("OTHER", "Diğer", "Other", "Другое", "آخر"),
+    option("MALE", "Erkek", "Man", "Мужчина", "رجل", "Kişi"),
+    option("FEMALE", "Kadın", "Woman", "Женщина", "امرأة", "Qadın"),
+    option("OTHER", "Diğer", "Other", "Другое", "آخر", "Digər"),
   ],
 };
 
@@ -365,8 +421,9 @@ function option(
   EN: string,
   RU: string,
   AR: string,
+  AZ: string,
 ): Option {
-  return { value, labels: { TR, EN, RU, AR } };
+  return { value, labels: { TR, EN, RU, AR, AZ } };
 }
 
 interface District {
@@ -457,7 +514,7 @@ export default function ProfileEditPage() {
 const normalizedLang = String(lang || "TR").toUpperCase();
 
 const currentLang: LangKey = (
-  ["TR", "EN", "RU", "AR"].includes(normalizedLang)
+  ["TR", "AZ", "EN", "RU", "AR"].includes(normalizedLang)
     ? normalizedLang
     : "TR"
 ) as LangKey;
@@ -1273,3 +1330,4 @@ function SelectField<K extends keyof ProfileData>({
     </Field>
   );
 }
+

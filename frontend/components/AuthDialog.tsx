@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
@@ -80,7 +80,38 @@ export default function AuthDialog({
   activeTab,
   onClose,
 }: AuthDialogProps) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const loginText = {
+    TR: {
+      forgotPassword: "Şifremi Unuttum?",
+      or: "veya",
+      google: "Google ile Devam Et",
+    },
+    AZ: {
+      forgotPassword: "Şifrəmi Unutdum?",
+      or: "və ya",
+      google: "Google ilə Davam Et",
+    },
+    EN: {
+      forgotPassword: "Forgot Password?",
+      or: "or",
+      google: "Continue with Google",
+    },
+    RU: {
+      forgotPassword: "Забыли пароль?",
+      or: "или",
+      google: "Продолжить с Google",
+    },
+    AR: {
+      forgotPassword: "هل نسيت كلمة المرور؟",
+      or: "أو",
+      google: "المتابعة باستخدام Google",
+    },
+  }[lang] ?? {
+    forgotPassword: "Şifremi Unuttum?",
+    or: "veya",
+    google: "Google ile Devam Et",
+  };
 
   const [tab, setTab] = useState<Tab>(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -535,7 +566,7 @@ export default function AuthDialog({
                   }}
                   className="text-base text-[#F6BA48] hover:text-[#F8D290] hover:underline transition-colors"
                 >
-                  Şifremi Unuttum?
+                  {loginText.forgotPassword}
                 </button>
               </div>
 
@@ -553,7 +584,7 @@ export default function AuthDialog({
                 </div>
 
                 <span className="relative bg-[#512510] px-2 text-xs text-[#B5A093]/80">
-                  veya
+                  {loginText.or}
                 </span>
               </div>
 
@@ -584,7 +615,7 @@ export default function AuthDialog({
                   />
                 </svg>
 
-                Google ile Devam Et
+                {loginText.google}
               </button>
 
               <p className="text-center text-base text-white/60">

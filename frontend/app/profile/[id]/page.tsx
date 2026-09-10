@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -12,7 +12,7 @@ import EgeMatchAICard from "@/components/EgeMatchAICard";
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL || "https://egelove-backend.onrender.com";
 
-type LangKey = "TR" | "EN" | "RU" | "AR";
+type LangKey = "TR" | "AZ" | "EN" | "RU" | "AR";
 
 const TEXT: Record<LangKey, Record<string, string>> = {
   TR: {
@@ -155,7 +155,42 @@ const TEXT: Record<LangKey, Record<string, string>> = {
     startCompatibleChat: "ابدأ محادثة متوافقة",
     loginForEgematch: "يجب تسجيل الدخول لتحليل SENveBEN AI.",
   },
-};
+
+  AZ: {
+    loading: "Profil yüklənir...",
+    notFound: "Profil tapılmadı",
+    back: "Geri Qayıt",
+    like: "Bəyən",
+    message: "Mesaj",
+    online: "Onlayn",
+    about: "Haqqımda",
+    lookingFor: "Axtardığım İnsan",
+    info: "Profil Məlumatları",
+    city: "Şəhər",
+    district: "Rayon",
+    occupation: "Peşə",
+    education: "Təhsil",
+    income: "Gəlir",
+    maritalStatus: "Ailə Vəziyyəti",
+    children: "Uşaqlar",
+    height: "Boy",
+    weight: "Çəki",
+    eyeColor: "Göz Rəngi",
+    hairColor: "Saç Rəngi",
+    hobbies: "Maraq Sahələri",
+    liked: "Bəyənmə göndərildi",
+    likeFailed: "Bəyənmə göndərilə bilmədi",
+    serverError: "Server xətası",
+    egematchSlogan: "Sevgi təsadüf ola bilər... uyğunluq deyil.",
+    aiAnalyzing: "AI analiz edir...",
+    compatCalculating: "Profil uyğunluğu hesablanır",
+    strengths: "Güclü Tərəflər",
+    risks: "Diqqət Ediləcək Məqamlar",
+    aiSuggestion: "AI Tövsiyəsi",
+    commonHobbies: "Ortaq Maraq Sahələri",
+    startCompatibleChat: "Uyğun Söhbətə Başla",
+    loginForEgematch: "SENveBEN AI analizi üçün daxil olmalısan.",
+  },};
 
 const OPTION_MAP: Record<LangKey, Record<string, string>> = {
   TR: {
@@ -270,7 +305,35 @@ const OPTION_MAP: Record<LangKey, Record<string, string>> = {
     emekli: "متقاعد",
     hemşire: "ممرضة",
   },
-};
+
+  AZ: {
+    ASSOCIATE: "Subbakalavr",
+    BACHELOR: "Bakalavr",
+    MASTER: "Magistr",
+    DOCTORATE: "Doktorantura",
+    HIGH_SCHOOL: "Lisey",
+    PRIMARY: "İbtidai məktəb",
+    MEDIUM: "Orta",
+    LOW: "Aşağı",
+    HIGH: "Yüksək",
+    DIVORCED: "Boşanıb",
+    SINGLE: "Subay",
+    MARRIED: "Evli",
+    NONE: "Yoxdur",
+    YES: "Var",
+    NO: "Yox",
+    HAZEL: "Fındıq Rəngi",
+    BLACK: "Qara",
+    BROWN: "Qəhvəyi",
+    BLUE: "Mavi",
+    GREEN: "Yaşıl",
+    BLONDE: "Sarışın",
+    RED: "Qızılı-qırmızı",
+    GRAY: "Boz",
+    WHITE: "Ağ",
+    emekli: "Təqaüdçü",
+    hemşire: "Tibb bacısı",
+  },};
 
 function normalizeArrayText(value: any) {
   if (!value) return "-";
@@ -299,9 +362,9 @@ useEffect(() => {
         ? localStorage.getItem("egelove-lang") || localStorage.getItem("lang")
         : null;
 
-    if (saved === "EN" || saved === "RU" || saved === "AR" || saved === "TR") {
+    if (saved === "EN" || saved === "RU" || saved === "AR" || saved === "AZ" || saved === "TR") {
       setPageLang(saved);
-    } else if (lang === "EN" || lang === "RU" || lang === "AR" || lang === "TR") {
+    } else if (lang === "EN" || lang === "RU" || lang === "AR" || lang === "AZ" || lang === "TR") {
       setPageLang(lang as LangKey);
     }
   };
@@ -338,24 +401,28 @@ const [compatLoading, setCompatLoading] = useState(false);
     WHITE: {
       TR: "Beyaz",
       EN: "White",
+      AZ: "Ağ",
       RU: "Белый",
       AR: "أبيض",
     },
     RED: {
       TR: "Kızıl",
       EN: "Red",
+      AZ: "Qızılı-qırmızı",
       RU: "Рыжий",
       AR: "أحمر",
     },
     BLACK: {
       TR: "Siyah",
       EN: "Black",
+      AZ: "Qara",
       RU: "Черный",
       AR: "أسود",
     },
     HAZEL: {
       TR: "Ela",
       EN: "Hazel",
+      AZ: "Fındıq Rəngi",
       RU: "Ореховый",
       AR: "عسلي",
     },

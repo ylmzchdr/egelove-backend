@@ -66,8 +66,8 @@ const languageOptions: Array<{
   { code: "EN", label: "English", native: "English", flag: "🇬🇧" },
   { code: "RU", label: "Русский", native: "Русский", flag: "🇷🇺" },
   { code: "AR", label: "العربية", native: "العربية", flag: "🇸🇦" },
+  { code: "AZ", label: "Azərbaycanca", native: "Azərbaycanca", flag: "🇦🇿" },
 ];
-
 const copy = {
   TR: {
     title: "Ayarlar",
@@ -229,11 +229,51 @@ const copy = {
     premiumCta: "استكشف Premium",
     active: "نشط",
   },
+   AZ: {
+    title: "Parametrlər",
+    subtitle: "SENveBEN təcrübəsini özünə uyğun fərdiləşdir.",
+    appearance: "Görünüş",
+    appearanceDesc: "SENveBEN-in görünüşünü və ekran seçimlərini idarə et.",
+    language: "Dil",
+    languageDesc: "SENveBEN-də istifadə etmək istədiyin dili seç.",
+    notifications: "Bildirişlər",
+    notificationsDesc: "Hansı bildirişləri almaq istədiyini seç.",
+    newMessages: "Yeni mesajlar",
+    newMessagesDesc: "Yeni mesaj gəldikdə bildiriş al.",
+    likes: "Bəyənmələr",
+    likesDesc: "Kimsə səni bəyəndikdə bildiriş al.",
+    matches: "Uyğunlaşmalar",
+    matchesDesc: "Yeni uyğunlaşma olduqda bildiriş al.",
+    sounds: "Bildiriş səsləri",
+    soundsDesc: "Bildirişlərdə səs istifadə et.",
+    privacy: "Məxfilik və təhlükəsizlik",
+    privacyDesc: "Hesabının görünməsini və təhlükəsizliyini idarə et.",
+    online: "Onlayn statusunu göstər",
+    onlineDesc: "Digər üzvlər onlayn olduğunu görə bilsin.",
+    read: "Oxundu məlumatını göstər",
+    readDesc: "Mesajların oxunduğunu qarşı tərəfə göstər.",
+    profile: "Profil parametrləri",
+    profileDesc: "Profil məlumatlarını və şəklini redaktə et.",
+    editProfile: "Profilimi Redaktə Et",
+    security: "Təhlükəsizlik",
+    securityDesc: "Hesabını təhlükəsiz saxlamaq üçün profil məlumatlarını yoxla.",
+    account: "Hesab",
+    accountDesc: "Hesabınla bağlı əməliyyatlar.",
+    help: "Yardım Mərkəzi",
+    logout: "Çıxış Et",
+    saved: "Parametrlər yadda saxlanıldı",
+    secure: "Hesabın təhlükəsizdir",
+    secureDesc: "SENveBEN hesabın təhlükəsiz bağlantı ilə qorunur.",
+    premium: "Premium",
+    premiumDesc: "Daha çox xüsusiyyət və görünürlük üçün Premium-u kəşf et.",
+    premiumCta: "Premium-u Kəşf Et",
+    active: "Aktiv",
+  }, 
 } as const;
 
 export default function SettingsPage() {
   const { lang, setLang } = useI18n();
-  const t = copy[lang] ?? copy.TR;
+  const t = copy[lang as keyof typeof copy] ?? copy.TR;
 
   const [newMessages, setNewMessages] = useState(true);
   const [likes, setLikes] = useState(true);

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -59,7 +59,7 @@ type CurrentUser = {
   languages?: string[] | string;
 };
 
-type LangKey = "TR" | "EN" | "RU" | "AR";
+type LangKey = "TR" | "AZ" | "EN" | "RU" | "AR";
 
 const TEXT: Record<LangKey, Record<string, string>> = {
   TR: {
@@ -213,7 +213,46 @@ const TEXT: Record<LangKey, Record<string, string>> = {
     premiumDescription: "قم بإبراز زيارات الملف الشخصي والمفضلة والمزيد.",
     userFallback: "مستخدم",
   },
-};
+
+  AZ: {
+    myProfile: "Profilim",
+    previewDesc:
+      "Profilinin digər istifadəçilərə necə göründüyünü buradan yoxla.",
+    editProfile: "Profili Redaktə Et",
+    mustLogin: "Əvvəlcə daxil olmalısan",
+    login: "Daxil Ol",
+    info: "Profil Məlumatları",
+    about: "Haqqımda",
+    lookingFor: "Axtardığım İnsan",
+    photos: "Şəkillər",
+    addPhoto: "Şəkil əlavə et, profil ziyarətlərini artır!",
+    email: "E-poçt",
+    age: "Yaş",
+    city: "Şəhər",
+    district: "Rayon",
+    occupation: "Peşə",
+    education: "Təhsil",
+    income: "Gəlir",
+    maritalStatus: "Ailə Vəziyyəti",
+    children: "Uşaqlar",
+    height: "Boy",
+    weight: "Çəki",
+    eyeColor: "Göz Rəngi",
+    hairColor: "Saç Rəngi",
+    hobbies: "Maraq Sahələri",
+    languages: "Dillər",
+    verified: "Təsdiqlənmiş Profil",
+    online: "Onlayn",
+    favorite: "Favorilərə Əlavə Et",
+    wink: "Göz Vur",
+    visitors: "Profil Ziyarətçiləri",
+    member: "SENveBEN Üzvü",
+    visitedProfile: "Profilini ziyarət etdi",
+    premium: "Premium",
+    premiumDescription:
+      "Profil ziyarətlərini, favoritləri və daha çoxunu ön plana çıxar.",
+    userFallback: "İstifadəçi",
+  },};
 
 function calculateAge(birthDate?: string) {
   if (!birthDate) return undefined;
@@ -258,7 +297,7 @@ export default function ProfilePage() {
   const { lang } = useI18n();
   console.log("PROFILE LANG:", lang);
 
-  const currentLang: LangKey = ["TR", "EN", "RU", "AR"].includes(lang)
+  const currentLang: LangKey = ["TR", "AZ", "EN", "RU", "AR"].includes(lang)
     ? (lang as LangKey)
     : "TR";
 
@@ -595,7 +634,72 @@ export default function ProfilePage() {
       EMEKLI: "متقاعد",
       emekli: "متقاعد",
     },
-  };
+  
+    AZ: {
+      PRIMARY: "İbtidai məktəb",
+      SECONDARY: "Orta məktəb",
+      HIGH_SCHOOL: "Lisey",
+      ASSOCIATE: "Subbakalavr",
+      BACHELOR: "Bakalavr",
+      MASTER: "Magistr",
+      DOCTORATE: "Doktorantura",
+
+      VERY_LOW: "Çox Aşağı",
+      LOW: "Aşağı",
+      MEDIUM: "Orta",
+      HIGH: "Yüksək",
+      VERY_HIGH: "Çox Yüksək",
+
+      NEVER_MARRIED: "Heç Evlənməyib",
+      DIVORCED: "Boşanıb",
+      WIDOWED: "Dul",
+      SEPARATED: "Ayrı Yaşayır",
+
+      HAS_LIVING_WITH: "Var (Birlikdə Yaşayır)",
+      HAS_NOT_LIVING: "Var (Birlikdə Yaşamır)",
+      NONE: "Yoxdur",
+
+      VERY_RELIGIOUS: "Çox Dindar",
+      RELIGIOUS: "Dindar",
+      MODERATE: "Orta",
+      NOT_RELIGIOUS: "Dindar Deyil",
+      ATHEIST: "Ateist",
+
+      NEVER: "Heç Vaxt",
+      QUIT: "Tərgidib",
+      OCCASIONAL: "Ara-sıra",
+      REGULAR: "Müntəzəm",
+
+      SLIM: "Arıq",
+      ATHLETIC: "Atletik",
+      NORMAL: "Normal",
+      CURVY: "Dolğun",
+      PLUS: "Kilolu",
+
+      BROWN: "Qəhvəyi",
+      BLUE: "Mavi",
+      GREEN: "Yaşıl",
+      HAZEL: "Fındıq Rəngi",
+      BLACK: "Qara",
+      OTHER: "Digər",
+
+      BLOND: "Sarışın",
+      RED: "Qızılı-qırmızı",
+      WHITE: "Ağ",
+      BALD: "Keçəl",
+
+      A_POSITIVE: "A+",
+      A_NEGATIVE: "A-",
+      B_POSITIVE: "B+",
+      B_NEGATIVE: "B-",
+      AB_POSITIVE: "AB+",
+      AB_NEGATIVE: "AB-",
+      ZERO_POSITIVE: "O+",
+      ZERO_NEGATIVE: "O-",
+
+      EMEKLI: "Təqaüdçü",
+      emekli: "Təqaüdçü",
+    },};
 
   function trOpt(value: string | null | undefined) {
     if (!value) return "-";

@@ -9,8 +9,7 @@ import {
   MapPin,
   Languages,
 } from "lucide-react";
-
-type LangKey = "TR" | "EN" | "RU" | "AR";
+type LangKey = "TR" | "EN" | "RU" | "AR" | "AZ";
 
 interface HeroSectionProps {
   onCtaClick?: () => void;
@@ -39,7 +38,7 @@ export default function HeroSection({ onCtaClick }: HeroSectionProps) {
     }
   > = {
     TR: {
-      eyebrow: "CANLI GÖRÜNTÜLÜ • ANINDA MESAJ • 4 DİLDE İLETİŞİM",
+      eyebrow: "CANLI GÖRÜNTÜLÜ • ANINDA MESAJ • 5 DİLDE İLETİŞİM",
       titlePrefix: "Aradığın kişi belki de sadece ",
       titleHighlight: "birkaç kilometre",
       titleSuffix: " uzakta.",
@@ -58,7 +57,7 @@ export default function HeroSection({ onCtaClick }: HeroSectionProps) {
     },
 
     EN: {
-      eyebrow: "LIVE VIDEO • INSTANT MESSAGES • 4 LANGUAGES",
+      eyebrow: "LIVE VIDEO • INSTANT MESSAGES • 5 LANGUAGES",
       titlePrefix: "The person you're looking for might be just ",
       titleHighlight: "a few kilometers",
       titleSuffix: " away.",
@@ -77,7 +76,7 @@ export default function HeroSection({ onCtaClick }: HeroSectionProps) {
     },
 
     RU: {
-      eyebrow: "ВИДЕО • МГНОВЕННЫЕ СООБЩЕНИЯ • 4 ЯЗЫКА",
+      eyebrow: "ВИДЕО • МГНОВЕННЫЕ СООБЩЕНИЯ • 5 ЯЗЫКОВ",
       titlePrefix: "Человек, которого вы ищете, может быть всего в ",
       titleHighlight: "нескольких километрах",
       titleSuffix: " от вас.",
@@ -96,7 +95,7 @@ export default function HeroSection({ onCtaClick }: HeroSectionProps) {
     },
 
     AR: {
-      eyebrow: "فيديو مباشر • رسائل فورية • 4 لغات",
+      eyebrow: "فيديو مباشر • رسائل فورية • 5 لغات",
       titlePrefix: "قد يكون الشخص الذي تبحث عنه على بُعد ",
       titleHighlight: "بضعة كيلومترات",
       titleSuffix: " فقط.",
@@ -113,9 +112,27 @@ export default function HeroSection({ onCtaClick }: HeroSectionProps) {
       liveMembers: "أعضاء من 81 محافظة",
       romanticQuote: "الحب جميل في كل عمر...",
     },
+      AZ: {
+    eyebrow: "CANLI GÖRÜNTÜLÜ • ANI MESAJ • 5 DİLDƏ ÜNSİYYƏT",
+    titlePrefix: "Axtardığın insan bəlkə də sadəcə",
+    titleHighlight: "bir neçə kilometr",
+    titleSuffix: "uzaqdadır.",
+    subtitle:
+      "Azərbaycanın və Türkiyənin hər yerindən yeni insanlarla tanış ol. Sənə uyğun profilləri tap, bəyən, uyğunlaş və dərhal görüntülü danış.",
+    ctaRegister: "Pulsuz Qeydiyyat",
+    ctaExplore: "Canlı Görüntülü Danış",
+    aiTitle: "SENveBEN AI ilə sərhədləri aradan qaldır",
+    aiDescription:
+      "Fərqli dillərdə danışan insanlarla daha rahat ünsiyyət qur. Sən öz dilində yaz, SENveBEN AI mesajlarını anında tərcümə etsin.",
+    languageSupport: "Dil dəstəyi",
+    provinceCoverage: "İl əhatəsi",
+    secureConnection: "Təhlükəsiz bağlantı",
+    liveMembers: "81 ildən canlı üzvlər",
+    romanticQuote: "Sevgi hər yaşda gözəldir...",
+  },
   };
 
-  const currentLang: LangKey = ["TR", "EN", "RU", "AR"].includes(lang)
+  const currentLang: LangKey = ["TR", "AZ", "EN", "RU", "AR"].includes(lang)
     ? (lang as LangKey)
     : "TR";
 
@@ -192,7 +209,7 @@ export default function HeroSection({ onCtaClick }: HeroSectionProps) {
 
             <div className="inline-flex items-center gap-2 rounded-full border border-[#F6BA48]/25 bg-[#310D0C]/50 px-3.5 py-2 text-xs font-bold text-[#F8D290]/80">
               <Languages className="h-4 w-4 text-[#F6BA48]" />
-              4 {t.languageSupport}
+              5 {t.languageSupport}
             </div>
           </div>
         </div>
@@ -224,7 +241,7 @@ export default function HeroSection({ onCtaClick }: HeroSectionProps) {
                   <div className="flex items-center gap-2">
                     <Languages className="h-5 w-5 text-[#F6BA48]" />
                     <span className="text-2xl font-black text-[#F6BA48]">
-                      4
+                      5
                     </span>
                   </div>
 
@@ -265,3 +282,6 @@ export default function HeroSection({ onCtaClick }: HeroSectionProps) {
     </section>
   );
 }
+
+
+

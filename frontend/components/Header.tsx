@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -26,6 +26,7 @@ const languages: { code: Lang; label: string }[] = [
   { code: "EN", label: "English" },
   { code: "RU", label: "Русский" },
   { code: "AR", label: "العربية" },
+  { code: "AZ", label: "AZ" },
 ];
 
 const welcomeByLang: Record<Lang, string> = {
@@ -33,6 +34,7 @@ const welcomeByLang: Record<Lang, string> = {
   EN: "Welcome",
   RU: "Добро пожаловать",
   AR: "مرحباً",
+  AZ: "Xoş gəlmisiniz",
 };
 
 function getFirstName(user: MeResponse | null) {
@@ -175,7 +177,7 @@ export default function Header({ onOpenLogin, onOpenRegister }: HeaderProps) {
                 className="h-8 border border-[#F6BA48]/60 bg-[#F6BA48] px-4 text-xs font-bold text-[#310D0C] shadow-sm hover:bg-[#EF912C]"
                 onClick={handleLogout}
               >
-                Çıkış
+                {t.auth.logout}
               </Button>
             </>
           ) : (
@@ -260,7 +262,7 @@ export default function Header({ onOpenLogin, onOpenRegister }: HeaderProps) {
                     handleLogout();
                   }}
                 >
-                  Çıkış
+                  {t.auth.logout}
                 </Button>
               </>
             ) : (
@@ -295,3 +297,4 @@ export default function Header({ onOpenLogin, onOpenRegister }: HeaderProps) {
     </header>
   );
 }
+

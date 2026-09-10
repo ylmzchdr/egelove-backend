@@ -17,7 +17,7 @@ type I18nContextType = {
 
 const I18nContext = createContext<I18nContextType | null>(null);
 const STORAGE_KEY = "egelove-language";
-const supportedLanguages: Lang[] = ["TR", "EN", "RU", "AR"];
+const supportedLanguages: Lang[] = ["TR", "AZ", "EN", "RU", "AR"];
 
 function isLang(value: string | null): value is Lang {
   return !!value && supportedLanguages.includes(value.toUpperCase() as Lang);

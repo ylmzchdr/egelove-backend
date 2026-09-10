@@ -73,6 +73,12 @@ const languages: Array<{
     label: "العربية",
     flag: "🇸🇦",
   },
+    {
+    code: "AZ",
+    shortLabel: "AZ",
+    label: "Azərbaycan",
+    flag: "🇦🇿",
+  },
 ];
 
 export default function Topbar({
@@ -86,6 +92,14 @@ export default function Topbar({
 }: TopbarProps) {
   const router = useRouter();
   const { lang, setLang } = useI18n();
+
+  const topbarText = {
+    TR:{search:"İsim, şehir veya kullanıcı adı ara...",member:"Üye ara",messages:"Mesajlar",notifications:"Bildirimler",online:"Çevrimiçi",viewProfile:"Profilimi görüntüle",editProfile:"Profili düzenle",premium:"Premium özellikler",security:"Güvenlik merkezi",upgrade:"Premium’a yükselt",logout:"Güvenli çıkış yap",recent:"{topbarText.recent}",preparing:"{topbarText.preparing}",messageInfo:"{topbarText.messageInfo}",allMessages:"{topbarText.allMessages}",latest:"{topbarText.latest}",noNotifications:"{topbarText.noNotifications}",notificationInfo:"{topbarText.notificationInfo}",notificationCenter:"{topbarText.notificationCenter}",visibility:"{topbarText.visibility}",profilePhoto:"profil fotoğrafı"},
+    AZ:{search:"Ad, şəhər və ya istifadəçi adı axtar...",member:"Üzv axtar",messages:"Mesajlar",notifications:"Bildirişlər",online:"Onlayn",viewProfile:"Profilimə bax",editProfile:"Profili redaktə et",premium:"Premium xüsusiyyətlər",security:"Təhlükəsizlik mərkəzi",upgrade:"Premiuma yüksəlt",logout:"Təhlükəsiz çıxış et",recent:"Son söhbətləriniz",preparing:"Mesaj önizləmələri hazırlanır",messageInfo:"Həqiqi mesaj məlumatları qoşulduqda son söhbətlər burada görünəcək.",allMessages:"Bütün mesajları aç",latest:"Hesabınızdakı son yeniliklər",noNotifications:"Yeni bildirişiniz yoxdur",notificationInfo:"Bəyənmələr, mesajlar və profil hərəkətləri burada göstəriləcək.",notificationCenter:"Bildiriş mərkəzini aç",visibility:"Daha çox görünürlük əldə et",profilePhoto:"profil şəkli"},
+    EN:{search:"Search by name, city or username...",member:"Search members",messages:"Messages",notifications:"Notifications",online:"Online",viewProfile:"View my profile",editProfile:"Edit profile",premium:"Premium features",security:"Security center",upgrade:"Upgrade to Premium",logout:"Sign out securely",recent:"Your recent conversations",preparing:"Message previews are being prepared",messageInfo:"Your latest conversations will appear here when message data is connected.",allMessages:"Open all messages",latest:"Latest updates on your account",noNotifications:"You have no new notifications",notificationInfo:"Likes, messages and profile activity will appear here.",notificationCenter:"Open notification center",visibility:"Get more visibility",profilePhoto:"profile photo"},
+    RU:{search:"Поиск по имени, городу или имени пользователя...",member:"Найти участника",messages:"Сообщения",notifications:"Уведомления",online:"В сети",viewProfile:"Посмотреть мой профиль",editProfile:"Редактировать профиль",premium:"Премиум-функции",security:"Центр безопасности",upgrade:"Перейти на Premium",logout:"Безопасный выход",recent:"Последние разговоры",preparing:"Предпросмотр сообщений готовится",messageInfo:"Последние разговоры появятся здесь после подключения данных сообщений.",allMessages:"Открыть все сообщения",latest:"Последние события аккаунта",noNotifications:"Новых уведомлений нет",notificationInfo:"Лайки, сообщения и активность профиля будут отображаться здесь.",notificationCenter:"Открыть центр уведомлений",visibility:"Получите больше видимости",profilePhoto:"фото профиля"},
+    AR:{search:"ابحث بالاسم أو المدينة أو اسم المستخدم...",member:"بحث عن عضو",messages:"الرسائل",notifications:"الإشعارات",online:"متصل",viewProfile:"عرض ملفي الشخصي",editProfile:"تعديل الملف الشخصي",premium:"ميزات Premium",security:"مركز الأمان",upgrade:"الترقية إلى Premium",logout:"تسجيل خروج آمن",recent:"محادثاتك الأخيرة",preparing:"جارٍ إعداد معاينات الرسائل",messageInfo:"ستظهر محادثاتك الأخيرة هنا عند ربط بيانات الرسائل.",allMessages:"فتح جميع الرسائل",latest:"آخر تحديثات حسابك",noNotifications:"ليس لديك إشعارات جديدة",notificationInfo:"ستظهر الإعجابات والرسائل ونشاط الملف الشخصي هنا.",notificationCenter:"فتح مركز الإشعارات",visibility:"احصل على ظهور أكبر",profilePhoto:"صورة الملف الشخصي"}
+  }[lang];
 
   const [activePanel, setActivePanel] =
     useState<ActivePanel>(null);
@@ -296,8 +310,8 @@ export default function Topbar({
                 event.target.value,
               )
             }
-            placeholder="İsim, şehir veya kullanıcı adı ara..."
-            aria-label="Üye ara"
+            placeholder={topbarText.search}
+            aria-label={topbarText.member}
             className="h-11 w-full rounded-2xl border border-[#F6BA48]/25 bg-[#512510]/55 pl-11 pr-20 text-base font-medium text-[#F8D290] outline-none transition-all duration-300 placeholder:text-[#B5A093]/70 hover:border-[#F6BA48]/40 focus:border-[#F6BA48]/60 focus:bg-[#683312]/55 focus:shadow-[0_0_0_4px_rgba(246,186,72,0.10)]"
           />
 
@@ -309,7 +323,7 @@ export default function Topbar({
         {/* MOBİL ARAMA */}
         <Link
           href="/search"
-          aria-label="Üye ara"
+          aria-label={topbarText.member}
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[#F6BA48]/25 bg-[#512510]/65 text-[#F8D290]/75 transition-all duration-300 hover:border-[#F6BA48]/55 hover:bg-[#7E4114]/60 hover:text-[#F6BA48] md:hidden"
         >
           <Search
@@ -354,7 +368,7 @@ export default function Topbar({
               onClick={() =>
                 togglePanel("messages")
               }
-              aria-label="Mesajlar"
+              aria-label={topbarText.messages}
               aria-expanded={
                 activePanel === "messages"
               }
@@ -371,7 +385,7 @@ export default function Topbar({
               />
 
               <span className="hidden text-xs font-bold md:inline">
-                Mesajlar
+                {topbarText.messages}
               </span>
 
               {unreadMessages > 0 && (
@@ -388,11 +402,11 @@ export default function Topbar({
                 <div className="flex items-center justify-between border-b border-[#F6BA48]/20 px-4 py-4">
                   <div>
                     <p className="text-base font-extrabold text-white">
-                      Mesajlar
+                      {topbarText.messages}
                     </p>
 
                     <p className="mt-0.5 text-[10px] text-slate-600">
-                      Son konuşmaların
+                      {topbarText.recent}
                     </p>
                   </div>
 
@@ -416,14 +430,11 @@ export default function Topbar({
                   </span>
 
                   <p className="mt-4 text-xs font-bold text-[#F8D290]">
-                    Mesaj önizlemeleri hazırlanıyor
+                    {topbarText.preparing}
                   </p>
 
                   <p className="mt-1.5 text-[10px] leading-5 text-[#B5A093]/75">
-                    Gerçek mesaj verileri
-                    bağlandığında son
-                    konuşmalar burada
-                    görünecek.
+                    {topbarText.messageInfo}
                   </p>
                 </div>
 
@@ -434,7 +445,7 @@ export default function Topbar({
                   }
                   className="flex min-h-11 items-center justify-center border-t border-[#F6BA48]/20 text-xs font-bold text-[#F6BA48] transition hover:bg-[#7E4114]/40"
                 >
-                  Tüm mesajları aç
+                  {topbarText.allMessages}
                 </Link>
               </div>
             )}
@@ -447,7 +458,7 @@ export default function Topbar({
               onClick={() =>
                 togglePanel("notifications")
               }
-              aria-label="Bildirimler"
+              aria-label={topbarText.notifications}
               aria-expanded={
                 activePanel ===
                 "notifications"
@@ -466,7 +477,7 @@ export default function Topbar({
               />
 
               <span className="hidden text-xs font-bold md:inline">
-                Bildirimler
+                {topbarText.notifications}
               </span>
 
               {unreadNotifications > 0 && (
@@ -485,12 +496,11 @@ export default function Topbar({
                 <div className="flex items-center justify-between border-b border-[#F6BA48]/20 px-4 py-4">
                   <div>
                     <p className="text-base font-extrabold text-white">
-                      Bildirimler
+                      {topbarText.notifications}
                     </p>
 
                     <p className="mt-0.5 text-[10px] text-slate-600">
-                      Hesabındaki son
-                      gelişmeler
+                      {topbarText.latest}
                     </p>
                   </div>
 
@@ -514,14 +524,11 @@ export default function Topbar({
                   </span>
 
                   <p className="mt-4 text-xs font-bold text-[#F8D290]">
-                    Yeni bildirimin
-                    bulunmuyor
+                    {topbarText.noNotifications}
                   </p>
 
                   <p className="mt-1.5 text-[10px] leading-5 text-[#B5A093]/75">
-                    Beğeni, mesaj ve
-                    profil hareketleri
-                    burada gösterilecek.
+                    {topbarText.notificationInfo}
                   </p>
                 </div>
 
@@ -532,7 +539,7 @@ export default function Topbar({
                   }
                   className="flex min-h-11 items-center justify-center border-t border-[#F6BA48]/20 text-xs font-bold text-[#F6BA48] transition hover:bg-[#7E4114]/40"
                 >
-                  Bildirim merkezini aç
+                  {topbarText.notificationCenter}
                 </Link>
               </div>
             )}
@@ -559,7 +566,7 @@ export default function Topbar({
                 {profilePhoto ? (
                   <img
                     src={profilePhoto}
-                    alt={`${userName} profil fotoğrafı`}
+                    alt={`${userName} ${topbarText.profilePhoto}`}
                     className="h-full w-full object-cover"
                   />
                 ) : (
@@ -600,7 +607,7 @@ export default function Topbar({
                       {profilePhoto ? (
                         <img
                           src={profilePhoto}
-                          alt={`${userName} profil fotoğrafı`}
+                          alt={`${userName} ${topbarText.profilePhoto}`}
                           className="h-full w-full object-cover"
                         />
                       ) : (
@@ -628,7 +635,7 @@ export default function Topbar({
 
                       <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-[#3FB36E]/10 px-2 py-1 text-[8px] font-bold uppercase tracking-wider text-[#3FB36E]">
                         <span className="h-1.5 w-1.5 rounded-full bg-[#3FB36E]" />
-                        Çevrimiçi
+                        {topbarText.online}
                       </span>
                     </div>
                   </div>
@@ -643,7 +650,7 @@ export default function Topbar({
                     className="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-xs font-bold text-[#F8D290]/80 transition hover:bg-[#7E4114]/45 hover:text-[#F8D290]"
                   >
                   <UserRound className="h-4 w-4 text-[#F6BA48]" />
-                    Profilimi görüntüle
+                    {topbarText.viewProfile}
                   </Link>
 
                   <Link
@@ -654,7 +661,7 @@ export default function Topbar({
                     className="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-xs font-bold text-[#F8D290]/80 transition hover:bg-[#7E4114]/45 hover:text-[#F8D290]"
                   >
                     <Settings className="h-4 w-4 text-[#F6BA48]" />
-                    Profili düzenle
+                    {topbarText.editProfile}
                   </Link>
 
                   <Link
@@ -665,7 +672,7 @@ export default function Topbar({
                     className="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-xs font-bold text-slate-400 transition hover:bg-[#7E4114]/45 hover:text-[#F8D290]"
                   >
                     <Crown className="h-4 w-4 text-[#F6BA48]" />
-                    Premium özellikler
+                    {topbarText.premium}
                   </Link>
 
                   <Link
@@ -676,7 +683,7 @@ export default function Topbar({
                     className="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-xs font-bold text-slate-400 transition hover:bg-[#7E4114]/45 hover:text-[#F8D290]"
                   >
                     <ShieldCheck className="h-4 w-4 text-[#F6BA48]" />
-                    Güvenlik merkezi
+                    {topbarText.security}
                   </Link>
                 </div>
 
@@ -694,12 +701,11 @@ export default function Topbar({
 
                     <span className="min-w-0">
                       <span className="block text-[11px] font-extrabold text-white">
-                        Premium’a yükselt
+                        {topbarText.upgrade}
                       </span>
 
                       <span className="mt-0.5 block text-[9px] text-[#B5A093]/75">
-                        Daha fazla görünürlük
-                        kazan
+                        {topbarText.visibility}
                       </span>
                     </span>
                   </Link>
@@ -713,7 +719,7 @@ export default function Topbar({
                   className="flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-left text-xs font-bold text-[#B5A093]/80 transition hover:bg-red-400/[0.08] hover:text-red-300"
                 >
                   <LogOut className="h-4 w-4" />
-                  Güvenli çıkış yap
+                  {topbarText.logout}
                 </button>
               </div>
             )}

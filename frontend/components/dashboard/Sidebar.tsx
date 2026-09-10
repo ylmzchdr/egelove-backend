@@ -1,4 +1,4 @@
-
+"use client";
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -129,6 +129,27 @@ export default function Sidebar() {
       mainMenu: "القائمة الرئيسية",
       accountMenu: "قائمة الحساب",
     },
+    AZ: {
+  home: "Ana Səhifə",
+  discover: "Uyğun şəxsi tap",
+  likes: "Bəyənmələr",
+  messages: "Mesajlar",
+  notifications: "Bildirişlər",
+  profile: "Profilim",
+  settings: "Ayarlar",
+  help: "Yardım Mərkəzi",
+  platform: "SENveBEN.TR keyfiyyətli və təhlükəsiz təcrübə",
+  menu: "İdarə Mərkəzi",
+  account: "Hesabım",
+  special: "Xüsusi",
+  premiumText: "Daha çox görünürlük və xüsusi imkanlara sahib olun.",
+  premiumCta: "Premiumu İncele",
+  secure: "Təhlükəsiz bağlantı",
+  protected: "Hesabınız qorunur",
+  logout: "Çıxış et",
+  mainMenu: "Əsas menyu",
+  accountMenu: "Hesab menyusu",
+},
   }[lang];
 
   const mainMenuItems: MenuItem[] = [

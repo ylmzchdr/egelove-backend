@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import {
@@ -19,7 +19,7 @@ import HeroSection from "@/components/HeroSection";
 import Footer from "@/components/Footer";
 import AuthDialog from "@/components/AuthDialog";
 
-type LangKey = "TR" | "EN" | "RU" | "AR";
+type LangKey = "TR" | "AZ" | "EN" | "RU" | "AR";
 
 type FeatureTranslations = {
   sectionTitle: string;
@@ -52,16 +52,16 @@ const featuresTranslations: Record<LangKey, FeatureTranslations> = {
     sectionTitle: "Neden ",
     sectionBrand: "SENveBEN?",
     mainSubtitle:
-      "Türkiye'nin 81 ilinden yeni insanlarla tanış. Canlı görüntülü görüş, 4 dilde iletişim kur ve sana uygun kişilerle güvenli bağlantılar oluştur.",
+      "Türkiye'nin 81 ilinden yeni insanlarla tanış. Canlı görüntülü görüş, 5 dilde iletişim kur ve sana uygun kişilerle güvenli bağlantılar oluştur.",
     f1Title: "81 İlden Yeni İnsanlar",
     f1Desc:
       "Türkiye'nin dört bir yanından profilleri keşfet, sana uygun kişileri bul ve yeni bağlantılar kur.",
     f2Title: "Canlı Görüntülü Görüşme",
     f2Desc:
       "Karşılıklı eşleştiğin kişilerle birebir canlı görüntülü konuş ve daha doğal iletişim kur.",
-    f3Title: "4 Dilde İletişim",
+    f3Title: "5 Dilde İletişim",
     f3Desc:
-      "Türkçe, İngilizce, Rusça ve Arapça desteğiyle farklı diller konuşan kişilerle daha kolay iletişim kur.",
+      "Türkçe, Azerbaycanca, İngilizce, Rusça ve Arapça desteğiyle farklı diller konuşan kişilerle daha kolay iletişim kur.",
     f4Title: "Akıllı Eşleşme",
     f4Desc:
       "SENveBEN AI ile ilgi alanlarına ve tercihlerine daha uygun profilleri keşfet.",
@@ -73,16 +73,16 @@ const featuresTranslations: Record<LangKey, FeatureTranslations> = {
     sectionTitle: "Why ",
     sectionBrand: "SENveBEN?",
     mainSubtitle:
-      "Meet new people from all 81 provinces of Türkiye. Enjoy live video conversations, communicate in 4 languages and build safer connections.",
+      "Meet new people from all 81 provinces of Türkiye. Enjoy live video conversations, communicate in 5 languages and build safer connections.",
     f1Title: "People from 81 Provinces",
     f1Desc:
       "Discover profiles from across Türkiye, find people who match you and build new connections.",
     f2Title: "Live Video Conversations",
     f2Desc:
       "Start one-to-one live video conversations with people you mutually match with.",
-    f3Title: "Communication in 4 Languages",
+    f3Title: "Communication in 5 Languages",
     f3Desc:
-      "Communicate more easily with Turkish, English, Russian and Arabic language support.",
+      "Communicate more easily with Turkish, Azerbaijani, English, Russian and Arabic language support.",
     f4Title: "Smart Matching",
     f4Desc:
       "Discover profiles that better match your interests and preferences with SENveBEN AI.",
@@ -94,14 +94,14 @@ const featuresTranslations: Record<LangKey, FeatureTranslations> = {
     sectionTitle: "Почему ",
     sectionBrand: "SENveBEN?",
     mainSubtitle:
-      "Знакомьтесь с людьми из всех 81 провинций Турции. Общайтесь по видеосвязи, используйте 4 языка и создавайте безопасные знакомства.",
+      "Знакомьтесь с людьми из всех 81 провинций Турции. Общайтесь по видеосвязи, используйте 5 языков и создавайте безопасные знакомства.",
     f1Title: "Люди из 81 провинции",
     f1Desc:
       "Открывайте профили со всей Турции, находите подходящих людей и заводите новые знакомства.",
     f2Title: "Видеосвязь",
     f2Desc:
       "Общайтесь один на один по видеосвязи с людьми, с которыми у вас взаимная симпатия.",
-    f3Title: "Общение на 4 языках",
+    f3Title: "Общение на 5 языках",
     f3Desc:
       "Общайтесь проще благодаря поддержке турецкого, английского, русского и арабского языков.",
     f4Title: "Умный подбор",
@@ -115,14 +115,14 @@ const featuresTranslations: Record<LangKey, FeatureTranslations> = {
     sectionTitle: "لماذا ",
     sectionBrand: "SENveBEN؟",
     mainSubtitle:
-      "تعرّف على أشخاص من جميع المحافظات الـ81 في تركيا. تواصل بالفيديو واستخدم 4 لغات وأنشئ علاقات أكثر أمانًا.",
+      "تعرّف على أشخاص من جميع المحافظات الـ81 في تركيا. تواصل بالفيديو واستخدم 5 لغات وأنشئ علاقات أكثر أمانًا.",
     f1Title: "أشخاص من 81 محافظة",
     f1Desc:
       "اكتشف ملفات شخصية من جميع أنحاء تركيا واعثر على الأشخاص المناسبين لك وابدأ علاقات جديدة.",
     f2Title: "محادثات فيديو مباشرة",
     f2Desc:
       "ابدأ محادثات فيديو مباشرة مع الأشخاص الذين تتبادلون الإعجاب.",
-    f3Title: "التواصل بـ4 لغات",
+    f3Title: "التواصل بـ5 لغات",
     f3Desc:
       "تواصل بسهولة أكبر بفضل دعم التركية والإنجليزية والروسية والعربية.",
     f4Title: "مطابقة ذكية",
@@ -131,7 +131,27 @@ const featuresTranslations: Record<LangKey, FeatureTranslations> = {
     bottomNote:
       "الفيديو المباشر والمطابقة الذكية والتواصل متعدد اللغات تجتمع في SENveBEN.",
   },
-};
+
+  AZ: {
+    sectionTitle: "Niyə ",
+    sectionBrand: "SENveBEN?",
+    mainSubtitle:
+      "Türkiyənin 81 vilayətindən yeni insanlarla tanış ol. Canlı görüntülü söhbət et, 5 dildə ünsiyyət qur və sənə uyğun insanlarla təhlükəsiz əlaqələr yarat.",
+    f1Title: "81 Vilayətdən Yeni İnsanlar",
+    f1Desc:
+      "Türkiyənin hər yerindən profilləri kəşf et, sənə uyğun insanları tap və yeni əlaqələr qur.",
+    f2Title: "Canlı Görüntülü Söhbət",
+    f2Desc:
+      "Qarşılıqlı uyğunlaşdığın insanlarla təkbətək canlı görüntülü danış və daha təbii ünsiyyət qur.",
+    f3Title: "5 Dildə Ünsiyyət",
+    f3Desc:
+      "Türkcə, Azərbaycanca, İngiliscə, Rusca və Ərəbcə dil dəstəyi ilə fərqli dillərdə danışan insanlarla daha asan ünsiyyət qur.",
+    f4Title: "Ağıllı Uyğunlaşdırma",
+    f4Desc:
+      "SENveBEN AI ilə maraqlarına və seçimlərinə daha uyğun profilləri kəşf et.",
+    bottomNote:
+      "Canlı görüntülü ünsiyyət, ağıllı uyğunlaşdırma və çoxdilli əlaqə SENveBEN-də bir aradadır.",
+  },};
 
 const contactTranslations: Record<LangKey, ContactTranslations> = {
   TR: {
@@ -181,7 +201,18 @@ const contactTranslations: Record<LangKey, ContactTranslations> = {
     techDesc: "مدعوم بتقنية SENveBEN AI",
     secureNote: "نحن هنا من أجل تواصل أكثر أمانًا وصدقًا.",
   },
-};
+
+  AZ: {
+    eyebrow: "SENveBEN",
+    title: "Əlaqə",
+    subtitle:
+      "Suallarınız, təklifləriniz və ya əməkdaşlıq imkanları üçün bizimlə əlaqə saxlaya bilərsiniz.",
+    emailTitle: "E-poçt",
+    webTitle: "Veb sayt",
+    techTitle: "Texnologiya",
+    techDesc: "SENveBEN AI dəstəkli",
+    secureNote: "Təhlükəsiz və səmimi ünsiyyət üçün buradayıq.",
+  },};
 
 function FeaturesSection({ langKey }: { langKey: LangKey }) {
   const t = featuresTranslations[langKey];
@@ -396,3 +427,4 @@ export default function Home() {
     </div>
   );
 }
+

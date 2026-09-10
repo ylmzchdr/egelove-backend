@@ -42,7 +42,76 @@ export default function DashboardPage() {
   const [showInstallHelp, setShowInstallHelp] = useState(false);
   const [installMessage, setInstallMessage] = useState("");
 
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+
+  const pwaText: Record<string, string> = ({
+    TR: {
+      installed: "senveben telefonuna başarıyla yüklendi.",
+      alreadyInstalled: "senveben zaten telefonunda yüklü.",
+      installing: "senveben yükleniyor...",
+      cancelled: "Kurulum iptal edildi. İstersen daha sonra tekrar deneyebilirsin.",
+      onPhone: "TELEFONUNDA YÜKLÜ",
+      onPhoneText: "senveben Telefonunda",
+      iosTitle: "iPhone'a senveben Nasıl Eklenir?",
+      otherTitle: "senveben'ı Ana Ekrana Ekle",
+      iosHelp: "Safari'de alttaki Paylaş simgesine dokun. Açılan menüden Ana Ekrana Ekle seçeneğini seç ve ardından Ekle butonuna dokun.",
+      otherHelp: "Tarayıcının menüsünü aç ve Uygulamayı yükle veya Ana ekrana ekle seçeneğini kullan. Kurulum seçeneği görünmüyorsa sayfayı normal tarayıcı sekmesinde açıp tekrar dene.",
+      closeHelp: "Kurulum yardımını kapat"
+    },
+    AZ: {
+      installed: "senveben telefonunuza uğurla quraşdırıldı.",
+      alreadyInstalled: "senveben artıq telefonunuzda quraşdırılıb.",
+      installing: "senveben quraşdırılır...",
+      cancelled: "Quraşdırma ləğv edildi. İstəsəniz daha sonra yenidən cəhd edə bilərsiniz.",
+      onPhone: "TELEFONUNUZDA QURAŞDIRILIB",
+      onPhoneText: "senveben Telefonunuzda",
+      iosTitle: "senveben iPhone-a necə əlavə edilir?",
+      otherTitle: "senveben-i Ana Ekrana Əlavə Et",
+      iosHelp: "Safari-də aşağıdakı Paylaş işarəsinə toxunun. Açılan menyudan Ana Ekrana Əlavə Et seçimini seçin və sonra Əlavə Et düyməsinə toxunun.",
+      otherHelp: "Brauzerin menyusunu açın və Tətbiqi quraşdır və ya Ana ekrana əlavə et seçimini istifadə edin. Quraşdırma seçimi görünmürsə, səhifəni adi brauzer bölməsində açıb yenidən cəhd edin.",
+      closeHelp: "Quraşdırma köməyini bağla"
+    },
+    EN: {
+      installed: "senveben was successfully installed on your phone.",
+      alreadyInstalled: "senveben is already installed on your phone.",
+      installing: "senveben is installing...",
+      cancelled: "Installation was cancelled. You can try again later.",
+      onPhone: "INSTALLED ON YOUR PHONE",
+      onPhoneText: "senveben is on your phone",
+      iosTitle: "How to Add senveben to iPhone?",
+      otherTitle: "Add senveben to Home Screen",
+      iosHelp: "In Safari, tap the Share icon below. Select Add to Home Screen from the menu, then tap Add.",
+      otherHelp: "Open your browser menu and select Install app or Add to Home screen. If the installation option is not visible, open the page in a normal browser tab and try again.",
+      closeHelp: "Close installation help"
+    },
+    RU: {
+      installed: "senveben успешно установлен на ваш телефон.",
+      alreadyInstalled: "senveben уже установлен на вашем телефоне.",
+      installing: "senveben устанавливается...",
+      cancelled: "Установка отменена. Вы можете повторить попытку позже.",
+      onPhone: "УСТАНОВЛЕНО НА ТЕЛЕФОНЕ",
+      onPhoneText: "senveben на вашем телефоне",
+      iosTitle: "Как добавить senveben на iPhone?",
+      otherTitle: "Добавить senveben на главный экран",
+      iosHelp: "В Safari нажмите значок «Поделиться» внизу. В открывшемся меню выберите «На экран Домой», затем нажмите «Добавить».",
+      otherHelp: "Откройте меню браузера и выберите «Установить приложение» или «Добавить на главный экран». Если пункт установки не отображается, откройте страницу в обычной вкладке браузера и попробуйте снова.",
+      closeHelp: "Закрыть помощь по установке"
+    },
+    AR: {
+      installed: "تم تثبيت senveben على هاتفك بنجاح.",
+      alreadyInstalled: "senveben مثبت بالفعل على هاتفك.",
+      installing: "جارٍ تثبيت senveben...",
+      cancelled: "تم إلغاء التثبيت. يمكنك المحاولة مرة أخرى لاحقًا.",
+      onPhone: "مثبت على هاتفك",
+      onPhoneText: "senveben على هاتفك",
+      iosTitle: "كيفية إضافة senveben إلى iPhone؟",
+      otherTitle: "إضافة senveben إلى الشاشة الرئيسية",
+      iosHelp: "في Safari، اضغط على أيقونة المشاركة في الأسفل. اختر إضافة إلى الشاشة الرئيسية من القائمة، ثم اضغط على إضافة.",
+      otherHelp: "افتح قائمة المتصفح واختر تثبيت التطبيق أو إضافة إلى الشاشة الرئيسية. إذا لم يظهر خيار التثبيت، افتح الصفحة في علامة تبويب عادية وحاول مرة أخرى.",
+      closeHelp: "إغلاق تعليمات التثبيت"
+    }
+  } as Record<string, Record<string, string>>)[lang];
+
 
   const [user, setUser] = useState({
     name: "Üye",
@@ -129,7 +198,7 @@ export default function DashboardPage() {
       setDeferredPrompt(null);
       setIsStandalone(true);
       setShowInstallHelp(false);
-      setInstallMessage("senveben telefonuna başarıyla yüklendi.");
+      setInstallMessage(pwaText.installed);
     };
 
     window.addEventListener(
@@ -151,7 +220,7 @@ export default function DashboardPage() {
 
   const handleInstallClick = async () => {
     if (isStandalone) {
-      setInstallMessage("senveben zaten telefonunda yüklü.");
+      setInstallMessage(pwaText.alreadyInstalled);
       return;
     }
 
@@ -170,10 +239,10 @@ export default function DashboardPage() {
         setDeferredPrompt(null);
 
         if (choice.outcome === "accepted") {
-          setInstallMessage("senveben yükleniyor...");
+          setInstallMessage(pwaText.installing);
         } else {
           setInstallMessage(
-            "Kurulum iptal edildi. İstersen daha sonra tekrar deneyebilirsin."
+            pwaText.cancelled
           );
         }
       } catch (error) {
@@ -356,7 +425,7 @@ export default function DashboardPage() {
                             : "border-[#F6BA48] bg-[#F6BA48] text-[#310D0C]"
                         }`}
                       >
-                        {isStandalone ? "TELEFONUNDA YÜKLÜ" : t.dashboard.free}
+                        {isStandalone ? pwaText.onPhone : t.dashboard.free}
                       </span>
                     </div>
 
@@ -380,7 +449,7 @@ export default function DashboardPage() {
                   {isStandalone && (
                     <div className="relative mt-auto flex w-full items-center justify-center gap-2 rounded-xl border border-[#3FB36E]/50 bg-[#3FB36E]/10 px-4 py-3 text-sm font-bold text-[#3FB36E]">
                       <Smartphone className="h-4 w-4" />
-                      senveben Telefonunda
+                      {pwaText.onPhoneText}
                     </div>
                   )}
 
@@ -410,38 +479,17 @@ export default function DashboardPage() {
                     <div className="min-w-0">
                       <h3 className="text-sm font-black text-[#F8D290]">
                         {isIOS
-                          ? "iPhone'a senveben Nasıl Eklenir?"
-                          : "senveben'ı Ana Ekrana Ekle"}
+                          ? pwaText.iosTitle
+                          : pwaText.otherTitle}
                       </h3>
 
                       {isIOS ? (
                         <p className="mt-2 text-xs leading-6 text-[#F8D290]/75 md:text-sm">
-                          Safari&apos;de alttaki
-                          <span className="font-bold text-[#F6BA48]">
-                            {" "}Paylaş{" "}
-                          </span>
-                          simgesine dokun. Açılan menüden
-                          <span className="font-bold text-[#F8D290]">
-                            {" "}Ana Ekrana Ekle{" "}
-                          </span>
-                          seçeneğini seç ve ardından
-                          <span className="font-bold text-[#F6BA48]">
-                            {" "}Ekle
-                          </span>
-                          butonuna dokun.
+                          {pwaText.iosHelp}
                         </p>
                       ) : (
                         <p className="mt-2 text-xs leading-6 text-[#F8D290]/75 md:text-sm">
-                          Tarayıcının menüsünü aç ve
-                          <span className="font-bold text-[#F8D290]">
-                            {" "}Uygulamayı yükle{" "}
-                          </span>
-                          veya
-                          <span className="font-bold text-[#F8D290]">
-                            {" "}Ana ekrana ekle{" "}
-                          </span>
-                          seçeneğini kullan. Kurulum seçeneği görünmüyorsa
-                          sayfayı normal tarayıcı sekmesinde açıp tekrar dene.
+                          {pwaText.otherHelp}
                         </p>
                       )}
                     </div>
@@ -450,7 +498,7 @@ export default function DashboardPage() {
 
                   <button
                     type="button"
-                    aria-label="Kurulum yardımını kapat"
+                    aria-label={pwaText.closeHelp}
                     onClick={() => setShowInstallHelp(false)}
                     className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[#F6BA48]/60 bg-[#310D0C] text-[#F6BA48] transition hover:bg-[#512510] hover:text-[#F8D290]"
                   >

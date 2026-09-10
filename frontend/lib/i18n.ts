@@ -1,4 +1,4 @@
-export type Lang = "TR" | "EN" | "RU" | "AR";
+﻿export type Lang = "TR" | "EN" | "RU" | "AR" | "AZ";
 
 const tr = {
   nav: { home: "Ana Sayfa", discover: "Sana Uygun Kişiyi Bul", likes: "Beğeniler", messages: "Mesajlar", premium: "Premium", dashboard: "Benim Sayfam" },
@@ -478,5 +478,31 @@ openFilters: "فتح الفلاتر",
   city: "المدينة",
   features: { title: "لماذا SenVeBen؟", members: "قاعدة أعضاء كبيرة", membersDesc: "أكبر موقع زواج مع 90 ألف تسجيل شهرياً.", secure: "منصة آمنة", secureDesc: "جميع بياناتك مشفرة.", mobile: "تطبيق جوال", mobileDesc: "الوصول إلى حسابك في أي وقت.", experience: "15 عاماً من الخبرة", experienceDesc: "آلاف القصص السعيدة بدأت معنا." },
 };
+const az: typeof tr = {
+  ...tr,
 
-export const translations: Record<Lang, typeof tr> = { TR: tr, EN: en, RU: ru, AR: ar };
+  nav: {
+    ...tr.nav,
+    home: "Ana Səhifə",
+    discover: "Sənə Uyğun İnsanı Tap",
+    likes: "Bəyənmələr",
+    messages: "Mesajlar",
+    premium: "Premium",
+    dashboard: "Mənim Səhifəm",
+  },
+
+  auth: {
+    ...tr.auth,
+    login: "Daxil Ol",
+    register: "Qeydiyyatdan Keç",
+    logout: "Çıxış",
+  },
+};
+
+export const translations: Record<Lang, typeof tr> = {
+  TR: tr,
+  EN: en,
+  RU: ru,
+  AR: ar,
+  AZ: az,
+};

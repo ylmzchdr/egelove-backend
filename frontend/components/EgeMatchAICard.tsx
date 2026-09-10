@@ -98,6 +98,21 @@ const TEXT: Record<Lang, MatchText> = {
     summary: (name) =>
       `يحلل SENveBEN AI التوافق بين ملفك الشخصي و${name} بناءً على الاهتمامات ونمط الحياة وتوقعات العلاقة.`,
   },
+    AZ: {
+    subtitle: "Süni intellekt uyğunluq analizi",
+    perfectMatch: "Mükəmməl Uyğunluq",
+    highMatch: "Yüksək Uyğunluq",
+    mediumMatch: "Orta Uyğunluq",
+    lowMatch: "Aşağı Uyğunluq",
+    shortComment: "Uyğunluq şərhi",
+    energy: "Enerji",
+    interest: "Maraq",
+    love: "Sevgi",
+    premiumMessage: "Daha ətraflı uyğunluq analizi üçün Premium-u kəşf et.",
+    profileFallback: "Bu profil",
+    summary: (name) =>
+      `${name} ilə həyat tərzi, maraqlar və emosional uyğunluq baxımından SENveBEN AI tərəfindən təhlil edildi.`,
+  },
 };
 
 export default function EgeMatchAICard({
@@ -112,7 +127,7 @@ export default function EgeMatchAICard({
   const { lang } = useI18n();
   const [animatedScore, setAnimatedScore] = useState(0);
 
-  const currentLang: Lang = ["TR", "EN", "RU", "AR"].includes(lang)
+ const currentLang: Lang = ["TR", "EN", "RU", "AR", "AZ"].includes(lang)
     ? (lang as Lang)
     : "TR";
 
