@@ -155,10 +155,11 @@ model User {
   cityId             Int
   city               City      @relation(fields: [cityId], references: [id])
 
-  districtId         Int
-  district           District  @relation(fields: [districtId], references: [id])
+  districtId         Int?
+  district           District? @relation(fields: [districtId], references: [id])
 
   spokenLanguages    String[]  @default([])
+
 
   bio                String?
   avatar             String?
