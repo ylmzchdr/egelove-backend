@@ -585,6 +585,18 @@ setIsPremium(premiumStatus);
                   >
                     🇸🇦 AR
                   </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setLang("AZ")}
+                    className={`h-10 px-3 rounded-xl border text-xs font-bold transition ${
+                      lang === "AZ"
+                        ? "border-[#F6BA48] bg-[#B16323] text-white"
+                        : "border-[#F6BA48]/30 bg-[#683312]/55 text-[#B5A093] hover:text-[#F8D290] hover:bg-[#7E4114]/65"
+                    }`}
+                  >
+                    🇦🇿 AZ
+                  </button>
                 </div>
 
                 {/* NOTIFICATION */}

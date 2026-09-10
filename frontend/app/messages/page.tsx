@@ -1782,7 +1782,7 @@ function MessagesContent() {
           </nav>
 
           <div className="hidden items-center gap-1 sm:flex">
-            {(["TR", "EN", "RU", "AR"] as const).map((language) => (
+            {(["TR", "EN", "RU", "AR", "AZ"] as const).map((language) => (
               <button
                 key={language}
                 type="button"
