@@ -292,53 +292,8 @@ export default function Topbar({
           />
         </button>
 
-        {/* ARAMA */}
-        <form
-          onSubmit={handleSearch}
-         className="group relative hidden min-w-0 flex-1 md:block md:max-w-[420px] lg:max-w-[450px] xl:max-w-[480px]"
-        >
-          <Search
-            className="pointer-events-none absolute left-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-[#F6BA48]/60 transition-colors duration-300 group-focus-within:text-[#F6BA48]"
-            strokeWidth={1.9}
-          />
-
-          <input
-            type="search"
-            value={searchValue}
-            onChange={(event) =>
-              setSearchValue(
-                event.target.value,
-              )
-            }
-            placeholder={topbarText.search}
-            aria-label={topbarText.member}
-            className="h-11 w-full rounded-2xl border border-[#F6BA48]/25 bg-[#512510]/55 pl-11 pr-20 text-base font-medium text-[#F8D290] outline-none transition-all duration-300 placeholder:text-[#B5A093]/70 hover:border-[#F6BA48]/40 focus:border-[#F6BA48]/60 focus:bg-[#683312]/55 focus:shadow-[0_0_0_4px_rgba(246,186,72,0.10)]"
-          />
-
-          <span className="pointer-events-none absolute right-3 top-1/2 hidden -translate-y-1/2 rounded-lg border border-[#F6BA48]/20 bg-[#512510]/60 px-2 py-1 text-[9px] font-bold text-[#B5A093]/80 xl:block">
-            ENTER
-          </span>
-        </form>
-
-        {/* MOBİL ARAMA */}
-        <Link
-          href="/search"
-          aria-label={topbarText.member}
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[#F6BA48]/25 bg-[#512510]/65 text-[#F8D290]/75 transition-all duration-300 hover:border-[#F6BA48]/55 hover:bg-[#7E4114]/60 hover:text-[#F6BA48] md:hidden"
-        >
-          <Search
-            className="h-[19px] w-[19px]"
-            strokeWidth={1.9}
-          />
-        </Link>
-
-        {/* SAĞ KONTROLLER */}
-        <div className="ml-auto flex min-w-0 shrink-0 items-center gap-2">
-
-          {/* TEMA */}
-
-          {/* DİLLER */}
-<div className="hidden items-center gap-1 sm:flex">
+        {/* DİL SEÇENEKLERİ */}
+<div className="flex flex-1 items-center gap-2">
   {languages.map((language) => {
     const isSelected = lang === language.code;
 
@@ -348,19 +303,44 @@ export default function Topbar({
         type="button"
         onClick={() => handleLanguageChange(language.code)}
         aria-label={`${language.label} diline geç`}
+        title={language.label}
         className={[
-          "flex h-9 min-w-[38px] items-center justify-center rounded-xl px-2",
-          "text-[11px] font-extrabold transition-all duration-200",
+          "group flex h-11 shrink-0 overflow-hidden rounded-xl border transition-all duration-200",
           isSelected
-            ? "border border-[#F6BA48]/60 bg-[#7E4114]/70 text-[#F8D290] shadow-[0_0_14px_rgba(246,186,72,0.12)]"
-            : "border border-transparent text-[#B5A093]/80 hover:border-[#F6BA48]/30 hover:bg-[#7E4114]/45 hover:text-[#F8D290]",
+            ? "border-[#F6BA48]/80 bg-[#7E4114]/80 shadow-[0_0_16px_rgba(246,186,72,0.16)]"
+            : "border-[#F6BA48]/25 bg-[#512510]/65 hover:border-[#F6BA48]/55 hover:bg-[#7E4114]/55",
         ].join(" ")}
       >
-        {language.shortLabel}
+        <span
+          className={[
+            "flex h-full w-11 items-center justify-center border-r text-[21px]",
+            isSelected
+              ? "border-[#F6BA48]/50 bg-[#F6BA48]/10"
+              : "border-[#F6BA48]/20 bg-[#310D0C]/35",
+          ].join(" ")}
+        >
+          {language.flag}
+        </span>
+
+        <span
+          className={[
+            "flex h-full min-w-[42px] items-center justify-center px-3 text-xs font-black tracking-wide",
+            isSelected
+              ? "text-[#F8D290]"
+              : "text-[#B5A093] group-hover:text-[#F8D290]",
+          ].join(" ")}
+        >
+          {language.shortLabel}
+        </span>
       </button>
     );
   })}
+
+  <span className="flex-1" />
 </div>
+
+{/* SAĞ KONTROLLER */}
+<div className="ml-auto flex min-w-0 shrink-0 items-center gap-2">
           {/* MESAJLAR */}
           <div className="relative">
             <button
