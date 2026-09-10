@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Bell, ArrowLeft, Loader2, CheckCircle2 } from "lucide-react";
+import { useI18n } from "@/lib/i18n-context";
 
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL ||
@@ -16,6 +17,35 @@ interface NotificationItem {
 }
 
 export default function NotificationsPage() {
+  const { lang } = useI18n();
+
+  const copy = {
+    TR: {
+      noSession: "Oturum bulunamadı.",
+      fetchError: "Bildirimler alınamadı",
+      loadError: "Bildirimler yüklenemedi.",
+      back: "⬅️ ANA SAYFAYA GERİ DÖN",
+      center: "SENveBEN BİLDİRİM MERKEZİ",
+      title: "Son Aktivite Bildirimleri",
+      subtitle: "Platform genelindeki anlık etkileşimleriniz ve sistem raporları.",
+      markAll: "Tümünü Okundu İşaretle",
+      empty: "[ Henüz yeni bir bildiriminiz bulunmuyor ]",
+    },
+    AZ: {
+      noSession: "Sessiya tapılmadı.",
+      fetchError: "Bildirişlər alına bilmədi",
+      loadError: "Bildirişlər yüklənə bilmədi.",
+      back: "⬅️ ANA SƏHİFƏYƏ QAYIT",
+      center: "SENveBEN BİLDİRİŞ MƏRKƏZİ",
+      title: "Son Fəaliyyət Bildirişləri",
+      subtitle: "Platformadakı ani qarşılıqlı əlaqələriniz və sistem məlumatları.",
+      markAll: "Hamısını Oxunmuş İşarələ",
+      empty: "[ Hələ yeni bildirişiniz yoxdur ]",
+    },
+  } as const;
+
+  const tx = copy[lang === "AZ" ? "AZ" : "TR"];
+
   const [isClient, setIsClient] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -29,7 +59,7 @@ export default function NotificationsPage() {
       const accessToken = localStorage.getItem("accessToken");
 
       if (!accessToken) {
-        setError("Oturum bulunamadı.");
+        setError(tx.noSession);
         return;
       }
 
@@ -43,7 +73,7 @@ export default function NotificationsPage() {
       });
 
       if (!res.ok) {
-        throw new Error(`Bildirimler alınamadı: ${res.status}`);
+        throw new Error(`${tx.fetchError}: ${res.status}`);
       }
 
       const data = await res.json();
@@ -51,7 +81,7 @@ export default function NotificationsPage() {
       setNotifications(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Notifications fetch error:", err);
-      setError("Bildirimler yüklenemedi.");
+      setError(tx.loadError);
       setNotifications([]);
     } finally {
       setLoading(false);
@@ -93,11 +123,11 @@ export default function NotificationsPage() {
           className="flex items-center gap-3 rounded-2xl border border-[#F6BA48]/30 bg-gradient-to-r from-[#7E4114] via-[#B16323] to-[#F6BA48] px-6 py-3 text-sm font-black tracking-wider text-[#310D0C] shadow-lg shadow-black/20 transition-all hover:brightness-110"
         >
           <ArrowLeft className="h-4 w-4" />
-          <span>⬅️ ANA SAYFAYA GERİ DÖN</span>
+          <span>{tx.back}</span>
         </a>
 
         <span className="font-mono text-xs font-bold tracking-widest text-[#F6BA48]">
-          SENveBEN BİLDİRİM MERKEZİ
+          {tx.center}
         </span>
       </header>
 
@@ -110,11 +140,11 @@ export default function NotificationsPage() {
 
             <div>
               <h2 className="text-lg font-black uppercase tracking-wider text-[#F6BA48]">
-                Son Aktivite Bildirimleri
+                {tx.title}
               </h2>
 
               <p className="mt-0.5 text-[10px] tracking-wide text-[#B5A093]">
-                Platform genelindeki anlık etkileşimleriniz ve sistem raporları.
+                {tx.subtitle}
               </p>
             </div>
           </div>
@@ -125,7 +155,7 @@ export default function NotificationsPage() {
               className="flex shrink-0 items-center gap-2 rounded-xl border border-[#F6BA48]/15 bg-[#683312]/70 px-4 py-2 text-xs font-bold text-[#F8D290] shadow-md transition-all hover:border-[#F6BA48]/30 hover:bg-[#7E4114]"
             >
               <CheckCircle2 className="h-4 w-4 text-[#3FB36E]" />
-              <span>Tümünü Okundu İşaretle</span>
+              <span>{tx.markAll}</span>
             </button>
           )}
         </div>
@@ -140,7 +170,7 @@ export default function NotificationsPage() {
           </div>
         ) : notifications.length === 0 ? (
           <div className="py-12 text-center text-xs font-bold uppercase tracking-wide text-[#9F7C61]">
-            [ Henüz yeni bir bildiriminiz bulunmuyor ]
+            {tx.empty}
           </div>
         ) : (
           <div className="space-y-4">
