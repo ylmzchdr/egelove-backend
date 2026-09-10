@@ -136,8 +136,8 @@ model User {
   seekingGender      Gender?
   cityId             Int
   city               City      @relation(fields: [cityId], references: [id])
-  districtId         Int
-  district           District  @relation(fields: [districtId], references: [id])
+  districtId         Int?
+  district           District? @relation(fields: [districtId], references: [id])
   bio                String?
   avatar             String?
   isPremiumCandidate Boolean   @default(false)
