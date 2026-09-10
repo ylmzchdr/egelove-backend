@@ -5,6 +5,7 @@ import Link from "next/link";
 
 
 import { api } from "@/lib/api";
+import { useI18n } from "@/lib/i18n-context";
 
 import {
   Search,
@@ -72,6 +73,8 @@ interface RangeInputsProps {
   maxValue: string;
   onMinChange: (value: string) => void;
   onMaxChange: (value: string) => void;
+  minPlaceholder: string;
+  maxPlaceholder: string;
 }
 
 function RangeInputs({
@@ -79,6 +82,8 @@ function RangeInputs({
   maxValue,
   onMinChange,
   onMaxChange,
+  minPlaceholder,
+  maxPlaceholder,
 }: RangeInputsProps) {
   return (
     <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
@@ -86,7 +91,7 @@ function RangeInputs({
         type="number"
         min="18"
         max="99"
-        placeholder="En az"
+        placeholder={minPlaceholder}
         value={minValue}
         onChange={(event) => onMinChange(event.target.value)}
       />
@@ -97,7 +102,7 @@ function RangeInputs({
         type="number"
         min="18"
         max="99"
-        placeholder="En çok"
+        placeholder={maxPlaceholder}
         value={maxValue}
         onChange={(event) => onMaxChange(event.target.value)}
       />
@@ -158,7 +163,15 @@ function FilterCheckbox({
 // SONUÇ KARTI
 // --------------------------------------------------
 
-function UserCard({ user }: { user: SearchUser }) {
+function UserCard({
+  user,
+  ageSuffix,
+  onlineLabel,
+}: {
+  user: SearchUser;
+  ageSuffix: string;
+  onlineLabel: string;
+}) {
  
   const image = user.photo || user.avatar;
 
@@ -217,7 +230,7 @@ function UserCard({ user }: { user: SearchUser }) {
           <div className="mt-1 flex flex-wrap items-center gap-3 text-sm text-white/50">
 
             {user.age !== null && (
-              <span>{user.age} yaş</span>
+              <span>{user.age} {ageSuffix}</span>
             )}
 
             {user.city && (
@@ -229,7 +242,7 @@ function UserCard({ user }: { user: SearchUser }) {
 
             {user.online && (
               <span className="font-semibold text-emerald-400">
-                Çevrimiçi
+                {onlineLabel}
               </span>
             )}
 
@@ -245,6 +258,56 @@ function UserCard({ user }: { user: SearchUser }) {
 // --------------------------------------------------
 
 export default function SearchPage() {
+  const { lang } = useI18n();
+
+  const copy = {
+    TR: {
+      min: "En az",
+      max: "En çok",
+      ageSuffix: "yaş",
+      online: "Çevrimiçi",
+      error: "Arama sırasında bir hata oluştu.",
+      live: "81 İLDEN CANLI VE GÜVENLİ BAĞLANTI",
+      placeholder: "İsim, şehir veya kullanıcı adı ara...",
+      back: "← Anasayfaya Dön",
+      search: "Ara",
+      filters: "Filtreler",
+      ageRange: "Yaş Aralığı",
+      onlyOnline: "Sadece Çevrimiçi",
+      onlyVip: "Sadece VIP Üyeler",
+      noResults: "Sonuç bulunamadı",
+      resultsFound: "sonuç bulundu",
+      searching: "Kullanıcılar aranıyor...",
+      userNotFound: "Kullanıcı bulunamadı",
+      changeCriteria: "Arama kriterlerini değiştirip tekrar deneyebilirsin.",
+      intro1: "Bir isim, kullanıcı adı veya şehir yazıp",
+      intro2: "Enter'a basarak arama yap.",
+    },
+    AZ: {
+      min: "Ən az",
+      max: "Ən çox",
+      ageSuffix: "yaş",
+      online: "Onlayn",
+      error: "Axtarış zamanı xəta baş verdi.",
+      live: "81 ŞƏHƏRDƏN CANLI VƏ TƏHLÜKƏSİZ BAĞLANTI",
+      placeholder: "Ad, şəhər və ya istifadəçi adı axtar...",
+      back: "← Ana Səhifəyə Qayıt",
+      search: "Axtar",
+      filters: "Filtrlər",
+      ageRange: "Yaş Aralığı",
+      onlyOnline: "Yalnız Onlayn",
+      onlyVip: "Yalnız VIP Üzvlər",
+      noResults: "Nəticə tapılmadı",
+      resultsFound: "nəticə tapıldı",
+      searching: "İstifadəçilər axtarılır...",
+      userNotFound: "İstifadəçi tapılmadı",
+      changeCriteria: "Axtarış meyarlarını dəyişdirib yenidən cəhd edə bilərsən.",
+      intro1: "Ad, istifadəçi adı və ya şəhər yazıb",
+      intro2: "Enter düyməsinə basaraq axtarış et.",
+    },
+  } as const;
+
+  const tx = copy[lang === "AZ" ? "AZ" : "TR"];
     // Tarayıcı ortamındaysak URL'deki parametreyi güvenle okur, sunucuda çökmeyi önler
   const isOnlineFilter = typeof window !== 'undefined' 
     ? new URLSearchParams(window.location.search).get('online') === 'true' 
@@ -369,7 +432,7 @@ setHasSearched(true);
       setError(
         err instanceof Error
           ? err.message
-          : "Arama sırasında bir hata oluştu."
+          : tx.error
       );
     } finally {
       setLoading(false);
@@ -434,7 +497,7 @@ setHasSearched(true);
           </span>
 
           <p className="text-xs font-bold tracking-wide text-[#F6BA48]">
-            81 İLDEN CANLI VE GÜVENLİ BAĞLANTI
+            {tx.live}
           </p>
         </div>
       </div>
@@ -453,7 +516,7 @@ setHasSearched(true);
 
             <input
               type="text"
-              placeholder="İsim, şehir veya kullanıcı adı ara..."
+              placeholder={tx.placeholder}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={handleKeyDown}
@@ -465,7 +528,7 @@ setHasSearched(true);
         href="/dashboard"
         className="mx-auto mt-3 inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2 text-sm font-semibold text-white/70 transition-all duration-200 hover:border-[#F6BA48]/30 hover:bg-[#F6BA48]/[0.06] hover:text-[#F8D290]"
       >
-        ← Anasayfaya Dön
+        {tx.back}
       </Link>
 
           {/* ARAMA BUTONU */}
@@ -475,7 +538,7 @@ setHasSearched(true);
             onClick={performSearch}
             disabled={loading}
             className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-[#F6BA48]/40 bg-[#F6BA48]/10 text-[#F8D290] transition hover:bg-[#F6BA48]/20 disabled:cursor-not-allowed disabled:opacity-50"
-            title="Ara"
+            title={tx.search}
           >
             {loading ? (
               <Loader2 className="h-5 w-5 animate-spin" />
@@ -494,7 +557,7 @@ setHasSearched(true);
                 ? "border-[#F6BA48] bg-[#F6BA48]/10 text-[#F6BA48]"
                 : "border-white/12 bg-white/[0.05] text-white/60 hover:bg-white/[0.08]"
             }`}
-            title="Filtreler"
+            title={tx.filters}
           >
             <SlidersHorizontal className="h-5 w-5" />
           </button>
@@ -512,7 +575,7 @@ setHasSearched(true);
 
               <label className="flex items-center gap-2 text-sm font-semibold text-white/60">
                 <Users className="h-4 w-4 text-[#F6BA48]" />
-                Yaş Aralığı
+                {tx.ageRange}
               </label>
 
               <RangeInputs
@@ -520,6 +583,8 @@ setHasSearched(true);
                 maxValue={maxAge}
                 onMinChange={setMinAge}
                 onMaxChange={setMaxAge}
+                minPlaceholder={tx.min}
+                maxPlaceholder={tx.max}
               />
 
             </div>
@@ -530,7 +595,7 @@ setHasSearched(true);
                 checked={onlyOnline}
                 onCheckedChange={setOnlyOnline}
                 icon={<Zap className="h-4 w-4" />}
-                label="Sadece Çevrimiçi"
+                label={tx.onlyOnline}
                 pulse
               />
 
@@ -538,7 +603,7 @@ setHasSearched(true);
                 checked={onlyPremium}
                 onCheckedChange={setOnlyPremium}
                 icon={<Shield className="h-4 w-4" />}
-                label="Sadece VIP Üyeler"
+                label={tx.onlyVip}
               />
 
             </div>
@@ -565,8 +630,8 @@ setHasSearched(true);
 
             <span className="text-sm text-white/40">
               {total === 0
-                ? "Sonuç bulunamadı"
-                : `${total} sonuç bulundu`}
+                ? tx.noResults
+                : `${total} ${tx.resultsFound}`}
             </span>
 
             {searchQuery.trim() && (
@@ -588,7 +653,7 @@ setHasSearched(true);
             <Loader2 className="mb-3 h-8 w-8 animate-spin text-[#F6BA48]" />
 
             <p className="text-sm text-white/50">
-              Kullanıcılar aranıyor...
+              {tx.searching}
             </p>
 
           </div>
@@ -605,6 +670,8 @@ setHasSearched(true);
               <UserCard
                 key={user.id}
                 user={user}
+                ageSuffix={tx.ageSuffix}
+                onlineLabel={tx.online}
               />
             ))}
 
@@ -624,11 +691,11 @@ setHasSearched(true);
               <Search className="mx-auto mb-4 h-10 w-10 text-white/20" />
 
               <h2 className="text-lg font-bold text-white/70">
-                Kullanıcı bulunamadı
+                {tx.userNotFound}
               </h2>
 
               <p className="mt-2 text-sm text-white/40">
-                Arama kriterlerini değiştirip tekrar deneyebilirsin.
+                {tx.changeCriteria}
               </p>
 
             </div>
@@ -644,9 +711,9 @@ setHasSearched(true);
             <Search className="mx-auto mb-3 h-8 w-8 text-white/15" />
 
             <p className="text-sm text-white/40">
-              Bir isim, kullanıcı adı veya şehir yazıp
+              {tx.intro1}
               <br />
-              Enter'a basarak arama yap.
+              {tx.intro2}
             </p>
 
           </div>
