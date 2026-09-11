@@ -137,6 +137,16 @@ const updated = await this.prisma.user.update({
 }
   @Get("online")
 async getOnlineUsers(@CurrentUser() user?: any) {
+   let seekingGender: "MALE" | "FEMALE" | "OTHER" | null = null;
+
+if (user?.sub) {
+  const currentUser = await this.prisma.user.findUnique({
+    where: { id: user.sub },
+    select: { seekingGender: true },
+  });
+
+  seekingGender = currentUser?.seekingGender ?? null;
+}
   const fiveMinutesAgo = new Date();
   fiveMinutesAgo.setUTCMinutes(
     fiveMinutesAgo.getUTCMinutes() - 5,
