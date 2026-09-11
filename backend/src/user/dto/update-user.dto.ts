@@ -26,15 +26,17 @@ export class UpdateUserDto {
   @IsDateString()
   @IsOptional()
   birthDate?: string;
+@IsEnum(Gender)
+@IsOptional()
+gender?: Gender;
 
-  @IsEnum(Gender)
-  @IsOptional()
-  gender?: Gender;
+@IsEnum(Gender)
+@IsOptional()
+seekingGender?: Gender;
 
-  @IsInt()
-  @IsOptional()
-  cityId?: number;
-
+@IsInt()
+@IsOptional()
+cityId?: number;
   @IsInt()
   @IsOptional()
   districtId?: number;
