@@ -253,6 +253,16 @@ async filterUsers(
     @Query("hasPhotos") hasPhotos?: string,
     @Query("username") username?: string,
   ) {
+     let seekingGender: "MALE" | "FEMALE" | "OTHER" | null = null;
+
+  if (user?.sub && !gender) {
+    const currentUser = await this.prisma.user.findUnique({
+      where: { id: user.sub },
+      select: { seekingGender: true },
+    });
+
+    seekingGender = currentUser?.seekingGender ?? null;
+  } 
    const where: any = {
   isActive: true,
 };
