@@ -135,7 +135,8 @@ const updated = await this.prisma.user.update({
 
   return safe;
 }
-  @Get("online")
+ @Get("online")
+@UseGuards(JwtAuthGuard)
 async getOnlineUsers(@CurrentUser() user?: any) {
    let seekingGender: "MALE" | "FEMALE" | "OTHER" | null = null;
 
@@ -153,15 +154,17 @@ if (user?.sub) {
   );
 
   const users = await this.prisma.user.findMany({
-    where: {
-      isActive: true,
+   where: {
+  isActive: true,
 
-      // Giriş yapan kullanıcı kendisini görmesin
-      ...(user?.sub && {
-        id: { not: user.sub },
-      }),
-    },
+  ...(seekingGender && {
+    gender: seekingGender,
+  }),
 
+  ...(user?.sub && {
+    id: { not: user.sub },
+  }),
+},
     take: 50,
 
     include: {
@@ -226,7 +229,8 @@ if (user?.sub) {
 }
 
 
-  @Get("search/filter")
+ @Get("search/filter")
+@UseGuards(JwtAuthGuard)
 async filterUsers(
   @CurrentUser() user?: any,
     @Query("city") city?: string,
