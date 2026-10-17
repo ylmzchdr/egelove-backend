@@ -1,4 +1,5 @@
-﻿"use client";
+﻿```tsx
+"use client";
 
 import { useEffect, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
@@ -36,27 +37,17 @@ type City = {
   name: string;
 };
 
-type District = {
-  id: number;
-  name: string;
-  cityId: number;
-};
-
 type LoginData = {
   emailOrPhone: string;
   password: string;
 };
 
 type RegisterData = {
-  name: string;
   username: string;
+  cityId: string;
+  age: string;
   email: string;
   password: string;
-  birthDate: string;
-  gender: string;
-  seekingGender: string;
-  cityId: string;
-  districtId: string;
 };
 
 const initialLoginData: LoginData = {
@@ -65,15 +56,11 @@ const initialLoginData: LoginData = {
 };
 
 const initialRegisterData: RegisterData = {
-  name: "",
   username: "",
+  cityId: "",
+  age: "",
   email: "",
   password: "",
-  birthDate: "",
-  gender: "",
-  seekingGender: "",
-  cityId: "",
-  districtId: "",
 };
 
 export default function AuthDialog({
@@ -81,6 +68,7 @@ export default function AuthDialog({
   onClose,
 }: AuthDialogProps) {
   const { t, lang } = useI18n();
+
   const loginText = {
     TR: {
       forgotPassword: "Şifremi Unuttum?",
@@ -114,6 +102,7 @@ export default function AuthDialog({
   };
 
   const [tab, setTab] = useState<Tab>(null);
+  const [registerStep, setRegisterStep] = useState<1 | 2>(1);
   const [showPassword, setShowPassword] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -125,22 +114,16 @@ export default function AuthDialog({
     useState<RegisterData>(initialRegisterData);
 
   const [cities, setCities] = useState<City[]>([]);
-  const [districts, setDistricts] = useState<District[]>([]);
   const [citiesLoading, setCitiesLoading] = useState(false);
-  const [districtsLoading, setDistrictsLoading] = useState(false);
 
-  /*
-   * Açılan sekmeyi takip et.
-   */
   useEffect(() => {
     setTab(activeTab);
+
+    if (activeTab === "register") {
+      setRegisterStep(1);
+    }
   }, [activeTab]);
 
-  /*
-   * Şehir listesini backend'den getir.
-   *
-   * Artık AuthDialog içerisinde sabit 81 il / ilçe listesi yok.
-   */
   useEffect(() => {
     if (tab !== "register") return;
 
@@ -149,7 +132,6 @@ export default function AuthDialog({
     const loadCities = async () => {
       try {
         setCitiesLoading(true);
-
         const data = await api.cities.list();
 
         if (!cancelled) {
@@ -176,71 +158,7 @@ export default function AuthDialog({
     };
   }, [tab]);
 
-  /*
-   * Şehir değiştiğinde o şehre ait ilçeleri backend'den getir.
-   */
-  useEffect(() => {
-    if (!registerData.cityId) {
-      setDistricts([]);
-      return;
-    }
-
-    let cancelled = false;
-
-    const loadDistricts = async () => {
-      try {
-        setDistrictsLoading(true);
-
-        const cityId = Number(registerData.cityId);
-
-        if (!Number.isInteger(cityId) || cityId <= 0) {
-          setDistricts([]);
-
-          if (!cancelled) {
-            setRegisterData((prev) => ({
-              ...prev,
-              districtId: "",
-            }));
-          }
-
-          return;
-        }
-
-        const data = await api.cities.districts(cityId);
-
-        if (!cancelled) {
-          setDistricts(Array.isArray(data) ? data : []);
-        }
-      } catch (error) {
-        console.error("İlçeler alınamadı:", error);
-
-        if (!cancelled) {
-          setDistricts([]);
-          setRegisterData((prev) => ({
-            ...prev,
-            districtId: "",
-          }));
-
-          alert("İlçeler yüklenemedi. Lütfen tekrar deneyin.");
-        }
-      } finally {
-        if (!cancelled) {
-          setDistrictsLoading(false);
-        }
-      }
-    };
-
-    loadDistricts();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [registerData.cityId]);
-
-  /*
-   * LOGIN
-   */
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (
@@ -259,181 +177,125 @@ export default function AuthDialog({
         password: loginData.password,
       });
 
-      console.log("🔐 LOGIN RESPONSE:", res);
-
       if (!res?.accessToken || !res?.refreshToken) {
         throw new Error("Giriş yanıtında token bilgisi bulunamadı.");
       }
 
       localStorage.setItem("accessToken", res.accessToken);
       localStorage.setItem("refreshToken", res.refreshToken);
-
       localStorage.setItem(
         "user",
         JSON.stringify(res.user || res.profile || res),
       );
 
       setLoginData({ ...initialLoginData });
-
       onClose();
-
       window.location.href = "/dashboard";
     } catch (err: any) {
       console.error("LOGIN ERROR:", err);
-
       alert(err?.message || "Giriş başarısız.");
     } finally {
       setLoading(false);
     }
   };
 
-  /*
-   * REGISTER
-   */
-  const handleRegister = async (e: React.FormEvent) => {
+  const handleRegister = async (
+    e: React.FormEvent<HTMLFormElement>,
+  ) => {
     e.preventDefault();
+
+    if (registerStep === 1) {
+      const username = registerData.username.trim();
+      const age = Number(registerData.age);
+      const cityId = Number(registerData.cityId);
+
+      if (username.length < 3) {
+        alert("Kullanıcı adı en az 3 karakter olmalıdır.");
+        return;
+      }
+
+      if (
+        !registerData.cityId ||
+        !Number.isInteger(cityId) ||
+        cityId <= 0
+      ) {
+        alert("Lütfen şehir seçin.");
+        return;
+      }
+
+      if (
+        !registerData.age.trim() ||
+        !Number.isInteger(age) ||
+        age < 18 ||
+        age > 120
+      ) {
+        alert("Kayıt için yaşınız 18 ile 120 arasında olmalıdır.");
+        return;
+      }
+
+      if (!cities.some((city) => Number(city.id) === cityId)) {
+        alert("Seçilen şehir bulunamadı. Lütfen tekrar seçin.");
+        return;
+      }
+
+      // Bu aşamada backend'e istek gönderilmez ve hesap oluşturulmaz.
+      setRegisterStep(2);
+      return;
+    }
+
+    if (!registerData.email.trim()) {
+      alert("Lütfen e-posta adresinizi girin.");
+      return;
+    }
+
+    if (
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+        registerData.email.trim(),
+      )
+    ) {
+      alert("Lütfen geçerli bir e-posta adresi girin.");
+      return;
+    }
+
+    if (registerData.password.length < 8) {
+      alert("Şifreniz en az 8 karakter olmalıdır.");
+      return;
+    }
 
     if (!agreeTerms) {
       alert("Lütfen şartları kabul edin.");
       return;
     }
 
-    if (
-      !registerData.name.trim() ||
-      !registerData.username.trim() ||
-      !registerData.email.trim() ||
-      !registerData.password
-    ) {
-      alert("Lütfen tüm zorunlu alanları doldurun.");
-      return;
-    }
-
-    /*
-     * Doğum tarihi ve cinsiyet artık sessizce varsayılan değer
-     * almıyor. Kullanıcı gerçekten seçim yapmış olmalı.
-     */
-    if (!registerData.birthDate) {
-      alert("Lütfen doğum tarihinizi seçin.");
-      return;
-    }
-
-    if (!registerData.gender) {
-      alert("Lütfen cinsiyet seçin.");
-      return;
-    }
-
-    if (!registerData.seekingGender) {
-      alert("Lütfen aradığınız kişiyi seçin.");
-      return;
-    }
-
-    if (!registerData.cityId) {
-      alert("Lütfen şehir seçin.");
-      return;
-    }
-
-    if (!registerData.districtId) {
-      alert("Lütfen ilçe seçin.");
-      return;
-    }
-
+    const username = registerData.username.trim();
     const cityId = Number(registerData.cityId);
-    const districtId = Number(registerData.districtId);
-
-    if (!Number.isInteger(cityId) || cityId <= 0) {
-      alert("Geçerli bir şehir seçin.");
-      return;
-    }
-
-    if (!Number.isInteger(districtId) || districtId <= 0) {
-      alert("Geçerli bir ilçe seçin.");
-      return;
-    }
-
-    /*
-     * Seçilen şehir ve ilçenin gerçekten mevcut olduğunu
-     * frontend tarafında da kontrol ediyoruz.
-     */
-    const selectedCity = cities.find(
-      (city) => Number(city.id) === cityId,
-    );
-
-    if (!selectedCity) {
-      alert("Seçilen şehir bulunamadı. Lütfen tekrar seçin.");
-      return;
-    }
-
-    const selectedDistrict = districts.find(
-      (district) => Number(district.id) === districtId,
-    );
-
-    if (!selectedDistrict) {
-      alert("Seçilen ilçe bulunamadı. Lütfen tekrar seçin.");
-      return;
-    }
-
-    /*
-     * Güvenlik kontrolü:
-     * İlçe gerçekten seçilen şehre mi ait?
-     */
-    if (Number(selectedDistrict.cityId) !== cityId) {
-      alert("Seçilen ilçe, seçilen şehre ait değil.");
-      return;
-    }
-
-    console.log("📝 KAYIT VERİSİ:", {
-      name: registerData.name.trim(),
-      username: registerData.username.trim(),
-      email: registerData.email.trim(),
-      birthDate: registerData.birthDate,
-      gender: registerData.gender,
-      cityId,
-      cityName: selectedCity.name,
-      districtId,
-      districtName: selectedDistrict.name,
-    });
+    const age = Number(registerData.age);
 
     setLoading(true);
 
     try {
+      // Hesap yalnızca ikinci aşamada, bütün bilgilerle oluşturulur.
+      // Backend'in zorunlu name alanına kullanıcı adı gönderilir.
       const res: any = await api.auth.register({
-        name: registerData.name.trim(),
-        username: registerData.username.trim(),
-        email: registerData.email.trim(),
+        name: username,
+        username,
+        email: registerData.email.trim().toLowerCase(),
         password: registerData.password,
-
-        /*
-         * Formda seçilen gerçek değerler gönderiliyor.
-         */
-        birthDate: registerData.birthDate,
-        gender: registerData.gender,
-        seekingGender: registerData.seekingGender,
         cityId,
-        districtId,
-
-        /*
-         * Mevcut backend sözleşmesini koruyoruz.
-         */
-        turnstileToken: "demo-token",
+        age,
       });
 
-      console.log("✅ REGISTER RESPONSE:", res);
+      console.log("REGISTER RESPONSE:", res);
 
       if (!res?.accessToken || !res?.refreshToken) {
         throw new Error(
-          "Kayıt başarılı görünüyor ancak giriş token bilgileri alınamadı.",
+          "Kayıt yanıtında giriş bilgileri bulunamadı. E-posta doğrulaması gerekiyorsa gelen mesajı kontrol edin.",
         );
       }
 
-      /*
-       * Kayıt sonrası tokenları kaydet.
-       */
       localStorage.setItem("accessToken", res.accessToken);
       localStorage.setItem("refreshToken", res.refreshToken);
 
-      /*
-       * Backend kullanıcı bilgisini döndürüyorsa sakla.
-       */
       if (res.user || res.profile) {
         localStorage.setItem(
           "user",
@@ -441,51 +303,43 @@ export default function AuthDialog({
         );
       }
 
-      /*
-       * Formu temizle.
-       */
       setRegisterData({ ...initialRegisterData });
+      setRegisterStep(1);
       setAgreeTerms(false);
+      setShowPassword(false);
 
       onClose();
-
       window.location.href = "/dashboard";
     } catch (err: any) {
       console.error("REGISTER ERROR:", err);
-
       alert(err?.message || "Kayıt başarısız.");
     } finally {
       setLoading(false);
     }
   };
 
-  /*
-   * GOOGLE LOGIN
-   */
   const handleSocialLogin = () => {
     window.location.href =
       "https://egelove-backend.onrender.com/auth/login/google";
   };
 
-  /*
-   * Dialog kapanırken formu zorla değiştirmiyoruz.
-   */
   const handleDialogChange = (open: boolean) => {
     if (!open) {
       onClose();
       setTab(null);
+      setRegisterStep(1);
     }
   };
+
+  const fieldClass =
+    "bg-[#310D0C]/65 border-[#F6BA48]/20 text-white placeholder:text-[#B5A093]/60 focus-visible:ring-[#F6BA48]/35";
 
   return (
     <Dialog
       open={tab !== null}
       onOpenChange={handleDialogChange}
     >
-      <DialogContent className="max-w-md border-[#F6BA48]/20 bg-gradient-to-b from-[#512510] to-[#310D0C] text-white shadow-[0_30px_90px_rgba(0,0,0,0.45)]">
-        {/* =========================
-            LOGIN
-        ========================== */}
+      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto border-[#F6BA48]/20 bg-gradient-to-b from-[#512510] to-[#310D0C] text-white shadow-[0_30px_90px_rgba(0,0,0,0.45)]">
         {tab === "login" && (
           <div>
             <DialogHeader>
@@ -496,16 +350,16 @@ export default function AuthDialog({
 
             <form
               onSubmit={handleLogin}
-              className="space-y-4 mt-4 text-gray-200"
+              className="mt-4 space-y-4 text-gray-200"
             >
               <div>
                 <Label className="text-white">
                   {t.auth.emailOrPhone}
                 </Label>
-
                 <Input
+                  autoComplete="username"
                   placeholder={t.auth.emailOrPhone}
-                  className="bg-[#310D0C]/65 border-[#F6BA48]/15 text-white placeholder:text-[#B5A093]/60 focus-visible:ring-[#F6BA48]/35"
+                  className={fieldClass}
                   value={loginData.emailOrPhone}
                   onChange={(e) =>
                     setLoginData((prev) => ({
@@ -520,12 +374,12 @@ export default function AuthDialog({
                 <Label className="text-white">
                   {t.auth.password}
                 </Label>
-
                 <div className="relative">
                   <Input
+                    autoComplete="current-password"
                     type={showPassword ? "text" : "password"}
                     placeholder={t.auth.password}
-                    className="bg-[#310D0C]/65 border-[#F6BA48]/15 text-white placeholder:text-[#B5A093]/60 focus-visible:ring-[#F6BA48]/35 pr-12"
+                    className={`${fieldClass} pr-12`}
                     value={loginData.password}
                     onChange={(e) =>
                       setLoginData((prev) => ({
@@ -534,7 +388,6 @@ export default function AuthDialog({
                       }))
                     }
                   />
-
                   <button
                     type="button"
                     onClick={() =>
@@ -542,29 +395,26 @@ export default function AuthDialog({
                     }
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-white/60 hover:text-white"
                     aria-label={
-                      showPassword
-                        ? "Şifreyi gizle"
-                        : "Şifreyi göster"
+                      showPassword ? "Şifreyi gizle" : "Şifreyi göster"
                     }
                   >
                     {showPassword ? (
-                      <EyeOff className="w-5 h-5" />
+                      <EyeOff className="h-5 w-5" />
                     ) : (
-                      <Eye className="w-5 h-5" />
+                      <Eye className="h-5 w-5" />
                     )}
                   </button>
                 </div>
               </div>
 
-              <div className="flex justify-end mt-1 mb-3">
+              <div className="flex justify-end">
                 <button
                   type="button"
                   onClick={() => {
                     onClose();
-                    window.location.href =
-                      "/forgot-password";
+                    window.location.href = "/forgot-password";
                   }}
-                  className="text-base text-[#F6BA48] hover:text-[#F8D290] hover:underline transition-colors"
+                  className="text-base text-[#F6BA48] hover:text-[#F8D290] hover:underline"
                 >
                   {loginText.forgotPassword}
                 </button>
@@ -573,16 +423,15 @@ export default function AuthDialog({
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-[#F6BA48] text-[#310D0C] hover:bg-[#EF912C] font-bold shadow-[0_10px_28px_rgba(246,186,72,0.18)]"
+                className="w-full bg-[#F6BA48] font-bold text-[#310D0C] hover:bg-[#EF912C]"
               >
                 {loading ? "..." : t.auth.login}
               </Button>
 
-              <div className="relative my-4 flex items-center justify-center w-full">
+              <div className="relative flex items-center justify-center py-2">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-white/20" />
                 </div>
-
                 <span className="relative bg-[#512510] px-2 text-xs text-[#B5A093]/80">
                   {loginText.or}
                 </span>
@@ -591,12 +440,9 @@ export default function AuthDialog({
               <button
                 type="button"
                 onClick={handleSocialLogin}
-                className="w-full h-10 flex items-center justify-center gap-2 bg-white text-black hover:bg-gray-100 font-medium rounded-md text-base transition-colors duration-200"
+                className="flex h-10 w-full items-center justify-center gap-2 rounded-md bg-white text-base font-medium text-black transition-colors hover:bg-gray-100"
               >
-                <svg
-                  className="w-4 h-4"
-                  viewBox="0 0 24 24"
-                >
+                <svg className="h-4 w-4" viewBox="0 0 24 24">
                   <path
                     fill="#EA4335"
                     d="M12 5.04c1.64 0 3.12.56 4.28 1.67l3.2-3.2C17.52 1.58 14.97 1 12 1 7.24 1 3.2 3.74 1.25 7.74l3.76 2.92C5.9 7.42 8.7 5.04 12 5.04z"
@@ -614,7 +460,6 @@ export default function AuthDialog({
                     d="M12 23c3.24 0 5.97-1.07 7.96-2.92l-3.66-2.84c-1.01.68-2.31 1.08-3.96 1.08-3.3 0-6.1-2.38-7.1-5.62L1.48 15.62C3.43 19.58 7.47 23 12 23z"
                   />
                 </svg>
-
                 {loginText.google}
               </button>
 
@@ -623,7 +468,10 @@ export default function AuthDialog({
                 <button
                   type="button"
                   className="text-[#F6BA48] underline"
-                  onClick={() => setTab("register")}
+                  onClick={() => {
+                    setRegisterStep(1);
+                    setTab("register");
+                  }}
                 >
                   {t.auth.register}
                 </button>
@@ -632,282 +480,258 @@ export default function AuthDialog({
           </div>
         )}
 
-        {/* =========================
-            REGISTER
-        ========================== */}
         {tab === "register" && (
           <div>
             <DialogHeader>
-              <DialogTitle className="text-white text-xl">
-                {t.auth.register}
+              <DialogTitle className="text-xl text-white">
+                {t.auth.register} — {registerStep}/2
               </DialogTitle>
-
-              <Button
-                type="button"
-                onClick={handleSocialLogin}
-                className="w-full mt-4 bg-white text-gray-900 hover:bg-gray-100 font-bold"
-              >
-                {t.auth.google}
-              </Button>
             </DialogHeader>
+
+            <div className="mt-4 flex gap-2" aria-label="Kayıt aşaması">
+              <div
+                className={`h-1.5 flex-1 rounded-full ${
+                  registerStep >= 1 ? "bg-[#F6BA48]" : "bg-white/20"
+                }`}
+              />
+              <div
+                className={`h-1.5 flex-1 rounded-full ${
+                  registerStep >= 2 ? "bg-[#F6BA48]" : "bg-white/20"
+                }`}
+              />
+            </div>
 
             <form
               onSubmit={handleRegister}
-              className="space-y-4 mt-4 text-gray-200"
+              className="mt-5 space-y-4 text-gray-200"
             >
-              {/* İSİM + KULLANICI ADI */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-white">
-                    {t.auth.name}
-                  </Label>
+              {registerStep === 1 && (
+                <>
+                  <p className="text-sm text-white/70">
+                    Önce kullanıcı adını, yaşını ve yaşadığın şehri seç.
+                  </p>
 
-                  <Input
-                    placeholder={t.auth.name}
-                    className="bg-[#310D0C]/65 border-[#F6BA48]/15 text-white placeholder:text-[#B5A093]/60 focus-visible:ring-[#F6BA48]/35"
-                    value={registerData.name}
-                    onChange={(e) =>
-                      setRegisterData((prev) => ({
-                        ...prev,
-                        name: e.target.value,
-                      }))
-                    }
-                  />
-                </div>
+                  <div>
+                    <Label className="text-white">
+                      Kullanıcı Adı
+                    </Label>
+                    <Input
+                      autoComplete="username"
+                      minLength={3}
+                      maxLength={30}
+                      required
+                      placeholder="Kullanıcı adın"
+                      className={fieldClass}
+                      value={registerData.username}
+                      onChange={(e) =>
+                        setRegisterData((prev) => ({
+                          ...prev,
+                          username: e.target.value,
+                        }))
+                      }
+                    />
+                  </div>
 
-                <div>
-                  <Label className="text-white">
-                    Kullanıcı Adı
-                  </Label>
+                  <div>
+                    <Label className="text-white">Şehir</Label>
+                    <Select
+                      value={registerData.cityId}
+                      onValueChange={(value) =>
+                        setRegisterData((prev) => ({
+                          ...prev,
+                          cityId: value,
+                        }))
+                      }
+                      disabled={citiesLoading || cities.length === 0}
+                    >
+                      <SelectTrigger className={fieldClass}>
+                        <SelectValue
+                          placeholder={
+                            citiesLoading
+                              ? "Şehirler yükleniyor..."
+                              : "Şehir seç"
+                          }
+                        />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-72">
+                        {cities.map((city) => (
+                          <SelectItem
+                            key={city.id}
+                            value={String(city.id)}
+                          >
+                            {city.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-                  <Input
-                    placeholder="Kullanıcı Adı"
-                    className="bg-[#310D0C]/65 border-[#F6BA48]/15 text-white placeholder:text-[#B5A093]/60 focus-visible:ring-[#F6BA48]/35"
-                    value={registerData.username}
-                    onChange={(e) =>
-                      setRegisterData((prev) => ({
-                        ...prev,
-                        username: e.target.value,
-                      }))
-                    }
-                  />
-                </div>
-              </div>
+                  <div>
+                    <Label className="text-white">Yaş</Label>
+                    <Input
+                      type="number"
+                      inputMode="numeric"
+                      min={18}
+                      max={120}
+                      step={1}
+                      required
+                      placeholder="Yaşın (18+)"
+                      className={fieldClass}
+                      value={registerData.age}
+                      onChange={(e) =>
+                        setRegisterData((prev) => ({
+                          ...prev,
+                          age: e.target.value,
+                        }))
+                      }
+                    />
+                    <p className="mt-1 text-xs text-white/50">
+                      Kayıt olmak için 18 yaşını doldurmuş olmalısın.
+                    </p>
+                  </div>
 
-              {/* E-POSTA */}
-              <Input
-                type="email"
-                placeholder={t.auth.email}
-                className="bg-[#310D0C]/65 border-[#F6BA48]/15 text-white placeholder:text-[#B5A093]/60 focus-visible:ring-[#F6BA48]/35"
-                value={registerData.email}
-                onChange={(e) =>
-                  setRegisterData((prev) => ({
-                    ...prev,
-                    email: e.target.value,
-                  }))
-                }
-              />
-
-              {/* ŞİFRE */}
-              <div className="relative">
-                <Input
-                  type={showPassword ? "text" : "password"}
-                  placeholder={t.auth.password}
-                  className="bg-[#310D0C]/65 border-[#F6BA48]/15 text-white placeholder:text-[#B5A093]/60 focus-visible:ring-[#F6BA48]/35 pr-12"
-                  value={registerData.password}
-                  onChange={(e) =>
-                    setRegisterData((prev) => ({
-                      ...prev,
-                      password: e.target.value,
-                    }))
-                  }
-                />
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    setShowPassword((prev) => !prev)
-                  }
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/60 hover:text-white"
-                  aria-label={
-                    showPassword
-                      ? "Şifreyi gizle"
-                      : "Şifreyi göster"
-                  }
-                >
-                  {showPassword ? (
-                    <EyeOff className="w-5 h-5" />
-                  ) : (
-                    <Eye className="w-5 h-5" />
-                  )}
-                </button>
-              </div>
-
-              {/* DOĞUM TARİHİ + CİNSİYET */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-white">
-                    Doğum Tarihi
-                  </Label>
-
-                  <Input
-                    type="date"
-                    className="bg-[#310D0C]/65 border-[#F6BA48]/15 text-white focus-visible:ring-[#F6BA48]/35"
-                    value={registerData.birthDate}
-                    onChange={(e) =>
-                      setRegisterData((prev) => ({
-                        ...prev,
-                        birthDate: e.target.value,
-                      }))
-                    }
-                  />
-                </div>
-
-                <div>
-                  <Label className="text-white">
-                    {t.auth.gender}
-                  </Label>
-
-                  <Select
-                    value={registerData.gender}
-                    onValueChange={(value) =>
-                      setRegisterData((prev) => ({
-                        ...prev,
-                        gender: value,
-                      }))
-                    }
+                  <Button
+                    type="submit"
+                    className="w-full bg-[#F6BA48] font-bold text-[#310D0C] hover:bg-[#EF912C]"
                   >
-                    <SelectTrigger className="bg-[#310D0C]/65 border-[#F6BA48]/15 text-white focus-visible:ring-[#F6BA48]/35">
-                      <SelectValue
-                        placeholder={t.auth.gender}
-                      />
-                    </SelectTrigger>
+                    Devam Et →
+                  </Button>
+                </>
+              )}
 
-                    <SelectContent>
-                      <SelectItem value="FEMALE">
-                        {t.auth.female}
-                      </SelectItem>
+              {registerStep === 2 && (
+                <>
+                  <p className="text-sm text-white/70">
+                    Son adım: E-posta ve şifreni girerek kaydını tamamla.
+                  </p>
 
-                      <SelectItem value="MALE">
-                        {t.auth.male}
-                      </SelectItem>
+                  <div className="rounded-md border border-[#F6BA48]/20 bg-black/10 p-3 text-sm">
+                    <p>
+                      <span className="text-white/60">Kullanıcı adı:</span>{" "}
+                      {registerData.username}
+                    </p>
+                    <p>
+                      <span className="text-white/60">Yaş:</span>{" "}
+                      {registerData.age}
+                    </p>
+                    <p>
+                      <span className="text-white/60">Şehir:</span>{" "}
+                      {cities.find(
+                        (city) =>
+                          String(city.id) === registerData.cityId,
+                      )?.name || "Seçilmedi"}
+                    </p>
+                  </div>
 
-                      <SelectItem value="OTHER">
-                        {t.auth.other}
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
+                  <div>
+                    <Label className="text-white">E-posta</Label>
+                    <Input
+                      type="email"
+                      autoComplete="email"
+                      required
+                      placeholder="ornek@eposta.com"
+                      className={fieldClass}
+                      value={registerData.email}
+                      onChange={(e) =>
+                        setRegisterData((prev) => ({
+                          ...prev,
+                          email: e.target.value,
+                        }))
+                      }
+                    />
+                  </div>
 
-              {/* ŞEHİR + İLÇE */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-white">
-                    {t.auth.selectCity}
-                  </Label>
-
-                  <Select
-                    value={registerData.cityId}
-                    onValueChange={(value) =>
-                      setRegisterData((prev) => ({
-                        ...prev,
-                        cityId: value,
-                        districtId: "",
-                      }))
-                    }
-                    disabled={
-                      citiesLoading || cities.length === 0
-                    }
-                  >
-                    <SelectTrigger className="bg-[#310D0C]/65 border-[#F6BA48]/15 text-white focus-visible:ring-[#F6BA48]/35">
-                      <SelectValue
-                        placeholder={
-                          citiesLoading
-                            ? "Şehirler yükleniyor..."
-                            : t.auth.selectCity
+                  <div>
+                    <Label className="text-white">Şifre</Label>
+                    <div className="relative">
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        autoComplete="new-password"
+                        minLength={8}
+                        required
+                        placeholder="En az 8 karakter"
+                        className={`${fieldClass} pr-12`}
+                        value={registerData.password}
+                        onChange={(e) =>
+                          setRegisterData((prev) => ({
+                            ...prev,
+                            password: e.target.value,
+                          }))
                         }
                       />
-                    </SelectTrigger>
-
-                    <SelectContent className="max-h-72">
-                      {cities.map((city) => (
-                        <SelectItem
-                          key={city.id}
-                          value={String(city.id)}
-                        >
-                          {city.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <Label className="text-white">
-                    {t.auth.selectDistrict}
-                  </Label>
-
-                  <Select
-                    value={registerData.districtId}
-                    onValueChange={(value) =>
-                      setRegisterData((prev) => ({
-                        ...prev,
-                        districtId: value,
-                      }))
-                    }
-                    disabled={
-                      !registerData.cityId ||
-                      districtsLoading ||
-                      districts.length === 0
-                    }
-                  >
-                    <SelectTrigger className="bg-[#310D0C]/65 border-[#F6BA48]/15 text-white focus-visible:ring-[#F6BA48]/35">
-                      <SelectValue
-                        placeholder={
-                          !registerData.cityId
-                            ? "Önce şehir seçin"
-                            : districtsLoading
-                              ? "İlçeler yükleniyor..."
-                              : t.auth.selectDistrict
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setShowPassword((prev) => !prev)
                         }
-                      />
-                    </SelectTrigger>
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-white/60 hover:text-white"
+                        aria-label={
+                          showPassword
+                            ? "Şifreyi gizle"
+                            : "Şifreyi göster"
+                        }
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-5 w-5" />
+                        ) : (
+                          <Eye className="h-5 w-5" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
 
-                    <SelectContent className="max-h-72">
-                      {districts.map((district) => (
-                        <SelectItem
-                          key={district.id}
-                          value={String(district.id)}
-                        >
-                          {district.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div className="flex items-start gap-2 text-sm">
+                    <Checkbox
+                      id="register-terms"
+                      checked={agreeTerms}
+                      onCheckedChange={(checked) =>
+                        setAgreeTerms(checked === true)
+                      }
+                    />
+                    <Label
+                      htmlFor="register-terms"
+                      className="cursor-pointer leading-5 text-white/80"
+                    >
+                      {t.auth.terms}
+                    </Label>
+                  </div>
+
+                  <Button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full bg-[#F6BA48] font-bold text-[#310D0C] hover:bg-[#EF912C]"
+                  >
+                    {loading ? "Kaydediliyor..." : "Kayıt Ol"}
+                  </Button>
+
+                  <Button
+                    type="button"
+                    disabled={loading}
+                    onClick={() => setRegisterStep(1)}
+                    variant="outline"
+                    className="w-full border-[#F6BA48]/30 bg-transparent text-white hover:bg-white/10 hover:text-white"
+                  >
+                    ← Geri
+                  </Button>
+                </>
+              )}
+
+              <div className="relative flex items-center justify-center py-2">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-white/20" />
                 </div>
+                <span className="relative bg-[#512510] px-2 text-xs text-[#B5A093]/80">
+                  {loginText.or}
+                </span>
               </div>
 
-              {/* ŞARTLAR */}
-              <div className="flex items-center gap-2 text-base">
-                <Checkbox
-                  checked={agreeTerms}
-                  onCheckedChange={(checked) =>
-                    setAgreeTerms(!!checked)
-                  }
-                />
-
-                <span>{t.auth.terms}</span>
-              </div>
-
-              {/* KAYIT */}
-              <Button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-[#F6BA48] text-[#310D0C] hover:bg-[#EF912C] font-bold shadow-[0_10px_28px_rgba(246,186,72,0.18)]"
+              <button
+                type="button"
+                onClick={handleSocialLogin}
+                className="flex h-10 w-full items-center justify-center rounded-md bg-white font-medium text-black hover:bg-gray-100"
               >
-                {loading ? "..." : t.auth.register}
-              </Button>
+                {loginText.google}
+              </button>
 
               <p className="text-center text-base text-white/60">
                 {t.auth.hasAccount}{" "}
@@ -926,3 +750,4 @@ export default function AuthDialog({
     </Dialog>
   );
 }
+```
