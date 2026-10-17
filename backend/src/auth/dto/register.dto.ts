@@ -6,6 +6,8 @@ import {
   IsInt,
   IsDateString,
   IsIn,
+  Min,
+  Max,
 } from "class-validator";
 
 export class RegisterDto {
@@ -27,17 +29,27 @@ export class RegisterDto {
   @IsInt()
   cityId!: number;
 
+  @IsOptional()
   @IsInt()
-  districtId!: number;
+  districtId?: number;
 
+  @IsOptional()
+  @IsInt()
+  @Min(18)
+  @Max(120)
+  age?: number;
+
+  @IsOptional()
   @IsDateString()
-  birthDate!: string;
+  birthDate?: string;
 
+  @IsOptional()
   @IsIn(["MALE", "FEMALE", "OTHER"])
-  gender!: "MALE" | "FEMALE" | "OTHER";
+  gender?: "MALE" | "FEMALE" | "OTHER";
 
+  @IsOptional()
   @IsIn(["MALE", "FEMALE"])
-  seekingGender!: "MALE" | "FEMALE";
+  seekingGender?: "MALE" | "FEMALE";
 
   @IsOptional()
   @IsString()
